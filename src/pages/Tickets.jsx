@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 
-const API = "http://localhost:5000/api";
+const API = "https://techfest-canada-backend.onrender.com/api";
 
 export default function Tickets() {
   const [inventory, setInventory] = useState([]);
@@ -12,7 +12,7 @@ export default function Tickets() {
   useEffect(() => {
   const loadInventory = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/admin/inventory/public");
+      const res = await fetch(`{$API}/admin/inventory/public`);
       const data = await res.json();
       setInventory(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -53,7 +53,7 @@ const handlePurchase = async (tier) => {
     }
 
     const res = await fetch(
-      "http://localhost:5000/api/payments/create-checkout",
+      `{$API}/payments/create-checkout`,
       {
         method: "POST",
         headers: {

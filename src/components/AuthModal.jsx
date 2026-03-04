@@ -4,7 +4,7 @@ import {
   clearPendingPurchase,
 } from "../utils/purchase";
 
-const API = "http://localhost:5000/api/auth";
+const API = "https://techfest-canada-backend.onrender.com/api/auth";
 
 // ⚠️ PUT YOUR REAL GOOGLE CLIENT ID HERE
 const GOOGLE_CLIENT_ID = "676399067827-8rri9ibgjqonjfs5ov6laul096rj1m7o.apps.googleusercontent.com";

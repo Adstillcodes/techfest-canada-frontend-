@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API = "http://localhost:5000/api";
+const API = "https://techfest-canada-backend.onrender.com/api";
 
 export default function AdminInventory() {
   const [inventory, setInventory] = useState([]);

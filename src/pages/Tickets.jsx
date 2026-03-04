@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { API } from "../utils/api";
-const API = "https://techfest-canada-backend.onrender.com/api";
+//const API = "https://techfest-canada-backend.onrender.com/api";
 
 export default function Tickets() {
   const [inventory, setInventory] = useState([]);

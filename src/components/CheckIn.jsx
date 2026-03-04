@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Scanner } from "@yudiel/react-qr-scanner";
 
-const API = "http://localhost:5000/api";
+const API = "https://techfest-canada-backend.onrender.com/api";
 
 export default function CheckIn() {
   const [result, setResult] = useState(null);

@@ -1,7 +1,7 @@
 export async function fetchMe() {
   const token = localStorage.getItem("token");
 
-  const res = await fetch("https://techfest-canada-frontend.vercel.app/api/auth", {
+  const res = await fetch("https://techfest-canada-frontend.vercel.app/api/auth/me", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

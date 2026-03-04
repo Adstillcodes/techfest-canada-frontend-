@@ -3,6 +3,7 @@ const API =
   (import.meta.env.DEV
     ? "http://localhost:5000/api"
     : "https://techfest-api.onrender.com/api");
+export { API };
 
 // ================= GET CURRENT USER =================
 

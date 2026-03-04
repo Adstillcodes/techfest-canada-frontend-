@@ -5,7 +5,7 @@ import AdminAttendees from "../components/AdminAttendees";
 import AdminInventory from "../components/AdminInventory";
 import CheckIn from "../components/CheckIn";
 
-const API = "http://localhost:5000/api";
+const API = "https://techfest-canada-backend.onrender.com/api/";
 
 /* =========================================================
    📊 OVERVIEW TAB

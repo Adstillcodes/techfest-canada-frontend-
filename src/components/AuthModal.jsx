@@ -4,7 +4,7 @@ import {
   clearPendingPurchase,
 } from "../utils/purchase";
 
-const API = "https://techfest-canada-backend.onrender.com/api/auth";
+const API = "https://techfest-canada-backend.onrender.com/api";
 
 // ⚠️ PUT YOUR REAL GOOGLE CLIENT ID HERE
 const GOOGLE_CLIENT_ID = "676399067827-8rri9ibgjqonjfs5ov6laul096rj1m7o.apps.googleusercontent.com";
@@ -71,7 +71,7 @@ export default function AuthModal({ isOpen, onClose }) {
   // ================= GOOGLE HANDLER =================
   const handleGoogleResponse = async (response) => {
     try {
-      const res = await fetch(`${API}/google`, {
+      const res = await fetch(`${API}/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ credential: response.credential }),

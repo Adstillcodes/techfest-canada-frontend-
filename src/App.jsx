@@ -26,6 +26,7 @@ function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+        <Route path="/auth-success" element={<AuthSuccess />} />
       </Routes>
     </BrowserRouter>
   );

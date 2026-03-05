@@ -6,8 +6,9 @@ import {
 
 const API = "https://techfest-canada-backend.onrender.com/api";
 
-// ⚠️ PUT YOUR REAL GOOGLE CLIENT ID HERE
-const GOOGLE_CLIENT_ID = "676399067827-8rri9ibgjqonjfs5ov6laul096rj1m7o.apps.googleusercontent.com";
+// GOOGLE CLIENT ID
+const GOOGLE_CLIENT_ID =
+  "676399067827-8rri9ibgjqonjfs5ov6laul096rj1m7o.apps.googleusercontent.com";
 
 export default function AuthModal({ isOpen, onClose }) {
   const [view, setView] = useState("login");
@@ -45,6 +46,12 @@ export default function AuthModal({ isOpen, onClose }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // ================= LINKEDIN LOGIN =================
+  const handleLinkedInLogin = () => {
+    window.location.href =
+      "https://techfest-canada-backend.onrender.com/api/auth/linkedin";
+  };
+
   // ================= FINISH AUTH =================
   const finishAuth = (token) => {
     localStorage.setItem("token", token);
@@ -63,7 +70,6 @@ export default function AuthModal({ isOpen, onClose }) {
         );
       }, 300);
     } else {
-      // optional refresh so navbar updates instantly
       window.location.reload();
     }
   };
@@ -152,7 +158,7 @@ export default function AuthModal({ isOpen, onClose }) {
           {view === "login" ? "Welcome Back" : "Create Account"}
         </h2>
 
-        {/* 🔥 GOOGLE BUTTON */}
+        {/* GOOGLE BUTTON */}
         <div
           id="google-btn"
           style={{
@@ -161,6 +167,18 @@ export default function AuthModal({ isOpen, onClose }) {
             marginBottom: "1rem",
           }}
         />
+
+        {/* LINKEDIN BUTTON */}
+        <button
+          className="btn-outline"
+          style={{
+            width: "100%",
+            marginBottom: "1rem",
+          }}
+          onClick={handleLinkedInLogin}
+        >
+          Continue with LinkedIn
+        </button>
 
         <div style={{ textAlign: "center", margin: "1rem 0" }}>
           — or —

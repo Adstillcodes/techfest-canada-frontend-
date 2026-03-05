@@ -31,12 +31,10 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 99999; /* 🔥 VERY IMPORTANT */
+  z-index: 99999;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* optional backdrop */
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(6px);
 }
@@ -80,15 +78,15 @@ nav {
 
 body.dark-mode {
     /* Dark Mode Settings */
-    --bg-main: var(--brand-black);
-    --bg-card: rgba(43, 47, 54, 0.6); 
-    --bg-nav: rgba(17, 17, 17, 0.95);
-    --bg-modal: var(--brand-charcoal);
-    
+    --bg-main: #0D0A1A;
+    --bg-card: rgba(28, 16, 52, 0.75);
+    --bg-nav: rgba(10, 7, 20, 0.92);
+    --bg-modal: #1A1030;
+
     --text-main: var(--brand-white);
     --text-muted: var(--brand-silver);
-    --border-main: rgba(191, 197, 204, 0.15);
-    --shadow-main: 0 15px 40px rgba(0, 0, 0, 0.6);
+    --border-main: rgba(122, 63, 209, 0.22);
+    --shadow-main: 0 15px 40px rgba(0, 0, 0, 0.7);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -103,7 +101,12 @@ body {
 }
 
 body.dark-mode {
-    background-image: radial-gradient(circle at top center, #2B2F36 0%, #111111 60%);
+    background-color: #0D0A1A;
+    background-image:
+        radial-gradient(ellipse at 20% 0%,   rgba(122, 63, 209, 0.28) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 10%,  rgba(245, 166, 35, 0.12) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 100%, rgba(217, 70, 143, 0.10) 0%, transparent 50%),
+        linear-gradient(180deg, #0D0A1A 0%, #070512 100%);
     background-attachment: fixed;
 }
 
@@ -370,7 +373,6 @@ footer { padding: 4rem 5%; background: var(--bg-card); border-top: 1px solid var
 
 /* =====================================================
    WHY ATTEND — FINAL POLISHED STYLES
-   (React-compatible, no conflicts)
 ===================================================== */
 
 /* ===== HERO ===== */
@@ -1052,89 +1054,6 @@ html {
 }
 
 /* ========================================
-   ADMIN PANEL — PREMIUM UI
-======================================== */
-
-.admin-page {
-  padding: 80px 0;
-}
-
-.admin-title {
-  font-family: 'Orbitron', sans-serif;
-  margin-bottom: 30px;
-}
-
-/* Tabs */
-.admin-tabs {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.admin-tabs button {
-  padding: 10px 18px;
-  border-radius: 999px;
-  border: 1px solid var(--border-main);
-  background: transparent;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.admin-tabs button.active {
-  background: var(--gradient-brand);
-  color: white;
-  border: none;
-}
-
-/* Card */
-.admin-card {
-  background: var(--bg-card);
-  border-radius: 16px;
-  padding: 24px;
-  border: 1px solid var(--border-main);
-}
-
-/* Table */
-.table-wrapper {
-  overflow-x: auto;
-  margin-top: 20px;
-}
-
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
-.admin-table th {
-  text-align: left;
-  padding: 14px;
-  background: rgba(122,63,209,0.08);
-  font-weight: 700;
-}
-
-.admin-table td {
-  padding: 14px;
-  border-bottom: 1px solid var(--border-main);
-}
-
-/* Excel feel */
-.admin-table tbody tr:hover {
-  background: rgba(122,63,209,0.05);
-}
-
-/* badges */
-.ticket-type {
-  font-weight: 700;
-  color: var(--brand-purple);
-}
-
-.ticket-id {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.85rem;
-}
-/* ========================================
    QR SCANNER
 ======================================== */
 
@@ -1354,12 +1273,12 @@ html {
   }
 }
 .attendees-section {
-  padding: 110px 0; /* bigger vertical presence */
+  padding: 110px 0;
 }
 .attendees-title {
   text-align: center;
   font-family: 'Orbitron', sans-serif;
-  font-size: 3.2rem; /* bigger */
+  font-size: 3.2rem;
   margin-bottom: 50px;
   line-height: 1.1;
 }
@@ -1438,7 +1357,7 @@ html {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #111; /* force dark for light mode */
+  color: #111;
   text-decoration: none;
 }
 

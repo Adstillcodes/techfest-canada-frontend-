@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Privacy from "./pages/Privacy";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AboutUs from "./components/AboutUs";
+import AuthSuccess from "./pages/AuthSuccess";
 
 import Admin from "./pages/Admin";
 

@@ -22,12 +22,10 @@ function GoogleIcon() {
 function LinkedInIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="#0A66C2">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
     </svg>
   );
 }
-
-/* ================= BUTTON STYLE ================= */
 
 const socialBtnStyle = {
   display: "flex",
@@ -44,7 +42,6 @@ const socialBtnStyle = {
   fontSize: "0.95rem",
   cursor: "pointer",
   marginBottom: "12px",
-  fontFamily: "'Montserrat', sans-serif",
 };
 
 /* ================= COMPONENT ================= */
@@ -52,7 +49,6 @@ const socialBtnStyle = {
 export default function AuthModal({ isOpen, onClose }) {
   const [view, setView] = useState("login");
   const [loading, setLoading] = useState(false);
-  const [resetSent, setResetSent] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -61,6 +57,12 @@ export default function AuthModal({ isOpen, onClose }) {
   });
 
   const googleBtnRef = useRef(null);
+
+  /* ================= RESET FORM WHEN SWITCHING VIEW ================= */
+
+  useEffect(() => {
+    setForm({ name: "", email: "", password: "" });
+  }, [view]);
 
   /* ================= GOOGLE INIT ================= */
 
@@ -75,28 +77,13 @@ export default function AuthModal({ isOpen, onClose }) {
         callback: handleGoogleResponse,
       });
 
-      window.google.accounts.id.renderButton(
-        googleBtnRef.current,
-        {
-          theme: "outline",
-          size: "large",
-          width: 1,
-        }
-      );
+      window.google.accounts.id.renderButton(googleBtnRef.current, {
+        theme: "outline",
+        size: "large",
+      });
     };
 
-    if (window.google) {
-      initGoogle();
-    } else {
-      const interval = setInterval(() => {
-        if (window.google) {
-          initGoogle();
-          clearInterval(interval);
-        }
-      }, 200);
-
-      return () => clearInterval(interval);
-    }
+    if (window.google) initGoogle();
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -115,14 +102,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
     if (pending) {
       clearPendingPurchase();
-
-      setTimeout(() => {
-        window.dispatchEvent(
-          new CustomEvent("resumePurchase", {
-            detail: pending,
-          })
-        );
-      }, 300);
+      window.dispatchEvent(new CustomEvent("resumePurchase", { detail: pending }));
     } else {
       window.location.reload();
     }
@@ -134,12 +114,8 @@ export default function AuthModal({ isOpen, onClose }) {
     try {
       const res = await fetch(`${API}/google`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          credential: response.credential,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: response.credential }),
       });
 
       const data = await res.json();
@@ -148,20 +124,13 @@ export default function AuthModal({ isOpen, onClose }) {
 
       finishAuth(data.token);
     } catch (err) {
-      alert("Google sign-in failed");
+      alert(err.message);
     }
   };
 
   const handleGoogleClick = () => {
-    const btn =
-      googleBtnRef.current &&
-      googleBtnRef.current.querySelector("div[role=button]");
-
-    if (btn) {
-      btn.click();
-    } else {
-      alert("Google sign-in unavailable. Please try again.");
-    }
+    const btn = googleBtnRef.current?.querySelector("div[role=button]");
+    if (btn) btn.click();
   };
 
   /* ================= LINKEDIN LOGIN ================= */
@@ -179,9 +148,7 @@ export default function AuthModal({ isOpen, onClose }) {
     try {
       const res = await fetch(`${API}/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           email: form.email,
           password: form.password,
@@ -194,7 +161,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
       finishAuth(data.token);
     } catch (err) {
-      alert(err.message || "Login failed");
+      alert(err.message);
     } finally {
       setLoading(false);
     }
@@ -207,12 +174,15 @@ export default function AuthModal({ isOpen, onClose }) {
     setLoading(true);
 
     try {
+
       const res = await fetch(`${API}/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.password
+        }),
       });
 
       const data = await res.json();
@@ -220,8 +190,9 @@ export default function AuthModal({ isOpen, onClose }) {
       if (!res.ok) throw new Error(data.error);
 
       finishAuth(data.token);
+
     } catch (err) {
-      alert(err.message || "Signup failed");
+      alert(err.message);
     } finally {
       setLoading(false);
     }
@@ -231,179 +202,54 @@ export default function AuthModal({ isOpen, onClose }) {
 
   return (
     <div className="modal-overlay">
-      <div
-        className="modal-content"
-        style={{
-          width: "100%",
-          maxWidth: "420px",
-          padding: "2rem",
-          borderRadius: "16px",
-          background: "var(--bg-modal)",
-          position: "relative",
-        }}
-      >
-        <button
-          onClick={onClose}
-          style={{
-            position: "absolute",
-            top: "16px",
-            right: "16px",
-            background: "transparent",
-            border: "none",
-            color: "var(--text-muted)",
-            fontSize: "1.2rem",
-            cursor: "pointer",
-          }}
-        >
-          ✖
-        </button>
+      <div className="modal-content">
 
-        <h2
-          style={{
-            textAlign: "center",
-            marginBottom: "1.5rem",
-            fontFamily: "'Orbitron', sans-serif",
-            fontSize: "1.4rem",
-          }}
-        >
-          {view === "login" && "Welcome Back"}
-          {view === "signup" && "Create Account"}
+        <button onClick={onClose}>✖</button>
+
+        <h2>
+          {view === "login" ? "Welcome Back" : "Create Account"}
         </h2>
 
-        {/* hidden Google button */}
-        <div
-          ref={googleBtnRef}
-          style={{
-            position: "absolute",
-            opacity: 0,
-            pointerEvents: "none",
-          }}
-        />
+        <div ref={googleBtnRef} style={{display:"none"}} />
 
-        {/* GOOGLE BUTTON */}
         <button style={socialBtnStyle} onClick={handleGoogleClick}>
           <GoogleIcon />
           Continue with Google
         </button>
 
-        {/* LINKEDIN BUTTON */}
         <button style={socialBtnStyle} onClick={handleLinkedIn}>
           <LinkedInIcon />
           Continue with LinkedIn
         </button>
 
-        <div
-          style={{
-            textAlign: "center",
-            margin: "1rem 0",
-            color: "var(--text-muted)",
-            fontSize: "0.8rem",
-            fontWeight: 700,
-          }}
-        >
-          — or —
-        </div>
+        <div style={{textAlign:"center", margin:"10px"}}>— or —</div>
 
         {view === "login" && (
           <form onSubmit={handleLogin}>
-            <input
-              className="form-input"
-              name="email"
-              type="email"
-              placeholder="Email address"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
+            <input name="email" placeholder="Email" onChange={handleChange} required />
+            <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+            <button disabled={loading}>{loading ? "Signing in..." : "Sign In"}</button>
 
-            <input
-              className="form-input"
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              required
-            />
-
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{ width: "100%" }}
-              disabled={loading}
-            >
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
-
-            <p style={{ textAlign: "center", marginTop: 12 }}>
-              Don't have an account?{" "}
-              <span
-                style={{
-                  color: "var(--brand-orange)",
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-                onClick={() => setView("signup")}
-              >
-                Sign up
-              </span>
+            <p>
+              Don't have an account?
+              <span onClick={() => setView("signup")}> Sign up</span>
             </p>
           </form>
         )}
 
         {view === "signup" && (
           <form onSubmit={handleSignup}>
-            <input
-              className="form-input"
-              name="name"
-              type="text"
-              placeholder="Full name"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
+            <input name="name" placeholder="Full name" onChange={handleChange} required />
+            <input name="email" placeholder="Email" onChange={handleChange} required />
+            <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
 
-            <input
-              className="form-input"
-              name="email"
-              type="email"
-              placeholder="Email address"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              className="form-input"
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              required
-            />
-
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{ width: "100%" }}
-              disabled={loading}
-            >
+            <button disabled={loading}>
               {loading ? "Creating account..." : "Create Account"}
             </button>
 
-            <p style={{ textAlign: "center", marginTop: 12 }}>
-              Already have an account?{" "}
-              <span
-                style={{
-                  color: "var(--brand-orange)",
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-                onClick={() => setView("login")}
-              >
-                Sign in
-              </span>
+            <p>
+              Already have an account?
+              <span onClick={() => setView("login")}> Sign in</span>
             </p>
           </form>
         )}

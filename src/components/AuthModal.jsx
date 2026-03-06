@@ -227,7 +227,7 @@ export default function AuthModal({ isOpen, onClose }) {
         {view === "login" && (
           <form onSubmit={handleLogin}>
             <input className="form-input" name="email" placeholder="Email" onChange={handleChange} required />
-            <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+            <input className="form-input" name="password" type="password" placeholder="Password" onChange={handleChange} required />
             <button disabled={loading}>{loading ? "Signing in..." : "Sign In"}</button>
 
             <p>
@@ -240,8 +240,8 @@ export default function AuthModal({ isOpen, onClose }) {
         {view === "signup" && (
           <form onSubmit={handleSignup}>
             <input className="form-input" name="name" placeholder="Full name" onChange={handleChange} required />
-            <input name="email" placeholder="Email" onChange={handleChange} required />
-            <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+            <input className="form-input" name="email" placeholder="Email" onChange={handleChange} required />
+            <input className="form-input" name="password" type="password" placeholder="Password" onChange={handleChange} required />
 
             <button disabled={loading}>
               {loading ? "Creating account..." : "Create Account"}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function UrgencyBanner() {
   // 🔥 Set your real deadline here
-  const DEADLINE = new Date("2026-04-01T00:00:00");
+  const DEADLINE = new Date("2026-10-01T00:00:00");
 
   const calculateTimeLeft = () => {
     const now = new Date();

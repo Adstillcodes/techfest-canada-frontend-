@@ -1364,3 +1364,62 @@ html {
 body.dark-mode .mobile-link {
   color: #fff;
 }
+
+/* ================= MOBILE MENU ================= */
+
+.nav-mobile {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  background: var(--bg-main);
+  padding: 30px 20px;
+  transform: translateY(-120%);
+  transition: transform 0.35s ease;
+  z-index: 999;
+}
+
+.nav-mobile.open {
+  transform: translateY(0);
+}
+
+/* ================= NAV LINKS ================= */
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 30px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mobile-link {
+  font-family: "Orbitron", sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-main);
+  letter-spacing: 1px;
+}
+
+.mobile-link:hover {
+  color: var(--brand-orange);
+}
+
+/* ================= BUTTON AREA ================= */
+
+.nav-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ================= MOBILE ONLY ================= */
+
+@media (min-width: 1024px) {
+  .nav-mobile {
+    display: none;
+  }
+}

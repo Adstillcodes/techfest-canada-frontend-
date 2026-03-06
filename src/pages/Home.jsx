@@ -374,7 +374,7 @@ export default function Home() {
               <a href="/tickets" className="btn-primary">
                 Get Your Tickets ➡️
               </a>
-              <a href="/on-demand" className="btn-outline">
+              <a href="/sponsors" className="btn-outline">
                 View Exhibitors
               </a>
             </div>

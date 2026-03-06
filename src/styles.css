@@ -1423,3 +1423,75 @@ body.dark-mode .mobile-link {
     display: none;
   }
 }
+/* ================= DASHBOARD GRID ================= */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: minmax(320px, 420px) 1fr;
+  }
+}
+
+/* ================= TICKET GRID ================= */
+
+.tickets-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ================= VENUE CARD ================= */
+
+.venue-card {
+  padding: 24px;
+  border-radius: 14px;
+  margin-bottom: 28px;
+}
+
+/* ================= VENUE TEXT ================= */
+
+.venue-block strong {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.venue-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.venue-sub {
+  color: var(--text-muted);
+}
+
+/* ================= CALENDAR BUTTONS ================= */
+
+.calendar-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Fix invisible Apple button */
+
+.calendar-outline {
+  border: 2px solid var(--border-main);
+  color: var(--text-main);
+  background: transparent;
+}
+
+/* ================= LOGOUT ================= */
+
+.logout-btn {
+  margin-top: 20px;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+}

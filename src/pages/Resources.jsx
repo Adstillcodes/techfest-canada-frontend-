@@ -60,7 +60,7 @@ export default function Resources() {
               </li>
             </ul>
 
-            <a href="/attendees" className="btn-primary">
+            <a href="/speakers" className="btn-primary">
               VIEW ATTENDEES
             </a>
           </div>

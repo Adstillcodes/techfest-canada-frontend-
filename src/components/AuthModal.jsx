@@ -27,6 +27,8 @@ function LinkedInIcon() {
   );
 }
 
+/* ================= BUTTON STYLE ================= */
+
 const socialBtnStyle = {
   display: "flex",
   alignItems: "center",
@@ -42,6 +44,7 @@ const socialBtnStyle = {
   fontSize: "0.95rem",
   cursor: "pointer",
   marginBottom: "12px",
+  fontFamily: "'Montserrat', sans-serif",
 };
 
 /* ================= COMPONENT ================= */
@@ -57,8 +60,6 @@ export default function AuthModal({ isOpen, onClose }) {
   });
 
   const googleBtnRef = useRef(null);
-
-  /* ================= RESET FORM WHEN SWITCHING VIEW ================= */
 
   useEffect(() => {
     setForm({ name: "", email: "", password: "" });
@@ -91,8 +92,6 @@ export default function AuthModal({ isOpen, onClose }) {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  /* ================= FINISH AUTH ================= */
-
   const finishAuth = (token) => {
     localStorage.setItem("token", token);
 
@@ -102,7 +101,9 @@ export default function AuthModal({ isOpen, onClose }) {
 
     if (pending) {
       clearPendingPurchase();
-      window.dispatchEvent(new CustomEvent("resumePurchase", { detail: pending }));
+      window.dispatchEvent(
+        new CustomEvent("resumePurchase", { detail: pending })
+      );
     } else {
       window.location.reload();
     }
@@ -133,13 +134,11 @@ export default function AuthModal({ isOpen, onClose }) {
     if (btn) btn.click();
   };
 
-  /* ================= LINKEDIN LOGIN ================= */
-
   const handleLinkedIn = () => {
     window.location.href = `${API}/linkedin`;
   };
 
-  /* ================= EMAIL LOGIN ================= */
+  /* ================= LOGIN ================= */
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -167,21 +166,20 @@ export default function AuthModal({ isOpen, onClose }) {
     }
   };
 
-  /* ================= EMAIL SIGNUP ================= */
+  /* ================= SIGNUP ================= */
 
   const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-
       const res = await fetch(`${API}/register`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           name: form.name,
           email: form.email,
-          password: form.password
+          password: form.password,
         }),
       });
 
@@ -204,13 +202,13 @@ export default function AuthModal({ isOpen, onClose }) {
     <div className="modal-overlay">
       <div className="modal-content">
 
-        <button onClick={onClose}>✖</button>
+        <button className="modal-close" onClick={onClose}>✖</button>
 
-        <h2>
-          {view === "login" ? "Welcome Back" : "Create Account"}
+        <h2 className="auth-title">
+          {view === "login" ? "Sign In" : "Create Account"}
         </h2>
 
-        <div ref={googleBtnRef} style={{display:"none"}} />
+        <div ref={googleBtnRef} style={{ display: "none" }} />
 
         <button style={socialBtnStyle} onClick={handleGoogleClick}>
           <GoogleIcon />
@@ -222,15 +220,40 @@ export default function AuthModal({ isOpen, onClose }) {
           Continue with LinkedIn
         </button>
 
-        <div style={{textAlign:"center", margin:"10px"}}>— or —</div>
+        <div className="auth-divider">— or —</div>
 
         {view === "login" && (
           <form onSubmit={handleLogin}>
-            <input className="form-input" name="email" placeholder="Email" onChange={handleChange} required />
-            <input className="form-input" name="password" type="password" placeholder="Password" onChange={handleChange} required />
-            <button type="submit" className="btn-primary" disabled={loading}>{loading ? "Signing in..." : "Sign In"}</button>
+            <input
+              className="form-input"
+              name="email"
+              type="email"
+              placeholder="Email address"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
 
-            <p>
+            <input
+              className="form-input"
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+
+            <button
+              type="submit"
+              className="btn-primary"
+              style={{ width: "100%" }}
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+
+            <p className="auth-switch">
               Don't have an account?
               <span onClick={() => setView("signup")}> Sign up</span>
             </p>
@@ -239,15 +262,46 @@ export default function AuthModal({ isOpen, onClose }) {
 
         {view === "signup" && (
           <form onSubmit={handleSignup}>
-            <input className="form-input" name="name" placeholder="Full name" onChange={handleChange} required />
-            <input className="form-input" name="email" placeholder="Email" onChange={handleChange} required />
-            <input className="form-input" name="password" type="password" placeholder="Password" onChange={handleChange} required />
+            <input
+              className="form-input"
+              name="name"
+              type="text"
+              placeholder="Full name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
 
-            <button type="submit" classname="btn-primary" disabled={loading}>
+            <input
+              className="form-input"
+              name="email"
+              type="email"
+              placeholder="Email address"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+
+            <input
+              className="form-input"
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+
+            <button
+              type="submit"
+              className="btn-primary"
+              style={{ width: "100%" }}
+              disabled={loading}
+            >
               {loading ? "Creating account..." : "Create Account"}
             </button>
 
-            <p>
+            <p className="auth-switch">
               Already have an account?
               <span onClick={() => setView("login")}> Sign in</span>
             </p>

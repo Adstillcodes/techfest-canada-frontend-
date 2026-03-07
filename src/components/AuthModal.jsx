@@ -259,7 +259,7 @@ width:"100%",
 maxWidth:"420px",
 padding:"32px",
 borderRadius:"18px",
-background:"linear-gradient(180deg,#160c2c,#1b0f35)",
+//background:"linear-gradient(180deg,#160c2c,#1b0f35)",
 border:"1px solid rgba(255,255,255,0.05)",
 boxShadow:"0 25px 60px rgba(0,0,0,0.6)",
 position:"relative"

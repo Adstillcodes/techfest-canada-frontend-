@@ -204,33 +204,39 @@ export default function AuthModal({ isOpen, onClose }) {
 
   /* ================= FORGOT PASSWORD ================= */
 
-  const handleForgotPassword = async (e) => {
+const handleForgotPassword = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    e.preventDefault();
-    setLoading(true);
+  try {
+
+    const res = await fetch(`${API}/forgot-password`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: form.email })
+    });
+
+    const text = await res.text();
+
+    let data;
 
     try {
-
-      const res = await fetch(`${API}/forgot-password`,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({ email:form.email })
-      });
-
-      const data = await res.json();
-
-      if(!res.ok) throw new Error(data.error);
-
-      alert("Password reset email sent.");
-
-      setView("login");
-
-    } catch(err){
-      alert(err.message);
-    } finally{
-      setLoading(false);
+      data = JSON.parse(text);
+    } catch {
+      throw new Error("Server error. Please try again.");
     }
-  };
+
+    if (!res.ok) throw new Error(data.error || "Request failed");
+
+    alert("Password reset email sent.");
+    setView("login");
+
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* ================= UI ================= */
 

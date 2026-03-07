@@ -378,7 +378,7 @@ export default function Home() {
           <div className="hero-text">
             <div className="hero-eyebrow">
               <span className="hero-eyebrow-dot" />
-              Toronto · Vancouver · Montreal
+              Toronto · London 
             </div>
 
             <div className="hero-divider" />
@@ -390,17 +390,25 @@ export default function Home() {
             </h1>
 
             <p className="hero-sub">
-              Canada's premier AI, blockchain & emerging tech conference.
-              3 days of keynotes, deep-dive workshops, and high-value
-              networking across Toronto, Vancouver, and Montreal.
+        The Tech Festival Canada is the country’s deal-making platform where innovators, buyers, investors,
+              and policymakers meet to turn emerging tech into real partnerships, pilots, and contracts
+               Expect senior decision-makers from enterprise and critical sectors alongside government bodies, associations, media,
+              and leading research institutions creating the right room for announcements, procurement conversations, 
+              and collaborations that move faster than “business as usual.”
+
+              For Partners, it’s a high-intent audience built for outcomes: qualified buyer meetings, brand visibility with leaders who influence budgets and policy,
+              and a direct path to partnerships and revenue. For attendees, it delivers sharp, practical content plus curated networking across industry, 
+              government, and research, so you leave with new relationships, 
+              real opportunities, and a clear view of what’s next for Canada’s tech economy
+
             </p>
 
             <div className="hero-cta-row">
               <a href="/tickets" className="btn-primary">
-                Get Your Tickets ➡️
+                Get Your Tickets 
               </a>
               <a href="/on-demand" className="btn-outline">
-                View Exhibitors
+                Partner With Us 
               </a>
             </div>
           </div>

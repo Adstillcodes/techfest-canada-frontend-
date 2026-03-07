@@ -642,7 +642,7 @@ export default function Home() {
           .hero-visual-wrap { display: none; }
           .hero-headline { font-size: 3.2rem; }
         }
-      `}</style>
+      ` }</style>
 
       <UrgencyBanner />
       <Navbar />

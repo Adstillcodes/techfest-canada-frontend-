@@ -106,44 +106,38 @@ export default function Navbar() {
     <>
       <style>{`
         .navbar .nav-container {
-          display: grid;
-          /* 3 equal columns so the middle (logo) is truly centered */
-          grid-template-columns: 1fr auto 1fr;
+          display: flex;
           align-items: center;
+          justify-content: space-between;
           min-height: 88px;
           padding: 0 2rem;
           gap: 1rem;
         }
         .nav-logo-wrap {
-          /* centre column */
           display: flex;
-          justify-content: center;
           align-items: center;
+          flex-shrink: 0;
         }
         .nav-logo-img {
-          height: 110px;
+          height: 64px;
           width: auto;
           object-fit: contain;
           display: block;
         }
         .nav-left-tabs {
-          /* left column — push tabs to the right edge of this cell */
           display: flex;
-          justify-content: flex-start;
           align-items: center;
+          flex: 1;
+          justify-content: center;
         }
         .nav-right-actions {
-          /* right column — push actions to the right */
           display: flex;
           justify-content: flex-end;
           align-items: center;
           gap: 1rem;
+          flex-shrink: 0;
         }
         @media (max-width: 1024px) {
-          .navbar .nav-container {
-            grid-template-columns: auto 1fr auto;
-          }
-          .nav-logo-wrap { justify-content: flex-start; }
           .nav-left-tabs { display: none; }
         }
       `}</style>

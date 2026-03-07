@@ -1293,6 +1293,9 @@ html {
 .navbar .mix-blend-difference {
   will-change: transform;
 }
+.navbar {
+  min-height: 90px;  /* increase this to match your logo height */
+}
 /* MOBILE NAV */
 .nav-mobile {
   position: absolute;

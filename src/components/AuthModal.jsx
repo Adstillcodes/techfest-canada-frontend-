@@ -22,7 +22,7 @@ function GoogleIcon() {
 function LinkedInIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="#0A66C2">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065z"/>
     </svg>
   );
 }
@@ -46,8 +46,6 @@ const socialBtnStyle = {
   marginBottom: "12px",
 };
 
-/* ================= COMPONENT ================= */
-
 export default function AuthModal({ isOpen, onClose }) {
 
   const [view, setView] = useState("login");
@@ -68,9 +66,11 @@ export default function AuthModal({ isOpen, onClose }) {
   /* ================= GOOGLE INIT ================= */
 
   useEffect(() => {
+
     if (!isOpen) return;
 
     const initGoogle = () => {
+
       if (!window.google) return;
 
       window.google.accounts.id.initialize({
@@ -80,26 +80,11 @@ export default function AuthModal({ isOpen, onClose }) {
 
       window.google.accounts.id.renderButton(
         googleBtnRef.current,
-        {
-          theme: "outline",
-          size: "large",
-          width: 1
-        }
+        { theme: "outline", size: "large", width: 1 }
       );
     };
 
-    if (window.google) {
-      initGoogle();
-    } else {
-      const interval = setInterval(() => {
-        if (window.google) {
-          initGoogle();
-          clearInterval(interval);
-        }
-      }, 200);
-
-      return () => clearInterval(interval);
-    }
+    if (window.google) initGoogle();
 
   }, [isOpen]);
 
@@ -117,15 +102,10 @@ export default function AuthModal({ isOpen, onClose }) {
     onClose();
 
     if (pending) {
-
       clearPendingPurchase();
-
-      setTimeout(() => {
-        window.dispatchEvent(
-          new CustomEvent("resumePurchase", { detail: pending })
-        );
-      }, 300);
-
+      window.dispatchEvent(
+        new CustomEvent("resumePurchase", { detail: pending })
+      );
     } else {
       window.location.reload();
     }
@@ -139,8 +119,8 @@ export default function AuthModal({ isOpen, onClose }) {
 
       const res = await fetch(`${API}/google`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ credential: response.credential }),
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ credential: response.credential })
       });
 
       const data = await res.json();
@@ -149,10 +129,8 @@ export default function AuthModal({ isOpen, onClose }) {
 
       finishAuth(data.token);
 
-    } catch (err) {
-
+    } catch {
       alert("Google sign-in failed");
-
     }
   };
 
@@ -175,28 +153,24 @@ export default function AuthModal({ isOpen, onClose }) {
     try {
 
       const res = await fetch(`${API}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-        }),
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          email:form.email,
+          password:form.password
+        })
       });
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error);
+      if(!res.ok) throw new Error(data.error);
 
       finishAuth(data.token);
 
-    } catch (err) {
-
+    } catch(err) {
       alert(err.message);
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
@@ -209,26 +183,52 @@ export default function AuthModal({ isOpen, onClose }) {
 
     try {
 
-      const res = await fetch(`${API}/register`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(form),
+      const res = await fetch(`${API}/register`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(form)
       });
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error);
+      if(!res.ok) throw new Error(data.error);
 
       finishAuth(data.token);
 
-    } catch (err) {
-
+    } catch(err){
       alert(err.message);
-
-    } finally {
-
+    } finally{
       setLoading(false);
+    }
+  };
 
+  /* ================= FORGOT PASSWORD ================= */
+
+  const handleForgotPassword = async (e) => {
+
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+
+      const res = await fetch(`${API}/forgot-password`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ email:form.email })
+      });
+
+      const data = await res.json();
+
+      if(!res.ok) throw new Error(data.error);
+
+      alert("Password reset email sent.");
+
+      setView("login");
+
+    } catch(err){
+      alert(err.message);
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -236,8 +236,7 @@ export default function AuthModal({ isOpen, onClose }) {
 
   return (
 
-<div
-style={{
+<div style={{
 position:"fixed",
 inset:0,
 background:"rgba(0,0,0,0.6)",
@@ -247,11 +246,9 @@ alignItems:"center",
 justifyContent:"center",
 padding:"20px",
 zIndex:9999
-}}
->
+}}>
 
-<div
-style={{
+<div style={{
 width:"100%",
 maxWidth:"420px",
 padding:"32px",
@@ -260,8 +257,7 @@ background:"linear-gradient(180deg,#160c2c,#1b0f35)",
 border:"1px solid rgba(255,255,255,0.05)",
 boxShadow:"0 25px 60px rgba(0,0,0,0.6)",
 position:"relative"
-}}
->
+}}>
 
 <button
 onClick={onClose}
@@ -275,22 +271,22 @@ fontSize:"18px",
 color:"#9ca3af",
 cursor:"pointer"
 }}
->
-✖
-</button>
+>✖</button>
 
-<h2
-style={{
+<h2 style={{
 textAlign:"center",
 marginBottom:"24px",
 fontFamily:"Orbitron",
 fontSize:"22px"
-}}
->
-{view === "login" ? "Welcome Back" : "Create Account"}
+}}>
+{view==="login" && "Welcome Back"}
+{view==="signup" && "Create Account"}
+{view==="forgot" && "Reset Password"}
 </h2>
 
-<div ref={googleBtnRef} style={{display:"none"}} />
+{view !== "forgot" && (
+<>
+<div ref={googleBtnRef} style={{display:"none"}}/>
 
 <button style={socialBtnStyle} onClick={handleGoogleClick}>
 <GoogleIcon/> Continue with Google
@@ -300,17 +296,15 @@ fontSize:"22px"
 <LinkedInIcon/> Continue with LinkedIn
 </button>
 
-<div
-style={{
-textAlign:"center",
-margin:"16px 0",
-color:"var(--text-muted)"
-}}
->
+<div style={{textAlign:"center",margin:"16px 0",color:"var(--text-muted)"}}>
 — or —
 </div>
+</>
+)}
 
-{view === "login" && (
+{/* LOGIN */}
+
+{view==="login" && (
 
 <form onSubmit={handleLogin}>
 
@@ -336,11 +330,8 @@ required
 
 <div style={{textAlign:"right",marginBottom:"10px"}}>
 <span
-style={{
-color:"var(--brand-orange)",
-cursor:"pointer",
-fontSize:"13px"
-}}
+style={{color:"var(--brand-orange)",cursor:"pointer",fontSize:"13px"}}
+onClick={()=>setView("forgot")}
 >
 Forgot password?
 </span>
@@ -352,7 +343,7 @@ className="btn-primary"
 style={{width:"100%"}}
 disabled={loading}
 >
-{loading ? "Signing in..." : "Sign In"}
+{loading?"Signing in...":"Sign In"}
 </button>
 
 <p style={{textAlign:"center",marginTop:"14px"}}>
@@ -366,10 +357,11 @@ Sign up
 </p>
 
 </form>
-
 )}
 
-{view === "signup" && (
+{/* SIGNUP */}
+
+{view==="signup" && (
 
 <form onSubmit={handleSignup}>
 
@@ -409,7 +401,7 @@ className="btn-primary"
 style={{width:"100%"}}
 disabled={loading}
 >
-{loading ? "Creating account..." : "Create Account"}
+{loading?"Creating account...":"Create Account"}
 </button>
 
 <p style={{textAlign:"center",marginTop:"14px"}}>
@@ -423,7 +415,43 @@ Sign in
 </p>
 
 </form>
+)}
 
+{/* FORGOT PASSWORD */}
+
+{view==="forgot" && (
+
+<form onSubmit={handleForgotPassword}>
+
+<input
+className="form-input"
+name="email"
+type="email"
+placeholder="Enter your email"
+value={form.email}
+onChange={handleChange}
+required
+/>
+
+<button
+type="submit"
+className="btn-primary"
+style={{width:"100%"}}
+disabled={loading}
+>
+{loading?"Sending...":"Send Reset Link"}
+</button>
+
+<p style={{textAlign:"center",marginTop:"14px"}}>
+<span
+style={{color:"var(--brand-orange)",cursor:"pointer"}}
+onClick={()=>setView("login")}
+>
+Back to login
+</span>
+</p>
+
+</form>
 )}
 
 </div>

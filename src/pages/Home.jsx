@@ -400,7 +400,6 @@ export default function Home() {
               and a direct path to partnerships and revenue. For attendees, it delivers sharp, practical content plus curated networking across industry, 
               government, and research, so you leave with new relationships, 
               real opportunities, and a clear view of what’s next for Canada’s tech economy
-
             </p>
 
             <div className="hero-cta-row">

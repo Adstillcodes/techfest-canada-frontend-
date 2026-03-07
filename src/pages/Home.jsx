@@ -397,6 +397,35 @@ export default function Home() {
         body.dark-mode .hero-desc-list li::before {
           background: rgba(160,100,255,0.9);
         }
+
+        /* ── FOOTER WATERMARK ── */
+        .footer-watermark-wrap {
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 60px 0 20px;
+          overflow: hidden;
+        }
+        .footer-watermark-img {
+          width: min(520px, 80vw);
+          height: auto;
+          opacity: 0.06;
+          filter: grayscale(30%);
+          user-select: none;
+          pointer-events: none;
+          display: block;
+        }
+        body:not(.dark-mode) .footer-watermark-img {
+          opacity: 0.04;
+          filter: grayscale(60%) brightness(0.3);
+        }
+        .footer-watermark-line {
+          position: absolute;
+          top: 0; left: 5%; right: 5%;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(122,63,209,0.3), rgba(245,166,35,0.2), rgba(122,63,209,0.3), transparent);
+        }
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
           .hero-inner {
@@ -505,6 +534,17 @@ export default function Home() {
 
       {/* ABOUT SECTION */}
       <AboutUs />
+
+      {/* ── FOOTER WATERMARK ── */}
+      <div className="footer-watermark-wrap">
+        <div className="footer-watermark-line" />
+        <img
+          src="/techfesttransparent.webp"
+          alt=""
+          className="footer-watermark-img"
+          aria-hidden="true"
+        />
+      </div>
 
       <Footer />
     </>

@@ -10,6 +10,7 @@ import Privacy from "./pages/Privacy";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AboutUs from "./components/AboutUs";
 import AuthSuccess from "./pages/AuthSuccess";
+import ResetPassword from "./pages/ResetPassword";
 
 import Admin from "./pages/Admin";
 
@@ -28,6 +29,10 @@ function App() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/auth-success" element={<AuthSuccess />} />
+
+        {/* RESET PASSWORD ROUTE */}
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+
       </Routes>
     </BrowserRouter>
   );

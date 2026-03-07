@@ -1,37 +1,40 @@
 "use client";
 
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback } from "react";
 
+// Nodes spread across all hemispheres to avoid clustering
 const TECH_NODES = [
-  { lat: 37.78,  lng: -122.42, shortLabel: "AI",         type: "pillar" },
-  { lat: 46.23,  lng:    6.05, shortLabel: "Quantum",    type: "pillar" },
-  { lat: 59.91,  lng:   10.75, shortLabel: "Sustain.",   type: "pillar" },
-  { lat: 38.89,  lng:  -77.03, shortLabel: "Cyber",      type: "pillar" },
-  { lat: 35.68,  lng:  139.69, shortLabel: "Robotics",   type: "pillar" },
-  { lat: 25.20,  lng:   55.27, shortLabel: "Energy",     type: "sector" },
-  { lat: 42.36,  lng:  -71.06, shortLabel: "Health",     type: "sector" },
-  { lat: 51.51,  lng:   -0.13, shortLabel: "Defence",    type: "sector" },
-  { lat: 40.71,  lng:  -74.01, shortLabel: "FinServ",    type: "sector" },
-  { lat:  1.35,  lng:  103.82, shortLabel: "Supply",     type: "sector" },
+  // Tech Pillars (orange)
+  { lat:  47.0,  lng: -105.0, shortLabel: "AI",         type: "pillar" },  // North America
+  { lat:  62.0,  lng:   18.0, shortLabel: "Quantum",    type: "pillar" },  // Scandinavia
+  { lat: -28.0,  lng:  133.0, shortLabel: "Sustain.",   type: "pillar" },  // Australia
+  { lat:  28.0,  lng:  -90.0, shortLabel: "Cyber",      type: "pillar" },  // SE United States
+  { lat:  36.0,  lng:  138.0, shortLabel: "Robotics",   type: "pillar" },  // Japan
+  // Applied Sectors (purple)
+  { lat:  23.0,  lng:   44.0, shortLabel: "Energy",     type: "sector" },  // Saudi Arabia
+  { lat:  18.0,  lng:   76.0, shortLabel: "Health",     type: "sector" },  // India
+  { lat:  53.0,  lng:   -3.0, shortLabel: "Defence",    type: "sector" },  // UK
+  { lat: -22.0,  lng:  -48.0, shortLabel: "FinServ",    type: "sector" },  // Brazil
+  { lat:   2.0,  lng:  105.0, shortLabel: "Supply",     type: "sector" },  // Singapore
 ];
 
 const CONNECTIONS = [
-  { from: [37.78, -122.42], to: [46.23,    6.05] },
-  { from: [37.78, -122.42], to: [38.89,  -77.03] },
-  { from: [46.23,    6.05], to: [59.91,   10.75] },
-  { from: [59.91,   10.75], to: [51.51,   -0.13] },
-  { from: [35.68,  139.69], to: [37.78, -122.42] },
-  { from: [35.68,  139.69], to:  [1.35,  103.82] },
-  { from: [37.78, -122.42], to: [42.36,  -71.06] },
-  { from: [37.78, -122.42], to: [40.71,  -74.01] },
-  { from: [38.89,  -77.03], to: [51.51,   -0.13] },
-  { from: [38.89,  -77.03], to: [40.71,  -74.01] },
-  { from: [59.91,   10.75], to: [25.20,   55.27] },
-  { from: [35.68,  139.69], to: [42.36,  -71.06] },
-  { from: [46.23,    6.05], to: [25.20,   55.27] },
-  { from: [25.20,   55.27], to:  [1.35,  103.82] },
-  { from: [42.36,  -71.06], to: [40.71,  -74.01] },
-  { from:  [1.35,  103.82], to: [35.68,  139.69] },
+  { from: [ 47.0, -105.0], to: [ 62.0,   18.0] },
+  { from: [ 47.0, -105.0], to: [ 28.0,  -90.0] },
+  { from: [ 62.0,   18.0], to: [-28.0,  133.0] },
+  { from: [-28.0,  133.0], to: [ 36.0,  138.0] },
+  { from: [ 36.0,  138.0], to: [ 47.0, -105.0] },
+  { from: [ 47.0, -105.0], to: [-22.0,  -48.0] },
+  { from: [ 47.0, -105.0], to: [ 18.0,   76.0] },
+  { from: [ 28.0,  -90.0], to: [ 53.0,   -3.0] },
+  { from: [ 28.0,  -90.0], to: [-22.0,  -48.0] },
+  { from: [ 62.0,   18.0], to: [ 23.0,   44.0] },
+  { from: [ 62.0,   18.0], to: [ 53.0,   -3.0] },
+  { from: [-28.0,  133.0], to: [  2.0,  105.0] },
+  { from: [ 36.0,  138.0], to: [  2.0,  105.0] },
+  { from: [ 36.0,  138.0], to: [ 18.0,   76.0] },
+  { from: [ 23.0,   44.0], to: [  2.0,  105.0] },
+  { from: [ 18.0,   76.0], to: [-22.0,  -48.0] },
 ];
 
 function latLngToXYZ(lat, lng, r) {
@@ -89,21 +92,18 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
 
     ctx.clearRect(0, 0, w, h);
 
-    // Ambient glow
     const glowGrad = ctx.createRadialGradient(cx, cy, radius * 0.5, cx, cy, radius * 1.6);
     glowGrad.addColorStop(0, isDarkMode ? "rgba(122,63,209,0.07)" : "rgba(122,63,209,0.04)");
     glowGrad.addColorStop(1, "rgba(122,63,209,0)");
     ctx.fillStyle = glowGrad;
     ctx.fillRect(0, 0, w, h);
 
-    // Globe outline
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.strokeStyle = isDarkMode ? "rgba(122,63,209,0.10)" : "rgba(122,63,209,0.15)";
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    // Dot lattice
     for (const d of dotsRef.current) {
       let [x, y, z] = [d[0] * radius, d[1] * radius, d[2] * radius];
       [x, y, z] = rotateX(x, y, z, rx);
@@ -119,7 +119,6 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
       ctx.fill();
     }
 
-    // Connections
     for (const conn of CONNECTIONS) {
       let [x1, y1, z1] = latLngToXYZ(conn.from[0], conn.from[1], radius);
       let [x2, y2, z2] = latLngToXYZ(conn.to[0],   conn.to[1],   radius);
@@ -138,7 +137,6 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
       ctx.strokeStyle = isDarkMode ? "rgba(160,100,255,0.28)" : "rgba(122,63,209,0.20)";
       ctx.lineWidth = 1.1;
       ctx.stroke();
-      // Travelling bead
       const tp = (Math.sin(t * 1.1 + conn.from[0] * 0.12) + 1) / 2;
       const bx = (1-tp)*(1-tp)*sx1 + 2*(1-tp)*tp*scx + tp*tp*sx2;
       const by = (1-tp)*(1-tp)*sy1 + 2*(1-tp)*tp*scy + tp*tp*sy2;
@@ -152,7 +150,6 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
       ctx.fillStyle = bGlow; ctx.fill();
     }
 
-    // Nodes
     for (const node of TECH_NODES) {
       let [x, y, z] = latLngToXYZ(node.lat, node.lng, radius);
       [x, y, z] = rotateX(x, y, z, rx);
@@ -199,13 +196,11 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
     dragRef.current = { active: true, startX: e.clientX, startY: e.clientY, startRotY: rotYRef.current, startRotX: rotXRef.current };
     e.target.setPointerCapture(e.pointerId);
   }, []);
-
   const onPointerMove = useCallback((e) => {
     if (!dragRef.current.active) return;
     rotYRef.current = dragRef.current.startRotY + (e.clientX - dragRef.current.startX) * 0.005;
     rotXRef.current = Math.max(-1, Math.min(1, dragRef.current.startRotX + (e.clientY - dragRef.current.startY) * 0.005));
   }, []);
-
   const onPointerUp = useCallback(() => { dragRef.current.active = false; }, []);
 
   return (

@@ -43,6 +43,11 @@
 .modal-content {
   position: relative;
   z-index: 100000;
+  background: var(--bg-modal);
+  color: var(--text-main);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.25);
 }
 nav {
   position: relative;

@@ -36,20 +36,20 @@ const socialBtnStyle = {
   gap: "10px",
   width: "100%",
   padding: "13px",
-  borderRadius: "8px",
-  border: "1px solid var(--border-main)",
+  borderRadius: "10px",
+  border: "1px solid rgba(255,255,255,0.08)",
   background: "transparent",
   color: "var(--text-main)",
   fontWeight: 700,
   fontSize: "0.95rem",
   cursor: "pointer",
   marginBottom: "12px",
-  fontFamily: "'Montserrat', sans-serif",
 };
 
 /* ================= COMPONENT ================= */
 
 export default function AuthModal({ isOpen, onClose }) {
+
   const [view, setView] = useState("login");
   const [loading, setLoading] = useState(false);
 
@@ -78,13 +78,29 @@ export default function AuthModal({ isOpen, onClose }) {
         callback: handleGoogleResponse,
       });
 
-      window.google.accounts.id.renderButton(googleBtnRef.current, {
-        theme: "outline",
-        size: "large",
-      });
+      window.google.accounts.id.renderButton(
+        googleBtnRef.current,
+        {
+          theme: "outline",
+          size: "large",
+          width: 1
+        }
+      );
     };
 
-    if (window.google) initGoogle();
+    if (window.google) {
+      initGoogle();
+    } else {
+      const interval = setInterval(() => {
+        if (window.google) {
+          initGoogle();
+          clearInterval(interval);
+        }
+      }, 200);
+
+      return () => clearInterval(interval);
+    }
+
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -93,6 +109,7 @@ export default function AuthModal({ isOpen, onClose }) {
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const finishAuth = (token) => {
+
     localStorage.setItem("token", token);
 
     const pending = getPendingPurchase();
@@ -100,10 +117,15 @@ export default function AuthModal({ isOpen, onClose }) {
     onClose();
 
     if (pending) {
+
       clearPendingPurchase();
-      window.dispatchEvent(
-        new CustomEvent("resumePurchase", { detail: pending })
-      );
+
+      setTimeout(() => {
+        window.dispatchEvent(
+          new CustomEvent("resumePurchase", { detail: pending })
+        );
+      }, 300);
+
     } else {
       window.location.reload();
     }
@@ -112,7 +134,9 @@ export default function AuthModal({ isOpen, onClose }) {
   /* ================= GOOGLE LOGIN ================= */
 
   const handleGoogleResponse = async (response) => {
+
     try {
+
       const res = await fetch(`${API}/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -124,8 +148,11 @@ export default function AuthModal({ isOpen, onClose }) {
       if (!res.ok) throw new Error(data.error);
 
       finishAuth(data.token);
+
     } catch (err) {
-      alert(err.message);
+
+      alert("Google sign-in failed");
+
     }
   };
 
@@ -141,13 +168,15 @@ export default function AuthModal({ isOpen, onClose }) {
   /* ================= LOGIN ================= */
 
   const handleLogin = async (e) => {
+
     e.preventDefault();
     setLoading(true);
 
     try {
+
       const res = await fetch(`${API}/login`, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: form.email,
           password: form.password,
@@ -159,28 +188,31 @@ export default function AuthModal({ isOpen, onClose }) {
       if (!res.ok) throw new Error(data.error);
 
       finishAuth(data.token);
+
     } catch (err) {
+
       alert(err.message);
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
   /* ================= SIGNUP ================= */
 
   const handleSignup = async (e) => {
+
     e.preventDefault();
     setLoading(true);
 
     try {
+
       const res = await fetch(`${API}/register`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-        }),
+        body: JSON.stringify(form),
       });
 
       const data = await res.json();
@@ -190,124 +222,211 @@ export default function AuthModal({ isOpen, onClose }) {
       finishAuth(data.token);
 
     } catch (err) {
+
       alert(err.message);
+
     } finally {
+
       setLoading(false);
+
     }
   };
 
   /* ================= UI ================= */
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
 
-        <button className="modal-close" onClick={onClose}>✖</button>
+<div
+style={{
+position:"fixed",
+inset:0,
+background:"rgba(0,0,0,0.6)",
+backdropFilter:"blur(6px)",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+padding:"20px",
+zIndex:9999
+}}
+>
 
-        <h2 className="auth-title">
-          {view === "login" ? "Sign In" : "Create Account"}
-        </h2>
+<div
+style={{
+width:"100%",
+maxWidth:"420px",
+padding:"32px",
+borderRadius:"18px",
+background:"linear-gradient(180deg,#160c2c,#1b0f35)",
+border:"1px solid rgba(255,255,255,0.05)",
+boxShadow:"0 25px 60px rgba(0,0,0,0.6)",
+position:"relative"
+}}
+>
 
-        <div ref={googleBtnRef} style={{ display: "none" }} />
+<button
+onClick={onClose}
+style={{
+position:"absolute",
+top:"18px",
+right:"18px",
+background:"none",
+border:"none",
+fontSize:"18px",
+color:"#9ca3af",
+cursor:"pointer"
+}}
+>
+✖
+</button>
 
-        <button style={socialBtnStyle} onClick={handleGoogleClick}>
-          <GoogleIcon />
-          Continue with Google
-        </button>
+<h2
+style={{
+textAlign:"center",
+marginBottom:"24px",
+fontFamily:"Orbitron",
+fontSize:"22px"
+}}
+>
+{view === "login" ? "Welcome Back" : "Create Account"}
+</h2>
 
-        <button style={socialBtnStyle} onClick={handleLinkedIn}>
-          <LinkedInIcon />
-          Continue with LinkedIn
-        </button>
+<div ref={googleBtnRef} style={{display:"none"}} />
 
-        <div className="auth-divider">— or —</div>
+<button style={socialBtnStyle} onClick={handleGoogleClick}>
+<GoogleIcon/> Continue with Google
+</button>
 
-        {view === "login" && (
-          <form onSubmit={handleLogin}>
-            <input
-              className="form-input"
-              name="email"
-              type="email"
-              placeholder="Email address"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
+<button style={socialBtnStyle} onClick={handleLinkedIn}>
+<LinkedInIcon/> Continue with LinkedIn
+</button>
 
-            <input
-              className="form-input"
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              required
-            />
+<div
+style={{
+textAlign:"center",
+margin:"16px 0",
+color:"var(--text-muted)"
+}}
+>
+— or —
+</div>
 
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{ width: "100%" }}
-              disabled={loading}
-            >
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
+{view === "login" && (
 
-            <p className="auth-switch">
-              Don't have an account?
-              <span onClick={() => setView("signup")}> Sign up</span>
-            </p>
-          </form>
-        )}
+<form onSubmit={handleLogin}>
 
-        {view === "signup" && (
-          <form onSubmit={handleSignup}>
-            <input
-              className="form-input"
-              name="name"
-              type="text"
-              placeholder="Full name"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
+<input
+className="form-input"
+name="email"
+type="email"
+placeholder="Email address"
+value={form.email}
+onChange={handleChange}
+required
+/>
 
-            <input
-              className="form-input"
-              name="email"
-              type="email"
-              placeholder="Email address"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
+<input
+className="form-input"
+name="password"
+type="password"
+placeholder="Password"
+value={form.password}
+onChange={handleChange}
+required
+/>
 
-            <input
-              className="form-input"
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              required
-            />
+<div style={{textAlign:"right",marginBottom:"10px"}}>
+<span
+style={{
+color:"var(--brand-orange)",
+cursor:"pointer",
+fontSize:"13px"
+}}
+>
+Forgot password?
+</span>
+</div>
 
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{ width: "100%" }}
-              disabled={loading}
-            >
-              {loading ? "Creating account..." : "Create Account"}
-            </button>
+<button
+type="submit"
+className="btn-primary"
+style={{width:"100%"}}
+disabled={loading}
+>
+{loading ? "Signing in..." : "Sign In"}
+</button>
 
-            <p className="auth-switch">
-              Already have an account?
-              <span onClick={() => setView("login")}> Sign in</span>
-            </p>
-          </form>
-        )}
-      </div>
-    </div>
+<p style={{textAlign:"center",marginTop:"14px"}}>
+Don't have an account?{" "}
+<span
+style={{color:"var(--brand-orange)",cursor:"pointer"}}
+onClick={()=>setView("signup")}
+>
+Sign up
+</span>
+</p>
+
+</form>
+
+)}
+
+{view === "signup" && (
+
+<form onSubmit={handleSignup}>
+
+<input
+className="form-input"
+name="name"
+type="text"
+placeholder="Full name"
+value={form.name}
+onChange={handleChange}
+required
+/>
+
+<input
+className="form-input"
+name="email"
+type="email"
+placeholder="Email address"
+value={form.email}
+onChange={handleChange}
+required
+/>
+
+<input
+className="form-input"
+name="password"
+type="password"
+placeholder="Password"
+value={form.password}
+onChange={handleChange}
+required
+/>
+
+<button
+type="submit"
+className="btn-primary"
+style={{width:"100%"}}
+disabled={loading}
+>
+{loading ? "Creating account..." : "Create Account"}
+</button>
+
+<p style={{textAlign:"center",marginTop:"14px"}}>
+Already have an account?{" "}
+<span
+style={{color:"var(--brand-orange)",cursor:"pointer"}}
+onClick={()=>setView("login")}
+>
+Sign in
+</span>
+</p>
+
+</form>
+
+)}
+
+</div>
+</div>
   );
 }

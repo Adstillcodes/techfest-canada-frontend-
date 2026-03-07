@@ -341,6 +341,7 @@ footer { padding: 4rem 5%; background: var(--bg-card); border-top: 1px solid var
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 80px;
 }
 
 .nav-menu {

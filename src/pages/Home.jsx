@@ -1,20 +1,22 @@
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import UrgencyBanner from "../components/UrgencyBanner";
-import { useEffect } from "react";
 import AboutUs from "../components/AboutUs";
+import { InteractiveGlobe } from "../components/ui/interactive-globe";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  // Detect dark-mode from body class (matches existing pattern)
+  const [isDarkMode, setIsDarkMode] = useState(
+    () => typeof document !== "undefined" && document.body.classList.contains("dark-mode")
+  );
+
   useEffect(() => {
-    const slides = document.querySelectorAll("#hero-slideshow .slideshow-image");
-    let index = 0;
-    if (!slides.length) return;
-    const interval = setInterval(() => {
-      slides[index].classList.remove("active");
-      index = (index + 1) % slides.length;
-      slides[index].classList.add("active");
-    }, 3500);
-    return () => clearInterval(interval);
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(document.body.classList.contains("dark-mode"));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -59,9 +61,7 @@ export default function Home() {
           bottom: -80px; left: 38%;
           animation-delay: 0.8s;
         }
-        @keyframes orbFadeIn {
-          to { opacity: 1; }
-        }
+        @keyframes orbFadeIn { to { opacity: 1; } }
 
         /* ── SUBTLE GRID TEXTURE ── */
         .hero-grid-overlay {
@@ -159,7 +159,6 @@ export default function Home() {
           animation: slideUp 0.75s ease 0.58s forwards;
         }
 
-        /* ── DIVIDER LINE ACCENT ── */
         .hero-divider {
           width: 56px;
           height: 3px;
@@ -170,9 +169,7 @@ export default function Home() {
           animation: slideUp 0.75s ease 0.18s forwards;
         }
 
-        @keyframes slideUp {
-          to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
         /* ── VISUAL SIDE ── */
         .hero-visual-wrap {
@@ -180,70 +177,62 @@ export default function Home() {
           opacity: 0;
           transform: translateX(30px);
           animation: slideLeft 0.9s ease 0.45s forwards;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        @keyframes slideLeft {
-          to { opacity: 1; transform: translateX(0); }
-        }
+        @keyframes slideLeft { to { opacity: 1; transform: translateX(0); } }
 
-        /* Glowing frame */
-        .hero-image-frame {
+        /* ── GLOBE CONTAINER ── */
+        .hero-globe-frame {
           position: relative;
-          width: 100%;
-          height: 500px;
-          border-radius: 28px;
-          overflow: hidden;
+          width: 460px;
+          height: 460px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* Subtle border ring around the canvas */
+        .hero-globe-frame::before {
+          content: '';
+          position: absolute;
+          inset: -2px;
+          border-radius: 50%;
+          background: conic-gradient(
+            from 0deg,
+            rgba(122,63,209,0.5),
+            rgba(245,166,35,0.4),
+            rgba(122,63,209,0.5),
+            rgba(245,166,35,0.4),
+            rgba(122,63,209,0.5)
+          );
+          animation: spinBorder 12s linear infinite;
+          opacity: 0.4;
+          pointer-events: none;
+        }
+        .hero-globe-frame::after {
+          content: '';
+          position: absolute;
+          inset: 1px;
+          border-radius: 50%;
+          background: transparent;
           box-shadow:
-            0 0 0 1px rgba(122,63,209,0.3),
-            0 25px 60px rgba(0,0,0,0.35),
-            0 0 80px rgba(122,63,209,0.12);
-        }
-        .hero-image-frame::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          z-index: 3;
-          border-radius: 28px;
-          border: 1px solid rgba(255,255,255,0.08);
+            0 0 40px rgba(122,63,209,0.20),
+            0 0 80px rgba(122,63,209,0.08),
+            inset 0 0 40px rgba(122,63,209,0.04);
           pointer-events: none;
         }
-        /* Bottom gradient fade on image */
-        .hero-image-frame::after {
-          content: '';
-          position: absolute;
-          bottom: 0; left: 0; right: 0;
-          height: 45%;
-          z-index: 3;
-          background: linear-gradient(to top, rgba(13,10,26,0.7) 0%, transparent 100%);
-          pointer-events: none;
-          border-radius: 0 0 28px 28px;
+        body:not(.dark-mode) .hero-globe-frame::after {
+          box-shadow:
+            0 0 30px rgba(122,63,209,0.12),
+            0 0 60px rgba(122,63,209,0.05),
+            inset 0 0 30px rgba(122,63,209,0.02);
         }
-        body:not(.dark-mode) .hero-image-frame::after {
-          background: linear-gradient(to top, rgba(255,255,255,0.4) 0%, transparent 100%);
-        }
+        @keyframes spinBorder { to { transform: rotate(360deg); } }
 
-        .slideshow-image {
-          position: absolute;
-          top: 0; left: 0;
-          width: 100%; height: 100%;
-          object-fit: cover;
-          opacity: 0;
-          transition: opacity 1.2s ease-in-out;
-        }
-        .slideshow-image.active { opacity: 1; z-index: 2; }
-
-        /* Corner accent lines */
-        .frame-corner {
-          position: absolute;
-          width: 28px; height: 28px;
-          z-index: 5;
-          pointer-events: none;
-        }
-        .frame-corner-tl { top: 14px; left: 14px; border-top: 2px solid var(--brand-orange); border-left: 2px solid var(--brand-orange); border-radius: 3px 0 0 0; }
-        .frame-corner-tr { top: 14px; right: 14px; border-top: 2px solid var(--brand-orange); border-right: 2px solid var(--brand-orange); border-radius: 0 3px 0 0; }
-        .frame-corner-bl { bottom: 14px; left: 14px; border-bottom: 2px solid var(--brand-orange); border-left: 2px solid var(--brand-orange); border-radius: 0 0 0 3px; }
-        .frame-corner-br { bottom: 14px; right: 14px; border-bottom: 2px solid var(--brand-orange); border-right: 2px solid var(--brand-orange); border-radius: 0 0 3px 0; }
-
-        /* ── FLOATING STAT BADGES ── */
+        /* ── FLOATING LEGEND BADGES ── */
         .hero-badge {
           position: absolute;
           background: var(--bg-card, rgba(28,16,52,0.85));
@@ -261,11 +250,11 @@ export default function Home() {
           box-shadow: 0 8px 32px rgba(17,17,17,0.10);
         }
         .hero-badge-top {
-          top: -20px; left: -24px;
+          top: 16px; left: -16px;
           animation-delay: 0s;
         }
         .hero-badge-bottom {
-          bottom: 28px; right: -22px;
+          bottom: 40px; right: -16px;
           animation-delay: 2.5s;
         }
         @keyframes badgeFloat {
@@ -291,15 +280,48 @@ export default function Home() {
           margin-top: 3px;
         }
 
-        /* ── DECORATIVE RING ── */
+        /* ── LEGEND DOTS ── */
+        .globe-legend {
+          position: absolute;
+          bottom: -10px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          z-index: 10;
+          pointer-events: none;
+          white-space: nowrap;
+        }
+        .legend-item {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 0.68rem;
+          font-weight: 600;
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+          color: var(--text-muted);
+        }
+        .legend-dot {
+          width: 7px; height: 7px;
+          border-radius: 50%;
+          flex-shrink: 0;
+        }
+        .legend-dot-pillar { background: rgba(245,166,35,0.9); box-shadow: 0 0 5px rgba(245,166,35,0.5); }
+        .legend-dot-sector { background: rgba(160,100,255,0.9); box-shadow: 0 0 5px rgba(160,100,255,0.5); }
+
+        /* ── DECORATIVE ORBIT RING ── */
         .hero-ring {
           position: absolute;
-          width: 160px; height: 160px;
+          width: 560px; height: 560px;
           border-radius: 50%;
-          border: 1px dashed rgba(122,63,209,0.3);
-          bottom: -50px; left: -60px;
+          border: 1px dashed rgba(122,63,209,0.15);
+          top: 50%; left: 50%;
+          transform: translate(-50%, -50%);
           z-index: 0;
-          animation: spinRing 20s linear infinite;
+          animation: spinRing 40s linear infinite;
+          pointer-events: none;
         }
         .hero-ring::before {
           content: '';
@@ -307,13 +329,18 @@ export default function Home() {
           width: 8px; height: 8px;
           border-radius: 50%;
           background: var(--brand-orange);
-          top: 12px; left: 50%;
+          top: 8px; left: 50%;
           transform: translateX(-50%);
           box-shadow: 0 0 8px var(--brand-orange);
         }
+        .hero-ring-2 {
+          width: 520px; height: 520px;
+          border: 1px dashed rgba(245,166,35,0.08);
+          animation: spinRing 25s linear infinite reverse;
+        }
         @keyframes spinRing {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
+          from { transform: translate(-50%, -50%) rotate(0deg); }
+          to   { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         /* ── RESPONSIVE ── */
@@ -337,14 +364,12 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section className="hero-section-wrapper">
-        {/* Ambient background orbs */}
+        {/* Ambient orbs */}
         <div className="hero-orbs">
           <div className="hero-orb hero-orb-1" />
           <div className="hero-orb hero-orb-2" />
           <div className="hero-orb hero-orb-3" />
         </div>
-
-        {/* Subtle grid texture */}
         <div className="hero-grid-overlay" />
 
         <div className="hero-inner">
@@ -365,10 +390,10 @@ export default function Home() {
             </h1>
 
             <p className="hero-sub">
-  Canada's premier AI, blockchain & emerging tech conference.
-  3 days of keynotes, deep-dive workshops, and high-value
-  networking across Toronto, Vancouver, and Montreal.
-</p>
+              Canada's premier AI, blockchain & emerging tech conference.
+              3 days of keynotes, deep-dive workshops, and high-value
+              networking across Toronto, Vancouver, and Montreal.
+            </p>
 
             <div className="hero-cta-row">
               <a href="/tickets" className="btn-primary">
@@ -380,53 +405,52 @@ export default function Home() {
             </div>
           </div>
 
-          {/* RIGHT — IMAGE */}
+          {/* RIGHT — GLOBE */}
           <div className="hero-visual-wrap">
+
+            {/* Floating orbit rings */}
             <div className="hero-ring" />
+            <div className="hero-ring hero-ring-2" />
 
-            {/* Floating badge — top left */}
+            {/* Floating badge — top left (Pillars) */}
             <div className="hero-badge hero-badge-top">
-              <div className="badge-number">500+</div>
-              <div className="badge-label">Attendees</div>
+              <div className="badge-number">5</div>
+              <div className="badge-label">Tech Pillars</div>
             </div>
 
-            {/* Glowing image frame */}
-            <div className="hero-image-frame" id="hero-slideshow">
-              <div className="frame-corner frame-corner-tl" />
-              <div className="frame-corner frame-corner-tr" />
-              <div className="frame-corner frame-corner-bl" />
-              <div className="frame-corner frame-corner-br" />
-              <img
-                src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&q=80"
-                className="slideshow-image active"
-                alt="Event visual 1"
+            {/* Globe canvas frame */}
+            <div className="hero-globe-frame">
+              <InteractiveGlobe
+                size={460}
+                isDarkMode={isDarkMode}
+                autoRotateSpeed={0.0018}
               />
-              <img
-                src="https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=1000&q=80"
-                className="slideshow-image"
-                alt="Event visual 2"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1000&q=80"
-                className="slideshow-image"
-                alt="Event visual 3"
-              />
+
+              {/* Pillar/Sector legend */}
+              <div className="globe-legend">
+                <div className="legend-item">
+                  <span className="legend-dot legend-dot-pillar" />
+                  Tech Pillars
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot legend-dot-sector" />
+                  Applied Sectors
+                </div>
+              </div>
             </div>
 
-            {/* Floating badge — bottom right */}
+            {/* Floating badge — bottom right (Sectors) */}
             <div className="hero-badge hero-badge-bottom">
-              <div className="badge-number">3</div>
-              <div className="badge-label">Days of Content</div>
+              <div className="badge-number">5</div>
+              <div className="badge-label">Applied Sectors</div>
             </div>
-          </div>
 
+          </div>
         </div>
       </section>
 
       {/* ABOUT SECTION */}
       <AboutUs />
-
-
 
       <Footer />
     </>

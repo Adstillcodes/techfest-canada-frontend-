@@ -390,11 +390,9 @@ export default function Home() {
             </h1>
 
             <p className="hero-sub">
-        The Tech Festival Canada is the country’s deal-making platform where innovators, buyers, investors,
-              and policymakers meet to turn emerging tech into real partnerships, pilots, and contracts
-               Expect senior decision-makers from enterprise and critical sectors alongside government bodies, associations, media,
-              and leading research institutions creating the right room for announcements, procurement conversations, 
-              and collaborations that move faster than “business as usual.”
+        The Tech Festival Canada is the country’s deal-making platform where innovators, buyers, investors,  and policymakers meet to turn emerging tech into
+        real partnerships, pilots, and contracts. Expect senior decision-makers from enterprise and critical sectors alongside government bodies, associations, media,
+        and leading research institutions creating the right room for announcements, procurement conversations, and collaborations that move faster than “business as usual.”
             </p>
 
             <div className="hero-cta-row">

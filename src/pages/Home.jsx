@@ -343,6 +343,60 @@ export default function Home() {
           to   { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
+
+        /* ── DESCRIPTION CARD ── */
+        .hero-desc-card {
+          background: rgba(122,63,209,0.07);
+          border: 1px solid rgba(122,63,209,0.20);
+          border-radius: 16px;
+          padding: 20px 24px;
+          margin-bottom: 2.4rem;
+          max-width: 500px;
+          opacity: 0;
+          transform: translateY(22px);
+          animation: slideUp 0.75s ease 0.42s forwards;
+          backdrop-filter: blur(8px);
+        }
+        body:not(.dark-mode) .hero-desc-card {
+          background: rgba(122,63,209,0.05);
+          border-color: rgba(122,63,209,0.15);
+        }
+        .hero-desc-intro {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--brand-orange, #f5a623);
+          margin-bottom: 12px;
+          letter-spacing: 0.3px;
+        }
+        .hero-desc-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .hero-desc-list li {
+          font-size: 0.85rem;
+          color: var(--text-muted);
+          line-height: 1.5;
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          font-weight: 500;
+        }
+        .hero-desc-list li::before {
+          content: '';
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--brand-purple, #7a3fd1);
+          flex-shrink: 0;
+          margin-top: 6px;
+        }
+        body.dark-mode .hero-desc-list li::before {
+          background: rgba(160,100,255,0.9);
+        }
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
           .hero-inner {
@@ -378,7 +432,7 @@ export default function Home() {
           <div className="hero-text">
             <div className="hero-eyebrow">
               <span className="hero-eyebrow-dot" />
-              Toronto · London 
+              Toronto · Vancouver · Montreal
             </div>
 
             <div className="hero-divider" />
@@ -390,17 +444,17 @@ export default function Home() {
             </h1>
 
             <p className="hero-sub">
-        The Tech Festival Canada is the country’s deal-making platform where innovators, buyers, investors,  and policymakers meet to turn emerging tech into
-        real partnerships, pilots, and contracts. Expect senior decision-makers from enterprise and critical sectors alongside government bodies, associations, media,
-        and leading research institutions creating the right room for announcements, procurement conversations, and collaborations that move faster than “business as usual.”
+              Canada's premier AI, blockchain & emerging tech conference.
+              3 days of keynotes, deep-dive workshops, and high-value
+              networking across Toronto, Vancouver, and Montreal.
             </p>
 
             <div className="hero-cta-row">
               <a href="/tickets" className="btn-primary">
-                Get Your Tickets 
+                Get Your Tickets ➡️
               </a>
               <a href="/on-demand" className="btn-outline">
-                Partner With Us 
+                View Exhibitors
               </a>
             </div>
           </div>

@@ -18,7 +18,7 @@ export default function Home() {
     observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, []);
-  
+
   return (
     <>
       <style>{`
@@ -414,8 +414,8 @@ export default function Home() {
 
             {/* Floating badge — top left (Pillars) */}
             <div className="hero-badge hero-badge-top">
-              <div className="badge-number">5</div>
-              <div className="badge-label">Tech Pillars</div>
+              <div className="badge-number">500+</div>
+              <div className="badge-label">Attendees</div>
             </div>
 
             {/* Globe canvas frame */}
@@ -441,8 +441,8 @@ export default function Home() {
 
             {/* Floating badge — bottom right (Sectors) */}
             <div className="hero-badge hero-badge-bottom">
-              <div className="badge-number">5</div>
-              <div className="badge-label">Applied Sectors</div>
+              <div className="badge-number">3</div>
+              <div className="badge-label">Days of Content</div>
             </div>
 
           </div>

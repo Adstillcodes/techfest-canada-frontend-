@@ -112,7 +112,7 @@ export default function Navbar() {
             <img
               src="/techfesttransparent.webp"
               alt="TechFest Canada"
-              style={{ height: "64px", width: "auto", objectFit: "contain", display: "block" }}
+              style={{ height: "100px", width: "auto", objectFit: "contain", display: "block" }}
             />
           </Link>
 

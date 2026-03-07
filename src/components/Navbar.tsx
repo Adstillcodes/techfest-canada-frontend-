@@ -104,49 +104,20 @@ export default function Navbar() {
 
   return (
     <>
-      <style>{`
-        .navbar .nav-container {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          min-height: 88px;
-          padding: 0 2rem;
-          gap: 1rem;
-        }
-        .nav-logo-wrap {
-          display: flex;
-          align-items: center;
-          flex-shrink: 0;
-        }
-        .nav-logo-img {
-          height: 64px;
-          width: auto;
-          object-fit: contain;
-          display: block;
-        }
-        .nav-left-tabs {
-          display: flex;
-          align-items: center;
-          flex: 1;
-          justify-content: center;
-        }
-        .nav-right-actions {
-          display: flex;
-          justify-content: flex-end;
-          align-items: center;
-          gap: 1rem;
-          flex-shrink: 0;
-        }
-        @media (max-width: 1024px) {
-          .nav-left-tabs { display: none; }
-        }
-      `}</style>
-
       <nav className="navbar">
-        <div className="nav-container">
+        <div className="container nav-container">
 
-          {/* LEFT — desktop tabs */}
-          <div className="nav-left-tabs hidden lg:flex">
+          {/* LOGO — left */}
+          <Link to="/" className="nav-logo" onClick={closeMobile}>
+            <img
+              src="/techfesttransparent.webp"
+              alt="TechFest Canada"
+              style={{ height: "64px", width: "auto", objectFit: "contain", display: "block" }}
+            />
+          </Link>
+
+          {/* TABS — centre */}
+          <div className="hidden lg:block mx-auto">
             <ul className="relative flex w-fit rounded-full border border-[var(--border-main)] bg-[var(--bg-card)] p-1">
               {navItems.map((item, i) => (
                 <Tab
@@ -164,19 +135,8 @@ export default function Navbar() {
             </ul>
           </div>
 
-          {/* CENTRE — logo */}
-          <div className="nav-logo-wrap">
-            <Link to="/" onClick={closeMobile}>
-              <img
-                src="/techfesttransparent.webp"
-                alt="TechFest Canada"
-                className="nav-logo-img"
-              />
-            </Link>
-          </div>
-
-          {/* RIGHT — actions */}
-          <div className="nav-right-actions">
+          {/* ACTIONS — right */}
+          <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-3">
               {!loggedIn ? (
                 <button

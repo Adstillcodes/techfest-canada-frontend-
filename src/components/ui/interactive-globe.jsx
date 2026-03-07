@@ -2,39 +2,50 @@
 
 import { useRef, useEffect, useCallback } from "react";
 
-// Nodes spread across all hemispheres to avoid clustering
+// ── EVENLY SPACED RINGS (no geographic clustering) ─────────────────────────
+// 5 Pillars: lat +35, every 72° of longitude
+// 5 Sectors: lat -35, offset by 36° so they interleave
+const makePillar = (i, label) => ({ lat: 35,  lng: -180 + i * 72,       shortLabel: label, type: "pillar" });
+const makeSector = (i, label) => ({ lat: -35, lng: -180 + 36 + i * 72,  shortLabel: label, type: "sector" });
+
 const TECH_NODES = [
-  // Tech Pillars (orange)
-  { lat:  47.0,  lng: -105.0, shortLabel: "AI",         type: "pillar" },  // North America
-  { lat:  62.0,  lng:   18.0, shortLabel: "Quantum",    type: "pillar" },  // Scandinavia
-  { lat: -28.0,  lng:  133.0, shortLabel: "Sustain.",   type: "pillar" },  // Australia
-  { lat:  28.0,  lng:  -90.0, shortLabel: "Cyber",      type: "pillar" },  // SE United States
-  { lat:  36.0,  lng:  138.0, shortLabel: "Robotics",   type: "pillar" },  // Japan
-  // Applied Sectors (purple)
-  { lat:  23.0,  lng:   44.0, shortLabel: "Energy",     type: "sector" },  // Saudi Arabia
-  { lat:  18.0,  lng:   76.0, shortLabel: "Health",     type: "sector" },  // India
-  { lat:  53.0,  lng:   -3.0, shortLabel: "Defence",    type: "sector" },  // UK
-  { lat: -22.0,  lng:  -48.0, shortLabel: "FinServ",    type: "sector" },  // Brazil
-  { lat:   2.0,  lng:  105.0, shortLabel: "Supply",     type: "sector" },  // Singapore
+  makePillar(0, "AI"),
+  makePillar(1, "Quantum"),
+  makePillar(2, "Sustain."),
+  makePillar(3, "Cyber"),
+  makePillar(4, "Robotics"),
+  makeSector(0, "Energy"),
+  makeSector(1, "Health"),
+  makeSector(2, "Defence"),
+  makeSector(3, "FinServ"),
+  makeSector(4, "Supply"),
 ];
 
+// Connect each pillar to its nearest two sectors + ring connections
 const CONNECTIONS = [
-  { from: [ 47.0, -105.0], to: [ 62.0,   18.0] },
-  { from: [ 47.0, -105.0], to: [ 28.0,  -90.0] },
-  { from: [ 62.0,   18.0], to: [-28.0,  133.0] },
-  { from: [-28.0,  133.0], to: [ 36.0,  138.0] },
-  { from: [ 36.0,  138.0], to: [ 47.0, -105.0] },
-  { from: [ 47.0, -105.0], to: [-22.0,  -48.0] },
-  { from: [ 47.0, -105.0], to: [ 18.0,   76.0] },
-  { from: [ 28.0,  -90.0], to: [ 53.0,   -3.0] },
-  { from: [ 28.0,  -90.0], to: [-22.0,  -48.0] },
-  { from: [ 62.0,   18.0], to: [ 23.0,   44.0] },
-  { from: [ 62.0,   18.0], to: [ 53.0,   -3.0] },
-  { from: [-28.0,  133.0], to: [  2.0,  105.0] },
-  { from: [ 36.0,  138.0], to: [  2.0,  105.0] },
-  { from: [ 36.0,  138.0], to: [ 18.0,   76.0] },
-  { from: [ 23.0,   44.0], to: [  2.0,  105.0] },
-  { from: [ 18.0,   76.0], to: [-22.0,  -48.0] },
+  // Pillar ring
+  { from: [35, -180],      to: [35, -108] },
+  { from: [35, -108],      to: [35, -36]  },
+  { from: [35, -36],       to: [35,  36]  },
+  { from: [35,  36],       to: [35, 108]  },
+  { from: [35, 108],       to: [35, 180]  },
+  // Sector ring
+  { from: [-35, -144],     to: [-35, -72]  },
+  { from: [-35, -72],      to: [-35,   0]  },
+  { from: [-35,   0],      to: [-35,  72]  },
+  { from: [-35,  72],      to: [-35, 144]  },
+  { from: [-35, 144],      to: [-35, -144] },
+  // Pillar ↔ Sector verticals (each pillar connects to adjacent sectors)
+  { from: [35, -180],      to: [-35, -144] },
+  { from: [35, -180],      to: [-35, -72]  },
+  { from: [35, -108],      to: [-35, -144] },
+  { from: [35, -108],      to: [-35, -72]  },
+  { from: [35, -36],       to: [-35, -72]  },
+  { from: [35, -36],       to: [-35,   0]  },
+  { from: [35,  36],       to: [-35,   0]  },
+  { from: [35,  36],       to: [-35,  72]  },
+  { from: [35, 108],       to: [-35,  72]  },
+  { from: [35, 108],       to: [-35, 144]  },
 ];
 
 function latLngToXYZ(lat, lng, r) {
@@ -52,8 +63,8 @@ function project(x, y, z, cx, cy, fov) { const sc=fov/(fov+z); return [x*sc+cx, 
 
 export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true, autoRotateSpeed = 0.0018 }) {
   const canvasRef = useRef(null);
-  const rotYRef   = useRef(0.4);
-  const rotXRef   = useRef(0.25);
+  const rotYRef   = useRef(0.3);
+  const rotXRef   = useRef(0.15);
   const dragRef   = useRef({ active: false, startX: 0, startY: 0, startRotY: 0, startRotX: 0 });
   const animRef   = useRef(0);
   const timeRef   = useRef(0);
@@ -92,18 +103,21 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
 
     ctx.clearRect(0, 0, w, h);
 
+    // Ambient glow
     const glowGrad = ctx.createRadialGradient(cx, cy, radius * 0.5, cx, cy, radius * 1.6);
     glowGrad.addColorStop(0, isDarkMode ? "rgba(122,63,209,0.07)" : "rgba(122,63,209,0.04)");
     glowGrad.addColorStop(1, "rgba(122,63,209,0)");
     ctx.fillStyle = glowGrad;
     ctx.fillRect(0, 0, w, h);
 
+    // Globe outline
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = isDarkMode ? "rgba(122,63,209,0.10)" : "rgba(122,63,209,0.15)";
+    ctx.strokeStyle = isDarkMode ? "rgba(122,63,209,0.12)" : "rgba(122,63,209,0.18)";
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
+    // Dot lattice
     for (const d of dotsRef.current) {
       let [x, y, z] = [d[0] * radius, d[1] * radius, d[2] * radius];
       [x, y, z] = rotateX(x, y, z, rx);
@@ -119,6 +133,7 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
       ctx.fill();
     }
 
+    // Connections
     for (const conn of CONNECTIONS) {
       let [x1, y1, z1] = latLngToXYZ(conn.from[0], conn.from[1], radius);
       let [x2, y2, z2] = latLngToXYZ(conn.to[0],   conn.to[1],   radius);
@@ -129,15 +144,16 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
       const [sx2, sy2] = project(x2, y2, z2, cx, cy, fov);
       const mX=(x1+x2)/2, mY=(y1+y2)/2, mZ=(z1+z2)/2;
       const mLen = Math.sqrt(mX*mX + mY*mY + mZ*mZ);
-      const ah = radius * 1.28;
+      const ah = radius * 1.22;
       const [scx, scy] = project((mX/mLen)*ah, (mY/mLen)*ah, (mZ/mLen)*ah, cx, cy, fov);
       ctx.beginPath();
       ctx.moveTo(sx1, sy1);
       ctx.quadraticCurveTo(scx, scy, sx2, sy2);
-      ctx.strokeStyle = isDarkMode ? "rgba(160,100,255,0.28)" : "rgba(122,63,209,0.20)";
+      ctx.strokeStyle = isDarkMode ? "rgba(160,100,255,0.30)" : "rgba(122,63,209,0.22)";
       ctx.lineWidth = 1.1;
       ctx.stroke();
-      const tp = (Math.sin(t * 1.1 + conn.from[0] * 0.12) + 1) / 2;
+      // Travelling bead
+      const tp = (Math.sin(t * 1.1 + conn.from[0] * 0.12 + conn.from[1] * 0.03) + 1) / 2;
       const bx = (1-tp)*(1-tp)*sx1 + 2*(1-tp)*tp*scx + tp*tp*sx2;
       const by = (1-tp)*(1-tp)*sy1 + 2*(1-tp)*tp*scy + tp*tp*sy2;
       ctx.beginPath(); ctx.arc(bx, by, 2.2, 0, Math.PI * 2);
@@ -150,6 +166,7 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
       ctx.fillStyle = bGlow; ctx.fill();
     }
 
+    // Nodes
     for (const node of TECH_NODES) {
       let [x, y, z] = latLngToXYZ(node.lat, node.lng, radius);
       [x, y, z] = rotateX(x, y, z, rx);
@@ -157,30 +174,51 @@ export function InteractiveGlobe({ className = "", size = 460, isDarkMode = true
       if (z > radius * 0.1) continue;
       const [sx, sy] = project(x, y, z, cx, cy, fov);
       const isPillar = node.type === "pillar";
-      const pulse = Math.sin(t * 2.2 + node.lat * 0.15) * 0.5 + 0.5;
-      const rA = 0.18 + pulse * 0.22;
-      ctx.beginPath(); ctx.arc(sx, sy, 5 + pulse * 6, 0, Math.PI * 2);
-      ctx.strokeStyle = isPillar ? `rgba(245,166,35,${rA})` : `rgba(122,63,209,${rA + 0.1})`;
+      const pulse = Math.sin(t * 2.2 + node.lng * 0.05) * 0.5 + 0.5;
+      const rA = 0.20 + pulse * 0.25;
+
+      // Outer pulse ring
+      ctx.beginPath(); ctx.arc(sx, sy, 6 + pulse * 6, 0, Math.PI * 2);
+      ctx.strokeStyle = isPillar ? `rgba(245,166,35,${rA})` : `rgba(160,80,255,${rA})`;
       ctx.lineWidth = 1; ctx.stroke();
-      ctx.beginPath(); ctx.arc(sx, sy, 3 + pulse * 2, 0, Math.PI * 2);
-      ctx.strokeStyle = isPillar ? `rgba(245,166,35,${rA+0.15})` : `rgba(160,100,255,${rA+0.15})`;
+
+      // Mid ring
+      ctx.beginPath(); ctx.arc(sx, sy, 4 + pulse * 2, 0, Math.PI * 2);
+      ctx.strokeStyle = isPillar ? `rgba(245,166,35,${rA+0.2})` : `rgba(160,100,255,${rA+0.2})`;
       ctx.lineWidth = 0.8; ctx.stroke();
-      const cg = ctx.createRadialGradient(sx, sy, 0, sx, sy, isPillar ? 4.5 : 3.5);
+
+      // Core dot with glow
+      const cg = ctx.createRadialGradient(sx, sy, 0, sx, sy, isPillar ? 5 : 4);
       if (isPillar) {
-        cg.addColorStop(0, "rgba(255,220,100,1)");
-        cg.addColorStop(1, "rgba(245,166,35,0.8)");
+        cg.addColorStop(0, "rgba(255,230,120,1)");
+        cg.addColorStop(1, "rgba(245,166,35,0.9)");
       } else {
-        cg.addColorStop(0, isDarkMode ? "rgba(200,160,255,1)" : "rgba(140,80,220,1)");
-        cg.addColorStop(1, "rgba(122,63,209,0.8)");
+        cg.addColorStop(0, "rgba(210,170,255,1)");
+        cg.addColorStop(1, "rgba(140,80,230,0.9)");
       }
-      ctx.beginPath(); ctx.arc(sx, sy, isPillar ? 4 : 3, 0, Math.PI * 2);
+      ctx.beginPath(); ctx.arc(sx, sy, isPillar ? 4.5 : 3.5, 0, Math.PI * 2);
       ctx.fillStyle = cg; ctx.fill();
+
+      // Label with background pill for readability
       if (node.shortLabel) {
-        ctx.font = `${isPillar ? "bold " : ""}9.5px monospace`;
+        const label = node.shortLabel;
+        ctx.font = `${isPillar ? "bold " : ""}10px monospace`;
+        const tw = ctx.measureText(label).width;
+        const lx = sx + 10, ly = sy + 4;
+
+        // Pill background
+        ctx.beginPath();
+        ctx.roundRect
+          ? ctx.roundRect(lx - 3, ly - 11, tw + 6, 14, 3)
+          : ctx.rect(lx - 3, ly - 11, tw + 6, 14);
+        ctx.fillStyle = isDarkMode ? "rgba(10,5,25,0.65)" : "rgba(255,255,255,0.70)";
+        ctx.fill();
+
+        // Label text
         ctx.fillStyle = isPillar
-          ? "rgba(245,180,35,0.95)"
-          : isDarkMode ? "rgba(190,150,255,0.8)" : "rgba(100,50,180,0.8)";
-        ctx.fillText(node.shortLabel, sx + 7, sy + 3.5);
+          ? "rgba(255,195,60,1)"
+          : isDarkMode ? "rgba(200,160,255,1)" : "rgba(110,55,200,1)";
+        ctx.fillText(label, lx, ly);
       }
     }
 

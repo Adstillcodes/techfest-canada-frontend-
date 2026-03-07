@@ -344,58 +344,98 @@ export default function Home() {
         }
 
 
-        /* ── DESCRIPTION CARD ── */
-        .hero-desc-card {
-          background: rgba(122,63,209,0.07);
-          border: 1px solid rgba(122,63,209,0.20);
-          border-radius: 16px;
-          padding: 20px 24px;
-          margin-bottom: 2.4rem;
-          max-width: 500px;
+        /* ── ONE-LINER ── */
+        .hero-oneliner {
+          font-size: 1rem;
+          color: var(--text-muted);
+          font-weight: 500;
+          margin-bottom: 1.6rem;
+          max-width: 420px;
+          line-height: 1.6;
           opacity: 0;
-          transform: translateY(22px);
-          animation: slideUp 0.75s ease 0.42s forwards;
-          backdrop-filter: blur(8px);
+          transform: translateY(16px);
+          animation: slideUp 0.75s ease 0.38s forwards;
         }
-        body:not(.dark-mode) .hero-desc-card {
-          background: rgba(122,63,209,0.05);
-          border-color: rgba(122,63,209,0.15);
+
+        /* ── PILL TAGS ── */
+        .hero-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 2rem;
+          opacity: 0;
+          transform: translateY(16px);
+          animation: slideUp 0.75s ease 0.48s forwards;
         }
-        .hero-desc-intro {
-          font-size: 0.85rem;
-          font-weight: 700;
-          color: var(--brand-orange, #f5a623);
-          margin-bottom: 12px;
+        .hero-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          background: rgba(122,63,209,0.10);
+          border: 1px solid rgba(122,63,209,0.22);
+          color: var(--text-muted);
+          padding: 5px 14px;
+          border-radius: 999px;
+          font-size: 0.78rem;
+          font-weight: 600;
           letter-spacing: 0.3px;
+          transition: background 0.2s, border-color 0.2s;
         }
-        .hero-desc-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
+        .hero-tag:hover {
+          background: rgba(122,63,209,0.22);
+          border-color: rgba(122,63,209,0.45);
+        }
+        body:not(.dark-mode) .hero-tag { color: #4a2a8a; }
+
+        /* ── MINI STATS ── */
+        .hero-mini-stats {
+          display: flex;
+          align-items: center;
+          gap: 0;
+          margin-bottom: 2.4rem;
+          background: rgba(122,63,209,0.06);
+          border: 1px solid rgba(122,63,209,0.18);
+          border-radius: 16px;
+          padding: 16px 24px;
+          width: fit-content;
+          opacity: 0;
+          transform: translateY(16px);
+          animation: slideUp 0.75s ease 0.54s forwards;
+        }
+        body:not(.dark-mode) .hero-mini-stats {
+          background: rgba(122,63,209,0.04);
+          border-color: rgba(122,63,209,0.14);
+        }
+        .hero-mini-stat {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          align-items: center;
+          padding: 0 20px;
+          gap: 2px;
         }
-        .hero-desc-list li {
-          font-size: 0.85rem;
+        .hero-mini-value {
+          font-family: 'Orbitron', sans-serif;
+          font-size: 1.3rem;
+          font-weight: 900;
+          background: linear-gradient(135deg, #7a3fd1, #f5a623);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          line-height: 1;
+        }
+        .hero-mini-label {
+          font-size: 0.65rem;
+          font-weight: 700;
           color: var(--text-muted);
-          line-height: 1.5;
-          display: flex;
-          align-items: flex-start;
-          gap: 8px;
-          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+          white-space: nowrap;
         }
-        .hero-desc-list li::before {
-          content: '';
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: var(--brand-purple, #7a3fd1);
+        .hero-mini-divider {
+          width: 1px;
+          height: 32px;
+          background: rgba(122,63,209,0.25);
           flex-shrink: 0;
-          margin-top: 6px;
-        }
-        body.dark-mode .hero-desc-list li::before {
-          background: rgba(160,100,255,0.9);
         }
 
         .footer-watermark-line {
@@ -439,7 +479,7 @@ export default function Home() {
           <div className="hero-text">
             <div className="hero-eyebrow">
               <span className="hero-eyebrow-dot" />
-              Toronto · Montreal  · London
+              Toronto · Vancouver · Montreal
             </div>
 
             <div className="hero-divider" />
@@ -451,15 +491,17 @@ export default function Home() {
             </h1>
 
             <p className="hero-sub">
-              The Tech Festival Canada is the country’s deal-making platform where innovators, buyers, investors, and policymakers meet to turn emerging tech into real partnerships, pilots, and contracts. Expect senior decision-makers from enterprise and critical sectors alongside government bodies, associations, media, and leading research institutions creating the right room for announcements, procurement conversations, and collaborations that move faster than “business as usual.”
+              Canada's premier AI, blockchain & emerging tech conference.
+              3 days of keynotes, deep-dive workshops, and high-value
+              networking across Toronto, Vancouver, and Montreal.
             </p>
 
             <div className="hero-cta-row">
               <a href="/tickets" className="btn-primary">
-                Get Your Tickets 
+                Get Your Tickets ➡️
               </a>
               <a href="/on-demand" className="btn-outline">
-               Partner With Us 
+                View Exhibitors
               </a>
             </div>
           </div>

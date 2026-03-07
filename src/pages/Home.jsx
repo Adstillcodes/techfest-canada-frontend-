@@ -18,7 +18,7 @@ export default function Home() {
     observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, []);
-
+  
   return (
     <>
       <style>{`

@@ -51,13 +51,20 @@ nav {
 /* 🔐 Auth form inputs */
 .form-input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+
+  border-radius: 10px;
   border: 1px solid var(--border-main);
-  background: var(--bg-input);
+
+  background: var(--bg-card);
   color: var(--text-main);
-  font-size: 0.95rem;
+
+  font-size: 1rem;
+  font-weight: 500;
+
+  outline: none;
+  transition: all 0.2s ease;
 }
 
 .form-input::placeholder {
@@ -1356,135 +1363,4 @@ html {
 
 body.dark-mode .mobile-link {
   color: #fff;
-}
-
-/* ================= MOBILE MENU ================= */
-
-.nav-mobile {
-  position: fixed;
-  top: 80px;
-  left: 0;
-  width: 100%;
-  background: var(--bg-main);
-  padding: 30px 20px;
-  transform: translateY(-120%);
-  transition: transform 0.35s ease;
-  z-index: 999;
-}
-
-.nav-mobile.open {
-  transform: translateY(0);
-}
-
-/* ================= NAV LINKS ================= */
-
-.nav-links {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 30px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.mobile-link {
-  font-family: "Orbitron", sans-serif;
-  font-weight: 800;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--text-main);
-  letter-spacing: 1px;
-}
-
-.mobile-link:hover {
-  color: var(--brand-orange);
-}
-
-/* ================= BUTTON AREA ================= */
-
-.nav-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-/* ================= MOBILE ONLY ================= */
-
-@media (min-width: 1024px) {
-  .nav-mobile {
-    display: none;
-  }
-}
-/* ================= DASHBOARD GRID ================= */
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 28px;
-}
-
-@media (min-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: minmax(320px, 420px) 1fr;
-  }
-}
-
-/* ================= TICKET GRID ================= */
-
-.tickets-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* ================= VENUE CARD ================= */
-
-.venue-card {
-  padding: 24px;
-  border-radius: 14px;
-  margin-bottom: 28px;
-}
-
-/* ================= VENUE TEXT ================= */
-
-.venue-block strong {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-}
-
-.venue-title {
-  font-size: 1.1rem;
-  font-weight: bold;
-}
-
-.venue-sub {
-  color: var(--text-muted);
-}
-
-/* ================= CALENDAR BUTTONS ================= */
-
-.calendar-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-/* Fix invisible Apple button */
-
-.calendar-outline {
-  border: 2px solid var(--border-main);
-  color: var(--text-main);
-  background: transparent;
-}
-
-/* ================= LOGOUT ================= */
-
-.logout-btn {
-  margin-top: 20px;
-  border: 1px solid #ef4444;
-  color: #ef4444;
 }

@@ -395,11 +395,6 @@ export default function Home() {
                Expect senior decision-makers from enterprise and critical sectors alongside government bodies, associations, media,
               and leading research institutions creating the right room for announcements, procurement conversations, 
               and collaborations that move faster than “business as usual.”
-
-              For Partners, it’s a high-intent audience built for outcomes: qualified buyer meetings, brand visibility with leaders who influence budgets and policy,
-              and a direct path to partnerships and revenue. For attendees, it delivers sharp, practical content plus curated networking across industry, 
-              government, and research, so you leave with new relationships, 
-              real opportunities, and a clear view of what’s next for Canada’s tech economy
             </p>
 
             <div className="hero-cta-row">

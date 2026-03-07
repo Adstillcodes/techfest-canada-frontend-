@@ -398,28 +398,6 @@ export default function Home() {
           background: rgba(160,100,255,0.9);
         }
 
-        /* ── FOOTER WATERMARK ── */
-        .footer-watermark-wrap {
-          position: relative;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 60px 0 20px;
-          overflow: hidden;
-        }
-        .footer-watermark-img {
-          width: min(520px, 80vw);
-          height: auto;
-          opacity: 0.06;
-          filter: grayscale(30%);
-          user-select: none;
-          pointer-events: none;
-          display: block;
-        }
-        body:not(.dark-mode) .footer-watermark-img {
-          opacity: 0.04;
-          filter: grayscale(60%) brightness(0.3);
-        }
         .footer-watermark-line {
           position: absolute;
           top: 0; left: 5%; right: 5%;
@@ -461,7 +439,7 @@ export default function Home() {
           <div className="hero-text">
             <div className="hero-eyebrow">
               <span className="hero-eyebrow-dot" />
-              Toronto · Vancouver · Montreal
+              Toronto · Montreal  · London
             </div>
 
             <div className="hero-divider" />
@@ -473,9 +451,7 @@ export default function Home() {
             </h1>
 
             <p className="hero-sub">
-              Canada's premier AI, blockchain & emerging tech conference.
-              3 days of keynotes, deep-dive workshops, and high-value
-              networking across Toronto, Vancouver, and Montreal.
+              The Tech Festival Canada is the country’s deal-making platform where innovators, buyers, investors, and policymakers meet to turn emerging tech into real partnerships, pilots, and contracts. Expect senior decision-makers from enterprise and critical sectors alongside government bodies, associations, media, and leading research institutions creating the right room for announcements, procurement conversations, and collaborations that move faster than “business as usual.”
             </p>
 
             <div className="hero-cta-row">
@@ -483,7 +459,7 @@ export default function Home() {
                 Get Your Tickets 
               </a>
               <a href="/on-demand" className="btn-outline">
-                Partner With Us
+               Partner With Us 
               </a>
             </div>
           </div>
@@ -534,17 +510,6 @@ export default function Home() {
 
       {/* ABOUT SECTION */}
       <AboutUs />
-
-      {/* ── FOOTER WATERMARK ── */}
-      <div className="footer-watermark-wrap">
-        <div className="footer-watermark-line" />
-        <img
-          src="/techfesttransparent.webp"
-          alt=""
-          className="footer-watermark-img"
-          aria-hidden="true"
-        />
-      </div>
 
       <Footer />
     </>

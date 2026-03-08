@@ -11,7 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AboutUs from "./components/AboutUs";
 import AuthSuccess from "./pages/AuthSuccess";
 import ResetPassword from "./pages/ResetPassword";
-
+import TicketBar from "./components/TicketBar";
 import Admin from "./pages/Admin";
 
 function App() {
@@ -34,6 +34,7 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
       </Routes>
+      <TicketBar />
     </BrowserRouter>
   );
 }

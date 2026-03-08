@@ -55,6 +55,7 @@ export default function Navbar() {
     { label: "First Timers", path: "/on-demand" },
     { label: "EXHIBITION",   path: "/sponsors" },
     { label: "Speakers",    path: "/speakers" },
+    {label: "Agenda", path: "/agenda"}
   ];
   if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
 

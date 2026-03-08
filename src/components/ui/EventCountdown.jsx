@@ -188,23 +188,42 @@ export function EventCountdown({ isDark = true }) {
           borderRadius: 28,
         }} />
 
-        {/* Top eyebrow */}
-        <div style={{
-          display: "inline-flex", alignItems: "center", gap: 7,
-          background: isDark ? "rgba(122,63,209,0.15)" : "rgba(122,63,209,0.08)",
-          border: `1px solid ${isDark ? "rgba(122,63,209,0.35)" : "rgba(122,63,209,0.20)"}`,
-          borderRadius: 999, padding: "5px 14px",
-          fontSize: "0.68rem", fontWeight: 700,
-          letterSpacing: "1.3px", textTransform: "uppercase",
-          color: isDark ? "#c4a8ff" : "#7a3fd1",
-          marginBottom: 20, position: "relative",
-        }}>
-          <span style={{
-            width: 6, height: 6, borderRadius: "50%",
-            background: "#f5a623", boxShadow: "0 0 6px #f5a623",
-            animation: "ctdPulse 2s ease infinite",
-          }} />
-          TFC 2026 · Live Event
+        {/* Logo + eyebrow row */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+          {/* Full wordmark — swaps with theme */}
+          <img
+            src={isDark
+              ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
+              : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
+            alt="Tech Festival Canada"
+            style={{
+              height: 52,
+              width: "auto",
+              objectFit: "contain",
+              display: "block",
+              filter: isDark ? "drop-shadow(0 0 8px rgba(200,120,255,0.18))" : "none",
+              transition: "filter 0.3s ease",
+            }}
+          />
+          {/* Live badge */}
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            background: isDark ? "rgba(122,63,209,0.15)" : "rgba(122,63,209,0.08)",
+            border: `1px solid ${isDark ? "rgba(122,63,209,0.35)" : "rgba(122,63,209,0.20)"}`,
+            borderRadius: 999, padding: "5px 12px",
+            fontSize: "0.65rem", fontWeight: 700,
+            letterSpacing: "1.2px", textTransform: "uppercase",
+            color: isDark ? "#c4a8ff" : "#7a3fd1",
+            whiteSpace: "nowrap",
+          }}>
+            <span style={{
+              width: 6, height: 6, borderRadius: "50%",
+              background: "#f5a623", boxShadow: "0 0 6px #f5a623",
+              animation: "ctdPulse 2s ease infinite",
+              display: "inline-block",
+            }} />
+            Live Event
+          </div>
         </div>
 
         {/* Animated word */}

@@ -129,7 +129,7 @@ export default function Home() {
 
         .hero-headline {
           font-size: 1.4rem !important;
-          line-height: 1.0;
+          line-height: 1.4;
           margin-bottom: 1.6rem;
           color: var(--brand-purple);
           opacity: 0;
@@ -222,7 +222,7 @@ export default function Home() {
         <div className="hero-inner">
 
           {/* LEFT — TEXT (unchanged) */}
-     
+          <div className="hero-text">
 
             <div className="hero-divider" />
 

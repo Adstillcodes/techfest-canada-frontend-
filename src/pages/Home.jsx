@@ -128,7 +128,7 @@ export default function Home() {
         }
 
         .hero-headline {
-          font-size: 5rem;
+          font-size: 2.2rem;
           line-height: 1.0;
           margin-bottom: 1.6rem;
           color: var(--brand-purple);
@@ -203,7 +203,7 @@ export default function Home() {
           .hero-eyebrow { margin-left: auto; margin-right: auto; }
           .hero-divider { margin-left: auto; margin-right: auto; }
           .hero-visual-wrap { display: none; }
-          .hero-headline { font-size: 3.2rem; }
+          .hero-headline { font-size: 1.6rem; }
         }
       `}</style>
 

@@ -133,7 +133,7 @@ export default function Navbar() {
           height: 100%;
         }
         .nav-logo-img {
-          height: 62px;
+          height: 72px;
           width: auto;
           object-fit: contain;
           display: block;
@@ -158,7 +158,7 @@ export default function Navbar() {
           {/* LOGO — C mark, left */}
           <Link to="/" onClick={closeMobile} style={{ flexShrink: 0 }}>
             <img
-              src="/justclogo.png"
+              src={theme === "dark" ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
               alt="TFC"
               className="nav-logo-img"
             />

@@ -52,7 +52,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: "HOME",        path: "/" },
-    { label: "First Timers", path: "/on-demand" },
+    { label: "Why Attend?", path: "/on-demand" },
     { label: "EXHIBITION",  path: "/sponsors" },
     { label: "ATTENDEES",   path: "/speakers" },
   ];
@@ -108,14 +108,12 @@ export default function Navbar() {
         <div className="container nav-container">
 
           {/* LOGO — left */}
-          <Link to="/" onClick={closeMobile}>
+          <Link to="/" className="nav-logo" onClick={closeMobile}>
             <img
-  src={theme === "dark"
-    ? "/updatednavlogotrans.png"
-    : "/updatednavlogotranswhite.png"}
-  alt="TechFest Canada"
-  className="nav-logo"
-/>
+              src="/techfesttransparent.webp"
+              alt="TechFest Canada"
+              style={{ height: "44px", width: "auto", objectFit: "contain", display: "block" }}
+            />
           </Link>
 
           {/* TABS — centre */}

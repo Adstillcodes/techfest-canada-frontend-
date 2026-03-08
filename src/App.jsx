@@ -12,6 +12,7 @@ import AboutUs from "./components/AboutUs";
 import AuthSuccess from "./pages/AuthSuccess";
 import ResetPassword from "./pages/ResetPassword";
 import TicketBar from "./components/TicketBar";
+import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/agenda" element={<Agenda />} />
         <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/auth-success" element={<AuthSuccess />} />
 

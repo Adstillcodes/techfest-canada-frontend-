@@ -3,6 +3,7 @@ import { X, Send, CheckCircle, Loader } from "lucide-react";
 
 export default function InquiryModal({ isOpen, onClose }) {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", enquiry: "" });
+
   const [status, setStatus] = useState("idle"); // idle | sending | success | error
 
   if (!isOpen) return null;

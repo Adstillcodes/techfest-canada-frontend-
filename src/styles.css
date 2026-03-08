@@ -1554,6 +1554,9 @@ body.dark-mode .mobile-link {
     width: 100%;
     text-align: center;
   }
-
+@media (min-width: 1024px){
+    .ticket-bar{
+        display:none;
+    }
 }
 

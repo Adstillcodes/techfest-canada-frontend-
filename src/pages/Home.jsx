@@ -128,7 +128,7 @@ export default function Home() {
         }
 
         .hero-headline {
-          font-size: 1.4rem !important;
+          font-size: 1.4rem;
           line-height: 1.0;
           margin-bottom: 1.6rem;
           color: var(--brand-purple);
@@ -250,9 +250,7 @@ export default function Home() {
             />
 
             <h1 className="hero-headline">
-              MEET.<br />
-              <span>BUILD.</span><br />
-              SCALE.
+              MEET <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>|</span> <span>BUILD</span> <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>|</span> SCALE
             </h1>
 
             <p className="hero-sub">

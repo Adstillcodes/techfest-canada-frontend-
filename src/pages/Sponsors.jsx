@@ -220,6 +220,7 @@ export default function Sponsors() {
                 </button>
                 
               </motion.div>
+              <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
             </div>
           )}
 

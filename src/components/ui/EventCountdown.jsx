@@ -189,7 +189,7 @@ export function EventCountdown({ isDark = true }) {
         }} />
 
         {/* Logo + eyebrow row */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
           {/* Full wordmark — swaps with theme */}
           <img
             src={isDark
@@ -197,7 +197,7 @@ export function EventCountdown({ isDark = true }) {
               : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
             alt="Tech Festival Canada"
             style={{
-              height: 180,
+              height: 120,
               width: "auto",
               maxWidth: 200,
               objectFit: "contain",
@@ -228,7 +228,7 @@ export function EventCountdown({ isDark = true }) {
         </div>
 
         {/* Animated word */}
-        <div style={{ marginBottom: 8, position: "relative", textAlign: "right" }}>
+        <div style={{ marginBottom: 6, position: "relative", textAlign: "right" }}>
           <p style={{ fontSize: "0.78rem", color: textMuted, fontWeight: 600, marginBottom: 4 }}>
             Covering the future of
           </p>
@@ -258,7 +258,7 @@ export function EventCountdown({ isDark = true }) {
 
         {/* Divider */}
         <div style={{
-          height: 1, marginBottom: 24,
+          height: 1, marginBottom: 14,
           background: isDark
             ? "linear-gradient(90deg, transparent, rgba(122,63,209,0.4), rgba(245,166,35,0.2), transparent)"
             : "linear-gradient(90deg, transparent, rgba(122,63,209,0.2), rgba(245,166,35,0.1), transparent)",

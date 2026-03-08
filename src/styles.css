@@ -1509,65 +1509,21 @@ body.dark-mode .mobile-link {
   z-index: 9999;
 
   box-shadow: 0 -10px 25px rgba(0,0,0,0.25);
-animation: ticketBarSlide 0.4s ease; 
-
-
-}
-@keyframes ticketBarSlide{
-    from{
-        transform: translateY(100%);
-    }
-    to{
-        transform: translateY(O);
-    }
 }
 
-.ticket-bar-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-    
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.ticket-bar-text {
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.ticket-bar-btn {
-  background: white;
-  color: black;
-  font-weight: 700;
-
-  padding: 10px 18px;
-  border-radius: 30px;
-  text-decoration: none;
-
-  transition: 0.2s ease;
-}
-
-.ticket-bar-btn:hover {
-  transform: translateY(-2px);
-}
-
-/* Mobile */
-
-@media (max-width: 768px) {
-
-  .ticket-bar-inner {
-    flex-direction: column;
-    gap: 10px;
+/* MOBILE ONLY */
+@media (min-width: 1024px) {
+  .ticket-bar {
+    display: none !important;
   }
+}
 
-  .ticket-bar-btn {
-    width: 100%;
-    text-align: center;
+/* prevent footer overlap (mobile only) */
+@media (max-width: 1023px) {
+  body {
+    padding-bottom: 90px;
   }
-@media (min-width: 1024px){
-    .ticket-bar{
-        display:none;
+}
     }
 }
 

@@ -204,15 +204,21 @@ export default function Sponsors() {
               >
                 <h4 className="font-['Orbitron'] font-bold text-xl mb-4">ACCESS PARTNER DIRECTORY</h4>
                 <p className="text-[var(--text-muted)] text-sm mb-6">Join our ecosystem to view the full list of attending practitioners and exhibitors.</p>
-                <ProtectedRoute>
+                
                 <button
                   className="btn-primary w-full"
                   style={{ padding: "18px 32px", fontSize: "1rem" }}
-                  onClick={() => setUnlocked(true)}
+                  onClick={() => {
+                    if(!isLoggedIn()){
+                      setAuthOpen(true);
+                      return;
+                    }
+                    setUnlocked(true);
+                  }}
                 >
                   Unlock full list after signing up
                 </button>
-                  </ProtectedRoute>
+                
               </motion.div>
             </div>
           )}

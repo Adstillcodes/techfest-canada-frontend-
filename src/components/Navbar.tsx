@@ -112,7 +112,7 @@ export default function Navbar() {
             <img
               src="/updatednavlogotrans.png"
               alt="TechFest Canada"
-              className="h-[80px] w-[95px]"
+              className="h-[95px] w-[95px]"
               
             />
           </Link>

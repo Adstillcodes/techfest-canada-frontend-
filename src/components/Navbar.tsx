@@ -112,6 +112,7 @@ export default function Navbar() {
             <img
               src="/techfesttransparent.webp"
               alt="TechFest Canada"
+              className="h-14 w-auto object-contain"
               
             />
           </Link>

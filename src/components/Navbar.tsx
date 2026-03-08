@@ -52,7 +52,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: "HOME",        path: "/" },
-    { label: "Why Attend?", path: "/on-demand" },
+    { label: "First Timers", path: "/on-demand" },
     { label: "EXHIBITION",  path: "/sponsors" },
     { label: "ATTENDEES",   path: "/speakers" },
   ];

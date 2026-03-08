@@ -224,7 +224,6 @@ export default function Home() {
           {/* LEFT — TEXT (unchanged) */}
           <div className="hero-text">
 
-            <div className="hero-divider" />
 
             {/* Full wordmark logo — hero sized */}
             <img

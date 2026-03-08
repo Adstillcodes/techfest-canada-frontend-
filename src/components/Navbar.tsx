@@ -51,10 +51,10 @@ export default function Navbar() {
   const tabsRef = useRef<(HTMLLIElement | null)[]>([]);
 
   const navItems = [
-    { label: "HOME",        path: "/" },
+    { label: "HOME",         path: "/" },
     { label: "First Timers", path: "/on-demand" },
-    { label: "EXHIBITION",  path: "/sponsors" },
-    { label: "ATTENDEES",   path: "/speakers" },
+    { label: "EXHIBITION",   path: "/sponsors" },
+    { label: "ATTENDEES",    path: "/speakers" },
   ];
   if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
 
@@ -104,18 +104,64 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="navbar">
-        <div className="container nav-container">
+      <style>{`
+        .navbar-custom {
+          height: 80px;
+          display: flex;
+          align-items: center;
+          width: 100%;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border-bottom: 1px solid rgba(122,63,209,0.12);
+          background: rgba(var(--bg-main-rgb, 10,5,25), 0.88);
+        }
+        body:not(.dark-mode) .navbar-custom {
+          background: rgba(255,255,255,0.92);
+          border-bottom-color: rgba(122,63,209,0.10);
+        }
+        .navbar-inner {
+          width: 100%;
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 0 2.5%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 100%;
+        }
+        .nav-logo-img {
+          height: 62px;
+          width: auto;
+          object-fit: contain;
+          display: block;
+          transition: transform 0.25s ease, filter 0.25s ease;
+          filter: drop-shadow(0 0 8px rgba(122,63,209,0.0));
+        }
+        .nav-logo-img:hover {
+          transform: scale(1.05);
+          filter: drop-shadow(0 0 10px rgba(200,120,255,0.35));
+        }
+        body:not(.dark-mode) .nav-logo-img {
+          filter: drop-shadow(0 0 0px transparent);
+        }
+        body:not(.dark-mode) .nav-logo-img:hover {
+          filter: drop-shadow(0 0 8px rgba(122,63,209,0.25));
+        }
+      `}</style>
 
-          {/* LOGO — left */}
-          <Link to="/" className="nav-logo" onClick={closeMobile}>
+      <nav className="navbar navbar-custom">
+        <div className="navbar-inner">
+
+          {/* LOGO — C mark, left */}
+          <Link to="/" onClick={closeMobile} style={{ flexShrink: 0 }}>
             <img
-  src={theme === "dark"
-    ? "/updatednavlogotranswhite.png"
-    : "/updatednavlogotrans.png"}
-  alt="TechFest Canada"
-  className="nav-logo"
-/>
+              src="/justclogo.png"
+              alt="TFC"
+              className="nav-logo-img"
+            />
           </Link>
 
           {/* TABS — centre */}

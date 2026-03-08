@@ -2,12 +2,11 @@ import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import UrgencyBanner from "../components/UrgencyBanner";
 import AboutUs from "../components/AboutUs";
-import { InteractiveGlobe } from "../components/ui/interactive-globe";
+import { EventCountdown } from "../components/ui/EventCountdown";
 import { useEffect, useState } from "react";
 import InquiryModal from "../components/InquiryModal";
 
 export default function Home() {
-  // Detect dark-mode from body class (matches existing pattern)
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(
     () => typeof document !== "undefined" && document.body.classList.contains("dark-mode")
@@ -185,267 +184,13 @@ export default function Home() {
         }
         @keyframes slideLeft { to { opacity: 1; transform: translateX(0); } }
 
-        /* ── GLOBE CONTAINER ── */
-        .hero-globe-frame {
-          position: relative;
-          width: 460px;
-          height: 460px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        /* Subtle border ring around the canvas */
-        .hero-globe-frame::before {
-          content: '';
-          position: absolute;
-          inset: -2px;
-          border-radius: 50%;
-          background: conic-gradient(
-            from 0deg,
-            rgba(122,63,209,0.5),
-            rgba(245,166,35,0.4),
-            rgba(122,63,209,0.5),
-            rgba(245,166,35,0.4),
-            rgba(122,63,209,0.5)
-          );
-          animation: spinBorder 12s linear infinite;
-          opacity: 0.4;
-          pointer-events: none;
-        }
-        .hero-globe-frame::after {
-          content: '';
-          position: absolute;
-          inset: 1px;
-          border-radius: 50%;
-          background: transparent;
-          box-shadow:
-            0 0 40px rgba(122,63,209,0.20),
-            0 0 80px rgba(122,63,209,0.08),
-            inset 0 0 40px rgba(122,63,209,0.04);
-          pointer-events: none;
-        }
-        body:not(.dark-mode) .hero-globe-frame::after {
-          box-shadow:
-            0 0 30px rgba(122,63,209,0.12),
-            0 0 60px rgba(122,63,209,0.05),
-            inset 0 0 30px rgba(122,63,209,0.02);
-        }
-        @keyframes spinBorder { to { transform: rotate(360deg); } }
-
-        /* ── FLOATING LEGEND BADGES ── */
-        .hero-badge {
-          position: absolute;
-          background: var(--bg-card, rgba(28,16,52,0.85));
-          border: 1px solid rgba(122,63,209,0.25);
-          backdrop-filter: blur(14px);
-          border-radius: 16px;
-          padding: 14px 18px;
-          z-index: 10;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-          animation: badgeFloat 5s ease-in-out infinite;
-        }
-        body:not(.dark-mode) .hero-badge {
-          background: rgba(255,255,255,0.92);
-          border-color: rgba(122,63,209,0.18);
-          box-shadow: 0 8px 32px rgba(17,17,17,0.10);
-        }
-        .hero-badge-top {
-          top: 16px; left: -16px;
-          animation-delay: 0s;
-        }
-        .hero-badge-bottom {
-          bottom: 40px; right: -16px;
-          animation-delay: 2.5s;
-        }
-        @keyframes badgeFloat {
-          0%, 100% { transform: translateY(0px); }
-          50%       { transform: translateY(-8px); }
-        }
-        .badge-number {
-          font-family: 'Orbitron', sans-serif;
-          font-size: 1.5rem;
-          font-weight: 900;
-          background: var(--gradient-brand);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          line-height: 1;
-        }
-        .badge-label {
-          font-size: 0.72rem;
-          font-weight: 700;
-          color: var(--text-muted, #BFC5CC);
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          margin-top: 3px;
-        }
-
-        /* ── LEGEND DOTS ── */
-        .globe-legend {
-          position: absolute;
-          bottom: -10px;
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          z-index: 10;
-          pointer-events: none;
-          white-space: nowrap;
-        }
-        .legend-item {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          font-size: 0.68rem;
-          font-weight: 600;
-          letter-spacing: 0.8px;
-          text-transform: uppercase;
-          color: var(--text-muted);
-        }
-        .legend-dot {
-          width: 7px; height: 7px;
-          border-radius: 50%;
-          flex-shrink: 0;
-        }
-        .legend-dot-pillar { background: rgba(245,166,35,0.9); box-shadow: 0 0 5px rgba(245,166,35,0.5); }
-        .legend-dot-sector { background: rgba(160,100,255,0.9); box-shadow: 0 0 5px rgba(160,100,255,0.5); }
-
-        /* ── DECORATIVE ORBIT RING ── */
-        .hero-ring {
-          position: absolute;
-          width: 560px; height: 560px;
-          border-radius: 50%;
-          border: 1px dashed rgba(122,63,209,0.15);
-          top: 50%; left: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 0;
-          animation: spinRing 40s linear infinite;
-          pointer-events: none;
-        }
-        .hero-ring::before {
-          content: '';
-          position: absolute;
-          width: 8px; height: 8px;
-          border-radius: 50%;
-          background: var(--brand-orange);
-          top: 8px; left: 50%;
-          transform: translateX(-50%);
-          box-shadow: 0 0 8px var(--brand-orange);
-        }
-        .hero-ring-2 {
-          width: 520px; height: 520px;
-          border: 1px dashed rgba(245,166,35,0.08);
-          animation: spinRing 25s linear infinite reverse;
-        }
-        @keyframes spinRing {
-          from { transform: translate(-50%, -50%) rotate(0deg); }
-          to   { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-
-        /* ── ONE-LINER ── */
-        .hero-oneliner {
-          font-size: 1rem;
-          color: var(--text-muted);
-          font-weight: 500;
-          margin-bottom: 1.6rem;
-          max-width: 420px;
-          line-height: 1.6;
-          opacity: 0;
-          transform: translateY(16px);
-          animation: slideUp 0.75s ease 0.38s forwards;
-        }
-
-        /* ── PILL TAGS ── */
-        .hero-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-bottom: 2rem;
-          opacity: 0;
-          transform: translateY(16px);
-          animation: slideUp 0.75s ease 0.48s forwards;
-        }
-        .hero-tag {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          background: rgba(122,63,209,0.10);
-          border: 1px solid rgba(122,63,209,0.22);
-          color: var(--text-muted);
-          padding: 5px 14px;
-          border-radius: 999px;
-          font-size: 0.78rem;
-          font-weight: 600;
-          letter-spacing: 0.3px;
-          transition: background 0.2s, border-color 0.2s;
-        }
-        .hero-tag:hover {
-          background: rgba(122,63,209,0.22);
-          border-color: rgba(122,63,209,0.45);
-        }
-        body:not(.dark-mode) .hero-tag { color: #4a2a8a; }
-
-        /* ── MINI STATS ── */
-        .hero-mini-stats {
-          display: flex;
-          align-items: center;
-          gap: 0;
-          margin-bottom: 2.4rem;
-          background: rgba(122,63,209,0.06);
-          border: 1px solid rgba(122,63,209,0.18);
-          border-radius: 16px;
-          padding: 16px 24px;
-          width: fit-content;
-          opacity: 0;
-          transform: translateY(16px);
-          animation: slideUp 0.75s ease 0.54s forwards;
-        }
-        body:not(.dark-mode) .hero-mini-stats {
-          background: rgba(122,63,209,0.04);
-          border-color: rgba(122,63,209,0.14);
-        }
-        .hero-mini-stat {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 0 20px;
-          gap: 2px;
-        }
-        .hero-mini-value {
-          font-family: 'Orbitron', sans-serif;
-          font-size: 1.3rem;
-          font-weight: 900;
-          background: linear-gradient(135deg, #7a3fd1, #f5a623);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          line-height: 1;
-        }
-        .hero-mini-label {
-          font-size: 0.65rem;
-          font-weight: 700;
-          color: var(--text-muted);
-          text-transform: uppercase;
-          letter-spacing: 0.8px;
-          white-space: nowrap;
-        }
-        .hero-mini-divider {
-          width: 1px;
-          height: 32px;
-          background: rgba(122,63,209,0.25);
-          flex-shrink: 0;
-        }
-
         .footer-watermark-line {
           position: absolute;
           top: 0; left: 5%; right: 5%;
           height: 1px;
           background: linear-gradient(90deg, transparent, rgba(122,63,209,0.3), rgba(245,166,35,0.2), rgba(122,63,209,0.3), transparent);
         }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
           .hero-inner {
@@ -467,7 +212,6 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section className="hero-section-wrapper">
-        {/* Ambient orbs */}
         <div className="hero-orbs">
           <div className="hero-orb hero-orb-1" />
           <div className="hero-orb hero-orb-2" />
@@ -477,7 +221,7 @@ export default function Home() {
 
         <div className="hero-inner">
 
-          {/* LEFT — TEXT */}
+          {/* LEFT — TEXT (unchanged) */}
           <div className="hero-text">
             <div className="hero-eyebrow">
               <span className="hero-eyebrow-dot" />
@@ -508,47 +252,11 @@ export default function Home() {
             </div>
           </div>
 
-          {/* RIGHT — GLOBE */}
+          {/* RIGHT — EVENT COUNTDOWN */}
           <div className="hero-visual-wrap">
-
-            {/* Floating orbit rings */}
-            <div className="hero-ring" />
-            <div className="hero-ring hero-ring-2" />
-
-            {/* Floating badge — top left (Pillars) */}
-            <div className="hero-badge hero-badge-top">
-              <div className="badge-number">500+</div>
-              <div className="badge-label">Attendees</div>
-            </div>
-
-            {/* Globe canvas frame */}
-            <div className="hero-globe-frame">
-              <InteractiveGlobe
-                size={460}
-                isDarkMode={isDarkMode}
-                autoRotateSpeed={0.0018}
-              />
-
-              {/* Pillar/Sector legend */}
-              <div className="globe-legend">
-                <div className="legend-item">
-                  <span className="legend-dot legend-dot-pillar" />
-                  Tech Pillars
-                </div>
-                <div className="legend-item">
-                  <span className="legend-dot legend-dot-sector" />
-                  Applied Sectors
-                </div>
-              </div>
-            </div>
-
-            {/* Floating badge — bottom right (Sectors) */}
-            <div className="hero-badge hero-badge-bottom">
-              <div className="badge-number">3</div>
-              <div className="badge-label">Days of Content</div>
-            </div>
-
+            <EventCountdown isDark={isDarkMode} />
           </div>
+
         </div>
       </section>
 

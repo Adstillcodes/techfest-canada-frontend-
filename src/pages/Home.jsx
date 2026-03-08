@@ -230,6 +230,25 @@ export default function Home() {
 
             <div className="hero-divider" />
 
+            {/* Full wordmark logo — hero sized */}
+            <img
+              src={isDarkMode
+                ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
+                : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
+              alt="Tech Festival Canada"
+              style={{
+                height: "auto",
+                width: "100%",
+                maxWidth: 480,
+                objectFit: "contain",
+                display: "block",
+                marginBottom: "1.2rem",
+                opacity: 0,
+                animation: "slideUp 0.75s ease 0.2s forwards",
+                filter: isDarkMode ? "drop-shadow(0 0 24px rgba(160,100,255,0.25))" : "none",
+              }}
+            />
+
             <h1 className="hero-headline">
               MEET.<br />
               <span>BUILD.</span><br />

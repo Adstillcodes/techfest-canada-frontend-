@@ -55,7 +55,7 @@ export default function Navbar() {
     { label: "First Timers", path: "/on-demand" },
     { label: "EXHIBITION",   path: "/sponsors" },
     { label: "Speakers",    path: "/speakers" },
-    {label: "Agenda", path: "/agenda"}
+    { label: "Agenda", path: "/agenda" }
   ];
   if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
 
@@ -133,37 +133,10 @@ export default function Navbar() {
           justify-content: space-between;
           height: 100%;
         }
-        .nav-logo-img {
-          height: 100px;
-          width: auto;
-          object-fit: contain;
-          display: block;
-          transition: transform 0.25s ease, filter 0.25s ease;
-          filter: drop-shadow(0 0 8px rgba(122,63,209,0.0));
-        }
-        .nav-logo-img:hover {
-          transform: scale(1.05);
-          filter: drop-shadow(0 0 10px rgba(200,120,255,0.35));
-        }
-        body:not(.dark-mode) .nav-logo-img {
-          filter: drop-shadow(0 0 0px transparent);
-        }
-        body:not(.dark-mode) .nav-logo-img:hover {
-          filter: drop-shadow(0 0 8px rgba(122,63,209,0.25));
-        }
       `}</style>
 
       <nav className="navbar navbar-custom">
         <div className="navbar-inner">
-
-          {/* LOGO — C mark, left */}
-          <Link to="/" onClick={closeMobile} style={{ flexShrink: 0 }}>
-            <img
-              src={theme === "dark" ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
-              alt="TFC"
-              className="nav-logo-img"
-            />
-          </Link>
 
           {/* TABS — centre */}
           <div className="hidden lg:block mx-auto">

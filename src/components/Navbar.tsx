@@ -106,7 +106,7 @@ export default function Navbar() {
     <>
       <style>{`
         .navbar-custom {
-          height: 80px;
+          height: 100px;
           display: flex;
           align-items: center;
           width: 100%;
@@ -133,7 +133,7 @@ export default function Navbar() {
           height: 100%;
         }
         .nav-logo-img {
-          height: 72px;
+          height: 100px;
           width: auto;
           object-fit: contain;
           display: block;

@@ -108,7 +108,7 @@ export default function Navbar() {
         <div className="container nav-container">
 
           {/* LOGO — left */}
-          <Link to="/" className="nav-logo" onClick={closeMobile}>
+          <Link to="/" onClick={closeMobile}>
             <img
               src="/techfesttransparent.webp"
               alt="TechFest Canada"

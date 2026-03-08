@@ -110,9 +110,9 @@ export default function Navbar() {
           {/* LOGO — left */}
           <Link to="/" onClick={closeMobile}>
             <img
-              src="/techfesttransparent.webp"
+              src="/updatednavlogo.png"
               alt="TechFest Canada"
-              className="nav-logo"
+              className="h-[68px] w-auto"
               
             />
           </Link>

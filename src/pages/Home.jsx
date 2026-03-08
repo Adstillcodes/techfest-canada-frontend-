@@ -85,10 +85,10 @@ export default function Home() {
           grid-template-columns: 1fr 1fr;
           align-items: center;
           gap: 4rem;
-          padding: 7rem 5% 6rem;
+          padding: 2rem 5% 4rem;
           max-width: 1400px;
           margin: 0 auto;
-          min-height: 85vh;
+          min-height: 75vh;
         }
 
         /* ── TEXT ANIMATIONS ── */

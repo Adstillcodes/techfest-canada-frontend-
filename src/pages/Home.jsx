@@ -128,7 +128,7 @@ export default function Home() {
         }
 
         .hero-headline {
-          font-size: 1.4rem;
+          font-size: 1.4rem important!;
           line-height: 1.0;
           margin-bottom: 1.6rem;
           color: var(--brand-purple);

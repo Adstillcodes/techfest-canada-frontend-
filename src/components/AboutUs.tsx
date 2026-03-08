@@ -29,6 +29,7 @@ import {
   Variants,
   useMotionValueEvent
 } from "framer-motion"
+import { InteractiveGlobe } from "./ui/interactive-globe";
 import { createClient } from "@sanity/client"
 import imageUrlBuilder from "@sanity/image-url"
 
@@ -190,25 +191,29 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
             variants={itemVariants}
             className="relative flex justify-center items-center py-6"
           >
-            <div className="relative w-full max-w-[340px] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border border-[var(--border-main)] group">
-              {data.mainImage ? (
-                <img 
-                  src={(urlFor(data.mainImage) as any).width(800).url()}
-                  alt="Tech Collaboration"
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 ease-in-out transform group-hover:scale-105"
-                />
-              ) : (
-                <img 
-                  src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?q=80&w=1000&auto=format&fit=crop" 
-                  alt="Default Builders"
-                  className="w-full h-full object-cover grayscale"
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity" />
-              <div className="absolute bottom-10 left-0 w-full px-6 text-center z-20">
-                <button className="bg-[var(--brand-white)] text-[var(--brand-black)] font-bold py-4 px-10 rounded-full hover:bg-[var(--brand-orange)] hover:text-[var(--brand-white)] transition-all transform hover:translate-y-[-5px] shadow-2xl text-[11px] tracking-[0.2em] uppercase font-['Orbitron'] border border-[var(--border-main)]">
-                  <a href="./on-demand">Our Portfolio</a>
-                </button>
+            <div className="relative w-full max-w-[340px] flex flex-col items-center gap-4">
+              {/* Globe */}
+              <div style={{ position: "relative", width: 320, height: 320 }}>
+                {/* Spinning conic border */}
+                <div style={{
+                  position: "absolute", inset: -2, borderRadius: "50%",
+                  background: "conic-gradient(from 0deg, rgba(122,63,209,0.5), rgba(245,166,35,0.4), rgba(122,63,209,0.5), rgba(245,166,35,0.4), rgba(122,63,209,0.5))",
+                  animation: "aboutGlobeSpin 12s linear infinite",
+                  opacity: 0.4,
+                }} />
+                <InteractiveGlobe size={320} isDarkMode={true} autoRotateSpeed={0.0012} />
+                <style>{`@keyframes aboutGlobeSpin { to { transform: rotate(360deg); } }`}</style>
+              </div>
+              {/* Legend */}
+              <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: "rgba(245,166,35,0.9)", boxShadow: "0 0 5px rgba(245,166,35,0.5)", display: "inline-block" }} />
+                  Tech Pillars
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: "rgba(160,100,255,0.9)", boxShadow: "0 0 5px rgba(160,100,255,0.5)", display: "inline-block" }} />
+                  Applied Sectors
+                </div>
               </div>
             </div>
             <motion.div 

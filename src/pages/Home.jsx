@@ -222,11 +222,7 @@ export default function Home() {
         <div className="hero-inner">
 
           {/* LEFT — TEXT (unchanged) */}
-          <div className="hero-text">
-            <div className="hero-eyebrow">
-              <span className="hero-eyebrow-dot" />
-              Toronto · Vancouver · Montreal
-            </div>
+     
 
             <div className="hero-divider" />
 

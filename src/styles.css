@@ -114,13 +114,11 @@ a { text-decoration: none; color: inherit; }
 /* --- OFFICIAL BRAND LOGO (Strictly Constrained) --- */
 .logo-block { display: flex; align-items: center; height: 100%; max-height: 50px; }
 .logo-link { display: flex; align-items: center; height: 100%; }
-.nav-logo {
-    display: block;
+.nav-logo img {
     height: 70px;
     width: auto;
     max-width: 320px;
     object-fit: contain;
-    transition: 0.3s ease;
 }
 
 body.dark-mode .nav-logo {
@@ -1497,7 +1495,4 @@ body.dark-mode .mobile-link {
   color: #ef4444;
 }
 
-.nav-logo img{
-    display: block;
-    height: 50px;
-}
+

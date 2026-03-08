@@ -179,6 +179,10 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
           
           {/* Left Column */}
           <div className="space-y-14">
+            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:"-1.5rem" }}>
+              <span style={{ width:8, height:8, borderRadius:"50%", background:"rgba(160,100,255,0.9)", boxShadow:"0 0 6px rgba(160,100,255,0.6)", display:"inline-block", flexShrink:0 }} />
+              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(160,100,255,0.85)" }}>Applied Sectors</span>
+            </div>
             {data.services
               ?.filter((s: any) => s.position === 'left')
               .map((service: any, i: number) => (
@@ -228,6 +232,10 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
 
           {/* Right Column */}
           <div className="space-y-14">
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"flex-end", gap:8, marginBottom:"-1.5rem" }}>
+              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(245,166,35,0.85)" }}>Tech Pillars</span>
+              <span style={{ width:8, height:8, borderRadius:"50%", background:"rgba(245,166,35,0.9)", boxShadow:"0 0 6px rgba(245,166,35,0.6)", display:"inline-block", flexShrink:0 }} />
+            </div>
             {data.services
               ?.filter((s: any) => s.position === 'right')
               .map((service: any, i: number) => (

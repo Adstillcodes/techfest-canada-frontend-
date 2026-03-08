@@ -119,6 +119,7 @@ const gatedPartners = [
 
 export default function Sponsors() {
   const [unlocked, setUnlocked] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
@@ -193,7 +194,7 @@ export default function Sponsors() {
         </h3>
 
         {/* 🔒 GATED SECTION CAROUSEL */}
-        const [authOpen, setAuthOpen] = useState(false);
+        
         <div className="gated-wrapper relative" style={{ borderRadius: '32px', overflow: 'hidden', border: '1px solid var(--border-main)', background: 'var(--bg-card)' }}>
           
           {!unlocked && (

@@ -151,31 +151,19 @@ export function EventCountdown({ isDark = true }) {
         maxWidth: 460,
       }}
     >
-      {/* Outer glow */}
-      <div style={{
-        position: "absolute", inset: -1,
-        borderRadius: 28,
-        background: hovered
-          ? "linear-gradient(135deg, rgba(122,63,209,0.6), rgba(245,166,35,0.4))"
-          : "linear-gradient(135deg, rgba(122,63,209,0.3), rgba(245,166,35,0.2))",
-        filter: "blur(12px)",
-        transition: "all 0.4s ease",
-        pointerEvents: "none",
-        opacity: 0.7,
-      }} />
-
-      {/* Main card */}
+      {/* Main card — glass/transparent, no heavy card */}
       <div style={{
         position: "relative",
-        background: cardBg,
-        border: `1px solid ${borderCol}`,
+        background: isDark ? "rgba(10,5,25,0.35)" : "rgba(255,255,255,0.30)",
+        border: `1px solid ${isDark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.12)"}`,
         borderRadius: 28,
         padding: "36px 36px 32px",
-        backdropFilter: "blur(20px)",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
         boxShadow: isDark
-          ? "0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(122,63,209,0.1)"
-          : "0 20px 60px rgba(122,63,209,0.10), 0 0 0 1px rgba(122,63,209,0.08)",
-        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+          ? "0 8px 40px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)"
+          : "0 8px 32px rgba(122,63,209,0.07), inset 0 1px 0 rgba(255,255,255,0.6)",
+        transition: "transform 0.3s ease",
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
         overflow: "hidden",
       }}>
@@ -183,7 +171,7 @@ export function EventCountdown({ isDark = true }) {
         {/* Background grid */}
         <div style={{
           position: "absolute", inset: 0, pointerEvents: "none",
-          backgroundImage: `linear-gradient(${isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.03)"} 1px, transparent 1px), linear-gradient(90deg, ${isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.03)"} 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(${isDark ? "rgba(122,63,209,0.03)" : "rgba(122,63,209,0.02)"} 1px, transparent 1px), linear-gradient(90deg, ${isDark ? "rgba(122,63,209,0.03)" : "rgba(122,63,209,0.02)"} 1px, transparent 1px)`,
           backgroundSize: "32px 32px",
           borderRadius: 28,
         }} />
@@ -286,7 +274,7 @@ export function EventCountdown({ isDark = true }) {
         }}>
           <div style={{
             flex: 1, minWidth: 160,
-            background: isDark ? "rgba(122,63,209,0.08)" : "rgba(122,63,209,0.05)",
+            background: isDark ? "rgba(122,63,209,0.12)" : "rgba(122,63,209,0.06)",
             border: `1px solid ${isDark ? "rgba(122,63,209,0.20)" : "rgba(122,63,209,0.12)"}`,
             borderRadius: 14, padding: "12px 16px",
             display: "flex", alignItems: "center", gap: 10,
@@ -307,7 +295,7 @@ export function EventCountdown({ isDark = true }) {
 
           <div style={{
             flex: 1, minWidth: 160,
-            background: isDark ? "rgba(245,166,35,0.06)" : "rgba(245,166,35,0.04)",
+            background: isDark ? "rgba(245,166,35,0.10)" : "rgba(245,166,35,0.05)",
             border: `1px solid ${isDark ? "rgba(245,166,35,0.18)" : "rgba(245,166,35,0.12)"}`,
             borderRadius: 14, padding: "12px 16px",
             display: "flex", alignItems: "center", gap: 10,

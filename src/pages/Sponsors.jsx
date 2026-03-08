@@ -4,7 +4,7 @@ import useMeasure from "react-use-measure";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import UrgencyBanner from "../components/UrgencyBanner";
-import ProtectedRoute from "../components/ProtectedRoute";
+import AuthModal from "../components/AuthModal";
 /**
  * Note: If you have these components in your local project, 
  * you can keep the imports. For the preview to function correctly here, 

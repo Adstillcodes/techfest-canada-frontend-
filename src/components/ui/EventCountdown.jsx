@@ -197,7 +197,7 @@ export function EventCountdown({ isDark = true }) {
               : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
             alt="Tech Festival Canada"
             style={{
-              height: 120,
+              height: 180,
               width: "auto",
               maxWidth: 200,
               objectFit: "contain",

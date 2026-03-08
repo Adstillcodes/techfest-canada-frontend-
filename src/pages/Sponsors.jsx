@@ -4,6 +4,7 @@ import useMeasure from "react-use-measure";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import UrgencyBanner from "../components/UrgencyBanner";
+import ProtectedRoute from "../components/ProtectedRoute";
 /**
  * Note: If you have these components in your local project, 
  * you can keep the imports. For the preview to function correctly here, 
@@ -203,6 +204,7 @@ export default function Sponsors() {
               >
                 <h4 className="font-['Orbitron'] font-bold text-xl mb-4">ACCESS PARTNER DIRECTORY</h4>
                 <p className="text-[var(--text-muted)] text-sm mb-6">Join our ecosystem to view the full list of attending practitioners and exhibitors.</p>
+                <ProtectedRoute>
                 <button
                   className="btn-primary w-full"
                   style={{ padding: "18px 32px", fontSize: "1rem" }}
@@ -210,6 +212,7 @@ export default function Sponsors() {
                 >
                   Unlock full list after signing up
                 </button>
+                  </ProtectedRoute>
               </motion.div>
             </div>
           )}

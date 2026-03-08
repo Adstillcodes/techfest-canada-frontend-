@@ -314,17 +314,7 @@ export default function Speakers() {
             }
           </section>
 
-          {/* ── 3D CAROUSEL ── */}
-          <section className="threed-section">
-            <div className="section-header">
-              <h2>All <span>Speakers</span></h2>
-              <p>Browse the full lineup of innovators, executives, and policymakers taking the stage.</p>
-              <div className="section-divider" />
-            </div>
-            <div style={{ overflow: "hidden" }}>
-              <ThreeDPhotoCarousel speakers={speakers} />
-            </div>
-          </section>
+        
 
           {/* ── SPEAK AT TFC CTA ── */}
           <div className="speak-cta-band">

@@ -52,7 +52,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: "HOME",        path: "/" },
-    { label: "Why Attend?", path: "/on-demand" },
+    { label: "First Timers", path: "/on-demand" },
     { label: "EXHIBITION",  path: "/sponsors" },
     { label: "ATTENDEES",   path: "/speakers" },
   ];
@@ -112,7 +112,7 @@ export default function Navbar() {
             <img
               src="/updatednavlogo.png"
               alt="TechFest Canada"
-              
+              className="h-[68px] w-[70px]"
               
             />
           </Link>

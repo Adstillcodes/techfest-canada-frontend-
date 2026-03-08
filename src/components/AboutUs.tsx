@@ -17,7 +17,8 @@ import {
   ArrowRight,
   Zap,
   TrendingUp,
-  HelpCircle
+  HelpCircle,
+  Mail
 } from "lucide-react"
 import { 
   motion, 
@@ -28,16 +29,9 @@ import {
   Variants,
   useMotionValueEvent
 } from "framer-motion"
-
-/**
- * Note: These imports might require 'npm install @sanity/client @sanity/image-url' 
- * in your local environment. 
- */
 import { createClient } from "@sanity/client"
 import imageUrlBuilder from "@sanity/image-url"
 
-// Sanity Client Configuration
-// Replacing 'your_project_id' with your actual Sanity Project ID
 const client = createClient({
   projectId: "021qtoci", 
   dataset: "production",
@@ -51,9 +45,6 @@ function urlFor(source: any) {
   return builder.image(source)
 }
 
-/**
- * Icon Map: Maps Sanity strings to Lucide components
- */
 const iconMap: Record<string, React.ReactNode> = {
   pen: <Pen className="w-5 h-5" />,
   paint: <PaintBucket className="w-5 h-5" />,
@@ -70,7 +61,8 @@ const iconMap: Record<string, React.ReactNode> = {
   check: <CheckCircle className="w-5 h-5" />
 }
 
-export default function AboutUs() {
+// Accept onWriteToUs prop to open the inquiry modal from Home
+export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   
@@ -80,7 +72,6 @@ export default function AboutUs() {
   const isInView = useInView(sectionRef, { once: false, amount: 0.1 })
   const isStatsInView = useInView(statsRef, { once: false, amount: 0.3 })
 
-  // 1. Fetch data from Sanity on Mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -88,7 +79,6 @@ export default function AboutUs() {
         if (result) {
           setData(result)
         } else {
-          // Fallback content for the initial preview or if no document is found
           setData({
             headline: "Beyond Theory",
             services: [
@@ -109,7 +99,6 @@ export default function AboutUs() {
         }
       } catch (error) {
         console.error("Sanity About Content Fetch Error:", error)
-        // Ensure UI doesn't crash on network error
         setData({ headline: "Beyond Theory", services: [], stats: [] })
       } finally {
         setLoading(false)
@@ -118,7 +107,6 @@ export default function AboutUs() {
     fetchData()
   }, [])
 
-  // 2. Parallax Effects
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
@@ -127,7 +115,6 @@ export default function AboutUs() {
   const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 12])
   const rotate2 = useTransform(scrollYProgress, [0, 1], [0, -12])
 
-  // 3. Animation Variants
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -145,7 +132,6 @@ export default function AboutUs() {
     },
   }
 
-  // Loading state
   if (loading) return (
     <div className="py-24 text-center bg-[var(--bg-main)] text-[var(--text-muted)] font-['Orbitron'] tracking-widest animate-pulse">
       INITIALIZING ECOSYSTEM...
@@ -166,7 +152,7 @@ export default function AboutUs() {
         viewport={{ once: true }}
         variants={containerVariants}
       >
-        {/* Header Section */}
+        {/* Header */}
         <div className="flex flex-col items-center mb-20">
           <motion.span 
             variants={itemVariants}
@@ -190,7 +176,7 @@ export default function AboutUs() {
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-center">
           
-          {/* Left Column (Services) */}
+          {/* Left Column */}
           <div className="space-y-14">
             {data.services
               ?.filter((s: any) => s.position === 'left')
@@ -199,7 +185,7 @@ export default function AboutUs() {
               ))}
           </div>
 
-          {/* Center Visual (Sanity Image) */}
+          {/* Center Visual */}
           <motion.div 
             variants={itemVariants}
             className="relative flex justify-center items-center py-6"
@@ -221,12 +207,10 @@ export default function AboutUs() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-40 group-hover:opacity-20 transition-opacity" />
               <div className="absolute bottom-10 left-0 w-full px-6 text-center z-20">
                 <button className="bg-[var(--brand-white)] text-[var(--brand-black)] font-bold py-4 px-10 rounded-full hover:bg-[var(--brand-orange)] hover:text-[var(--brand-white)] transition-all transform hover:translate-y-[-5px] shadow-2xl text-[11px] tracking-[0.2em] uppercase font-['Orbitron'] border border-[var(--border-main)]">
-                  <a href="./on-demand" >Our Portfolio</a>
+                  <a href="./on-demand">Our Portfolio</a>
                 </button>
               </div>
             </div>
-            
-            {/* Decorative Parallax Frames */}
             <motion.div 
               className="absolute -inset-4 border-2 border-[var(--brand-purple)]/10 rounded-3xl z-[-1]"
               style={{ rotate: rotate1 }}
@@ -237,7 +221,7 @@ export default function AboutUs() {
             />
           </motion.div>
 
-          {/* Right Column (Services) */}
+          {/* Right Column */}
           <div className="space-y-14">
             {data.services
               ?.filter((s: any) => s.position === 'right')
@@ -247,29 +231,80 @@ export default function AboutUs() {
           </div>
         </div>
 
-        {/* Stats Section */}
+        {/* Stats */}
         <div ref={statsRef} className="mt-32 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {data.stats?.map((stat: any, index: number) => (
             <StatBox key={index} {...stat} delay={index * 0.1} />
           ))}
         </div>
 
-        {/* Bottom CTA Block */}
+        {/* ── BOTTOM CTA — GET INVOLVED ── */}
         <motion.div
-          className="mt-28 bg-[var(--bg-card)] border border-[var(--border-main)] p-12 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-10 shadow-sm"
+          className="mt-28 relative overflow-hidden bg-[var(--bg-card)] border border-[var(--border-main)] p-12 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-10 shadow-sm"
           variants={itemVariants}
         >
-          <div className="flex-1 text-center md:text-left">
-            <h3 className="text-3xl font-black mb-4 font-['Orbitron'] tracking-tight text-[var(--text-main)] uppercase">READY TO SCALE?</h3>
-            <p className="text-[var(--text-muted)] text-lg max-w-md">Join Canada's top innovators in Toronto, Vancouver, and Montreal.</p>
+          {/* Ambient glow */}
+          <div style={{
+            position: "absolute", inset: 0, pointerEvents: "none",
+            background: "radial-gradient(ellipse 60% 80% at 0% 50%, rgba(122,63,209,0.10), transparent)",
+          }} />
+
+          <div className="flex-1 text-center md:text-left relative z-10">
+            {/* Eyebrow */}
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              background: "rgba(122,63,209,0.12)", border: "1px solid rgba(122,63,209,0.28)",
+              borderRadius: 999, padding: "4px 14px", marginBottom: 14,
+              fontSize: "0.68rem", fontWeight: 700, letterSpacing: "1.2px",
+              textTransform: "uppercase", color: "#b99eff",
+            }}>
+              <span style={{ width:5, height:5, borderRadius:"50%", background:"#f5a623", boxShadow:"0 0 5px #f5a623", display:"inline-block" }} />
+              TFC 2026
+            </div>
+
+            <h3 className="text-3xl font-black mb-3 font-['Orbitron'] tracking-tight text-[var(--text-main)] uppercase">
+              GET <span style={{ color: "#f5a623" }}>INVOLVED</span>
+            </h3>
+
+            {/* Three sub-tags */}
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "inherit" }}>
+              {["Volunteer", "Collaborate", "Become a Community Partner"].map((tag) => (
+                <span key={tag} style={{
+                  background: "rgba(122,63,209,0.10)",
+                  border: "1px solid rgba(122,63,209,0.22)",
+                  borderRadius: 999, padding: "4px 14px",
+                  fontSize: "0.78rem", fontWeight: 600,
+                  color: "var(--text-muted)",
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
-          <button className="bg-[var(--brand-purple)] hover:bg-[var(--brand-orange)] text-[var(--brand-white)] px-12 py-5 rounded-2xl flex items-center gap-3 font-bold transition-all hover:scale-105 active:scale-95 shadow-xl">
-            <a href="/tickets" className="flex items-center gap-3">
-              Get Your Passes
-              <ArrowRight className="w-5 h-5" />
-            </a>
+
+          {/* Write to Us button — opens inquiry modal */}
+          <button
+            onClick={onWriteToUs}
+            className="relative z-10 flex items-center gap-3 font-bold transition-all hover:scale-105 active:scale-95 shadow-xl"
+            style={{
+              background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
+              color: "white",
+              padding: "18px 40px",
+              borderRadius: 18,
+              border: "none",
+              cursor: "pointer",
+              fontSize: "0.92rem",
+              fontFamily: "'Orbitron', sans-serif",
+              fontWeight: 800,
+              letterSpacing: "0.5px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <Mail size={18} />
+            Write to Us
           </button>
         </motion.div>
+
       </motion.div>
     </section>
   )

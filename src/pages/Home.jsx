@@ -500,10 +500,10 @@ export default function Home() {
 
             <div className="hero-cta-row">
               <a href="/tickets" className="btn-primary">
-                Get Your Tickets ➡️
+                Get Your Tickets
               </a>
-              <a href="/on-demand" className="btn-outline">
-                View Exhibitors
+              <a href="/speakers" className="btn-outline">
+                Partner With Us
               </a>
             </div>
           </div>

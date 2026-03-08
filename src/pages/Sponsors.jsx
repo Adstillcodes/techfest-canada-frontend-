@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useMotionValue, animate, motion } from "framer-motion";
+import { isLoggedIn } from "../utils/auth";
 import useMeasure from "react-use-measure";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
@@ -192,7 +193,9 @@ export default function Sponsors() {
         </h3>
 
         {/* 🔒 GATED SECTION CAROUSEL */}
+        const [authOpen, setAuthOpen] = useState(false);
         <div className="gated-wrapper relative" style={{ borderRadius: '32px', overflow: 'hidden', border: '1px solid var(--border-main)', background: 'var(--bg-card)' }}>
+          
           {!unlocked && (
             <div 
               className="absolute inset-0 z-10 flex flex-col items-center justify-center backdrop-blur-sm bg-black/40 p-8"

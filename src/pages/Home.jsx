@@ -4,9 +4,11 @@ import UrgencyBanner from "../components/UrgencyBanner";
 import AboutUs from "../components/AboutUs";
 import { InteractiveGlobe } from "../components/ui/interactive-globe";
 import { useEffect, useState } from "react";
+import InquiryModal from "../components/InquiryModal";
 
 export default function Home() {
   // Detect dark-mode from body class (matches existing pattern)
+  const [inquiryOpen, setInquiryOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(
     () => typeof document !== "undefined" && document.body.classList.contains("dark-mode")
   );
@@ -551,9 +553,12 @@ export default function Home() {
       </section>
 
       {/* ABOUT SECTION */}
-      <AboutUs />
+      <AboutUs onWriteToUs={() => setInquiryOpen(true)} />
 
       <Footer />
+
+      {/* INQUIRY MODAL */}
+      <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} />
     </>
   );
 }

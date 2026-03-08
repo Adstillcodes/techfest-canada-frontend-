@@ -197,11 +197,12 @@ export function EventCountdown({ isDark = true }) {
               : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
             alt="Tech Festival Canada"
             style={{
-              height: 52,
+              height: 90,
               width: "auto",
+              maxWidth: 200,
               objectFit: "contain",
               display: "block",
-              filter: isDark ? "drop-shadow(0 0 8px rgba(200,120,255,0.18))" : "none",
+              filter: isDark ? "drop-shadow(0 0 10px rgba(200,120,255,0.22))" : "none",
               transition: "filter 0.3s ease",
             }}
           />
@@ -227,11 +228,11 @@ export function EventCountdown({ isDark = true }) {
         </div>
 
         {/* Animated word */}
-        <div style={{ marginBottom: 8, position: "relative" }}>
+        <div style={{ marginBottom: 8, position: "relative", textAlign: "right" }}>
           <p style={{ fontSize: "0.78rem", color: textMuted, fontWeight: 600, marginBottom: 4 }}>
             Covering the future of
           </p>
-          <div style={{ height: 40, overflow: "hidden", position: "relative" }}>
+          <div style={{ height: 40, overflow: "hidden", position: "relative", display: "flex", justifyContent: "flex-end" }}>
             <AnimatePresence mode="wait">
               <motion.span
                 key={CYCLING_WORDS[wordIdx]}

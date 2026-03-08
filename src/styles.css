@@ -1509,12 +1509,23 @@ body.dark-mode .mobile-link {
   z-index: 9999;
 
   box-shadow: 0 -10px 25px rgba(0,0,0,0.25);
+animation: ticketBarSlide 0.4s ease; 
+
+
+}
+@keyframes ticketBarSlide{
+    from{
+        transform: translateY(100%);
+    }
+    to{
+        transform: translateY(O);
+    }
 }
 
 .ticket-bar-inner {
   max-width: 1200px;
   margin: 0 auto;
-
+    
   display: flex;
   justify-content: space-between;
   align-items: center;

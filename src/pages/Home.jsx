@@ -5,13 +5,9 @@ import AboutUs from "../components/AboutUs";
 import { EventCountdown } from "../components/ui/EventCountdown";
 import { useEffect, useState } from "react";
 import InquiryModal from "../components/InquiryModal";
-import CookieConsent from "../components/CookieConsent";
-import OnboardingSurvey from "../components/OnboardingSurvey";
 
 export default function Home() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
-  const [surveyOpen, setSurveyOpen] = useState(false);
-  const [surveyName, setSurveyName] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(
     () => typeof document !== "undefined" && document.body.classList.contains("dark-mode")
   );
@@ -24,14 +20,7 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const handler = (e: any) => {
-      setSurveyName(e.detail?.name || "");
-      setSurveyOpen(true);
-    };
-    window.addEventListener("showSurvey", handler);
-    return () => window.removeEventListener("showSurvey", handler);
-  }, []);
+
 
   return (
     <>
@@ -293,15 +282,6 @@ export default function Home() {
       {/* INQUIRY MODAL */}
       <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} />
 
-      {/* COOKIE CONSENT */}
-      <CookieConsent />
-
-      {/* ONBOARDING SURVEY */}
-      <OnboardingSurvey
-        isOpen={surveyOpen}
-        onClose={() => { setSurveyOpen(false); window.location.reload(); }}
-        userName={surveyName}
-      />
     </>
   );
 }

@@ -23,7 +23,7 @@ function LinkedInIcon() {
   );
 }
 
-export default function AuthModal({ isOpen, onClose }) {
+export default function AuthModal({ isOpen, onClose, onSurvey }) {
   const [view, setView] = useState("login");
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -57,12 +57,18 @@ export default function AuthModal({ isOpen, onClose }) {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const finishAuth = (token) => {
+  const finishAuth = (token, isNew = false, name = "") => {
     localStorage.setItem("token", token);
     const pending = getPendingPurchase();
     onClose();
-    if (pending) { clearPendingPurchase(); window.dispatchEvent(new CustomEvent("resumePurchase", { detail: pending })); }
-    else { window.location.reload(); }
+    if (pending) {
+      clearPendingPurchase();
+      window.dispatchEvent(new CustomEvent("resumePurchase", { detail: pending }));
+    } else if (isNew) {
+      window.dispatchEvent(new CustomEvent("showSurvey", { detail: { name } }));
+    } else {
+      window.location.reload();
+    }
   };
 
   const handleGoogleResponse = async (response) => {
@@ -97,7 +103,7 @@ export default function AuthModal({ isOpen, onClose }) {
       const res = await fetch(`${API}/register`,{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(form) });
       const data = await res.json();
       if(!res.ok) throw new Error(data.error);
-      finishAuth(data.token);
+      finishAuth(data.token, true, form.name);
     } catch(err){ alert(err.message); } finally{ setLoading(false); }
   };
 

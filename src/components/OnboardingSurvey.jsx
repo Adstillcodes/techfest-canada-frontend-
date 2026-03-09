@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Linkedin, Briefcase, ChevronDown, Sparkles, ArrowRight, CheckCircle, PartyPopper } from "lucide-react";
 
-
 const FIELDS = [
   "Artificial Intelligence & Machine Learning",
   "Cybersecurity",

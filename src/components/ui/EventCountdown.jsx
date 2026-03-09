@@ -179,21 +179,6 @@ export function EventCountdown({ isDark = true }) {
         {/* Logo + eyebrow row */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
           {/* Full wordmark — swaps with theme */}
-          <img
-            src={isDark
-              ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
-              : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
-            alt="Tech Festival Canada"
-            style={{
-              height: 120,
-              width: "auto",
-              maxWidth: 200,
-              objectFit: "contain",
-              display: "block",
-              filter: isDark ? "drop-shadow(0 0 10px rgba(200,120,255,0.22))" : "none",
-              transition: "filter 0.3s ease",
-            }}
-          />
           {/* Live badge */}
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 6,
@@ -330,7 +315,7 @@ export function EventCountdown({ isDark = true }) {
           }}>
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: "68%" }}
+              animate={{ width: "0%" }}
               transition={{ duration: 1.4, ease: "easeOut", delay: 0.5 }}
               style={{
                 height: "100%", borderRadius: 999,

@@ -172,6 +172,12 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
             variants={itemVariants}
             className="w-24 h-2 bg-gradient-to-r from-[var(--brand-purple)] to-[var(--brand-orange)] rounded-full shadow-sm"
           />
+          <motion.p
+            variants={itemVariants}
+            className="text-center max-w-3xl mt-8 text-[var(--text-muted)] text-base leading-relaxed"
+          >
+            The Tech Festival Canada's <strong style={{ color: "var(--brand-orange)" }}>5 tech pillars</strong> aren't discussed in isolation. They're showcased through <strong style={{ color: "var(--brand-purple)" }}>5 applied sectors</strong> where the demand is urgent and budgets are real. Every session, showcase, and networking moment is designed to answer one question: <em style={{ color: "var(--text-main)", fontWeight: 600 }}>How does this technology get deployed, scaled, and procured in Canada, NOW?</em>
+          </motion.p>
         </div>
 
         {/* Content Grid */}
@@ -181,7 +187,7 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
           <div className="space-y-14">
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:"-1.5rem" }}>
               <span style={{ width:8, height:8, borderRadius:"50%", background:"rgba(160,100,255,0.9)", boxShadow:"0 0 6px rgba(160,100,255,0.6)", display:"inline-block", flexShrink:0 }} />
-              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(160,100,255,0.85)" }}>Applied Sectors</span>
+              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(160,100,255,0.85)" }}>5 APPLIED SECTORS</span>
             </div>
             {data.services
               ?.filter((s: any) => s.position === 'left')
@@ -233,7 +239,7 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
           {/* Right Column */}
           <div className="space-y-14">
             <div style={{ display:"flex", alignItems:"center", justifyContent:"flex-end", gap:8, marginBottom:"-1.5rem" }}>
-              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(245,166,35,0.85)" }}>Tech Pillars</span>
+              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(245,166,35,0.85)" }}>5 TECH PILLARS</span>
               <span style={{ width:8, height:8, borderRadius:"50%", background:"rgba(245,166,35,0.9)", boxShadow:"0 0 6px rgba(245,166,35,0.6)", display:"inline-block", flexShrink:0 }} />
             </div>
             {data.services

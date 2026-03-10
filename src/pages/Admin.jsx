@@ -6,7 +6,7 @@ import AdminInventory from "../components/AdminInventory";
 import CheckIn from "../components/CheckIn";
 import AdminAnalytics from "../components/AdminAnalytics";
 
-const API = "https://techfest-canada-backend.onrender.com/api/";
+const API = "https://techfest-canada-backend.onrender.com/api";
 
 /* =========================================================
    📊 OVERVIEW TAB

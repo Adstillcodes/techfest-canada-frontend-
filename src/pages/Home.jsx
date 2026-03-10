@@ -25,8 +25,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      const detail = (e as CustomEvent).detail;
+    const handler = (e) => {
+      const detail = e.detail;
       setSurveyName(detail?.name || "");
       setSurveyOpen(true);
     };

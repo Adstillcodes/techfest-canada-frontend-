@@ -4,6 +4,7 @@ import AdminTabs from "../components/AdminTabs";
 import AdminAttendees from "../components/AdminAttendees";
 import AdminInventory from "../components/AdminInventory";
 import CheckIn from "../components/CheckIn";
+import AdminAnalytics from "../components/AdminAnalytics";
 
 const API = "https://techfest-canada-backend.onrender.com/api/";
 
@@ -13,9 +14,7 @@ const API = "https://techfest-canada-backend.onrender.com/api/";
 function Overview() {
   return (
     <div className="admin-card">
-      <h2>Admin Overview</h2>
-      <p>Monitor ticket sales and event activity.</p>
-      <h3>Work In Progress</h3>
+<AdminAnalytics />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { MapPin, Calendar, Clock, ChevronRight, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const EVENT_DATE = new Date("2026-10-05T09:00:00");
+const EVENT_DATE = new Date("2026-10-28T09:00:00");
 
 const CYCLING_WORDS = [
   "AI",
@@ -177,7 +177,7 @@ export function EventCountdown({ isDark = true }) {
         }} />
 
         {/* Logo + eyebrow row */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", marginBottom: 8 }}>
           {/* Full wordmark — swaps with theme */}
           {/* Live badge */}
           <div style={{
@@ -205,7 +205,7 @@ export function EventCountdown({ isDark = true }) {
           <p style={{ fontSize: "0.78rem", color: textMuted, fontWeight: 600, marginBottom: 4 }}>
             Covering the future of
           </p>
-          <div style={{ height: 40, overflow: "hidden", position: "relative", display: "flex", justifyContent: "flex-end" }}>
+          <div style={{ height: 40, overflow: "hidden", position: "relative", display: "flex", justifyContent: "center" }}>
             <AnimatePresence mode="wait">
               <motion.span
                 key={CYCLING_WORDS[wordIdx]}
@@ -274,7 +274,7 @@ export function EventCountdown({ isDark = true }) {
             </div>
             <div>
               <div style={{ fontSize: "0.68rem", color: textMuted, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.8px" }}>Date</div>
-              <div style={{ fontSize: "0.82rem", fontWeight: 700, color: textMain }}>October 5, 2026</div>
+              <div style={{ fontSize: "0.82rem", fontWeight: 700, color: textMain }}>Wednesday, Oct 28, 2026</div>
             </div>
           </div>
 
@@ -295,7 +295,7 @@ export function EventCountdown({ isDark = true }) {
             </div>
             <div>
               <div style={{ fontSize: "0.68rem", color: textMuted, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.8px" }}>Venue</div>
-              <div style={{ fontSize: "0.82rem", fontWeight: 700, color: textMain }}>The Carlu, Toronto</div>
+              <a href="https://maps.google.com/?q=The+Carlu+Toronto" target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.82rem", fontWeight: 700, color: textMain, textDecoration: "underline", textDecorationColor: "rgba(245,166,35,0.5)", cursor: "pointer" }}>The Carlu, Toronto</a>
             </div>
           </div>
         </div>

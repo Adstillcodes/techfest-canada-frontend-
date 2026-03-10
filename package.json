@@ -13,6 +13,7 @@
     "@sanity/client": "^7.16.0",
     "@sanity/image-url": "^2.0.3",
     "@yudiel/react-qr-scanner": "^2.5.1",
+    "axios": "^1.13.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.34.4",
@@ -23,6 +24,7 @@
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.1",
     "react-use-measure": "^2.1.7",
+    "recharts": "^3.8.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss-animate": "^1.0.7"
   },

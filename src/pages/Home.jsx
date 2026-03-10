@@ -265,9 +265,7 @@ export default function Home() {
             </h1>
 
             <p className="hero-sub">
-              Canada's premier AI, blockchain & emerging tech conference.
-              3 days of keynotes, deep-dive workshops, and high-value
-              networking across Toronto, Vancouver, and Montreal.
+              The Tech Festival Canada is Canada's first-of-its-kind, deal-making platform where innovators, buyers, investors, and policymakers turn emerging tech into real partnerships, pilots, and contracts — not just conversations. Expect a never-seen-before concentration of senior decision-makers from enterprise and critical sectors, alongside government, associations, media, and leading research institutions.
             </p>
 
             <div className="hero-cta-row">

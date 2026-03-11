@@ -61,13 +61,24 @@ export default function AuthModal({ isOpen, onClose, onSurvey }) {
     localStorage.setItem("token", token);
     const pending = getPendingPurchase();
     onClose();
+    // Dispatch auth event so Navbar/App updates without full reload
+    window.dispatchEvent(new CustomEvent("authStateChanged", { detail: { token, name } }));
     if (pending) {
       clearPendingPurchase();
       window.dispatchEvent(new CustomEvent("resumePurchase", { detail: pending }));
     } else if (isNew) {
-      window.dispatchEvent(new CustomEvent("showSurvey", { detail: { name } }));
+      // Small delay so modal closes first, then survey appears
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent("showSurvey", { detail: { name } }));
+      }, 350);
     } else {
-      window.location.reload();
+      // Soft reload — only reload if not already on dashboard
+      const path = window.location.pathname;
+      if (path === "/dashboard") {
+        window.dispatchEvent(new CustomEvent("dashboardRefresh"));
+      } else {
+        window.location.reload();
+      }
     }
   };
 

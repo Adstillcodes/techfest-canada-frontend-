@@ -18,7 +18,14 @@ import {
   Zap,
   TrendingUp,
   HelpCircle,
-  Mail
+  Mail,
+  Heart,
+  Shield,
+  Cpu,
+  Atom,
+  Lock,
+  Settings,
+  Leaf
 } from "lucide-react"
 import { 
   motion, 
@@ -59,7 +66,15 @@ const iconMap: Record<string, React.ReactNode> = {
   trending: <TrendingUp className="w-5 h-5" />,
   star: <Star className="w-5 h-5" />,
   sparkles: <Sparkles className="w-5 h-5" />,
-  check: <CheckCircle className="w-5 h-5" />
+  check: <CheckCircle className="w-5 h-5" />,
+  heart: <Heart className="w-5 h-5" />,
+  shield: <Shield className="w-5 h-5" />,
+  zap: <Zap className="w-5 h-5" />,
+  cpu: <Cpu className="w-5 h-5" />,
+  atom: <Atom className="w-5 h-5" />,
+  lock: <Lock className="w-5 h-5" />,
+  settings: <Settings className="w-5 h-5" />,
+  leaf: <Leaf className="w-5 h-5" />
 }
 
 // Accept onWriteToUs prop to open the inquiry modal from Home
@@ -83,12 +98,16 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
           setData({
             headline: "Beyond Theory",
             services: [
-              { title: "Architecture", description: "Designing scalable foundations for the next generation of tech leaders.", iconName: "pen", position: "left" },
-              { title: "Ecosystems", description: "Connecting builders, practitioners, and investors in a high-velocity environment.", iconName: "home", position: "left" },
-              { title: "Mastery", description: "Curated tracks focused on applied engineering rather than abstract theory.", iconName: "tool", position: "left" },
-              { title: "Optimization", description: "Fine-tuning performance metrics to ensure zero-latency user experiences.", iconName: "paint", position: "right" },
-              { title: "Planning", description: "Strategic roadmapping from MVP to international tech dominance.", iconName: "ruler", position: "right" },
-              { title: "Scaling", description: "Transforming projects into national infrastructure through elite builds.", iconName: "building", position: "right" }
+              { title: "Healthcare & Lifesciences", description: "Connecting health innovators with buyers, policymakers, and capital to deploy at scale.", iconName: "heart", position: "left" },
+              { title: "Banking, Financial Services & Insurance", description: "Where fintech meets enterprise — driving real procurement and partnerships.", iconName: "building", position: "left" },
+              { title: "Supply Chain, Manufacturing & Infrastructure", description: "Bringing tech solutions to the backbone of Canada's industrial economy.", iconName: "tool", position: "left" },
+              { title: "Defence & Public Safety", description: "Bridging the gap between cutting-edge tech and national security priorities.", iconName: "shield", position: "left" },
+              { title: "Energy & Utilities", description: "Accelerating Canada's clean energy transition through applied innovation.", iconName: "zap", position: "left" },
+              { title: "Artificial Intelligence", description: "Unlocking the Future of Innovation — from models to real-world deployment.", iconName: "cpu", position: "right" },
+              { title: "Quantum Computing", description: "Unleashing Infinite Possibilities — Canada's quantum advantage on the world stage.", iconName: "atom", position: "right" },
+              { title: "Cybersecurity", description: "Building resilient digital infrastructure for enterprise and government.", iconName: "lock", position: "right" },
+              { title: "Robotics & Automation", description: "From factory floors to smart cities — automation that drives real ROI.", iconName: "settings", position: "right" },
+              { title: "Sustainability & CleanTech", description: "Pioneering a Greener, Smarter Future through technology-led climate action.", iconName: "leaf", position: "right" }
             ],
             stats: [
               { value: 150, suffix: "+", label: "Builds Completed", iconName: "award" },

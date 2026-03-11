@@ -12,6 +12,7 @@ const CYCLING_WORDS = [
   "Sustainability",
 ];
 
+
 function getTimeLeft() {
   const now = new Date();
   const diff = EVENT_DATE - now;

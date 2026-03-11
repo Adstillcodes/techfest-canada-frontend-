@@ -1,158 +1,779 @@
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence, useInView, useScroll, useTransform } from "framer-motion";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 
-export default function Resources() {
-  return (
-    <>
-      {/* Urgency Banner (keep if used globally) */}
-      <div className="urgency-banner">
-        Save CAD 200 - Early Bird ends in{" "}
-        <span id="countdown-timer">Loading...</span>
-      </div>
+// ── DATA ─────────────────────────────────────────────────────────────────────
 
+const PILLARS = [
+  {
+    id: "ai",
+    title: "Artificial Intelligence & Generative AI",
+    short: "AI",
+    icon: "🤖",
+    color: "#7a3fd1",
+    glow: "rgba(122,63,209,0.4)",
+    description:
+      "From automation to decision intelligence, we focus on where AI is delivering measurable impact, what it takes to deploy responsibly, and how to move from pilots to enterprise scale.",
+  },
+  {
+    id: "quantum",
+    title: "Quantum Computing",
+    short: "QUANTUM",
+    icon: "⚛️",
+    color: "#a855f7",
+    glow: "rgba(168,85,247,0.4)",
+    description:
+      "Understand what is real today, what is coming next, and how to prepare for quantum readiness across security, optimization, and next generation computing.",
+  },
+  {
+    id: "sustainability",
+    title: "Sustainability & Climate Tech",
+    short: "SUSTAIN",
+    icon: "🌿",
+    color: "#22c55e",
+    glow: "rgba(34,197,94,0.4)",
+    description:
+      "Learn how technology is helping organizations cut emissions, improve efficiency, modernize infrastructure, and meet compliance and reporting expectations while staying competitive.",
+  },
+  {
+    id: "cyber",
+    title: "Cybersecurity & Digital Trust",
+    short: "CYBER",
+    icon: "🔐",
+    color: "#f5a623",
+    glow: "rgba(245,166,35,0.4)",
+    description:
+      "Go beyond tools and talk about trust, resilience, and modern security programs that protect data, operations, and critical systems in a rapidly changing threat landscape.",
+  },
+  {
+    id: "robotics",
+    title: "Robotics & Intelligent Infrastructure",
+    short: "ROBOTICS",
+    icon: "🦾",
+    color: "#06b6d4",
+    glow: "rgba(6,182,212,0.4)",
+    description:
+      "Explore robotics, automation, and connected systems that raise productivity, improve safety, and modernize operations across industries.",
+  },
+];
+
+const SECTORS = [
+  { label: "Energy & Utilities",                      icon: "⚡", color: "#f5a623" },
+  { label: "Healthcare & Life Sciences",              icon: "🏥", color: "#ec4899" },
+  { label: "Defence & National Security",             icon: "🛡️", color: "#7a3fd1" },
+  { label: "Financial Services & Insurance",          icon: "🏦", color: "#22c55e" },
+  { label: "Supply Chain, Manufacturing & Infrastructure", icon: "🏭", color: "#06b6d4" },
+];
+
+const FORMATS = [
+  {
+    title: "The Expo",
+    icon: "🏛️",
+    color: "#7a3fd1",
+    description:
+      "Technology comes alive. Companies from across Canada and around the world showcase products, platforms, and solutions. Expect demos, live conversations with builders, and a front row view of what is being deployed now — not someday.",
+  },
+  {
+    title: "Awards Night",
+    icon: "🏆",
+    color: "#f5a623",
+    description:
+      "Celebrating the Tech Titans of Canada. We recognize the innovators, builders, researchers, and leaders who are shaping the future and delivering real impact across the country.",
+  },
+  {
+    title: "CxO Breakfast",
+    icon: "☕",
+    color: "#a855f7",
+    description:
+      "An exclusive invitation-only breakfast for CxOs and senior leaders. This is where business happens in a quieter, higher-trust setting. Think strategic conversations, peer connections, and deal-making over breakfast.",
+  },
+  {
+    title: "Gala Dinner & Networking Reception",
+    icon: "🥂",
+    color: "#22c55e",
+    description:
+      "A premium evening to deepen relationships with speakers, exhibitors, partners, and senior attendees. If you want stronger connections, this is where they form.",
+  },
+  {
+    title: "Consultation Clinic",
+    icon: "💡",
+    color: "#06b6d4",
+    description:
+      "In collaboration with government bodies, associations, and academic institutes, our Consultation Clinic helps you move forward with clarity. Whether you're looking for funding, programs, partnerships, talent, standards, research support, or market entry — you'll find credible direction and next steps.",
+  },
+];
+
+// ── ANIMATED COUNTER ─────────────────────────────────────────────────────────
+
+function Counter({ to, suffix = "" }) {
+  const [val, setVal] = useState(0);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const step = Math.ceil(to / 40);
+    const id = setInterval(() => {
+      start += step;
+      if (start >= to) { setVal(to); clearInterval(id); }
+      else setVal(start);
+    }, 30);
+    return () => clearInterval(id);
+  }, [inView, to]);
+  return <span ref={ref}>{val}{suffix}</span>;
+}
+
+// ── PILLAR CARD ──────────────────────────────────────────────────────────────
+
+function PillarCard({ pillar, index, isActive, onClick }) {
+  return (
+    <motion.button
+      onClick={onClick}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.5 }}
+      whileHover={{ y: -4 }}
+      style={{
+        background: isActive
+          ? `linear-gradient(135deg, ${pillar.color}22, ${pillar.color}11)`
+          : "rgba(255,255,255,0.03)",
+        border: `1.5px solid ${isActive ? pillar.color : "rgba(255,255,255,0.08)"}`,
+        borderRadius: 20,
+        padding: "20px 22px",
+        cursor: "pointer",
+        textAlign: "left",
+        width: "100%",
+        position: "relative",
+        overflow: "hidden",
+        transition: "border-color 0.3s",
+      }}
+    >
+      {isActive && (
+        <motion.div
+          layoutId="pillarGlow"
+          style={{
+            position: "absolute", inset: 0, borderRadius: 20,
+            background: `radial-gradient(ellipse at 30% 50%, ${pillar.glow}, transparent 70%)`,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
+        <span style={{ fontSize: "1.5rem" }}>{pillar.icon}</span>
+        <span style={{
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: "0.65rem", fontWeight: 800,
+          letterSpacing: "1.5px", textTransform: "uppercase",
+          color: isActive ? pillar.color : "rgba(255,255,255,0.4)",
+          transition: "color 0.3s",
+        }}>
+          {pillar.short}
+        </span>
+      </div>
+      <div style={{
+        fontFamily: "'Orbitron', sans-serif",
+        fontSize: "0.82rem", fontWeight: 700,
+        color: isActive ? "#ffffff" : "rgba(255,255,255,0.7)",
+        lineHeight: 1.4, transition: "color 0.3s",
+      }}>
+        {pillar.title}
+      </div>
+    </motion.button>
+  );
+}
+
+// ── MAIN PAGE ────────────────────────────────────────────────────────────────
+
+export default function FirstTimers() {
+  const [activePillar, setActivePillar] = useState(0);
+  const [activeFormat, setActiveFormat] = useState(null);
+  const [isDark, setIsDark] = useState(true);
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+  useEffect(() => {
+    setIsDark(document.body.classList.contains("dark-mode"));
+    const observer = new MutationObserver(() =>
+      setIsDark(document.body.classList.contains("dark-mode"))
+    );
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  const bg       = isDark ? "#07030f"              : "#f4f0ff";
+  const cardBg   = isDark ? "rgba(255,255,255,0.03)" : "rgba(122,63,209,0.05)";
+  const border   = isDark ? "rgba(255,255,255,0.08)" : "rgba(122,63,209,0.15)";
+  const textMain = isDark ? "#ffffff"              : "#0f0520";
+  const textMuted= isDark ? "rgba(200,180,255,0.65)": "rgba(80,50,140,0.65)";
+
+  return (
+    <div style={{ background: bg, minHeight: "100vh", color: textMain, fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
       <Navbar />
 
-      {/* ================= HEADER ================= */}
-      <div className="why-header">
-  <div className="container">
-    <h1>
-      Catalyzing Canada's
-      <span>Tech Future</span>
-    </h1>
+      {/* ── HERO ── */}
+      <section
+        ref={heroRef}
+        style={{
+          position: "relative", minHeight: "85vh",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          overflow: "hidden", paddingTop: 100,
+        }}
+      >
+        {/* Background grid */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          backgroundImage: `linear-gradient(rgba(122,63,209,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(122,63,209,0.06) 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+        }} />
 
-    <p>
-      The country’s deal-making platform where innovators,
-      buyers, investors, and policymakers meet to turn
-      emerging tech into real partnerships, pilots, and
-      contracts.
-    </p>
-  </div>
-</div>
+        {/* Orbs */}
+        <div style={{ position: "absolute", top: "10%", left: "5%", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(122,63,209,0.15), transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: "10%", right: "5%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(245,166,35,0.10), transparent 70%)", pointerEvents: "none" }} />
 
-      {/* ================= CONTENT ================= */}
-      <div className="container" style={{ paddingTop: "6rem" }}>
-        {/* ===== ROW 1 ===== */}
-        <div className="feature-row">
-          <div className="feature-text">
-            <h2>
-              Meet the <span>Decision Makers</span>
-            </h2>
+        <motion.div
+          style={{ y: heroY, opacity: heroOpacity, position: "relative", zIndex: 1, textAlign: "center", padding: "0 5%", maxWidth: 900, margin: "0 auto" }}
+        >
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "rgba(122,63,209,0.12)", border: "1px solid rgba(122,63,209,0.30)",
+              borderRadius: 999, padding: "6px 18px", marginBottom: 28,
+            }}
+          >
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px #f5a623", display: "inline-block" }} />
+            <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: "#c4a8ff" }}>
+              First Timers Guide
+            </span>
+          </motion.div>
 
-            <p>
-              Connect with enterprise decision-makers,
-              high-growth startups, policymakers, and
-              researchers. Get in the right room for
-              announcements and procurement conversations.
-            </p>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.7 }}
+            style={{
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "clamp(2.2rem, 5vw, 4rem)",
+              fontWeight: 900, lineHeight: 1.1,
+              marginBottom: 24,
+            }}
+          >
+            Welcome to{" "}
+            <span style={{
+              background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+            }}>
+              The Tech Festival Canada
+            </span>
+          </motion.h1>
 
-            <ul className="feature-list">
-              <li>
-                CIOs, CTOs, CDOs, and CISOs from enterprise
-                and public sectors.
-              </li>
-              <li>
-                VPs of Digital Transformation, Data &
-                Analytics, and Cloud.
-              </li>
-              <li>
-                Heads of Strategic Sourcing and Vendor
-                Management.
-              </li>
-            </ul>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.6 }}
+            style={{ fontSize: "1.05rem", color: textMuted, lineHeight: 1.8, maxWidth: 680, margin: "0 auto 40px" }}
+          >
+            If this is your first time, here is what to expect and how to get the most value from the experience. This is built for outcomes: clearer decisions, faster partnerships, and real momentum after the event.
+          </motion.p>
 
-            <a href="/speakers" className="btn-primary">
-              VIEW ATTENDEES
-            </a>
+          {/* Stats row */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}
+          >
+            {[
+              { val: 500, suffix: "+", label: "Decision Makers" },
+              { val: 5, suffix: "", label: "Tech Pillars" },
+              { val: 5, suffix: "", label: "Applied Sectors" },
+              { val: 1, suffix: " Day", label: "Oct 28, 2026" },
+            ].map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 + i * 0.1 }}
+                style={{
+                  background: "rgba(122,63,209,0.10)", border: "1px solid rgba(122,63,209,0.20)",
+                  borderRadius: 14, padding: "14px 24px", textAlign: "center",
+                }}
+              >
+                <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.4rem", fontWeight: 900, color: "#f5a623" }}>
+                  <Counter to={s.val} suffix={s.suffix} />
+                </div>
+                <div style={{ fontSize: "0.7rem", color: textMuted, letterSpacing: "0.8px", textTransform: "uppercase", marginTop: 2 }}>{s.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 1.8 }}
+          style={{ position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)", color: textMuted, fontSize: "0.7rem", textAlign: "center" }}
+        >
+          <div>↓</div>
+          <div style={{ letterSpacing: "1px", marginTop: 4 }}>SCROLL</div>
+        </motion.div>
+      </section>
+
+      {/* ── THE CONFERENCE ── */}
+      <section style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
+        <SectionLabel label="The Conference" />
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }}>
+          {/* Left: intro + pillar list */}
+          <div>
+            <motion.h2
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.8rem", fontWeight: 900, marginBottom: 16, lineHeight: 1.2 }}
+            >
+              Curated around<br />
+              <span style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                real-world impact
+              </span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              style={{ color: textMuted, lineHeight: 1.8, marginBottom: 32 }}
+            >
+              Our conference is curated around five tech pillars and the real-world sectors where they are being adopted. Every session is designed to unpack opportunities, challenges, and practical solutions you can take back to your organization.
+            </motion.p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {PILLARS.map((p, i) => (
+                <PillarCard
+                  key={p.id} pillar={p} index={i}
+                  isActive={activePillar === i}
+                  onClick={() => setActivePillar(i)}
+                />
+              ))}
+            </div>
           </div>
 
-          <div className="feature-img-wrapper">
-            <img
-              src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80"
-              alt="Networking Executives"
-            />
+          {/* Right: detail panel */}
+          <div style={{ position: "sticky", top: 120 }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activePillar}
+                initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.97 }}
+                transition={{ duration: 0.4 }}
+                style={{
+                  background: `linear-gradient(135deg, ${PILLARS[activePillar].color}18, ${PILLARS[activePillar].color}08)`,
+                  border: `1.5px solid ${PILLARS[activePillar].color}55`,
+                  borderRadius: 28, padding: "40px",
+                  position: "relative", overflow: "hidden",
+                }}
+              >
+                {/* Glow */}
+                <div style={{
+                  position: "absolute", top: -60, right: -60,
+                  width: 280, height: 280, borderRadius: "50%",
+                  background: `radial-gradient(circle, ${PILLARS[activePillar].glow}, transparent 70%)`,
+                  pointerEvents: "none",
+                }} />
+
+                <div style={{ fontSize: "3.5rem", marginBottom: 20 }}>{PILLARS[activePillar].icon}</div>
+
+                <div style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "0.65rem", fontWeight: 800,
+                  letterSpacing: "1.5px", textTransform: "uppercase",
+                  color: PILLARS[activePillar].color, marginBottom: 12,
+                }}>
+                  Tech Pillar {activePillar + 1} of 5
+                </div>
+
+                <h3 style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "1.3rem", fontWeight: 900,
+                  marginBottom: 20, lineHeight: 1.3,
+                }}>
+                  {PILLARS[activePillar].title}
+                </h3>
+
+                <p style={{ color: textMuted, lineHeight: 1.8, fontSize: "0.95rem" }}>
+                  {PILLARS[activePillar].description}
+                </p>
+
+                {/* Pillar dots nav */}
+                <div style={{ display: "flex", gap: 8, marginTop: 32 }}>
+                  {PILLARS.map((p, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActivePillar(i)}
+                      style={{
+                        width: activePillar === i ? 24 : 8,
+                        height: 8, borderRadius: 99,
+                        background: activePillar === i ? PILLARS[activePillar].color : "rgba(255,255,255,0.15)",
+                        border: "none", cursor: "pointer",
+                        transition: "all 0.3s",
+                        padding: 0,
+                      }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
+      </section>
 
-        {/* ===== ROW 2 ===== */}
-        <div className="feature-row reverse">
-          <div className="feature-text">
-            <h2>
-              Learn From <span>The Best</span>
-            </h2>
+      {/* ── APPLIED SECTORS ── */}
+      <section style={{ padding: "80px 5%", background: isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.04)", borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <SectionLabel label="Applied Sectors" />
 
-            <p>
-              Master the future-critical focus areas driving
-              Canada's economy. Every conversation maps to a
-              real industry problem and a path to scale.
-            </p>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.8rem", fontWeight: 900, marginBottom: 16, textAlign: "center" }}
+          >
+            Where the demand is urgent &{" "}
+            <span style={{ background: "linear-gradient(135deg, #f5a623, #7a3fd1)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              budgets are real
+            </span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            style={{ color: textMuted, textAlign: "center", maxWidth: 600, margin: "0 auto 48px", lineHeight: 1.8 }}
+          >
+            We bring these conversations into the sectors where deployment decisions are being made right now.
+          </motion.p>
 
-            <ul className="feature-list">
-              <li>
-                Deep dives into Artificial Intelligence (AI)
-                and Machine Learning.
-              </li>
-              <li>
-                Readiness strategies for Quantum Computing &
-                Security.
-              </li>
-              <li>
-                Implementing Sustainability & Climate Tech.
-              </li>
-            </ul>
-
-            <a href="/programme" className="btn-outline">
-              EXPLORE PROGRAMME
-            </a>
-          </div>
-
-          <div className="feature-img-wrapper">
-            <img
-              src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80"
-              alt="Keynote Speaker"
-            />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
+            {SECTORS.map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                style={{
+                  background: cardBg, border: `1.5px solid ${border}`,
+                  borderRadius: 20, padding: "28px 20px", textAlign: "center",
+                  cursor: "default", position: "relative", overflow: "hidden",
+                }}
+              >
+                <div style={{
+                  position: "absolute", top: 0, left: 0, right: 0, height: 3,
+                  background: `linear-gradient(90deg, ${s.color}, transparent)`,
+                  borderRadius: "20px 20px 0 0",
+                }} />
+                <div style={{ fontSize: "2rem", marginBottom: 12 }}>{s.icon}</div>
+                <div style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "0.72rem", fontWeight: 700,
+                  color: textMain, lineHeight: 1.4,
+                }}>
+                  {s.label}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* ===== ROW 3 ===== */}
-        <div className="feature-row">
-          <div className="feature-text">
-            <h2>
-              Discuss Topics & <span>Network</span>
-            </h2>
+      {/* ── WHERE PILLARS MEET SECTORS ── */}
+      <section style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
+        <SectionLabel label="Where Pillars Meet Sectors" />
 
-            <p>
-              Designed for outcomes. Experience high-signal
-              networking across complementary stakeholders—
-              industry, government, and academia.
-            </p>
-
-            <ul className="feature-list">
-              <li>Dedicated Business Matching sessions.</li>
-              <li>
-                Exclusive CxO Breakfasts and VIP Policy
-                Roundtables.
-              </li>
-              <li>
-                Official closing Gala Dinner at The Carlu.
-              </li>
-            </ul>
-
-            
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
+          <div>
+            <motion.h2
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.8rem", fontWeight: 900, marginBottom: 20, lineHeight: 1.2 }}
+            >
+              This is where the{" "}
+              <span style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                magic happens
+              </span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              style={{ color: textMuted, lineHeight: 1.9, fontSize: "0.98rem", marginBottom: 28 }}
+            >
+              You will see how each pillar translates into real use cases inside each sector — who is buying, what procurement looks like, and what it takes to implement successfully.
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15 }}
+              style={{ color: textMuted, lineHeight: 1.9, fontSize: "0.98rem" }}
+            >
+              The goal is to connect solution providers with decision makers who need outcomes, so conversations can move from interest to pilots to partnerships and contracts.
+            </motion.p>
           </div>
 
-          <div className="feature-img-wrapper">
-            <img
-              src="https://images.unsplash.com/photo-1528605105345-5344ea20e269?w=800&q=80"
-              alt="Roundtable Networking"
-            />
-          </div>
-          <a href="/tickets" className="btn-primary">
-              SECURE YOUR PASS
-            </a>
+          {/* Intersection grid visual */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            style={{ position: "relative" }}
+          >
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "auto repeat(5, 1fr)",
+              gap: 4,
+              fontSize: "0.6rem",
+            }}>
+              {/* Header row */}
+              <div />
+              {PILLARS.map(p => (
+                <div key={p.id} style={{
+                  background: `${p.color}22`, border: `1px solid ${p.color}44`,
+                  borderRadius: 8, padding: "8px 4px", textAlign: "center",
+                  color: p.color, fontFamily: "'Orbitron', sans-serif",
+                  fontWeight: 700, fontSize: "0.55rem", letterSpacing: "0.5px",
+                }}>
+                  {p.short}
+                </div>
+              ))}
+              {/* Sector rows */}
+              {SECTORS.map((sector, si) => (
+                <>
+                  <div key={`label-${si}`} style={{
+                    display: "flex", alignItems: "center", gap: 4,
+                    padding: "8px 8px", color: textMuted,
+                    fontSize: "0.6rem", fontWeight: 600, whiteSpace: "nowrap",
+                  }}>
+                    <span>{sector.icon}</span>
+                    <span style={{ maxWidth: 70, overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {sector.label.split(",")[0]}
+                    </span>
+                  </div>
+                  {PILLARS.map((pillar, pi) => (
+                    <motion.div
+                      key={`${si}-${pi}`}
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: (si * 5 + pi) * 0.02 }}
+                      whileHover={{ scale: 1.3 }}
+                      style={{
+                        background: `linear-gradient(135deg, ${pillar.color}25, ${sector.color}20)`,
+                        border: `1px solid ${pillar.color}33`,
+                        borderRadius: 6, aspectRatio: "1",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        cursor: "default",
+                        color: pillar.color, fontSize: "0.75rem",
+                      }}
+                    >
+                      ✦
+                    </motion.div>
+                  ))}
+                </>
+              ))}
+            </div>
+          </motion.div>
         </div>
-      </div>
+      </section>
+
+      {/* ── EVENT FORMATS ── */}
+      <section style={{ padding: "80px 5%", background: isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.04)", borderTop: `1px solid ${border}` }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <SectionLabel label="What's On" />
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.8rem", fontWeight: 900, marginBottom: 12, textAlign: "center" }}
+          >
+            Five ways to{" "}
+            <span style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              engage
+            </span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            style={{ color: textMuted, textAlign: "center", marginBottom: 48, maxWidth: 500, margin: "0 auto 48px" }}
+          >
+            Click on any format to learn more about what to expect.
+          </motion.p>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16, marginBottom: 32 }}>
+            {FORMATS.map((f, i) => (
+              <motion.button
+                key={f.title}
+                onClick={() => setActiveFormat(activeFormat === i ? null : i)}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -4 }}
+                style={{
+                  background: activeFormat === i
+                    ? `linear-gradient(135deg, ${f.color}22, ${f.color}10)`
+                    : cardBg,
+                  border: `1.5px solid ${activeFormat === i ? f.color : border}`,
+                  borderRadius: 20, padding: "28px 18px", cursor: "pointer",
+                  textAlign: "center", transition: "all 0.3s",
+                  position: "relative", overflow: "hidden",
+                }}
+              >
+                {activeFormat === i && (
+                  <div style={{
+                    position: "absolute", inset: 0, borderRadius: 20,
+                    background: `radial-gradient(ellipse at 50% 0%, ${f.color}30, transparent 70%)`,
+                    pointerEvents: "none",
+                  }} />
+                )}
+                <div style={{ fontSize: "2rem", marginBottom: 12 }}>{f.icon}</div>
+                <div style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "0.72rem", fontWeight: 800,
+                  color: activeFormat === i ? f.color : textMain,
+                  lineHeight: 1.4, transition: "color 0.3s",
+                }}>
+                  {f.title}
+                </div>
+                <div style={{
+                  marginTop: 10, fontSize: "0.65rem",
+                  color: activeFormat === i ? f.color : textMuted,
+                  transition: "color 0.3s",
+                }}>
+                  {activeFormat === i ? "▲ Close" : "▼ Learn more"}
+                </div>
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Expanded description */}
+          <AnimatePresence>
+            {activeFormat !== null && (
+              <motion.div
+                key={activeFormat}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: "hidden" }}
+              >
+                <div style={{
+                  background: `linear-gradient(135deg, ${FORMATS[activeFormat].color}15, ${FORMATS[activeFormat].color}08)`,
+                  border: `1.5px solid ${FORMATS[activeFormat].color}44`,
+                  borderRadius: 20, padding: "32px 40px",
+                  display: "flex", alignItems: "flex-start", gap: 20,
+                }}>
+                  <span style={{ fontSize: "2.5rem", flexShrink: 0 }}>{FORMATS[activeFormat].icon}</span>
+                  <div>
+                    <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.1rem", fontWeight: 800, color: FORMATS[activeFormat].color, marginBottom: 12 }}>
+                      {FORMATS[activeFormat].title}
+                    </h3>
+                    <p style={{ color: textMuted, lineHeight: 1.9, maxWidth: 700 }}>
+                      {FORMATS[activeFormat].description}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* ── BOTTOM CTA ── */}
+      <section style={{ padding: "100px 5%", textAlign: "center" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ maxWidth: 700, margin: "0 auto" }}
+        >
+          <div style={{ fontSize: "3rem", marginBottom: 20 }}>🚀</div>
+          <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", fontWeight: 900, marginBottom: 16 }}>
+            Ready to{" "}
+            <span style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              show up prepared?
+            </span>
+          </h2>
+          <p style={{ color: textMuted, lineHeight: 1.8, marginBottom: 36, fontSize: "1rem" }}>
+            Secure your seat at The Carlu, Toronto on October 28, 2026. Spaces are limited — this is not a conference you attend passively.
+          </p>
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+            <motion.a
+              href="/tickets"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
+                color: "white", padding: "15px 36px", borderRadius: 14,
+                fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
+                fontSize: "0.85rem", textDecoration: "none",
+                letterSpacing: "0.5px",
+              }}
+            >
+              ✦ Get Your Tickets
+            </motion.a>
+            <motion.a
+              href="/speakers"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                background: "transparent",
+                border: "1.5px solid rgba(122,63,209,0.5)",
+                color: textMain, padding: "15px 36px", borderRadius: 14,
+                fontFamily: "'Orbitron', sans-serif", fontWeight: 700,
+                fontSize: "0.85rem", textDecoration: "none",
+              }}
+            >
+              View Speakers →
+            </motion.a>
+          </div>
+        </motion.div>
+      </section>
 
       <Footer />
-    </>
+    </div>
+  );
+}
+
+// ── SECTION LABEL ─────────────────────────────────────────────────────────────
+
+function SectionLabel({ label }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: 8,
+        background: "rgba(122,63,209,0.10)", border: "1px solid rgba(122,63,209,0.25)",
+        borderRadius: 999, padding: "5px 16px", marginBottom: 24,
+      }}
+    >
+      <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 6px #f5a623", display: "inline-block" }} />
+      <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: "#c4a8ff" }}>
+        {label}
+      </span>
+    </motion.div>
   );
 }

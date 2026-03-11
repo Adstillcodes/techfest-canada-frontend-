@@ -170,6 +170,7 @@ export default function AdminInventory() {
                   <td>
                     <input
                       type="number"
+                      className="inventory-input"
                       defaultValue={item.total}
                       onBlur={(e) =>
                         updatePrice(item.tier, e.target.value)
@@ -182,7 +183,9 @@ export default function AdminInventory() {
                   <td>
                     <input
                       type="number"
-                      defaultValue={item.total}
+                      className="inventory-input"
+                      
+                     defaultValue={item.total}
                       onBlur={(e) =>
                         updateTotal(item.tier, e.target.value)
                       }

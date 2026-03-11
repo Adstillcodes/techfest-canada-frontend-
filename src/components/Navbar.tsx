@@ -65,6 +65,7 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
+  
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);

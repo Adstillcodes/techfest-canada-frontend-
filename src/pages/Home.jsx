@@ -321,6 +321,39 @@ export default function Home() {
           pointer-events: none;
         }
 
+        /* ──────────── FLOATING SIDE CARDS ──────────── */
+        .hero-float {
+          position: absolute;
+          z-index: 6;
+          pointer-events: none;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          padding: 16px 20px;
+          border-radius: 16px;
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+        }
+        .hero-float-num {
+          font-family: 'Orbitron', sans-serif;
+          font-weight: 900;
+          font-size: 1.3rem;
+          line-height: 1;
+        }
+        .hero-float-label {
+          font-size: 0.58rem;
+          font-weight: 700;
+          letter-spacing: 1.2px;
+          text-transform: uppercase;
+          line-height: 1.2;
+        }
+        .hero-float-icon {
+          width: 28px; height: 28px;
+          border-radius: 8px;
+          display: flex; align-items: center; justify-content: center;
+          margin-bottom: 4px;
+        }
+
         /* ──────────── RESPONSIVE ──────────── */
         @media (max-width: 640px) {
           .hero-ctas-wrap { flex-direction: column !important; width: 100% !important; }
@@ -328,6 +361,9 @@ export default function Home() {
           .hero-sub { text-align: left !important; }
           .hero-stat { padding: 14px 18px !important; }
           .hero-stats { border-radius: 16px !important; }
+        }
+        @media (max-width: 1100px) {
+          .hero-float { display: none !important; }
         }
       `}</style>
 
@@ -375,6 +411,113 @@ export default function Home() {
           filter: "blur(100px)",
         }} />
 
+        {/* ── FLOATING SIDE ELEMENTS ── */}
+
+        {/* LEFT — top: Decision Makers */}
+        <motion.div
+          className="hero-float"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "spring", bounce: 0.25, duration: 1.6, delay: 1.6 }}
+          style={{
+            left: "3%",
+            top: "28%",
+            background: dark ? "rgba(122,63,209,0.08)" : "rgba(122,63,209,0.04)",
+            border: "1px solid " + (dark ? "rgba(155,135,245,0.15)" : "rgba(122,63,209,0.10)"),
+          }}
+        >
+          <div className="hero-float-icon" style={{
+            background: dark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.10)",
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <span className="hero-float-num" style={{ color: dark ? "#ffffff" : "#0d0520" }}>500+</span>
+          <span className="hero-float-label" style={{ color: textSoft }}>Decision Makers</span>
+        </motion.div>
+
+        {/* LEFT — bottom: One Day Format */}
+        <motion.div
+          className="hero-float"
+          initial={{ opacity: 0, x: -25 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "spring", bounce: 0.25, duration: 1.6, delay: 2.0 }}
+          style={{
+            left: "5%",
+            top: "55%",
+            background: dark ? "rgba(245,166,35,0.06)" : "rgba(245,166,35,0.04)",
+            border: "1px solid " + (dark ? "rgba(245,166,35,0.15)" : "rgba(245,166,35,0.10)"),
+          }}
+        >
+          <div className="hero-float-icon" style={{
+            background: dark ? "rgba(245,166,35,0.15)" : "rgba(245,166,35,0.08)",
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange, #f5a623)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <span className="hero-float-num" style={{ color: dark ? "#ffffff" : "#0d0520" }}>1 Day</span>
+          <span className="hero-float-label" style={{ color: textSoft }}>Unlimited Momentum</span>
+        </motion.div>
+
+        {/* RIGHT — top: Tech Pillars */}
+        <motion.div
+          className="hero-float"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "spring", bounce: 0.25, duration: 1.6, delay: 1.8 }}
+          style={{
+            right: "3%",
+            top: "28%",
+            alignItems: "flex-end",
+            textAlign: "right",
+            background: dark ? "rgba(155,135,245,0.06)" : "rgba(155,135,245,0.04)",
+            border: "1px solid " + (dark ? "rgba(155,135,245,0.15)" : "rgba(155,135,245,0.08)"),
+          }}
+        >
+          <div className="hero-float-icon" style={{
+            background: dark ? "rgba(155,135,245,0.15)" : "rgba(155,135,245,0.08)",
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </div>
+          <span className="hero-float-num" style={{ color: dark ? "#ffffff" : "#0d0520" }}>5</span>
+          <span className="hero-float-label" style={{ color: textSoft }}>Tech Pillars</span>
+        </motion.div>
+
+        {/* RIGHT — bottom: Venue */}
+        <motion.div
+          className="hero-float"
+          initial={{ opacity: 0, x: 25 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "spring", bounce: 0.25, duration: 1.6, delay: 2.2 }}
+          style={{
+            right: "5%",
+            top: "55%",
+            alignItems: "flex-end",
+            textAlign: "right",
+            background: dark ? "rgba(122,63,209,0.06)" : "rgba(122,63,209,0.03)",
+            border: "1px solid " + (dark ? "rgba(122,63,209,0.15)" : "rgba(122,63,209,0.08)"),
+          }}
+        >
+          <div className="hero-float-icon" style={{
+            background: dark ? "rgba(122,63,209,0.15)" : "rgba(122,63,209,0.08)",
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+          </div>
+          <span className="hero-float-num" style={{ color: dark ? "#ffffff" : "#0d0520", fontSize: "1rem" }}>The Carlu</span>
+          <span className="hero-float-label" style={{ color: textSoft }}>Historic Venue</span>
+        </motion.div>
+
         {/* ── HERO CONTENT ── */}
         <div
           style={{
@@ -402,35 +545,6 @@ export default function Home() {
               width: "100%",
             }}
           >
-            {/* Eyebrow badge */}
-            <motion.div
-              variants={itemBlur}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "8px 22px",
-                borderRadius: 999,
-                background: pillBg,
-                border: "1px solid " + pillBdr,
-                color: accent,
-                fontSize: "0.7rem",
-                fontWeight: 700,
-                letterSpacing: "1.8px",
-                textTransform: "uppercase",
-                marginBottom: "2rem",
-                backdropFilter: "blur(10px)",
-              }}
-            >
-              <span style={{
-                width: 6, height: 6, borderRadius: "50%",
-                background: "var(--brand-orange, #f5a623)",
-                boxShadow: "0 0 10px var(--brand-orange, #f5a623)",
-                animation: "dot-pulse 2.2s ease infinite",
-              }} />
-              Canada's Premier Tech Conference
-            </motion.div>
-
             {/* Logo */}
             <motion.div variants={itemBlur} style={{ marginBottom: "0.6rem" }}>
               <img
@@ -450,29 +564,54 @@ export default function Home() {
               />
             </motion.div>
 
-            {/* Event date pill */}
+            {/* Event pills row */}
             <motion.div
               variants={itemBlur}
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: "1.6rem",
+                flexWrap: "wrap",
+                justifyContent: "center",
+              }}
+            >
+              <div style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 8,
                 padding: "10px 28px",
                 borderRadius: 999,
                 background: dark ? "rgba(255,255,255,0.06)" : "rgba(13,5,32,0.05)",
                 border: "1px solid " + (dark ? "rgba(255,255,255,0.12)" : "rgba(13,5,32,0.12)"),
-                marginBottom: "1.6rem",
-              }}
-            >
-              <span style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: "clamp(0.85rem, 1.8vw, 1.1rem)",
-                fontWeight: 800,
-                letterSpacing: "1.5px",
-                color: dark ? "#ffffff" : "#0d0520",
               }}>
-                Oct 28, 2026
-              </span>
+                <span style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "clamp(0.85rem, 1.8vw, 1.1rem)",
+                  fontWeight: 800,
+                  letterSpacing: "1.5px",
+                  color: dark ? "#ffffff" : "#0d0520",
+                }}>
+                  Oct 28, 2026
+                </span>
+              </div>
+              <div style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "10px 28px",
+                borderRadius: 999,
+                background: dark ? "rgba(255,255,255,0.06)" : "rgba(13,5,32,0.05)",
+                border: "1px solid " + (dark ? "rgba(255,255,255,0.12)" : "rgba(13,5,32,0.12)"),
+              }}>
+                <span style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "clamp(0.85rem, 1.8vw, 1.1rem)",
+                  fontWeight: 800,
+                  letterSpacing: "1.5px",
+                  color: dark ? "#ffffff" : "#0d0520",
+                }}>
+                  Toronto, ON
+                </span>
+              </div>
             </motion.div>
 
             {/* Headline: MEET · BUILD · SCALE */}
@@ -485,10 +624,11 @@ export default function Home() {
                 lineHeight: 1.08,
                 marginBottom: "0.4rem",
                 display: "flex",
-                flexWrap: "wrap",
+                flexWrap: "nowrap",
                 justifyContent: "center",
-                gap: "0.55rem",
+                gap: "0.5em",
                 letterSpacing: "-0.5px",
+                whiteSpace: "nowrap",
               }}
             >
               {WORDS.map(function (word, i) {

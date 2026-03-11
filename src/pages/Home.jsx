@@ -6,12 +6,15 @@ import { EventCountdown } from "../components/ui/EventCountdown";
 import { useEffect, useState } from "react";
 import InquiryModal from "../components/InquiryModal";
 import CookieConsent from "../components/CookieConsent";
+import PostPurchaseModal from "../components/PostPurchaseModal";
 import OnboardingSurvey from "../components/OnboardingSurvey";
 
 export default function Home() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [surveyOpen, setSurveyOpen] = useState(false);
   const [surveyName, setSurveyName] = useState("");
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
+  const [purchaseTicketType, setPurchaseTicketType] = useState("");
   const [cursorPos, setCursorPos] = useState({ x: -999, y: -999 });
   const [isDarkMode, setIsDarkMode] = useState(
     () => typeof document !== "undefined" && document.body.classList.contains("dark-mode")
@@ -39,6 +42,16 @@ export default function Home() {
     };
     window.addEventListener("showSurvey", handler);
     return () => window.removeEventListener("showSurvey", handler);
+  }, []);
+
+  useEffect(() => {
+    const handlePurchase = (e) => {
+      const detail = e.detail;
+      setPurchaseTicketType(detail?.ticketType || "Delegate Pass");
+      setPurchaseOpen(true);
+    };
+    window.addEventListener("purchaseComplete", handlePurchase);
+    return () => window.removeEventListener("purchaseComplete", handlePurchase);
   }, []);
 
 
@@ -316,6 +329,12 @@ export default function Home() {
       <InquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} />
 
       <CookieConsent />
+
+      <PostPurchaseModal
+        isOpen={purchaseOpen}
+        onClose={() => setPurchaseOpen(false)}
+        ticketType={purchaseTicketType}
+      />
 
       <OnboardingSurvey
         isOpen={surveyOpen}

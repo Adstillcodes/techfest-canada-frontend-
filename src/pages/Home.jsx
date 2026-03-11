@@ -108,106 +108,6 @@ function AnimatedCounter(props) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PILLAR TAGS — entrance animated
-   ═══════════════════════════════════════════════════════ */
-var PILLARS = [
-  { name: "Artificial Intelligence", hue: "122,63,209" },
-  { name: "Cybersecurity",           hue: "245,166,35" },
-  { name: "Cloud & SaaS",            hue: "56,189,248" },
-  { name: "Fintech",                 hue: "34,211,238" },
-  { name: "GreenTech",               hue: "74,222,128" },
-];
-
-function PillarShowcase(props) {
-  var dark = props.dark;
-  var ref = useRef(null);
-  var isInView = useInView(ref, { once: true, margin: "-80px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ type: "spring", stiffness: 80, damping: 20, duration: 1.2 }}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "2rem",
-        padding: "5rem 6% 4rem",
-        textAlign: "center",
-      }}
-    >
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 0.2, duration: 0.8 }}
-        style={{
-          fontSize: "0.66rem",
-          fontWeight: 700,
-          letterSpacing: "2.2px",
-          textTransform: "uppercase",
-          color: dark ? "rgba(200,185,255,0.4)" : "rgba(90,40,180,0.4)",
-        }}
-      >
-        Five Technology Pillars
-      </motion.p>
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", justifyContent: "center", maxWidth: 740 }}>
-        {PILLARS.map(function (p, i) {
-          return (
-            <motion.span
-              key={p.name}
-              initial={{ opacity: 0, filter: "blur(10px)", y: 14 }}
-              animate={isInView ? { opacity: 1, filter: "blur(0px)", y: 0 } : {}}
-              transition={{
-                type: "spring",
-                bounce: 0.3,
-                duration: 1.2,
-                delay: 0.3 + i * 0.09,
-              }}
-              whileHover={{ y: -3, scale: 1.04 }}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "12px 26px",
-                borderRadius: "14px",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                letterSpacing: "0.4px",
-                background: "rgba(" + p.hue + ",0.08)",
-                border: "1px solid rgba(" + p.hue + ",0.2)",
-                color: "rgb(" + p.hue + ")",
-                cursor: "default",
-              }}
-            >
-              {p.name}
-            </motion.span>
-          );
-        })}
-      </div>
-
-      <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.8, duration: 0.9 }}
-        style={{
-          fontSize: "clamp(0.95rem, 1.4vw, 1.08rem)",
-          lineHeight: 1.82,
-          color: dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.58)",
-          maxWidth: 560,
-          textAlign: "center",
-        }}
-      >
-        Each pillar features curated matchmaking, live demos, and
-        investment-ready showcases designed to accelerate real business outcomes.
-      </motion.p>
-    </motion.div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════
    HOME PAGE
    ═══════════════════════════════════════════════════════ */
 export default function Home() {
@@ -532,7 +432,7 @@ export default function Home() {
             </motion.div>
 
             {/* Logo */}
-            <motion.div variants={itemBlur} style={{ marginBottom: "1.6rem" }}>
+            <motion.div variants={itemBlur} style={{ marginBottom: "0.6rem" }}>
               <img
                 src={dark
                   ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
@@ -559,9 +459,9 @@ export default function Home() {
                 gap: 8,
                 padding: "10px 28px",
                 borderRadius: 999,
-                background: dark ? "rgba(245,166,35,0.12)" : "rgba(245,166,35,0.10)",
-                border: "1px solid " + (dark ? "rgba(245,166,35,0.28)" : "rgba(245,166,35,0.25)"),
-                marginBottom: "1.8rem",
+                background: dark ? "rgba(255,255,255,0.06)" : "rgba(13,5,32,0.05)",
+                border: "1px solid " + (dark ? "rgba(255,255,255,0.12)" : "rgba(13,5,32,0.12)"),
+                marginBottom: "1.6rem",
               }}
             >
               <span style={{
@@ -569,7 +469,7 @@ export default function Home() {
                 fontSize: "clamp(0.85rem, 1.8vw, 1.1rem)",
                 fontWeight: 800,
                 letterSpacing: "1.5px",
-                color: dark ? "#f7c15e" : "#d48a0a",
+                color: dark ? "#ffffff" : "#0d0520",
               }}>
                 Oct 28, 2026
               </span>
@@ -842,13 +742,6 @@ export default function Home() {
           background: "linear-gradient(to bottom, transparent, " + bg + ")",
           pointerEvents: "none",
         }} />
-      </section>
-
-      {/* ════════════════════════════════════════════
-          PILLAR SHOWCASE
-          ════════════════════════════════════════════ */}
-      <section style={{ background: bg }}>
-        <PillarShowcase dark={dark} />
       </section>
 
       {/* ════════════════════════════════════════════

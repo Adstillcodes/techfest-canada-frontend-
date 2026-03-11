@@ -4,64 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "./AuthModal";
 import { fetchMe } from "../utils/api";
 
-type User = { _id: string; name: string; email: string; role?: string; };
-type TabPosition = { left: number; width: number; opacity: number };
-type TabProps = {
-  children: React.ReactNode;
-  setPosition: React.Dispatch<React.SetStateAction<TabPosition>>;
-  onClick: () => void;
-  to: string;
-  isActive: boolean;
-};
+type User = { _id: string; name: string; email: string; role?: string };
 
-/* ── SLIDING CURSOR ── */
-const Cursor = ({ position }: { position: TabPosition }) => (
-  <motion.li
-    animate={position}
-    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-    style={{
-      position: "absolute", top: 4, bottom: 4,
-      borderRadius: 999,
-      background: "linear-gradient(135deg, var(--brand-purple), var(--brand-orange))",
-      zIndex: 0, opacity: position.opacity,
-    }}
-  />
-);
-
-const Tab = React.forwardRef<HTMLLIElement, TabProps>(
-  ({ children, setPosition, onClick, to, isActive }, ref) => (
-    <li
-      ref={ref}
-      onMouseEnter={() => {
-        if (!ref || typeof ref === "function") return;
-        const el = (ref as React.RefObject<HTMLLIElement>).current;
-        if (!el) return;
-        setPosition({ left: el.offsetLeft, width: el.offsetWidth, opacity: 1 });
-      }}
-      style={{ position: "relative", zIndex: 1, listStyle: "none" }}
-    >
-      <Link to={to} onClick={onClick} style={{
-        display: "block", padding: "8px 18px", borderRadius: 999,
-        fontSize: "0.72rem", fontWeight: 800, fontFamily: "'Orbitron', sans-serif",
-        letterSpacing: "0.8px", textTransform: "uppercase",
-        color: isActive ? "#fff" : "var(--text-muted)",
-        textDecoration: "none", transition: "color 0.2s", whiteSpace: "nowrap",
-      }}>
-        {children}
-      </Link>
-    </li>
-  )
-);
-
-/* ── MAIN ── */
 export default function Navbar() {
   const [authOpen, setAuthOpen]     = useState(false);
   const [theme, setTheme]           = useState<"light" | "dark">("light");
   const [user, setUser]             = useState<User | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location                    = useLocation();
-  const [position, setPosition]     = useState<TabPosition>({ left: 0, width: 0, opacity: 0 });
-  const tabsRef                     = useRef<(HTMLLIElement | null)[]>([]);
 
   const navItems = [
     { label: "HOME",         path: "/" },
@@ -70,15 +20,11 @@ export default function Navbar() {
     { label: "SPEAKERS",     path: "/speakers" },
     { label: "AGENDA",       path: "/agenda" },
   ];
+
   const loggedIn = !!user;
   const isAdmin  = user?.role === "admin";
   if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
   const activeIndex = navItems.findIndex(i => i.path === location.pathname);
-
-  useEffect(() => {
-    const tab = tabsRef.current[activeIndex];
-    if (tab) setPosition({ left: tab.offsetLeft, width: tab.offsetWidth, opacity: 1 });
-  }, [activeIndex, location.pathname]);
 
   useEffect(() => {
     const load = async () => {
@@ -102,21 +48,20 @@ export default function Navbar() {
     document.documentElement.classList.toggle("dark", saved === "dark");
   }, []);
 
-  /* Lock body scroll when sheet open */
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
       document.body.style.position = "fixed";
-      document.body.style.width = "100%";
+      document.body.style.width    = "100%";
     } else {
       document.body.style.overflow = "";
       document.body.style.position = "";
-      document.body.style.width = "";
+      document.body.style.width    = "";
     }
     return () => {
       document.body.style.overflow = "";
       document.body.style.position = "";
-      document.body.style.width = "";
+      document.body.style.width    = "";
     };
   }, [mobileOpen]);
 
@@ -137,11 +82,10 @@ export default function Navbar() {
 
   const isDark = theme === "dark";
   const borderCol = isDark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.12)";
-  const textCol   = isDark ? "rgba(255,255,255,0.75)" : "rgba(15,5,32,0.75)";
 
   return (
     <>
-      {/* ════ STICKY NAV BAR ════ */}
+      {/* ════ STICKY NAV ════ */}
       <nav style={{
         height: 80, display: "flex", alignItems: "center", width: "100%",
         position: "sticky", top: 0, zIndex: 1000,
@@ -166,38 +110,78 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* DESKTOP TABS */}
+          {/* DESKTOP TABS — tubelight pill */}
           <div className="tfc-desk-nav">
-            <ul style={{
-              position: "relative", display: "flex", alignItems: "center", borderRadius: 999,
+            <div style={{
+              display: "flex", alignItems: "center", gap: 2,
+              background: isDark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.04)",
               border: `1px solid ${borderCol}`,
-              background: isDark ? "rgba(122,63,209,0.06)" : "rgba(122,63,209,0.04)",
-              padding: "4px", margin: 0, listStyle: "none",
+              borderRadius: 999, padding: "4px",
             }}>
-              {navItems.map((item, i) => (
-                <Tab
-                  key={item.path} to={item.path}
-                  ref={(el: HTMLLIElement | null) => { if (el) tabsRef.current[i] = el; }}
-                  setPosition={setPosition} onClick={() => {}} isActive={activeIndex === i}
-                >
-                  {item.label}
-                </Tab>
-              ))}
-              <Cursor position={position} />
-            </ul>
+              {navItems.map((item, i) => {
+                const isActive = activeIndex === i;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    style={{
+                      position: "relative",
+                      padding: "8px 18px",
+                      borderRadius: 999,
+                      fontSize: "0.72rem", fontWeight: 800,
+                      fontFamily: "'Orbitron', sans-serif",
+                      letterSpacing: "0.8px", textTransform: "uppercase",
+                      color: isActive ? "#fff" : (isDark ? "rgba(255,255,255,0.55)" : "rgba(15,5,32,0.55)"),
+                      textDecoration: "none", whiteSpace: "nowrap",
+                      transition: "color 0.2s",
+                      zIndex: 1,
+                    }}
+                  >
+                    {item.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="tfc-lamp-bg"
+                        style={{
+                          position: "absolute", inset: 0, borderRadius: 999,
+                          background: "linear-gradient(135deg, var(--brand-purple), #9b68ff)",
+                          zIndex: -1,
+                        }}
+                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      />
+                    )}
+                    {/* Tubelight glow above active tab */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="tfc-lamp-glow"
+                        style={{
+                          position: "absolute",
+                          top: -2, left: "50%",
+                          transform: "translateX(-50%)",
+                          width: 32, height: 3,
+                          borderRadius: "0 0 4px 4px",
+                          background: "var(--brand-orange)",
+                          boxShadow: "0 0 12px 4px rgba(245,166,35,0.6)",
+                        }}
+                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* RIGHT ACTIONS */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
 
-            {/* Desktop buttons */}
             <div className="tfc-desk-actions">
               {!loggedIn ? (
                 <button onClick={() => setAuthOpen(true)} style={{
                   padding: "0 22px", height: 40, borderRadius: 999,
                   background: "var(--brand-purple)", color: "#fff", border: "none",
                   fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                  fontSize: "0.68rem", letterSpacing: "0.8px", cursor: "pointer", textTransform: "uppercase",
+                  fontSize: "0.68rem", letterSpacing: "0.8px", cursor: "pointer",
+                  textTransform: "uppercase",
                 }}>MY ACCOUNT</button>
               ) : (
                 <Link to="/dashboard" style={{
@@ -209,7 +193,8 @@ export default function Navbar() {
                 }}>MY ACCOUNT</Link>
               )}
               <Link to="/tickets" style={{
-                padding: "0 22px", height: 40, borderRadius: 999, background: "transparent",
+                padding: "0 22px", height: 40, borderRadius: 999,
+                background: "transparent",
                 border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`,
                 color: isDark ? "#fff" : "#0f0520",
                 fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
@@ -218,14 +203,11 @@ export default function Navbar() {
               }}>TICKETS</Link>
             </div>
 
-            {/* Theme toggle */}
             <button onClick={toggleTheme} style={{
               width: 38, height: 38, borderRadius: "50%", border: `1px solid ${borderCol}`,
               background: "transparent", cursor: "pointer", fontSize: "1rem",
               display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              {isDark ? "☀️" : "🌙"}
-            </button>
+            }}>{isDark ? "☀️" : "🌙"}</button>
 
             {/* Hamburger */}
             <button
@@ -273,7 +255,7 @@ export default function Navbar() {
                 position: "fixed", top: 0, right: 0, bottom: 0,
                 width: "min(340px, 90vw)", zIndex: 99999,
                 background: isDark ? "#0a0518" : "#ffffff",
-                borderLeft: `1px solid ${isDark ? "rgba(122,63,209,0.28)" : "rgba(122,63,209,0.18)"}`,
+                borderLeft: `1px solid ${borderCol}`,
                 boxShadow: "-24px 0 80px rgba(0,0,0,0.5)",
                 display: "flex", flexDirection: "column", overflowY: "auto",
               }}
@@ -282,7 +264,7 @@ export default function Navbar() {
               <div style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between",
                 padding: "18px 22px",
-                borderBottom: `1px solid ${isDark ? "rgba(122,63,209,0.15)" : "rgba(122,63,209,0.10)"}`,
+                borderBottom: `1px solid ${borderCol}`,
               }}>
                 <img
                   src={isDark
@@ -291,8 +273,7 @@ export default function Navbar() {
                   alt="TFC" style={{ height: 34, width: "auto" }}
                 />
                 <button onClick={() => setMobileOpen(false)} style={{
-                  width: 32, height: 32, borderRadius: "50%",
-                  border: `1px solid ${borderCol}`,
+                  width: 32, height: 32, borderRadius: "50%", border: `1px solid ${borderCol}`,
                   background: "transparent", cursor: "pointer",
                   color: isDark ? "#fff" : "#0f0520", fontSize: "1rem",
                   display: "flex", alignItems: "center", justifyContent: "center",
@@ -302,42 +283,54 @@ export default function Navbar() {
               {/* Nav links */}
               <div style={{ padding: "22px 20px", flex: 1 }}>
                 <p style={{
-                  fontSize: "0.58rem", fontWeight: 800, letterSpacing: "1.6px", textTransform: "uppercase",
-                  color: isDark ? "rgba(196,168,255,0.45)" : "rgba(122,63,209,0.45)", marginBottom: 12,
+                  fontSize: "0.58rem", fontWeight: 800, letterSpacing: "1.6px",
+                  textTransform: "uppercase",
+                  color: isDark ? "rgba(196,168,255,0.45)" : "rgba(122,63,209,0.45)",
+                  marginBottom: 12,
                 }}>Navigation</p>
+
                 <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 28 }}>
-                  {navItems.map((item) => (
+                  {navItems.map((item, i) => (
                     <Link
-                      key={item.path} to={item.path}
+                      key={item.path}
+                      to={item.path}
                       onClick={() => setMobileOpen(false)}
                       style={{
                         display: "flex", alignItems: "center", justifyContent: "space-between",
                         padding: "13px 16px", borderRadius: 12,
-                        background: activeIndex === navItems.indexOf(item)
-                          ? isDark ? "rgba(122,63,209,0.16)" : "rgba(122,63,209,0.08)"
+                        background: activeIndex === i
+                          ? (isDark ? "rgba(122,63,209,0.16)" : "rgba(122,63,209,0.08)")
                           : "transparent",
-                        border: `1px solid ${activeIndex === navItems.indexOf(item) ? "rgba(122,63,209,0.30)" : "transparent"}`,
+                        border: `1px solid ${activeIndex === i ? "rgba(122,63,209,0.30)" : "transparent"}`,
                         textDecoration: "none",
-                        fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
+                        fontFamily: "'Orbitron', sans-serif",
+                        fontSize: "0.78rem", fontWeight: 800,
                         letterSpacing: "0.5px", textTransform: "uppercase",
-                        color: activeIndex === navItems.indexOf(item)
-                          ? (isDark ? "#c4a8ff" : "#7a3fd1") : textCol,
+                        color: activeIndex === i
+                          ? (isDark ? "#c4a8ff" : "#7a3fd1")
+                          : (isDark ? "rgba(255,255,255,0.70)" : "rgba(15,5,32,0.70)"),
                         transition: "all 0.18s",
                       }}
                     >
                       {item.label}
-                      {activeIndex === navItems.indexOf(item) && (
-                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--brand-orange)", boxShadow: "0 0 6px var(--brand-orange)" }} />
+                      {activeIndex === i && (
+                        <span style={{
+                          width: 6, height: 6, borderRadius: "50%",
+                          background: "var(--brand-orange)",
+                          boxShadow: "0 0 6px var(--brand-orange)",
+                        }} />
                       )}
                     </Link>
                   ))}
                 </div>
 
-                <div style={{ height: 1, background: isDark ? "rgba(122,63,209,0.10)" : "rgba(122,63,209,0.08)", marginBottom: 22 }} />
+                <div style={{ height: 1, background: borderCol, marginBottom: 22 }} />
 
                 <p style={{
-                  fontSize: "0.58rem", fontWeight: 800, letterSpacing: "1.6px", textTransform: "uppercase",
-                  color: isDark ? "rgba(196,168,255,0.45)" : "rgba(122,63,209,0.45)", marginBottom: 12,
+                  fontSize: "0.58rem", fontWeight: 800, letterSpacing: "1.6px",
+                  textTransform: "uppercase",
+                  color: isDark ? "rgba(196,168,255,0.45)" : "rgba(122,63,209,0.45)",
+                  marginBottom: 12,
                 }}>Account</p>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -346,15 +339,15 @@ export default function Navbar() {
                       padding: "13px", borderRadius: 12, border: "none",
                       background: "var(--brand-purple)", color: "#fff",
                       fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                      fontSize: "0.76rem", cursor: "pointer", letterSpacing: "0.4px",
+                      fontSize: "0.76rem", cursor: "pointer",
                     }}>Sign Up / Log In</button>
                   ) : (
                     <>
                       <Link to="/dashboard" onClick={() => setMobileOpen(false)} style={{
                         display: "block", padding: "13px", borderRadius: 12,
-                        background: "var(--brand-purple)", color: "#fff", textDecoration: "none",
-                        textAlign: "center", fontFamily: "'Orbitron', sans-serif",
-                        fontWeight: 800, fontSize: "0.76rem",
+                        background: "var(--brand-purple)", color: "#fff",
+                        textDecoration: "none", textAlign: "center",
+                        fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.76rem",
                       }}>My Account</Link>
                       <button onClick={handleLogout} style={{
                         padding: "13px", borderRadius: 12, background: "transparent",
@@ -365,21 +358,19 @@ export default function Navbar() {
                     </>
                   )}
                   <Link to="/tickets" onClick={() => setMobileOpen(false)} style={{
-                    display: "block", padding: "14px", borderRadius: 12, textDecoration: "none",
+                    display: "block", padding: "14px", borderRadius: 12,
                     background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
-                    color: "#fff", textAlign: "center",
-                    fontFamily: "'Orbitron', sans-serif", fontWeight: 900,
-                    fontSize: "0.78rem", letterSpacing: "0.4px",
-                    boxShadow: "0 4px 18px rgba(245,166,35,0.30)",
+                    color: "#fff", textDecoration: "none", textAlign: "center",
+                    fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "0.78rem",
+                    boxShadow: "0 4px 18px rgba(245,166,35,0.28)",
                   }}>✦ Get Your Tickets</Link>
                 </div>
               </div>
 
-              {/* Footer */}
               <div style={{
-                padding: "14px 20px",
-                borderTop: `1px solid ${isDark ? "rgba(122,63,209,0.10)" : "rgba(122,63,209,0.08)"}`,
-                fontSize: "0.65rem", color: isDark ? "rgba(200,180,255,0.35)" : "rgba(122,63,209,0.40)",
+                padding: "14px 20px", borderTop: `1px solid ${borderCol}`,
+                fontSize: "0.65rem",
+                color: isDark ? "rgba(200,180,255,0.35)" : "rgba(122,63,209,0.40)",
                 textAlign: "center",
               }}>
                 The Tech Festival Canada · Oct 28, 2026 · The Carlu, Toronto
@@ -389,7 +380,6 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* Responsive rules */}
       <style>{`
         .tfc-desk-nav { display: none; }
         .tfc-desk-actions { display: none; align-items: center; gap: 10px; }

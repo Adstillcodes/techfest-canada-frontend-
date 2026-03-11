@@ -9,7 +9,7 @@ import EventSchedule from "../components/EventSchedule";
 import { client } from "../utils/sanity";
 import { getNewsForField } from "../data/newsData";
 
-// ── TAG COLOR MAP ──────────────────────────────────────────────────────────────
+// ── TAG COLOR MAP ─────────────────────────────────────────────────────────────
 const TAG_COLORS = [
   "#7a3fd1","#f5a623","#22c55e","#06b6d4","#ec4899",
   "#a855f7","#f97316","#10b981","#3b82f6","#eab308",

@@ -2,17 +2,15 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import UrgencyBanner from "../components/UrgencyBanner";
 import AboutUs from "../components/AboutUs";
-import { EventCountdown } from "../components/ui/EventCountdown";
 import { useEffect, useState, useRef, useCallback } from "react";
 import InquiryModal from "../components/InquiryModal";
 import CookieConsent from "../components/CookieConsent";
 import PostPurchaseModal from "../components/PostPurchaseModal";
 import OnboardingSurvey from "../components/OnboardingSurvey";
 
-/* ── SCAN-LINE CANVAS ── */
-
+/* ── FULL-WIDTH SCAN CANVAS (background layer) ── */
 function ScanCanvas() {
-  const canvasRef = useRef(null);
+  var canvasRef = useRef(null);
 
   useEffect(function() {
     var canvas = canvasRef.current;
@@ -30,13 +28,14 @@ function ScanCanvas() {
       H = canvas.offsetHeight;
       canvas.width  = W * window.devicePixelRatio;
       canvas.height = H * window.devicePixelRatio;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     }
     resize();
     window.addEventListener("resize", resize);
 
-    var DOT = 28;
-    var DOT_R = 1.1;
+    var DOT = 40;
+    var DOT_R = 1.0;
 
     function draw(ts) {
       if (!start) start = ts;
@@ -50,31 +49,31 @@ function ScanCanvas() {
           var hash = Math.abs(Math.sin(nx * 127.1 + ny * 311.7) * 43758.5 % 1);
           ctx.beginPath();
           ctx.arc(x, y, DOT_R, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(160,100,255," + (0.12 + hash * 0.22) + ")";
+          ctx.fillStyle = "rgba(155,135,245," + (0.08 + hash * 0.14) + ")";
           ctx.fill();
         }
       }
 
-      var prog  = Math.sin(t * 0.5) * 0.5 + 0.5;
+      var prog  = Math.sin(t * 0.4) * 0.5 + 0.5;
       var scanY = prog * H;
-      var bw    = 55;
+      var bw    = 80;
 
       var g = ctx.createLinearGradient(0, scanY - bw, 0, scanY + bw);
-      g.addColorStop(0,    "rgba(220,60,60,0)");
-      g.addColorStop(0.45, "rgba(220,60,60,0.16)");
-      g.addColorStop(0.5,  "rgba(255,80,80,0.50)");
-      g.addColorStop(0.55, "rgba(220,60,60,0.16)");
-      g.addColorStop(1,    "rgba(220,60,60,0)");
+      g.addColorStop(0,    "rgba(155,135,245,0)");
+      g.addColorStop(0.45, "rgba(155,135,245,0.06)");
+      g.addColorStop(0.5,  "rgba(155,135,245,0.18)");
+      g.addColorStop(0.55, "rgba(155,135,245,0.06)");
+      g.addColorStop(1,    "rgba(155,135,245,0)");
       ctx.fillStyle = g;
       ctx.fillRect(0, scanY - bw, W, bw * 2);
 
       ctx.beginPath();
       ctx.moveTo(0, scanY);
       ctx.lineTo(W, scanY);
-      ctx.strokeStyle = "rgba(255,100,100,0.85)";
-      ctx.lineWidth   = 1.5;
-      ctx.shadowColor = "rgba(255,80,80,0.7)";
-      ctx.shadowBlur  = 10;
+      ctx.strokeStyle = "rgba(155,135,245,0.35)";
+      ctx.lineWidth   = 1;
+      ctx.shadowColor = "rgba(155,135,245,0.5)";
+      ctx.shadowBlur  = 8;
       ctx.stroke();
       ctx.shadowBlur  = 0;
 
@@ -82,7 +81,6 @@ function ScanCanvas() {
     }
 
     raf = requestAnimationFrame(draw);
-
     return function() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
@@ -95,8 +93,7 @@ function ScanCanvas() {
       style={{
         position: "absolute", inset: 0,
         width: "100%", height: "100%",
-        pointerEvents: "none", zIndex: 3,
-        borderRadius: "inherit",
+        pointerEvents: "none", zIndex: 1,
       }}
     />
   );
@@ -112,11 +109,11 @@ function AnimatedHeadline(props) {
   return (
     <h1 style={{
       fontFamily: "'Orbitron', sans-serif",
-      fontSize: "clamp(1.5rem, 3.5vw, 2.7rem)",
-      fontWeight: 900, lineHeight: 1.2,
-      marginBottom: "1.4rem",
-      display: "flex", flexWrap: "wrap", gap: "0.5rem",
-      minHeight: "1.4em",
+      fontSize: "clamp(2rem, 5vw, 4rem)",
+      fontWeight: 900, lineHeight: 1.15,
+      marginBottom: "1.6rem",
+      display: "flex", flexWrap: "wrap",
+      justifyContent: "center", gap: "0.6rem",
     }}>
       {WORDS.map(function(word, i) {
         var isDivider = word === "|";
@@ -126,14 +123,15 @@ function AnimatedHeadline(props) {
             style={{
               display: "inline-block",
               opacity: i < shown ? 1 : 0,
-              transform: i < shown ? "translateY(0)" : "translateY(18px)",
-              transition: "opacity 0.35s ease " + (i * 0.04) + "s, transform 0.35s ease " + (i * 0.04) + "s",
+              transform: i < shown ? "translateY(0)" : "translateY(20px)",
+              transition: "opacity 0.4s ease " + (i * 0.08) + "s, transform 0.4s ease " + (i * 0.08) + "s",
               color: isDivider
-                ? "rgba(160,100,255,0.35)"
+                ? "rgba(155,135,245,0.30)"
                 : i === 2
                   ? "var(--brand-orange)"
                   : (isDark ? "#ffffff" : "#0f0520"),
-              fontWeight: isDivider ? 300 : 900,
+              fontWeight: isDivider ? 200 : 900,
+              fontSize: isDivider ? "0.6em" : undefined,
             }}
           >
             {word}
@@ -146,47 +144,16 @@ function AnimatedHeadline(props) {
 
 /* ── MAIN PAGE ── */
 export default function Home() {
-  var inquiryState        = useState(false);
-  var inquiryOpen         = inquiryState[0];
-  var setInquiryOpen      = inquiryState[1];
-
-  var surveyState         = useState(false);
-  var surveyOpen          = surveyState[0];
-  var setSurveyOpen       = surveyState[1];
-
-  var surveyNameState     = useState("");
-  var surveyName          = surveyNameState[0];
-  var setSurveyName       = surveyNameState[1];
-
-  var purchaseState       = useState(false);
-  var purchaseOpen        = purchaseState[0];
-  var setPurchaseOpen     = purchaseState[1];
-
-  var ticketTypeState     = useState("");
-  var purchaseTicketType  = ticketTypeState[0];
-  var setPurchaseTicketType = ticketTypeState[1];
-
-  var darkState           = useState(false);
-  var isDarkMode          = darkState[0];
-  var setIsDarkMode       = darkState[1];
-
-  var mouseState          = useState({ x: 0, y: 0 });
-  var mouse               = mouseState[0];
-  var setMouse            = mouseState[1];
-
-  var subState            = useState(false);
-  var subtitleVisible     = subState[0];
-  var setSubtitleVisible  = subState[1];
-
-  var ctaState            = useState(false);
-  var ctaVisible          = ctaState[0];
-  var setCtaVisible       = ctaState[1];
-
-  var shownState          = useState(0);
-  var shown               = shownState[0];
-  var setShown            = shownState[1];
-
-  var heroRef = useRef(null);
+  var s1 = useState(false);   var inquiryOpen = s1[0];        var setInquiryOpen = s1[1];
+  var s2 = useState(false);   var surveyOpen = s2[0];         var setSurveyOpen = s2[1];
+  var s3 = useState("");      var surveyName = s3[0];         var setSurveyName = s3[1];
+  var s4 = useState(false);   var purchaseOpen = s4[0];       var setPurchaseOpen = s4[1];
+  var s5 = useState("");      var purchaseTicketType = s5[0]; var setPurchaseTicketType = s5[1];
+  var s6 = useState(false);   var isDarkMode = s6[0];         var setIsDarkMode = s6[1];
+  var s7 = useState(false);   var subVis = s7[0];             var setSubVis = s7[1];
+  var s8 = useState(false);   var ctaVis = s8[0];             var setCtaVis = s8[1];
+  var s9 = useState(false);   var statsVis = s9[0];           var setStatsVis = s9[1];
+  var s10 = useState(0);      var shown = s10[0];             var setShown = s10[1];
 
   // Dark mode
   useEffect(function() {
@@ -201,33 +168,18 @@ export default function Home() {
   // Word reveal
   useEffect(function() {
     if (shown >= WORDS.length) return;
-    var delay = shown === 0 ? 700 : 230;
+    var delay = shown === 0 ? 500 : 200;
     var t = setTimeout(function() { setShown(function(n) { return n + 1; }); }, delay);
     return function() { clearTimeout(t); };
   }, [shown]);
 
   // Staggered reveals
   useEffect(function() {
-    var t1 = setTimeout(function() { setSubtitleVisible(true); }, 1800);
-    var t2 = setTimeout(function() { setCtaVisible(true); }, 2200);
-    return function() { clearTimeout(t1); clearTimeout(t2); };
+    var t1 = setTimeout(function() { setSubVis(true); },   1600);
+    var t2 = setTimeout(function() { setCtaVis(true); },   2000);
+    var t3 = setTimeout(function() { setStatsVis(true); }, 2400);
+    return function() { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
-
-  // Mouse parallax
-  var handleMouse = useCallback(function(e) {
-    var el = heroRef.current;
-    if (!el) return;
-    var rect = el.getBoundingClientRect();
-    setMouse({
-      x: ((e.clientX - rect.left) / rect.width  - 0.5) * 2,
-      y: ((e.clientY - rect.top)  / rect.height - 0.5) * 2,
-    });
-  }, []);
-
-  useEffect(function() {
-    window.addEventListener("mousemove", handleMouse);
-    return function() { window.removeEventListener("mousemove", handleMouse); };
-  }, [handleMouse]);
 
   // Events
   useEffect(function() {
@@ -253,292 +205,309 @@ export default function Home() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   }
 
-  var pxX = mouse.x * -5;
-  var pxY = mouse.y * -3;
+  var dark = isDarkMode;
 
   return (
     <>
       <style>{`
+        /* ── hero wrap ── */
         .hero-wrap {
           position: relative; overflow: hidden;
-          background: linear-gradient(135deg, #0a0613 0%, #150d27 55%, #0d0a1e 100%);
+          background: linear-gradient(160deg, #07030f 0%, #100820 50%, #0a0518 100%);
         }
         body:not(.dark-mode) .hero-wrap {
-          background: linear-gradient(135deg, #f4f0ff 0%, #ede8ff 55%, #f8f4ff 100%);
+          background: linear-gradient(160deg, #f6f2ff 0%, #ede6ff 50%, #f2eeff 100%);
         }
-        .hero-orb {
+
+        /* ── ambient orbs ── */
+        .h-orb {
           position: absolute; border-radius: 50%;
-          filter: blur(90px); pointer-events: none;
-          opacity: 0; animation: h-orb-in 2s ease forwards;
+          filter: blur(100px); pointer-events: none;
+          opacity: 0; animation: h-orb-in 2.4s ease forwards;
         }
         @keyframes h-orb-in { to { opacity: 1; } }
-        .hero-bg-grid {
-          pointer-events: none; position: absolute; inset: 0; z-index: 0;
-          background-image:
-            linear-gradient(rgba(122,63,209,0.045) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(122,63,209,0.045) 1px, transparent 1px);
-          background-size: 56px 56px;
-          mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 30%, transparent 100%);
-          -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 30%, transparent 100%);
+
+        /* ── center content ── */
+        .hero-center {
+          position: relative; z-index: 2;
+          display: flex; flex-direction: column;
+          align-items: center; text-align: center;
+          padding: clamp(5rem,10vw,8rem) 5% clamp(4rem,8vw,7rem);
+          max-width: 900px; margin: 0 auto;
         }
+
+        /* ── badge ── */
         .hero-badge {
           display: inline-flex; align-items: center; gap: 8px;
           background: rgba(155,135,245,0.10);
-          border: 1px solid rgba(155,135,245,0.30);
-          color: #9b87f5; padding: 6px 16px; border-radius: 999px;
-          font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px;
-          text-transform: uppercase; margin-bottom: 1.4rem;
-          opacity: 0; animation: h-slide-up 0.6s ease 0.3s forwards;
+          border: 1px solid rgba(155,135,245,0.28);
+          color: #9b87f5; padding: 7px 18px; border-radius: 999px;
+          font-size: 0.72rem; font-weight: 700; letter-spacing: 1.8px;
+          text-transform: uppercase; margin-bottom: 2rem;
+          opacity: 0; animation: h-up 0.7s ease 0.2s forwards;
         }
-        body:not(.dark-mode) .hero-badge {
-          background: rgba(122,63,209,0.07);
-          border-color: rgba(122,63,209,0.22); color: #7a3fd1;
-        }
+        body:not(.dark-mode) .hero-badge { color: #7a3fd1; background: rgba(122,63,209,0.07); border-color: rgba(122,63,209,0.20); }
         .badge-dot {
           width: 7px; height: 7px; border-radius: 50%;
-          background: var(--brand-orange);
-          box-shadow: 0 0 7px var(--brand-orange);
-          animation: badge-pulse 2s ease infinite; flex-shrink: 0;
+          background: var(--brand-orange); box-shadow: 0 0 8px var(--brand-orange);
+          animation: b-pulse 2s ease infinite; flex-shrink: 0;
         }
-        @keyframes badge-pulse {
+        @keyframes b-pulse {
           0%,100% { transform: scale(1); opacity: 1; }
-          50%      { transform: scale(1.4); opacity: 0.6; }
+          50%      { transform: scale(1.5); opacity: 0.55; }
         }
-        .hero-inner {
-          position: relative; z-index: 2;
-          display: grid; grid-template-columns: 1fr 1fr;
-          align-items: center; gap: 4rem;
-          padding: clamp(2rem,6vw,4rem) 5% clamp(2.5rem,6vw,5rem);
-          max-width: 1400px; margin: 0 auto; min-height: 80vh;
+
+        /* ── logo ── */
+        .hero-logo {
+          opacity: 0; animation: h-up 0.8s ease 0.35s forwards;
+          margin-bottom: 2rem;
         }
-        .scan-host {
-          position: relative; border-radius: 24px; overflow: hidden;
+
+        /* ── sub text ── */
+        .hero-sub {
+          font-size: clamp(1rem, 1.8vw, 1.2rem);
+          line-height: 1.8; font-weight: 400;
+          max-width: 620px; text-align: justify;
+          hyphens: auto;
+          margin-bottom: 2.8rem;
         }
+
+        /* ── neumorphic CTA button ── */
         .neumorphic-btn {
           position: relative; overflow: hidden; border-radius: 999px;
-          border: 1px solid rgba(255,255,255,0.10);
-          background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.05) 100%);
-          padding: 14px 32px; color: #fff;
+          border: 1px solid rgba(255,255,255,0.12);
+          background: linear-gradient(180deg, rgba(122,63,209,0.85) 0%, rgba(90,30,170,0.90) 100%);
+          padding: 16px 36px; color: #fff;
           font-family: 'Orbitron', sans-serif; font-weight: 800;
-          font-size: 0.75rem; letter-spacing: 0.8px; text-transform: uppercase;
+          font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;
           cursor: pointer; text-decoration: none;
-          display: inline-flex; align-items: center; gap: 8px;
-          box-shadow: 0 8px 32px rgba(122,63,209,0.25);
-          transition: box-shadow 0.3s, border-color 0.3s;
+          display: inline-flex; align-items: center; gap: 10px;
+          box-shadow: 0 8px 40px rgba(122,63,209,0.40), 0 2px 8px rgba(0,0,0,0.3);
+          transition: box-shadow 0.3s, transform 0.2s;
         }
         .neumorphic-btn:hover {
-          box-shadow: 0 0 28px rgba(155,135,245,0.45);
-          border-color: rgba(155,135,245,0.40);
+          box-shadow: 0 12px 50px rgba(155,135,245,0.55), 0 2px 8px rgba(0,0,0,0.3);
+          transform: translateY(-2px);
         }
         .neumorphic-btn::after {
           content: ''; position: absolute; inset: 0; opacity: 0;
           transition: opacity 0.3s;
-          background: linear-gradient(135deg, rgba(155,135,245,0.22) 0%, transparent 100%);
+          background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
           border-radius: 999px;
         }
         .neumorphic-btn:hover::after { opacity: 1; }
-        .hero-stats {
-          display: grid; grid-template-columns: repeat(3, 1fr);
-          gap: 10px; margin-top: 18px;
-          opacity: 0; animation: h-slide-up 0.7s ease 1.2s forwards;
+
+        .outline-btn {
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 16px 36px; border-radius: 999px;
+          border: 1.5px solid rgba(155,135,245,0.30);
+          color: rgba(155,135,245,0.85); background: transparent;
+          font-size: 0.88rem; font-weight: 500; text-decoration: none;
+          transition: border-color 0.2s, color 0.2s;
         }
+        body:not(.dark-mode) .outline-btn {
+          border-color: rgba(122,63,209,0.25); color: rgba(122,63,209,0.80);
+        }
+        .outline-btn:hover { border-color: rgba(155,135,245,0.6); color: #9b87f5; }
+
+        /* ── stat chips ── */
+        .hero-stats {
+          display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+          margin-top: 4rem;
+        }
+        .stat-chip {
+          display: flex; align-items: center; gap: 10px;
+          padding: 10px 20px; border-radius: 999px;
+          border: 1px solid rgba(155,135,245,0.18);
+          background: rgba(155,135,245,0.06);
+        }
+        body:not(.dark-mode) .stat-chip {
+          border-color: rgba(122,63,209,0.14); background: rgba(122,63,209,0.04);
+        }
+
+        /* ── divider line ── */
+        .hero-divider {
+          width: 100%; height: 1px; margin-top: 5rem;
+          background: linear-gradient(90deg, transparent, rgba(155,135,245,0.25), rgba(245,166,35,0.15), rgba(155,135,245,0.25), transparent);
+        }
+
+        /* ── scroll hint ── */
         .scroll-hint {
           display: inline-flex; align-items: center; gap: 8px;
-          color: rgba(155,135,245,0.55);
-          font-size: 0.68rem; font-weight: 700;
-          letter-spacing: 1.2px; text-transform: uppercase;
-          opacity: 0; animation: h-fade-in 0.8s ease 3s forwards;
-          margin-top: 2rem; cursor: pointer; border: none; background: none;
+          color: rgba(155,135,245,0.45); font-size: 0.68rem;
+          font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+          cursor: pointer; border: none; background: none;
+          margin-top: 2rem;
+          opacity: 0; animation: h-fade 0.8s ease 3.2s forwards;
         }
-        @keyframes h-fade-in { to { opacity: 1; } }
-        .scroll-arrow { animation: bounce-down 1.6s ease infinite; }
-        @keyframes bounce-down {
+        @keyframes h-fade { to { opacity: 1; } }
+        .scroll-arrow { animation: b-down 1.6s ease infinite; }
+        @keyframes b-down {
           0%,100% { transform: translateY(0); }
           50%      { transform: translateY(5px); }
         }
-        @keyframes h-slide-up {
-          from { opacity: 0; transform: translateY(18px); }
+
+        /* ── keyframes ── */
+        @keyframes h-up {
+          from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes h-slide-left {
-          from { opacity: 0; transform: translateX(36px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
-        .hero-visual-in {
-          opacity: 0; animation: h-slide-left 0.9s ease 0.55s forwards;
-        }
-        @media (max-width: 920px) {
-          .hero-inner {
-            grid-template-columns: 1fr; text-align: center;
-            gap: 2.5rem; min-height: auto;
-          }
-          .hero-badge  { margin-left: auto; margin-right: auto; }
-          .hero-sub    { margin-left: auto !important; margin-right: auto !important; }
-          .hero-ctas   { justify-content: center !important; }
-          .scroll-hint { margin-left: auto; margin-right: auto; display: flex; }
-          .hero-inner h1 { justify-content: center; }
-        }
+
+        /* ── mobile ── */
         @media (max-width: 600px) {
-          .hero-ctas {
-            flex-direction: column !important;
-            align-items: stretch !important;
-          }
+          .hero-ctas { flex-direction: column !important; width: 100%; }
           .hero-ctas a { width: 100% !important; justify-content: center !important; }
-          .hero-sub { font-size: 0.85rem !important; }
+          .hero-sub { text-align: left; font-size: 0.92rem !important; }
+          .stat-chip { font-size: 0.78rem; }
         }
       `}</style>
 
       <UrgencyBanner />
       <Navbar />
 
-      <section className="hero-wrap" ref={heroRef}>
+      <section className="hero-wrap">
 
-        {/* Radial glows (doc 3 pattern) */}
-        <div style={{
-          position: "absolute", right: 0, top: 0, width: "50%", height: "50%", pointerEvents: "none",
-          background: "radial-gradient(circle at 70% 30%, rgba(155,135,245,0.15) 0%, rgba(13,10,25,0) 60%)",
+        {/* Scan canvas — full background */}
+        <ScanCanvas />
+
+        {/* Ambient orbs */}
+        <div className="h-orb" style={{
+          width: 700, height: 700,
+          background: "radial-gradient(circle, rgba(122,63,209,0.22) 0%, transparent 70%)",
+          top: -200, left: -200, animationDelay: "0s",
         }} />
-        <div style={{
-          position: "absolute", left: 0, top: 0, width: "50%", height: "50%",
-          transform: "scaleX(-1)", pointerEvents: "none",
-          background: "radial-gradient(circle at 70% 30%, rgba(155,135,245,0.15) 0%, rgba(13,10,25,0) 60%)",
+        <div className="h-orb" style={{
+          width: 500, height: 500,
+          background: "radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%)",
+          top: -100, right: -180, animationDelay: "0.3s",
+        }} />
+        <div className="h-orb" style={{
+          width: 400, height: 400,
+          background: "radial-gradient(circle, rgba(155,135,245,0.14) 0%, transparent 70%)",
+          bottom: -80, left: "35%", animationDelay: "0.6s",
         }} />
 
-        <div className="hero-orb" style={{
-          width: 580, height: 580,
-          background: "radial-gradient(circle, rgba(122,63,209,0.28) 0%, transparent 70%)",
-          top: -160, left: -160, animationDelay: "0.1s",
-        }} />
-        <div className="hero-orb" style={{
-          width: 420, height: 420,
-          background: "radial-gradient(circle, rgba(245,166,35,0.14) 0%, transparent 70%)",
-          top: 40, right: -100, animationDelay: "0.4s",
-        }} />
-        <div className="hero-bg-grid" />
+        {/* ── CENTERED CONTENT ── */}
+        <div className="hero-center">
 
-        <div className="hero-inner">
-
-          {/* LEFT: TEXT */}
-          <div>
-            <div className="hero-badge">
-              <span className="badge-dot" />
-              Oct 28, 2026 · The Carlu, Toronto
-            </div>
-
-            <img
-              src={isDarkMode
-                ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
-                : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
-              alt="Tech Festival Canada"
-              style={{
-                width: "100%", maxWidth: 460, height: "auto",
-                objectFit: "contain", display: "block", marginBottom: "1.4rem",
-                opacity: 0, animation: "h-slide-up 0.7s ease 0.15s forwards",
-                filter: isDarkMode ? "drop-shadow(0 0 28px rgba(160,100,255,0.28))" : "none",
-              }}
-            />
-
-            <AnimatedHeadline isDark={isDarkMode} shown={shown} />
-
-            <p
-              className="hero-sub"
-              style={{
-                fontSize: "clamp(0.88rem,1.4vw,1.06rem)",
-                color: isDarkMode ? "rgba(255,255,255,0.58)" : "rgba(15,5,32,0.60)",
-                lineHeight: 1.78, fontWeight: 400,
-                maxWidth: 480, marginBottom: "2.2rem",
-                opacity: subtitleVisible ? 1 : 0,
-                transform: subtitleVisible ? "translateY(0)" : "translateY(16px)",
-                transition: "opacity 0.65s ease, transform 0.65s ease",
-              }}
-            >
-              Canada's first-of-its-kind deal-making platform — where innovators,
-              buyers, investors, and policymakers turn emerging tech into real
-              partnerships, pilots, and contracts. Not just conversations.
-            </p>
-
-            <div
-              className="hero-ctas"
-              style={{
-                display: "flex", gap: "1rem", flexWrap: "wrap",
-                opacity: ctaVisible ? 1 : 0,
-                transform: ctaVisible ? "translateY(0)" : "translateY(14px)",
-                transition: "opacity 0.6s ease, transform 0.6s ease",
-              }}
-            >
-              <a href="/tickets" className="neumorphic-btn">
-                ✦ Get Your Tickets
-              </a>
-              <a
-                href="/speakers"
-                style={{
-                  display: "inline-flex", alignItems: "center", gap: 6,
-                  color: isDarkMode ? "rgba(255,255,255,0.65)" : "rgba(15,5,32,0.65)",
-                  fontSize: "0.88rem", fontWeight: 500, textDecoration: "none",
-                  transition: "color 0.2s", padding: "14px 8px",
-                }}
-              >
-                Partner With Us
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </a>
-            </div>
-
-            <button className="scroll-hint" onClick={scrollToAbout}>
-              Scroll to explore
-              <svg className="scroll-arrow" width="18" height="18" viewBox="0 0 22 22" fill="none">
-                <path d="M11 5V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                <path d="M6 12L11 17L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            </button>
+          {/* Badge */}
+          <div className="hero-badge">
+            <span className="badge-dot" />
+            Oct 28, 2026 · The Carlu, Toronto
           </div>
 
-          {/* RIGHT: SCAN VISUAL */}
-          <div className="hero-visual-in">
-            <div style={{
-              transform: "translate(" + pxX + "px, " + pxY + "px)",
-              transition: "transform 0.12s linear",
-              willChange: "transform",
-            }}>
-              <div className="scan-host">
-                <ScanCanvas />
-                <EventCountdown isDark={isDarkMode} />
-              </div>
-            </div>
+          {/* Logo */}
+          <img
+            className="hero-logo"
+            src={dark
+              ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
+              : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
+            alt="Tech Festival Canada"
+            style={{
+              width: "100%", maxWidth: 520, height: "auto",
+              objectFit: "contain",
+              filter: dark ? "drop-shadow(0 0 40px rgba(155,135,245,0.30))" : "none",
+            }}
+          />
 
-            <div className="hero-stats">
-              {[
-                { val: "500+",    label: "Decision Makers" },
-                { val: "5",       label: "Tech Pillars" },
-                { val: "Oct '26", label: "Toronto" },
-              ].map(function(s) {
-                return (
-                  <div key={s.label} style={{
-                    background: isDarkMode ? "rgba(155,135,245,0.06)" : "rgba(122,63,209,0.05)",
-                    border: "1px solid " + (isDarkMode ? "rgba(155,135,245,0.16)" : "rgba(122,63,209,0.14)"),
-                    borderRadius: 14, padding: "12px 8px", textAlign: "center",
-                  }}>
+          {/* Word-by-word headline */}
+          <AnimatedHeadline isDark={dark} shown={shown} />
+
+          {/* Subtitle — justified */}
+          <p
+            className="hero-sub"
+            style={{
+              color: dark ? "rgba(255,255,255,0.55)" : "rgba(15,5,32,0.58)",
+              opacity: subVis ? 1 : 0,
+              transform: subVis ? "translateY(0)" : "translateY(16px)",
+              transition: "opacity 0.7s ease, transform 0.7s ease",
+            }}
+          >
+            Canada's first-of-its-kind deal-making platform — where innovators,
+            buyers, investors, and policymakers turn emerging tech into real
+            partnerships, pilots, and contracts. Expect a never-seen-before
+            concentration of senior decision-makers from enterprise, government,
+            associations, media, and leading research institutions.
+          </p>
+
+          {/* CTAs */}
+          <div
+            className="hero-ctas"
+            style={{
+              display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center",
+              opacity: ctaVis ? 1 : 0,
+              transform: ctaVis ? "translateY(0)" : "translateY(14px)",
+              transition: "opacity 0.6s ease, transform 0.6s ease",
+            }}
+          >
+            <a href="/tickets" className="neumorphic-btn">
+              ✦ Get Your Tickets
+            </a>
+            <a href="/speakers" className="outline-btn">
+              Partner With Us
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </a>
+          </div>
+
+          {/* Scroll hint */}
+          <button className="scroll-hint" onClick={scrollToAbout}>
+            Scroll to explore
+            <svg className="scroll-arrow" width="16" height="16" viewBox="0 0 22 22" fill="none">
+              <path d="M11 5V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M6 12L11 17L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+
+          {/* Stats chips */}
+          <div
+            className="hero-stats"
+            style={{
+              opacity: statsVis ? 1 : 0,
+              transform: statsVis ? "translateY(0)" : "translateY(14px)",
+              transition: "opacity 0.6s ease, transform 0.6s ease",
+            }}
+          >
+            {[
+              { val: "500+",       label: "Decision Makers",   icon: "👥" },
+              { val: "5",          label: "Tech Pillars",      icon: "🔬" },
+              { val: "1 Day",      label: "Oct 28, 2026",      icon: "📅" },
+              { val: "The Carlu",  label: "Toronto, Canada",   icon: "📍" },
+            ].map(function(s) {
+              return (
+                <div className="stat-chip" key={s.label}>
+                  <span style={{ fontSize: "1rem" }}>{s.icon}</span>
+                  <div>
                     <div style={{
-                      fontFamily: "'Orbitron', sans-serif",
-                      fontSize: "1.15rem", fontWeight: 900,
+                      fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
+                      fontSize: "0.85rem",
                       background: "linear-gradient(135deg, #9b87f5, #f5a623)",
                       WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
                       backgroundClip: "text",
                     }}>{s.val}</div>
                     <div style={{
-                      fontSize: "0.58rem", fontWeight: 700, letterSpacing: "1px",
+                      fontSize: "0.58rem", fontWeight: 600, letterSpacing: "0.8px",
                       textTransform: "uppercase",
-                      color: isDarkMode ? "rgba(200,180,255,0.45)" : "rgba(122,63,209,0.50)",
-                      marginTop: 4,
+                      color: dark ? "rgba(200,185,255,0.45)" : "rgba(122,63,209,0.50)",
                     }}>{s.label}</div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
 
         </div>
+
+        {/* Bottom gradient fade into about section */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: 120,
+          background: dark
+            ? "linear-gradient(to bottom, transparent, #07030f)"
+            : "linear-gradient(to bottom, transparent, #f6f2ff)",
+          pointerEvents: "none", zIndex: 2,
+        }} />
+
       </section>
 
       <div id="about-section">
@@ -547,7 +516,7 @@ export default function Home() {
 
       <Footer />
 
-      <InquiryModal  isOpen={inquiryOpen}  onClose={function() { setInquiryOpen(false); }} />
+      <InquiryModal isOpen={inquiryOpen} onClose={function() { setInquiryOpen(false); }} />
       <CookieConsent />
       <PostPurchaseModal
         isOpen={purchaseOpen}

@@ -11,14 +11,14 @@ const makeSector = (i, label) => ({ lat: -35, lng: -180 + 36 + i * 72,  shortLab
 const TECH_NODES = [
   makePillar(0, "AI"),
   makePillar(1, "Quantum"),
-  makePillar(2, "Sustain."),
-  makePillar(3, "Cyber"),
-  makePillar(4, "Robotics"),
-  makeSector(0, "Energy"),
-  makeSector(1, "Health"),
+  makePillar(2, "Cyber"),
+  makePillar(3, "Robotics"),
+  makePillar(4, "DigitalTrust"),
+  makeSector(0, "Healthcare"),
+  makeSector(1, "Finance"),
   makeSector(2, "Defence"),
-  makeSector(3, "FinServ"),
-  makeSector(4, "Supply"),
+  makeSector(3, "Energy"),
+  makeSector(4, "Manufacturing"),
 ];
 
 // Connect each pillar to its nearest two sectors + ring connections

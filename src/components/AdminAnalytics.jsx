@@ -131,31 +131,31 @@ export default function AdminAnalytics() {
           Revenue Over Time
         </h3>
 
-        <ResponsiveContainer width="100%" height={350}>
+<ResponsiveContainer width="100%" height={350}>
 
-          <LineChart data={data}>
+  <LineChart data={data}>
 
-            <CartesianGrid stroke="#333" />
+    <CartesianGrid stroke="#333" />
 
-            <XAxis
-              dataKey="name"
-              stroke="#aaa"
-            />
+    <XAxis
+      dataKey="name"
+      stroke="#aaa"
+    />
 
-            <YAxis stroke="#aaa" />
+    <YAxis stroke="#aaa" />
 
-            <Tooltip />
+    <Tooltip />
 
-            <Line
-              type="monotone"
-              dataKey="revenue"
-              stroke="#a855f7"
-              strokeWidth={3}
-            />
+    <Line
+      type="monotone"
+      dataKey="revenue"
+      stroke="#a855f7"
+      strokeWidth={3}
+    />
 
-          </LineChart>
+  </LineChart>
 
-        </ResponsiveContainer>
+</ResponsiveContainer>
 
       </div>
 

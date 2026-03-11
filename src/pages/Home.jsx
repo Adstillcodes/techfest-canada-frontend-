@@ -12,6 +12,7 @@ export default function Home() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [surveyOpen, setSurveyOpen] = useState(false);
   const [surveyName, setSurveyName] = useState("");
+  const [cursorPos, setCursorPos] = useState({ x: -999, y: -999 });
   const [isDarkMode, setIsDarkMode] = useState(
     () => typeof document !== "undefined" && document.body.classList.contains("dark-mode")
   );
@@ -22,6 +23,12 @@ export default function Home() {
     });
     observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => setCursorPos({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
   }, []);
 
   useEffect(() => {
@@ -212,14 +219,28 @@ export default function Home() {
           .hero-inner {
             grid-template-columns: 1fr;
             text-align: center;
-            padding-top: 4rem;
+            padding-top: 3rem;
+            gap: 2rem;
           }
-          .hero-cta-row { justify-content: center; }
-          .hero-sub { margin-left: auto; margin-right: auto; }
+          .hero-cta-row { justify-content: center; flex-wrap: wrap; gap: 10px; }
+          .hero-sub { margin-left: auto; margin-right: auto; font-size: 0.9rem; }
           .hero-eyebrow { margin-left: auto; margin-right: auto; }
           .hero-divider { margin-left: auto; margin-right: auto; }
-          .hero-visual-wrap { display: none; }
-          .hero-headline { font-size: 1.2rem; }
+          .hero-visual-wrap { display: flex; justify-content: center; transform: scale(0.85); transform-origin: top center; }
+          .hero-headline { font-size: 1.4rem; }
+          .hero-section-wrapper { min-height: auto; padding: 1rem 4%; }
+        }
+        @media (max-width: 600px) {
+          .hero-headline { font-size: 1.15rem; }
+          .hero-sub { font-size: 0.82rem; }
+          .hero-visual-wrap { transform: scale(0.75); }
+          .hero-inner { padding-top: 2rem; gap: 1rem; }
+          .hero-section-wrapper { padding: 0.5rem 4%; }
+          .hero-cta-row a, .hero-cta-row button {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+          }
         }
       `}</style>
 

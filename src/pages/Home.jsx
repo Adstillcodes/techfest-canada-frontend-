@@ -29,7 +29,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const handleMove = (e: MouseEvent) => setCursorPos({ x: e.clientX, y: e.clientY });
+    const handleMove = (e) => setCursorPos({ x: e.clientX, y: e.clientY });
     window.addEventListener("mousemove", handleMove);
     return () => window.removeEventListener("mousemove", handleMove);
   }, []);
@@ -244,16 +244,29 @@ export default function Home() {
           .hero-section-wrapper { min-height: auto; padding: 1rem 4%; }
         }
         @media (max-width: 600px) {
-          .hero-headline { font-size: 1.15rem; }
-          .hero-sub { font-size: 0.82rem; }
-          .hero-visual-wrap { transform: scale(0.75); }
-          .hero-inner { padding-top: 2rem; gap: 1rem; }
-          .hero-section-wrapper { padding: 0.5rem 4%; }
-          .hero-cta-row a, .hero-cta-row button {
-            width: 100%;
-            text-align: center;
-            justify-content: center;
+          .hero-headline { font-size: 1.1rem; }
+          .hero-sub { font-size: 0.82rem; max-width: 100% !important; }
+          .hero-visual-wrap { 
+            transform: scale(0.72); 
+            transform-origin: top center;
+            margin-top: -20px;
+            overflow: hidden;
+            max-width: 100vw;
           }
+          .hero-inner { padding-top: 1.5rem; gap: 0.5rem; }
+          .hero-section-wrapper { padding: 0.5rem 4%; overflow: hidden; }
+          .hero-cta-row { gap: 8px !important; }
+          .hero-cta-row a, .hero-cta-row button {
+            width: 100% !important;
+            text-align: center !important;
+            justify-content: center !important;
+            padding: 12px 16px !important;
+            font-size: 0.78rem !important;
+          }
+        }
+        @media (max-width: 400px) {
+          .hero-visual-wrap { transform: scale(0.62); margin-top: -30px; }
+          .hero-headline { font-size: 0.98rem; }
         }
       `}</style>
 

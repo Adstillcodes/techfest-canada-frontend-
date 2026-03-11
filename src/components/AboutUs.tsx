@@ -374,9 +374,7 @@ function ServiceCard({ iconName, title, description, align }: any) {
           {title}
         </h3>
       </div>
-      <p className={`text-[var(--text-muted)] text-sm leading-relaxed max-w-sm ${align === 'right' ? 'lg:text-right' : ''}`}>
-        {description}
-      </p>
+
     </motion.div>
   )
 }

@@ -1100,13 +1100,16 @@ html {
 
 /* smooth input */
 .inventory-input {
-  width: 100px;
+  width: 90px;
   padding: 6px 8px;
   border-radius: 6px;
-  border: 1px solid var(--border-main);
-  background: var(--bg-card);
-  color: var(--text-main);
-  transition: border 0.2s ease;
+  border: 1px solid #4b2e8f;
+
+  background: #ffffff;   /* light input */
+  color: #000000;        /* dark text so numbers show */
+
+  text-align: center;
+  font-weight: 600;
 }
 
 .inventory-input:focus {

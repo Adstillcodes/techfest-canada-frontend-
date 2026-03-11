@@ -646,7 +646,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Account info */}
-                <div style={{ className="db-account-span" style={{ background: card, border: `1.5px solid ${border}`, borderRadius: 24, padding: "32px", gridColumn: "span 2", position: "relative", overflow: "hidden" }}>
+                <div className="db-account-span" style={{ background: card, border: `1.5px solid ${border}`, borderRadius: 24, padding: "32px", gridColumn: "span 2", position: "relative", overflow: "hidden" }}>
                   <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "linear-gradient(90deg,#a855f7,#f5a623)" }} />
                   <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: "#c4a8ff", marginBottom: 20 }}>👤 Your Account</div>
                   <div className="db-account-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>

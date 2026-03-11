@@ -152,7 +152,7 @@ export function EventCountdown({ isDark = true }) {
       }}
     >
       {/* Main card — glass/transparent, no heavy card */}
-      <div style={{
+      <div className="ecd-outer" style={{
         position: "relative",
         background: isDark ? "rgba(10,5,25,0.35)" : "rgba(255,255,255,0.30)",
         border: `1px solid ${isDark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.12)"}`,
@@ -366,6 +366,14 @@ export function EventCountdown({ isDark = true }) {
         @keyframes ctdPulse {
           0%,100% { opacity:1; transform:scale(1); }
           50% { opacity:0.6; transform:scale(1.4); }
+        }
+        @media (max-width: 480px) {
+          .ecd-outer { padding: 18px 14px !important; }
+          .ecd-digits { gap: 4px !important; }
+          .ecd-digit-box { min-width: 48px !important; padding: 8px 4px !important; }
+          .ecd-digit-num { font-size: 1.5rem !important; }
+          .ecd-chips-row { flex-direction: column !important; gap: 8px !important; }
+          .ecd-chip-box { min-width: unset !important; }
         }
       `}</style>
     </div>

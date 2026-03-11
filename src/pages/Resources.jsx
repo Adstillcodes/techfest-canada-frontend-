@@ -126,7 +126,7 @@ function Counter({ to, suffix = "" }) {
 
 // ── PILLAR CARD ──────────────────────────────────────────────────────────────
 
-function PillarCard({ pillar, index, isActive, onClick }) {
+function PillarCard({ pillar, index, isActive, onClick, isDark = true }) {
   return (
     <motion.button
       onClick={onClick}
@@ -166,7 +166,7 @@ function PillarCard({ pillar, index, isActive, onClick }) {
           fontFamily: "'Orbitron', sans-serif",
           fontSize: "0.65rem", fontWeight: 800,
           letterSpacing: "1.5px", textTransform: "uppercase",
-          color: isActive ? pillar.color : "rgba(255,255,255,0.4)",
+          color: isActive ? pillar.color : (isDark ? "rgba(255,255,255,0.4)" : "rgba(20,5,60,0.4)"),
           transition: "color 0.3s",
         }}>
           {pillar.short}
@@ -175,7 +175,7 @@ function PillarCard({ pillar, index, isActive, onClick }) {
       <div style={{
         fontFamily: "'Orbitron', sans-serif",
         fontSize: "0.82rem", fontWeight: 700,
-        color: isActive ? "#ffffff" : "rgba(255,255,255,0.7)",
+        color: isActive ? (isDark ? "#ffffff" : "#0f0520") : (isDark ? "rgba(255,255,255,0.7)" : "rgba(20,5,60,0.75)"),
         lineHeight: 1.4, transition: "color 0.3s",
       }}>
         {pillar.title}
@@ -205,10 +205,10 @@ export default function FirstTimers() {
   }, []);
 
   const bg       = isDark ? "#07030f"              : "#f4f0ff";
-  const cardBg   = isDark ? "rgba(255,255,255,0.03)" : "rgba(122,63,209,0.05)";
-  const border   = isDark ? "rgba(255,255,255,0.08)" : "rgba(122,63,209,0.15)";
+  const cardBg   = isDark ? "rgba(255,255,255,0.03)" : "rgba(122,63,209,0.07)";
+  const border   = isDark ? "rgba(255,255,255,0.08)" : "rgba(122,63,209,0.25)";
   const textMain = isDark ? "#ffffff"              : "#0f0520";
-  const textMuted= isDark ? "rgba(200,180,255,0.65)": "rgba(80,50,140,0.65)";
+  const textMuted= isDark ? "rgba(200,180,255,0.65)": "rgba(60,30,110,0.75)";
 
   return (
     <div style={{ background: bg, minHeight: "100vh", color: textMain, fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
@@ -226,7 +226,7 @@ export default function FirstTimers() {
         {/* Background grid */}
         <div style={{
           position: "absolute", inset: 0, pointerEvents: "none",
-          backgroundImage: `linear-gradient(rgba(122,63,209,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(122,63,209,0.06) 1px, transparent 1px)`,
+          backgroundImage: isDark ? `linear-gradient(rgba(122,63,209,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(122,63,209,0.06) 1px, transparent 1px)` : `linear-gradient(rgba(122,63,209,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(122,63,209,0.10) 1px, transparent 1px)`,
           backgroundSize: "60px 60px",
         }} />
 
@@ -249,7 +249,7 @@ export default function FirstTimers() {
             }}
           >
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px #f5a623", display: "inline-block" }} />
-            <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: "#c4a8ff" }}>
+            <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: isDark ? "#c4a8ff" : "#5a1fa8" }}>
               First Timers Guide
             </span>
           </motion.div>
@@ -328,7 +328,7 @@ export default function FirstTimers() {
 
       {/* ── THE CONFERENCE ── */}
       <section style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
-        <SectionLabel label="The Conference" />
+        <SectionLabel label="The Conference" isDark={isDark} />
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }}>
           {/* Left: intro + pillar list */}
@@ -359,6 +359,7 @@ export default function FirstTimers() {
                   key={p.id} pillar={p} index={i}
                   isActive={activePillar === i}
                   onClick={() => setActivePillar(i)}
+                  isDark={isDark}
                 />
               ))}
             </div>
@@ -437,7 +438,7 @@ export default function FirstTimers() {
       {/* ── APPLIED SECTORS ── */}
       <section style={{ padding: "80px 5%", background: isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.04)", borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <SectionLabel label="Applied Sectors" />
+          <SectionLabel label="Applied Sectors" isDark={isDark} />
 
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -483,7 +484,7 @@ export default function FirstTimers() {
                 <div style={{
                   fontFamily: "'Orbitron', sans-serif",
                   fontSize: "0.72rem", fontWeight: 700,
-                  color: textMain, lineHeight: 1.4,
+                  color: isDark ? textMain : "#1a0a40", lineHeight: 1.4,
                 }}>
                   {s.label}
                 </div>
@@ -495,7 +496,7 @@ export default function FirstTimers() {
 
       {/* ── WHERE PILLARS MEET SECTORS ── */}
       <section style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
-        <SectionLabel label="Where Pillars Meet Sectors" />
+        <SectionLabel label="Where Pillars Meet Sectors" isDark={isDark} />
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
           <div>
@@ -529,75 +530,15 @@ export default function FirstTimers() {
             </motion.p>
           </div>
 
-          {/* Intersection grid visual */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            style={{ position: "relative" }}
-          >
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "auto repeat(5, 1fr)",
-              gap: 4,
-              fontSize: "0.6rem",
-            }}>
-              {/* Header row */}
-              <div />
-              {PILLARS.map(p => (
-                <div key={p.id} style={{
-                  background: `${p.color}22`, border: `1px solid ${p.color}44`,
-                  borderRadius: 8, padding: "8px 4px", textAlign: "center",
-                  color: p.color, fontFamily: "'Orbitron', sans-serif",
-                  fontWeight: 700, fontSize: "0.55rem", letterSpacing: "0.5px",
-                }}>
-                  {p.short}
-                </div>
-              ))}
-              {/* Sector rows */}
-              {SECTORS.map((sector, si) => (
-                <>
-                  <div key={`label-${si}`} style={{
-                    display: "flex", alignItems: "center", gap: 4,
-                    padding: "8px 8px", color: textMuted,
-                    fontSize: "0.6rem", fontWeight: 600, whiteSpace: "nowrap",
-                  }}>
-                    <span>{sector.icon}</span>
-                    <span style={{ maxWidth: 70, overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {sector.label.split(",")[0]}
-                    </span>
-                  </div>
-                  {PILLARS.map((pillar, pi) => (
-                    <motion.div
-                      key={`${si}-${pi}`}
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: (si * 5 + pi) * 0.02 }}
-                      whileHover={{ scale: 1.3 }}
-                      style={{
-                        background: `linear-gradient(135deg, ${pillar.color}25, ${sector.color}20)`,
-                        border: `1px solid ${pillar.color}33`,
-                        borderRadius: 6, aspectRatio: "1",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        cursor: "default",
-                        color: pillar.color, fontSize: "0.75rem",
-                      }}
-                    >
-                      ✦
-                    </motion.div>
-                  ))}
-                </>
-              ))}
-            </div>
-          </motion.div>
+          {/* Interactive Pillar → Sector connector */}
+          <PillarSectorConnector PILLARS={PILLARS} SECTORS={SECTORS} isDark={isDark} textMuted={textMuted} textMain={textMain} />
         </div>
       </section>
 
       {/* ── EVENT FORMATS ── */}
       <section style={{ padding: "80px 5%", background: isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.04)", borderTop: `1px solid ${border}` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <SectionLabel label="What's On" />
+          <SectionLabel label="What's On" isDark={isDark} />
 
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -632,7 +573,7 @@ export default function FirstTimers() {
                 style={{
                   background: activeFormat === i
                     ? `linear-gradient(135deg, ${f.color}22, ${f.color}10)`
-                    : cardBg,
+                    : (isDark ? "rgba(255,255,255,0.03)" : "rgba(122,63,209,0.06)"),
                   border: `1.5px solid ${activeFormat === i ? f.color : border}`,
                   borderRadius: 20, padding: "28px 18px", cursor: "pointer",
                   textAlign: "center", transition: "all 0.3s",
@@ -650,14 +591,14 @@ export default function FirstTimers() {
                 <div style={{
                   fontFamily: "'Orbitron', sans-serif",
                   fontSize: "0.72rem", fontWeight: 800,
-                  color: activeFormat === i ? f.color : textMain,
+                  color: activeFormat === i ? f.color : (isDark ? textMain : "#1a0a40"),
                   lineHeight: 1.4, transition: "color 0.3s",
                 }}>
                   {f.title}
                 </div>
                 <div style={{
                   marginTop: 10, fontSize: "0.65rem",
-                  color: activeFormat === i ? f.color : textMuted,
+                  color: activeFormat === i ? f.color : (isDark ? textMuted : "rgba(60,30,110,0.6)"),
                   transition: "color 0.3s",
                 }}>
                   {activeFormat === i ? "▲ Close" : "▼ Learn more"}
@@ -739,8 +680,8 @@ export default function FirstTimers() {
               style={{
                 display: "inline-flex", alignItems: "center", gap: 8,
                 background: "transparent",
-                border: "1.5px solid rgba(122,63,209,0.5)",
-                color: textMain, padding: "15px 36px", borderRadius: 14,
+                border: `1.5px solid ${isDark ? "rgba(122,63,209,0.5)" : "rgba(122,63,209,0.6)"}`,
+                color: isDark ? textMain : "#1a0a40", padding: "15px 36px", borderRadius: 14,
                 fontFamily: "'Orbitron', sans-serif", fontWeight: 700,
                 fontSize: "0.85rem", textDecoration: "none",
               }}
@@ -756,9 +697,146 @@ export default function FirstTimers() {
   );
 }
 
+
+const USE_CASES = {
+  ai: [
+    { sector: "Healthcare & Life Sciences",              case: "AI diagnostics & clinical decision support deployed at hospital networks" },
+    { sector: "Financial Services & Insurance",         case: "Real-time fraud detection & AI-driven underwriting at scale" },
+    { sector: "Defence & National Security",            case: "Autonomous threat detection and intelligence analysis systems" },
+    { sector: "Energy & Utilities",                     case: "Predictive grid maintenance and energy demand forecasting" },
+    { sector: "Supply Chain, Manufacturing & Infrastructure", case: "Computer vision QA and intelligent logistics routing" },
+  ],
+  quantum: [
+    { sector: "Financial Services & Insurance",         case: "Portfolio optimization and quantum-safe cryptography for banks" },
+    { sector: "Healthcare & Life Sciences",              case: "Drug discovery acceleration through molecular simulation" },
+    { sector: "Defence & National Security",            case: "Quantum-secure communications and encryption migration" },
+    { sector: "Energy & Utilities",                     case: "Grid optimization and materials science for battery development" },
+    { sector: "Supply Chain, Manufacturing & Infrastructure", case: "Route optimization and quantum logistics for complex supply chains" },
+  ],
+  sustainability: [
+    { sector: "Energy & Utilities",                     case: "Smart grid management and renewable energy integration platforms" },
+    { sector: "Supply Chain, Manufacturing & Infrastructure", case: "Carbon tracking, circular economy platforms, green manufacturing" },
+    { sector: "Healthcare & Life Sciences",              case: "Sustainable hospital operations and green pharma supply chains" },
+    { sector: "Financial Services & Insurance",         case: "ESG reporting tools, green bonds, and climate risk modelling" },
+    { sector: "Defence & National Security",            case: "Sustainable military logistics and energy-resilient base infrastructure" },
+  ],
+  cyber: [
+    { sector: "Defence & National Security",            case: "Critical infrastructure protection and national cyber resilience" },
+    { sector: "Financial Services & Insurance",         case: "Zero-trust banking architecture and cyber insurance underwriting" },
+    { sector: "Healthcare & Life Sciences",              case: "Medical device security and patient data protection at scale" },
+    { sector: "Energy & Utilities",                     case: "OT/IT convergence security for power grids and pipelines" },
+    { sector: "Supply Chain, Manufacturing & Infrastructure", case: "Supply chain attack prevention and secure industrial IoT" },
+  ],
+  robotics: [
+    { sector: "Supply Chain, Manufacturing & Infrastructure", case: "Autonomous warehousing, robotic assembly, and smart factories" },
+    { sector: "Healthcare & Life Sciences",              case: "Surgical robotics, hospital automation, and rehab exoskeletons" },
+    { sector: "Defence & National Security",            case: "Autonomous drones, bomb disposal robots, and logistics automation" },
+    { sector: "Energy & Utilities",                     case: "Robotic inspection of pipelines, wind turbines, and power infrastructure" },
+    { sector: "Financial Services & Insurance",         case: "Process automation, robotic document processing, and compliance bots" },
+  ],
+};
+
+function PillarSectorConnector({ PILLARS, SECTORS, isDark, textMuted, textMain }) {
+  const [selected, setSelected] = useState(0);
+  const pillar = PILLARS[selected];
+  const cases = USE_CASES[pillar.id] || [];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.97 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      style={{ width: "100%" }}
+    >
+      {/* Pillar selector tabs */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
+        {PILLARS.map((p, i) => (
+          <button
+            key={p.id}
+            onClick={() => setSelected(i)}
+            style={{
+              display: "flex", alignItems: "center", gap: 6,
+              padding: "8px 14px", borderRadius: 99, cursor: "pointer",
+              background: selected === i ? `${p.color}22` : "transparent",
+              border: `1.5px solid ${selected === i ? p.color : isDark ? "rgba(255,255,255,0.12)" : "rgba(122,63,209,0.20)"}`,
+              color: selected === i ? p.color : (isDark ? "rgba(255,255,255,0.5)" : "rgba(60,30,110,0.55)"),
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.8px",
+              textTransform: "uppercase", transition: "all 0.25s",
+            }}
+          >
+            <span style={{ fontSize: "0.9rem" }}>{p.icon}</span>
+            {p.short}
+          </button>
+        ))}
+      </div>
+
+      {/* Heading */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selected}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div style={{ marginBottom: 16, paddingBottom: 14, borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(122,63,209,0.15)"}` }}>
+            <div style={{ fontSize: "1.4rem", marginBottom: 6 }}>{pillar.icon}</div>
+            <div style={{
+              fontFamily: "'Orbitron', sans-serif", fontSize: "0.75rem",
+              fontWeight: 800, color: pillar.color, letterSpacing: "0.5px", marginBottom: 4,
+            }}>
+              {pillar.title}
+            </div>
+            <div style={{ fontSize: "0.8rem", color: textMuted, lineHeight: 1.6 }}>
+              {pillar.description}
+            </div>
+          </div>
+
+          {/* Sector use-cases */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {cases.map((c, i) => {
+              const sector = SECTORS.find(s => s.label === c.sector);
+              return (
+                <motion.div
+                  key={c.sector}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.07 }}
+                  style={{
+                    display: "flex", alignItems: "flex-start", gap: 12,
+                    background: isDark ? "rgba(255,255,255,0.03)" : "rgba(122,63,209,0.05)",
+                    border: `1px solid ${isDark ? "rgba(255,255,255,0.07)" : "rgba(122,63,209,0.18)"}`,
+                    borderLeft: `3px solid ${pillar.color}`,
+                    borderRadius: 12, padding: "12px 14px",
+                  }}
+                >
+                  <span style={{ fontSize: "1.1rem", flexShrink: 0, marginTop: 1 }}>{sector?.icon}</span>
+                  <div>
+                    <div style={{
+                      fontSize: "0.72rem", fontWeight: 700,
+                      color: isDark ? "rgba(255,255,255,0.85)" : "#1a0a40",
+                      marginBottom: 3, fontFamily: "'Orbitron', sans-serif", letterSpacing: "0.3px",
+                    }}>
+                      {c.sector}
+                    </div>
+                    <div style={{ fontSize: "0.78rem", color: textMuted, lineHeight: 1.6 }}>
+                      {c.case}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
 // ── SECTION LABEL ─────────────────────────────────────────────────────────────
 
-function SectionLabel({ label }) {
+function SectionLabel({ label, isDark = true }) {
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -766,12 +844,13 @@ function SectionLabel({ label }) {
       viewport={{ once: true }}
       style={{
         display: "inline-flex", alignItems: "center", gap: 8,
-        background: "rgba(122,63,209,0.10)", border: "1px solid rgba(122,63,209,0.25)",
+        background: isDark ? "rgba(122,63,209,0.10)" : "rgba(122,63,209,0.08)",
+        border: `1px solid ${isDark ? "rgba(122,63,209,0.25)" : "rgba(122,63,209,0.35)"}`,
         borderRadius: 999, padding: "5px 16px", marginBottom: 24,
       }}
     >
       <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 6px #f5a623", display: "inline-block" }} />
-      <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: "#c4a8ff" }}>
+      <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: isDark ? "#c4a8ff" : "#5a1fa8" }}>
         {label}
       </span>
     </motion.div>

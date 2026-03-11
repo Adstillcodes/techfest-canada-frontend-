@@ -212,6 +212,19 @@ export default function FirstTimers() {
 
   return (
     <div style={{ background: bg, minHeight: "100vh", color: textMain, fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
+      <style>{`
+        @media (max-width: 860px) {
+          .ft-two-col { grid-template-columns: 1fr !important; }
+          .ft-five-col { grid-template-columns: repeat(2, 1fr) !important; }
+          .ft-stat-row { grid-template-columns: repeat(2, 1fr) !important; }
+          .ft-sticky { position: static !important; }
+          .ft-connector-tabs { flex-wrap: wrap; }
+        }
+        @media (max-width: 520px) {
+          .ft-five-col { grid-template-columns: 1fr !important; }
+          .ft-stat-row { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+      `}</style>
       <Navbar />
 
       {/* ── HERO ── */}
@@ -288,7 +301,7 @@ export default function FirstTimers() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}
+            className="ft-stat-row" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}
           >
             {[
               { val: 500, suffix: "+", label: "Decision Makers" },
@@ -330,7 +343,7 @@ export default function FirstTimers() {
       <section style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
         <SectionLabel label="The Conference" isDark={isDark} />
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }}>
+        <div className="ft-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }}>
           {/* Left: intro + pillar list */}
           <div>
             <motion.h2
@@ -366,7 +379,7 @@ export default function FirstTimers() {
           </div>
 
           {/* Right: detail panel */}
-          <div style={{ position: "sticky", top: 120 }}>
+          <div className="ft-sticky" style={{ position: "sticky", top: 120 }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activePillar}
@@ -460,7 +473,7 @@ export default function FirstTimers() {
             We bring these conversations into the sectors where deployment decisions are being made right now.
           </motion.p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
+          <div className="ft-five-col" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
             {SECTORS.map((s, i) => (
               <motion.div
                 key={s.label}
@@ -498,7 +511,7 @@ export default function FirstTimers() {
       <section style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
         <SectionLabel label="Where Pillars Meet Sectors" isDark={isDark} />
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
+        <div className="ft-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
           <div>
             <motion.h2
               initial={{ opacity: 0, x: -30 }}

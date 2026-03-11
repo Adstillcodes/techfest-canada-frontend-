@@ -9,6 +9,7 @@ import CookieConsent from "../components/CookieConsent";
 import PostPurchaseModal from "../components/PostPurchaseModal";
 import OnboardingSurvey from "../components/OnboardingSurvey";
 
+
 export default function Home() {
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [surveyOpen, setSurveyOpen] = useState(false);

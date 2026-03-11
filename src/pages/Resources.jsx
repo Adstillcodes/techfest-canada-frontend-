@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from "framer-motion";
-import Navbar from "../components/Navbar.tsx";
+import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 // ── DATA ─────────────────────────────────────────────────────────────────────

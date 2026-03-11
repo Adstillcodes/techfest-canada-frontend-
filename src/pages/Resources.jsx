@@ -213,16 +213,29 @@ export default function FirstTimers() {
   return (
     <div style={{ background: bg, minHeight: "100vh", color: textMain, fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
       <style>{`
-        @media (max-width: 860px) {
-          .ft-two-col { grid-template-columns: 1fr !important; }
+        /* ── FIRST TIMERS MOBILE ── */
+        @media (max-width: 900px) {
+          .ft-two-col { grid-template-columns: 1fr !important; gap: 24px !important; }
           .ft-five-col { grid-template-columns: repeat(2, 1fr) !important; }
-          .ft-stat-row { grid-template-columns: repeat(2, 1fr) !important; }
-          .ft-sticky { position: static !important; }
-          .ft-connector-tabs { flex-wrap: wrap; }
+          .ft-sticky { position: static !important; top: auto !important; }
+          .ft-hero-stats { flex-direction: row !important; flex-wrap: wrap !important; justify-content: center !important; }
+          .ft-hero-stats > * { min-width: 120px !important; flex: 1 1 120px !important; }
+          .ft-sector-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .ft-format-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .ft-connector-tabs { flex-wrap: wrap !important; gap: 6px !important; }
+          .ft-pillar-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+          .ft-section { padding: 60px 5% !important; }
         }
-        @media (max-width: 520px) {
+        @media (max-width: 540px) {
           .ft-five-col { grid-template-columns: 1fr !important; }
-          .ft-stat-row { grid-template-columns: repeat(2, 1fr) !important; }
+          .ft-format-grid { grid-template-columns: 1fr 1fr !important; }
+          .ft-hero-h1 { font-size: 1.6rem !important; }
+          .ft-hero-stats { gap: 8px !important; }
+          .ft-hero-stats > * { min-width: 100px !important; padding: 10px 12px !important; }
+          .ft-pillar-list { grid-template-columns: 1fr !important; }
+          .ft-sector-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .ft-cta-row { flex-direction: column !important; }
+          .ft-cta-row a, .ft-cta-row button { width: 100% !important; text-align: center !important; }
         }
       `}</style>
       <Navbar />
@@ -271,7 +284,7 @@ export default function FirstTimers() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.7 }}
-            style={{
+            className="ft-hero-h1" style={{
               fontFamily: "'Orbitron', sans-serif",
               fontSize: "clamp(2.2rem, 5vw, 4rem)",
               fontWeight: 900, lineHeight: 1.1,
@@ -301,7 +314,7 @@ export default function FirstTimers() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="ft-stat-row" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}
+            className="ft-hero-stats" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}
           >
             {[
               { val: 500, suffix: "+", label: "Decision Makers" },
@@ -340,7 +353,7 @@ export default function FirstTimers() {
       </section>
 
       {/* ── THE CONFERENCE ── */}
-      <section style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
+      <section className="ft-section" style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
         <SectionLabel label="The Conference" isDark={isDark} />
 
         <div className="ft-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }}>
@@ -366,7 +379,7 @@ export default function FirstTimers() {
               Our conference is curated around five tech pillars and the real-world sectors where they are being adopted. Every session is designed to unpack opportunities, challenges, and practical solutions you can take back to your organization.
             </motion.p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div className="ft-pillar-list" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {PILLARS.map((p, i) => (
                 <PillarCard
                   key={p.id} pillar={p} index={i}
@@ -449,7 +462,7 @@ export default function FirstTimers() {
       </section>
 
       {/* ── APPLIED SECTORS ── */}
-      <section style={{ padding: "80px 5%", background: isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.04)", borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>
+      <section className="ft-section" style={{ padding: "80px 5%", background: isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.04)", borderTop: `1px solid ${border}`, borderBottom: `1px solid ${border}` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <SectionLabel label="Applied Sectors" isDark={isDark} />
 
@@ -473,7 +486,7 @@ export default function FirstTimers() {
             We bring these conversations into the sectors where deployment decisions are being made right now.
           </motion.p>
 
-          <div className="ft-five-col" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
+          <div className="ft-sector-grid ft-five-col" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
             {SECTORS.map((s, i) => (
               <motion.div
                 key={s.label}
@@ -508,7 +521,7 @@ export default function FirstTimers() {
       </section>
 
       {/* ── WHERE PILLARS MEET SECTORS ── */}
-      <section style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
+      <section className="ft-section" style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
         <SectionLabel label="Where Pillars Meet Sectors" isDark={isDark} />
 
         <div className="ft-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
@@ -549,7 +562,7 @@ export default function FirstTimers() {
       </section>
 
       {/* ── EVENT FORMATS ── */}
-      <section style={{ padding: "80px 5%", background: isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.04)", borderTop: `1px solid ${border}` }}>
+      <section className="ft-section" style={{ padding: "80px 5%", background: isDark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.04)", borderTop: `1px solid ${border}` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <SectionLabel label="What's On" isDark={isDark} />
 
@@ -588,7 +601,7 @@ export default function FirstTimers() {
                     ? `linear-gradient(135deg, ${f.color}22, ${f.color}10)`
                     : (isDark ? "rgba(255,255,255,0.03)" : "rgba(122,63,209,0.06)"),
                   border: `1.5px solid ${activeFormat === i ? f.color : border}`,
-                  borderRadius: 20, padding: "28px 18px", cursor: "pointer",
+                  borderRadius: 20, padding: "20px 12px", cursor: "pointer",
                   textAlign: "center", transition: "all 0.3s",
                   position: "relative", overflow: "hidden",
                 }}
@@ -603,9 +616,10 @@ export default function FirstTimers() {
                 <div style={{ fontSize: "2rem", marginBottom: 12 }}>{f.icon}</div>
                 <div style={{
                   fontFamily: "'Orbitron', sans-serif",
-                  fontSize: "0.72rem", fontWeight: 800,
+                  fontSize: "0.68rem", fontWeight: 800,
                   color: activeFormat === i ? f.color : (isDark ? textMain : "#1a0a40"),
-                  lineHeight: 1.4, transition: "color 0.3s",
+                  lineHeight: 1.35, transition: "color 0.3s",
+                  wordBreak: "break-word",
                 }}>
                   {f.title}
                 </div>
@@ -670,7 +684,7 @@ export default function FirstTimers() {
           <p style={{ color: textMuted, lineHeight: 1.8, marginBottom: 36, fontSize: "1rem" }}>
             Secure your seat at The Carlu, Toronto on October 28, 2026. Spaces are limited — this is not a conference you attend passively.
           </p>
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+          <div className="ft-cta-row" style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
             <motion.a
               href="/tickets"
               whileHover={{ scale: 1.04 }}
@@ -762,20 +776,21 @@ function PillarSectorConnector({ PILLARS, SECTORS, isDark, textMuted, textMain }
       style={{ width: "100%" }}
     >
       {/* Pillar selector tabs */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
+      <div className="ft-connector-tabs" style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
         {PILLARS.map((p, i) => (
           <button
             key={p.id}
             onClick={() => setSelected(i)}
             style={{
               display: "flex", alignItems: "center", gap: 6,
-              padding: "8px 14px", borderRadius: 99, cursor: "pointer",
+              padding: "8px 12px", borderRadius: 99, cursor: "pointer",
               background: selected === i ? `${p.color}22` : "transparent",
               border: `1.5px solid ${selected === i ? p.color : isDark ? "rgba(255,255,255,0.12)" : "rgba(122,63,209,0.20)"}`,
               color: selected === i ? p.color : (isDark ? "rgba(255,255,255,0.5)" : "rgba(60,30,110,0.55)"),
               fontFamily: "'Orbitron', sans-serif",
-              fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.8px",
+              fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.5px",
               textTransform: "uppercase", transition: "all 0.25s",
+              flexShrink: 0,
             }}
           >
             <span style={{ fontSize: "0.9rem" }}>{p.icon}</span>

@@ -3,118 +3,196 @@ import { useEffect, useState } from "react";
 const API = "https://techfest-canada-backend.onrender.com/api";
 
 export default function AdminInventory() {
+
   const [inventory, setInventory] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [tier, setTier] = useState("festival");
-  const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadInventory();
   }, []);
 
-  // ================= LOAD =================
- const loadInventory = async () => {
-  try {
-    const token = localStorage.getItem("token"); // ⭐ REQUIRED
+  /* ================= LOAD ================= */
 
-    if (!token) {
-      console.error("No token found in localStorage");
-      return;
-    }
-
-    const res = await fetch(`${API}/admin/inventory`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      console.error("Inventory error:", data);
-      throw new Error(data.error || "Failed to load inventory");
-    }
-
-    setInventory(Array.isArray(data) ? data : []);
-  } catch (err) {
-    console.error("Inventory load failed:", err);
-  }
-};
-
-  // ================= ADD STOCK =================
-  const handleAddTickets = async () => {
-    if (!amount || amount <= 0) {
-      alert("Enter valid ticket amount");
-      return;
-    }
+  const loadInventory = async () => {
 
     try {
-      setLoading(true);
 
       const token = localStorage.getItem("token");
-      const item = inventory.find((i) => i.tier === tier);
 
-      const newTotal = (item?.total || 0) + Number(amount);
+      const res = await fetch(`${API}/admin/inventory`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
-  await fetch(`${API}/admin/inventory/${tier}`, {
-  method: "PUT",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-  body: JSON.stringify({ total: newTotal }),
-});
+      const data = await res.json();
 
-      setShowModal(false);
-      setAmount("");
+      setInventory(Array.isArray(data) ? data : []);
+
+    } catch (err) {
+
+      console.error("Inventory load failed:", err);
+
+    }
+
+  };
+
+  /* ================= UPDATE PRICE ================= */
+
+  const updatePrice = async (tier, price) => {
+
+    try {
+
+      const token = localStorage.getItem("token");
+
+      await fetch(`${API}/admin/inventory/${tier}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ price: Number(price) })
+      });
+
       loadInventory();
 
-      // 🔥 notify other pages (tickets page live update)
-      window.dispatchEvent(new Event("inventoryUpdated"));
     } catch (err) {
-      alert("Failed to add tickets");
-    } finally {
-      setLoading(false);
+
+      console.error("Price update failed");
+
     }
+
   };
+
+  /* ================= UPDATE TOTAL ================= */
+
+  const updateTotal = async (tier, total) => {
+
+    try {
+
+      const token = localStorage.getItem("token");
+
+      await fetch(`${API}/admin/inventory/${tier}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ total: Number(total) })
+      });
+
+      loadInventory();
+
+    } catch (err) {
+
+      console.error("Total update failed");
+
+    }
+
+  };
+
+  /* ================= CALCULATIONS ================= */
+
+  const totalRevenue = inventory.reduce(
+    (sum, i) => sum + (i.sold * (i.price || 0)),
+    0
+  );
+
+  const totalSold = inventory.reduce(
+    (sum, i) => sum + i.sold,
+    0
+  );
+
+  const totalRemaining = inventory.reduce(
+    (sum, i) => sum + (i.total - i.sold),
+    0
+  );
 
   return (
     <div className="admin-card">
-      <div className="inventory-header">
-        <h2>Ticket Inventory</h2>
 
-        <button
-          className="btn-gradient"
-          onClick={() => setShowModal(true)}
-        >
-          + Add Tickets
-        </button>
+      <h2>Ticket Inventory</h2>
+
+      {/* ===== DASHBOARD STATS ===== */}
+
+      <div className="inventory-stats">
+
+        <div className="stat-card">
+          <p>Total Revenue</p>
+          <h3>${totalRevenue}</h3>
+        </div>
+
+        <div className="stat-card">
+          <p>Tickets Sold</p>
+          <h3>{totalSold}</h3>
+        </div>
+
+        <div className="stat-card">
+          <p>Tickets Remaining</p>
+          <h3>{totalRemaining}</h3>
+        </div>
+
       </div>
 
       {/* ===== TABLE ===== */}
+
       <div className="table-wrapper">
+
         <table className="admin-table">
+
           <thead>
             <tr>
               <th>Tier</th>
+              <th>Price</th>
               <th>Total</th>
               <th>Sold</th>
               <th>Remaining</th>
+              <th>Revenue</th>
+              <th>Progress</th>
             </tr>
           </thead>
 
           <tbody>
+
             {inventory.map((item) => {
+
               const remaining = item.total - item.sold;
+              const revenue = item.sold * (item.price || 0);
+              const percent = (item.sold / item.total) * 100;
 
               return (
                 <tr key={item.tier}>
-                  <td className="ticket-type">
-                    {item.tier.toUpperCase()}
+
+                  <td>{item.tier.toUpperCase()}</td>
+
+                  {/* PRICE */}
+
+                  <td>
+                    <input
+                      type="number"
+                      defaultValue={item.price || 0}
+                      onBlur={(e) =>
+                        updatePrice(item.tier, e.target.value)
+                      }
+                    />
                   </td>
-                  <td>{item.total}</td>
+
+                  {/* TOTAL */}
+
+                  <td>
+                    <input
+                      type="number"
+                      defaultValue={item.total}
+                      onBlur={(e) =>
+                        updateTotal(item.tier, e.target.value)
+                      }
+                    />
+                  </td>
+
                   <td>{item.sold}</td>
+
+                  {/* REMAINING */}
+
                   <td
                     className={
                       remaining <= 10
@@ -124,56 +202,41 @@ export default function AdminInventory() {
                   >
                     {remaining}
                   </td>
+
+                  {/* REVENUE */}
+
+                  <td>${revenue}</td>
+
+                  {/* PROGRESS BAR */}
+
+                  <td>
+
+                    <div className="progress-bar">
+
+                      <div
+                        className="progress-fill"
+                        style={{
+                          width: `${percent}%`
+                        }}
+                      />
+
+                    </div>
+
+                    <small>{Math.round(percent)}%</small>
+
+                  </td>
+
                 </tr>
               );
+
             })}
+
           </tbody>
+
         </table>
+
       </div>
 
-      {/* ===== MODAL ===== */}
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="admin-modal">
-            <h3>Add Ticket Stock</h3>
-
-            <label>Ticket Tier</label>
-            <select
-              value={tier}
-              onChange={(e) => setTier(e.target.value)}
-            >
-              <option value="early">Early Adopter</option>
-              <option value="festival">Festival Pass</option>
-              <option value="vip">VIP Experience</option>
-            </select>
-
-            <label>Number of tickets to add</label>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter amount"
-            />
-
-            <div className="modal-actions">
-              <button
-                className="btn-outline"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </button>
-
-              <button
-                className="btn-primary"
-                onClick={handleAddTickets}
-                disabled={loading}
-              >
-                {loading ? "Adding..." : "Add Tickets"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

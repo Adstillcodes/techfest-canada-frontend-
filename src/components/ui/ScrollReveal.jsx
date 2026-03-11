@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
  *   translateFrom / translateTo: translateY start/end in px (default 60 → 0)
  *   className, style: container
  */
+
 export default function ScrollReveal({
   children,
   perspective = "1200px",

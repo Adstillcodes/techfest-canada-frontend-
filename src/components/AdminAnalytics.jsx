@@ -138,7 +138,7 @@ export default function AdminAnalytics() {
             <CartesianGrid stroke="#333" />
 
             <XAxis
-              dataKey="_id"
+              dataKey="name"
               stroke="#aaa"
             />
 

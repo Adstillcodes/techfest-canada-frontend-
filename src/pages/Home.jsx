@@ -10,6 +10,7 @@ import PostPurchaseModal from "../components/PostPurchaseModal";
 import OnboardingSurvey from "../components/OnboardingSurvey";
 
 /* ── SCAN-LINE CANVAS ── */
+
 function ScanCanvas() {
   const canvasRef = useRef(null);
 

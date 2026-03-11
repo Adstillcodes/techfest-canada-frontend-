@@ -214,28 +214,41 @@ export default function FirstTimers() {
     <div style={{ background: bg, minHeight: "100vh", color: textMain, fontFamily: "'DM Sans', sans-serif", overflowX: "hidden" }}>
       <style>{`
         /* ── FIRST TIMERS MOBILE ── */
+
+        /* Tablet */
         @media (max-width: 900px) {
-          .ft-two-col { grid-template-columns: 1fr !important; gap: 24px !important; }
+          .ft-two-col { grid-template-columns: 1fr !important; gap: 20px !important; }
           .ft-five-col { grid-template-columns: repeat(2, 1fr) !important; }
           .ft-sticky { position: static !important; top: auto !important; }
-          .ft-hero-stats { flex-direction: row !important; flex-wrap: wrap !important; justify-content: center !important; }
-          .ft-hero-stats > * { min-width: 120px !important; flex: 1 1 120px !important; }
+          .ft-hero-stats { flex-wrap: wrap !important; justify-content: center !important; gap: 10px !important; }
+          .ft-hero-stats > * { flex: 1 1 140px !important; min-width: 130px !important; max-width: 180px !important; }
           .ft-sector-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .ft-format-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .ft-connector-tabs { flex-wrap: wrap !important; gap: 6px !important; }
-          .ft-pillar-list { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
-          .ft-section { padding: 60px 5% !important; }
+          .ft-pillar-list { display: grid !important; grid-template-columns: 1fr !important; gap: 8px !important; }
+          .ft-section { padding: 56px 5% !important; }
+          .ft-connector-inner { grid-template-columns: 1fr !important; }
         }
+
+        /* Mobile */
         @media (max-width: 540px) {
-          .ft-five-col { grid-template-columns: 1fr !important; }
-          .ft-format-grid { grid-template-columns: 1fr 1fr !important; }
-          .ft-hero-h1 { font-size: 1.6rem !important; }
+          .ft-hero-h1 { font-size: 1.5rem !important; line-height: 1.25 !important; }
           .ft-hero-stats { gap: 8px !important; }
-          .ft-hero-stats > * { min-width: 100px !important; padding: 10px 12px !important; }
-          .ft-pillar-list { grid-template-columns: 1fr !important; }
-          .ft-sector-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .ft-cta-row { flex-direction: column !important; }
-          .ft-cta-row a, .ft-cta-row button { width: 100% !important; text-align: center !important; }
+          .ft-hero-stats > * { flex: 1 1 110px !important; min-width: 100px !important; padding: 10px 10px !important; }
+          .ft-five-col { grid-template-columns: 1fr 1fr !important; }
+          .ft-format-grid { grid-template-columns: 1fr 1fr !important; }
+          .ft-sector-grid { grid-template-columns: 1fr 1fr !important; }
+          .ft-cta-row { flex-direction: column !important; align-items: stretch !important; }
+          .ft-cta-row a, .ft-cta-row button { width: 100% !important; text-align: center !important; justify-content: center !important; }
+          .ft-section { padding: 44px 4% !important; }
+          .ft-connector-tabs button { padding: 6px 10px !important; font-size: 0.55rem !important; }
+        }
+
+        /* Very small */
+        @media (max-width: 380px) {
+          .ft-hero-h1 { font-size: 1.25rem !important; }
+          .ft-five-col { grid-template-columns: 1fr !important; }
+          .ft-format-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
       <Navbar />
@@ -244,9 +257,9 @@ export default function FirstTimers() {
       <section
         ref={heroRef}
         style={{
-          position: "relative", minHeight: "85vh",
+          position: "relative",
           display: "flex", alignItems: "center", justifyContent: "center",
-          overflow: "hidden", paddingTop: 100,
+          overflow: "hidden", paddingTop: "clamp(80px, 15vw, 130px)", paddingBottom: "clamp(40px, 8vw, 80px)",
         }}
       >
         {/* Background grid */}
@@ -486,7 +499,7 @@ export default function FirstTimers() {
             We bring these conversations into the sectors where deployment decisions are being made right now.
           </motion.p>
 
-          <div className="ft-sector-grid ft-five-col" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
+          <div className="ft-sector-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}>
             {SECTORS.map((s, i) => (
               <motion.div
                 key={s.label}
@@ -524,7 +537,7 @@ export default function FirstTimers() {
       <section className="ft-section" style={{ padding: "100px 5%", maxWidth: 1200, margin: "0 auto" }}>
         <SectionLabel label="Where Pillars Meet Sectors" isDark={isDark} />
 
-        <div className="ft-two-col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
+        <div className="ft-two-col" className="ft-two-col ft-connector-inner" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }}>
           <div>
             <motion.h2
               initial={{ opacity: 0, x: -30 }}

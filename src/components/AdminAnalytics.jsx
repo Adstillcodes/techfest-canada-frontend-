@@ -50,8 +50,8 @@ export default function AdminAnalytics() {
   }, [range]);
 
   const avgPrice =
-    totals?.totalTickets > 0
-      ? (totals?.totalRevenue / totals?.totalTickets).toFixed(2)
+    totals?.totalTickets?.toLocaleString() > 0
+      ? (totals?.totalRevenue?.toLocaleString() / totals?.totalTickets?.toLocaleString()).toFixed(2)
       : 0;
 
   return (
@@ -64,7 +64,7 @@ export default function AdminAnalytics() {
         <div className="bg-[#1a1035] p-6 rounded-xl border border-purple-700">
           <p className="text-gray-400">Total Revenue</p>
           <h2 className="text-3xl font-bold text-white">
-            ${totals?.totalRevenue}
+            ${totals?.totalRevenue?.toLocaleString()}
           </h2>
         </div>
 

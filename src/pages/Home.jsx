@@ -9,70 +9,49 @@ import PostPurchaseModal from "../components/PostPurchaseModal";
 import OnboardingSurvey from "../components/OnboardingSurvey";
 import {
   motion,
-  AnimatePresence,
   useScroll,
   useTransform,
-  useMotionValue,
-  useSpring,
   useInView,
 } from "framer-motion";
 
 /* ═══════════════════════════════════════════════════════
-   ANIMATION VARIANTS
+   STAGGER VARIANTS
    ═══════════════════════════════════════════════════════ */
-
-var containerVariants = {
+var container = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.3,
+      staggerChildren: 0.13,
+      delayChildren: 0.25,
     },
   },
 };
 
-var itemBlur = {
-  hidden: {
-    opacity: 0,
-    filter: "blur(12px)",
-    y: 24,
-  },
+var blurSlide = {
+  hidden: { opacity: 0, filter: "blur(10px)", y: 22 },
   visible: {
     opacity: 1,
     filter: "blur(0px)",
     y: 0,
-    transition: {
-      type: "spring",
-      bounce: 0.3,
-      duration: 1.5,
-    },
+    transition: { type: "spring", bounce: 0.3, duration: 1.4 },
   },
 };
 
-var itemFade = {
-  hidden: { opacity: 0, y: 18 },
+var gentleFade = {
+  hidden: { opacity: 0, y: 14 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring", bounce: 0.25, duration: 1.2 },
+    transition: { type: "spring", bounce: 0.2, duration: 1.6 },
   },
 };
 
-var itemSlow = {
-  hidden: { opacity: 0, y: 16 },
+var slowReveal = {
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring", bounce: 0.2, duration: 1.8, delay: 0.1 },
-  },
-};
-
-var scaleUp = {
-  hidden: { opacity: 0, scale: 0.92 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { type: "spring", stiffness: 120, damping: 18 },
+    transition: { type: "spring", bounce: 0.15, duration: 2, delay: 0.05 },
   },
 };
 
@@ -82,71 +61,106 @@ var scaleUp = {
 var WORDS = ["MEET", "BUILD", "SCALE"];
 
 /* ═══════════════════════════════════════════════════════
-   ANIMATED COUNTER — counts up on scroll into view
+   ANIMATED COUNTER
    ═══════════════════════════════════════════════════════ */
 function AnimatedCounter(props) {
   var target = props.target;
   var suffix = props.suffix || "";
   var ref = useRef(null);
-  var isInView = useInView(ref, { once: true, margin: "-50px" });
-  var s = useState(0);
-  var count = s[0];
-  var setCount = s[1];
-  var s2 = useState(false);
-  var done = s2[0];
-  var setDone = s2[1];
+  var inView = useInView(ref, { once: true, margin: "-40px" });
+  var s = useState(0); var count = s[0]; var setCount = s[1];
+  var s2 = useState(false); var done = s2[0]; var setDone = s2[1];
 
   useEffect(function () {
-    if (!isInView || done) return;
+    if (!inView || done) return;
     var num = parseInt(target);
     if (isNaN(num)) { setCount(target); setDone(true); return; }
-    var steps = 35;
-    var inc = num / steps;
+    var steps = 30;
     var step = 0;
     var t = setInterval(function () {
       step++;
       if (step >= steps) {
-        setCount(num);
-        setDone(true);
-        clearInterval(t);
+        setCount(num); setDone(true); clearInterval(t);
       } else {
-        setCount(Math.round(inc * step));
+        setCount(Math.round((num / steps) * step));
       }
-    }, 1400 / steps);
+    }, 40);
     return function () { clearInterval(t); };
-  }, [isInView, done, target]);
+  }, [inView, done, target]);
+
+  return <span ref={ref}>{typeof count === "number" ? count + suffix : target}</span>;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SVG ANIMATED WAVES (no canvas)
+   ═══════════════════════════════════════════════════════ */
+function AnimatedWaves(props) {
+  var dark = props.dark;
+  var layers = [
+    { opacity: dark ? 0.08 : 0.05, speed: "32s", dy: 0,  color: dark ? "155,135,245" : "122,63,209" },
+    { opacity: dark ? 0.06 : 0.04, speed: "26s", dy: 20, color: dark ? "122,63,209" : "155,135,245" },
+    { opacity: dark ? 0.05 : 0.035, speed: "20s", dy: 40, color: dark ? "245,166,35" : "245,166,35" },
+    { opacity: dark ? 0.04 : 0.025, speed: "36s", dy: 10, color: dark ? "192,132,252" : "192,132,252" },
+  ];
 
   return (
-    <span ref={ref}>
-      {typeof count === "number" ? count + suffix : target}
-    </span>
+    <div style={{
+      position: "absolute", inset: 0, zIndex: 1,
+      overflow: "hidden", pointerEvents: "none",
+    }}>
+      {layers.map(function (l, i) {
+        return (
+          <svg
+            key={i}
+            viewBox="0 0 1440 320"
+            preserveAspectRatio="none"
+            style={{
+              position: "absolute",
+              bottom: l.dy,
+              left: "-5%",
+              width: "110%",
+              height: "45%",
+              opacity: l.opacity,
+              animation: "wave-drift-" + (i % 2 === 0 ? "left" : "right") + " " + l.speed + " linear infinite",
+            }}
+          >
+            <path
+              d={i % 2 === 0
+                ? "M0,160 C180,80 360,260 540,160 C720,60 900,240 1080,160 C1260,80 1350,200 1440,160 L1440,320 L0,320 Z"
+                : "M0,200 C160,120 320,280 480,180 C640,80 800,260 960,180 C1120,100 1280,240 1440,180 L1440,320 L0,320 Z"
+              }
+              fill={"rgba(" + l.color + ",1)"}
+            />
+          </svg>
+        );
+      })}
+    </div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════
-   FLOATING PARTICLES (CSS-only, no canvas)
+   FLOATING PARTICLES (CSS only)
    ═══════════════════════════════════════════════════════ */
-function FloatingParticles(props) {
+function Particles(props) {
   var dark = props.dark;
   var dots = [];
-  for (var i = 0; i < 24; i++) {
+  for (var i = 0; i < 20; i++) {
     dots.push({
       id: i,
       left: (Math.sin(i * 2.39) * 0.5 + 0.5) * 100,
       top: (Math.cos(i * 1.73) * 0.5 + 0.5) * 100,
-      size: 1.5 + (i % 5) * 0.6,
-      delay: (i * 0.4) % 8,
-      dur: 7 + (i % 6) * 2,
-      opacity: 0.12 + (i % 4) * 0.08,
+      size: 1.5 + (i % 4) * 0.7,
+      delay: (i * 0.5) % 7,
+      dur: 8 + (i % 5) * 2.5,
+      o: 0.12 + (i % 3) * 0.09,
     });
   }
   return (
-    <div style={{ position: "absolute", inset: 0, zIndex: 1, overflow: "hidden", pointerEvents: "none" }}>
+    <div style={{ position: "absolute", inset: 0, zIndex: 2, overflow: "hidden", pointerEvents: "none" }}>
       {dots.map(function (d) {
         return (
           <span
             key={d.id}
-            className="hero-particle"
             style={{
               position: "absolute",
               left: d.left + "%",
@@ -154,10 +168,8 @@ function FloatingParticles(props) {
               width: d.size,
               height: d.size,
               borderRadius: "50%",
-              background: dark
-                ? "rgba(155,135,245," + d.opacity + ")"
-                : "rgba(122,63,209," + d.opacity + ")",
-              animation: "particle-drift " + d.dur + "s ease-in-out " + d.delay + "s infinite alternate",
+              background: dark ? "rgba(155,135,245," + d.o + ")" : "rgba(122,63,209," + d.o + ")",
+              animation: "particle-float " + d.dur + "s ease-in-out " + d.delay + "s infinite alternate",
             }}
           />
         );
@@ -167,7 +179,7 @@ function FloatingParticles(props) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   PILLAR TAGS — scroll-revealed section
+   PILLAR SHOWCASE
    ═══════════════════════════════════════════════════════ */
 var PILLARS = [
   { name: "Artificial Intelligence", hue: "122,63,209" },
@@ -180,34 +192,30 @@ var PILLARS = [
 function PillarShowcase(props) {
   var dark = props.dark;
   var ref = useRef(null);
-  var isInView = useInView(ref, { once: true, margin: "-80px" });
+  var inView = useInView(ref, { once: true, margin: "-60px" });
+
+  var textSoft = dark ? "rgba(200,185,255,0.4)" : "rgba(90,40,180,0.4)";
+  var textMid  = dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.58)";
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, rotateX: 8, scale: 0.94, y: 50 }}
-      animate={isInView ? { opacity: 1, rotateX: 0, scale: 1, y: 0 } : {}}
-      transition={{ type: "spring", stiffness: 80, damping: 20, duration: 1.2 }}
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ type: "spring", stiffness: 70, damping: 20, duration: 1.4 }}
       style={{
-        perspective: "1200px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "2rem",
-        padding: "5rem 6% 4rem",
-        textAlign: "center",
+        display: "flex", flexDirection: "column", alignItems: "center",
+        gap: "2rem", padding: "5rem 6% 4rem", textAlign: "center",
       }}
     >
       <motion.p
         initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 0.2, duration: 0.8 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.15, duration: 0.8 }}
         style={{
-          fontSize: "0.66rem",
-          fontWeight: 700,
-          letterSpacing: "2.2px",
-          textTransform: "uppercase",
-          color: dark ? "rgba(200,185,255,0.4)" : "rgba(90,40,180,0.4)",
+          fontSize: "0.66rem", fontWeight: 700,
+          letterSpacing: "2.2px", textTransform: "uppercase",
+          color: textSoft,
         }}
       >
         Five Technology Pillars
@@ -218,29 +226,18 @@ function PillarShowcase(props) {
           return (
             <motion.span
               key={p.name}
-              initial={{ opacity: 0, filter: "blur(10px)", y: 16 }}
-              animate={isInView ? { opacity: 1, filter: "blur(0px)", y: 0 } : {}}
-              transition={{
-                type: "spring",
-                bounce: 0.3,
-                duration: 1.2,
-                delay: 0.35 + i * 0.09,
-              }}
+              initial={{ opacity: 0, filter: "blur(8px)", y: 14 }}
+              animate={inView ? { opacity: 1, filter: "blur(0px)", y: 0 } : {}}
+              transition={{ type: "spring", bounce: 0.3, duration: 1.2, delay: 0.3 + i * 0.08 }}
               whileHover={{ y: -3, scale: 1.04 }}
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "12px 26px",
-                borderRadius: "14px",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                letterSpacing: "0.4px",
+                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                padding: "12px 26px", borderRadius: "14px",
+                fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.4px",
                 background: "rgba(" + p.hue + ",0.08)",
                 border: "1px solid rgba(" + p.hue + ",0.2)",
                 color: "rgb(" + p.hue + ")",
                 cursor: "default",
-                transition: "box-shadow 0.3s ease",
               }}
             >
               {p.name}
@@ -250,15 +247,12 @@ function PillarShowcase(props) {
       </div>
 
       <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.8, duration: 0.9 }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.7, duration: 0.9 }}
         style={{
           fontSize: "clamp(0.95rem, 1.4vw, 1.08rem)",
-          lineHeight: 1.82,
-          color: dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.58)",
-          maxWidth: 560,
-          textAlign: "center",
+          lineHeight: 1.82, color: textMid, maxWidth: 560, textAlign: "center",
         }}
       >
         Each pillar features curated matchmaking, live demos, and
@@ -279,13 +273,11 @@ export default function Home() {
   var s5  = useState("");     var purchaseTicketType = s5[0];  var setPurchaseTicketType = s5[1];
   var s6  = useState(false);  var dark = s6[0];                var setDark = s6[1];
 
-  /* ── parallax scroll ── */
+  /* ── gentle parallax — only drifts 60px, fades late ── */
   var heroRef = useRef(null);
-  var scrollData = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  var scrollY = scrollData.scrollYProgress;
-  var heroY = useTransform(scrollY, [0, 1], [0, -120]);
-  var heroOpacity = useTransform(scrollY, [0, 0.6], [1, 0]);
-  var heroScale = useTransform(scrollY, [0, 0.7], [1, 0.97]);
+  var sd = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  var heroY       = useTransform(sd.scrollYProgress, [0, 1], [0, -60]);
+  var heroOpacity = useTransform(sd.scrollYProgress, [0, 0.85], [1, 0]);
 
   /* ── dark mode observer ── */
   useEffect(function () {
@@ -315,7 +307,7 @@ export default function Home() {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   }
 
-  /* ── theme tokens ── */
+  /* ── tokens ── */
   var bg       = dark ? "#06020f"                  : "#ffffff";
   var textMain = dark ? "#ffffff"                  : "#0d0520";
   var textMid  = dark ? "rgba(255,255,255,0.55)"   : "rgba(13,5,32,0.58)";
@@ -326,7 +318,13 @@ export default function Home() {
   var cardBg   = dark ? "rgba(155,135,245,0.04)"    : "rgba(122,63,209,0.025)";
   var cardBdr  = dark ? "rgba(155,135,245,0.12)"    : "rgba(122,63,209,0.12)";
 
-  /* ── stat data ── */
+  /* solid word colors — no background-clip hacks */
+  var wordColors = [
+    textMain,
+    accent,
+    "var(--brand-orange, #f5a623)",
+  ];
+
   var stats = [
     { num: "500", suffix: "+", label: "Decision Makers" },
     { num: "5",   suffix: "",  label: "Tech Pillars" },
@@ -336,46 +334,43 @@ export default function Home() {
 
   return (
     <>
-      {/* ═══ GLOBAL STYLES ═══ */}
       <style>{`
-        /* ── Particle float (no canvas) ── */
-        @keyframes particle-drift {
-          0%   { transform: translate(0, 0) scale(1); }
-          100% { transform: translate(14px, -20px) scale(1.4); }
+        /* ── Wave animations ── */
+        @keyframes wave-drift-left {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-15%); }
+        }
+        @keyframes wave-drift-right {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(15%); }
         }
 
-        /* ── Glow pulse ── */
+        /* ── Particles ── */
+        @keyframes particle-float {
+          0%   { transform: translate(0, 0) scale(1); }
+          100% { transform: translate(12px, -18px) scale(1.35); }
+        }
+
+        /* ── Glow breathe ── */
         @keyframes glow-breathe {
-          0%, 100% { opacity: 0.55; }
+          0%, 100% { opacity: 0.5; }
           50%      { opacity: 1; }
         }
 
         /* ── Badge dot ── */
         @keyframes dot-pulse {
           0%, 100% { transform: scale(1); opacity: 1; }
-          50%      { transform: scale(1.8); opacity: 0.4; }
+          50%      { transform: scale(1.7); opacity: 0.4; }
         }
 
-        /* ── Scroll cue ── */
-        @keyframes scroll-nudge {
-          0%, 100% { transform: translateY(0); }
-          50%      { transform: translateY(5px); }
-        }
-
-        /* ── Line draw ── */
-        @keyframes line-draw {
-          from { transform: scaleX(0); }
-          to   { transform: scaleX(1); }
-        }
-
-        /* ── Mouse wheel pulse ── */
-        @keyframes wheel-scroll {
+        /* ── Mouse wheel ── */
+        @keyframes wheel-bob {
           0%   { transform: translateY(0); opacity: 1; }
-          50%  { transform: translateY(6px); opacity: 0.3; }
+          50%  { transform: translateY(5px); opacity: 0.3; }
           100% { transform: translateY(0); opacity: 1; }
         }
 
-        /* ── Grid overlay ── */
+        /* ── Grid ── */
         .hero-grid {
           position: absolute; inset: 0; z-index: 1; pointer-events: none;
           background-image:
@@ -386,16 +381,14 @@ export default function Home() {
           -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, black 15%, transparent 100%);
         }
 
-        /* ── Radial glow blobs ── */
+        /* ── Glow blobs ── */
         .hero-glow {
-          position: absolute;
-          border-radius: 50%;
-          pointer-events: none;
-          z-index: 1;
+          position: absolute; border-radius: 50%;
+          pointer-events: none; z-index: 1;
           animation: glow-breathe 7s ease-in-out infinite;
         }
 
-        /* ── CTA hover states ── */
+        /* ── CTA solid ── */
         .hero-cta-solid {
           position: relative; overflow: hidden;
           display: inline-flex; align-items: center; gap: 10px;
@@ -406,10 +399,9 @@ export default function Home() {
           letter-spacing: 1.2px; text-transform: uppercase;
           transition: transform 0.25s ease, box-shadow 0.35s ease;
         }
-        .hero-cta-solid:hover {
-          transform: translateY(-3px);
-        }
+        .hero-cta-solid:hover { transform: translateY(-3px); }
 
+        /* ── CTA ghost ── */
         .hero-cta-ghost {
           display: inline-flex; align-items: center; gap: 8px;
           padding: 15px 32px; border-radius: 14px;
@@ -417,11 +409,9 @@ export default function Home() {
           text-decoration: none; cursor: pointer;
           transition: all 0.3s ease;
         }
-        .hero-cta-ghost:hover {
-          transform: translateY(-2px);
-        }
+        .hero-cta-ghost:hover { transform: translateY(-2px); }
 
-        /* ── Stat strip ── */
+        /* ── Stat bar ── */
         .hero-stats {
           display: flex; flex-wrap: wrap;
           justify-content: center; gap: 1px;
@@ -432,29 +422,25 @@ export default function Home() {
         .hero-stat {
           display: flex; flex-direction: column; align-items: center;
           padding: 20px 34px; flex: 1; min-width: 135px;
-          transition: background 0.25s ease;
-          cursor: default;
+          transition: background 0.25s ease; cursor: default;
         }
         .hero-stat:last-child { border-right: none !important; }
 
-        /* ── Navbar border override ── */
+        /* ── Kill navbar border on hero ── */
         .tfc-navbar-wrap { border-bottom: none !important; box-shadow: none !important; }
 
-        /* ── Radial bottom arc (Doc 4 style) ── */
+        /* ── Bottom arc ── */
         .hero-arc {
-          position: absolute;
-          left: 50%; bottom: -2px;
-          transform: translateX(-50%);
-          border-radius: 100%;
-          z-index: 3;
-          pointer-events: none;
+          position: absolute; border-radius: 100%;
+          z-index: 3; pointer-events: none;
+          left: 50%; transform: translateX(-50%);
         }
 
         /* ── Responsive ── */
         @media (max-width: 640px) {
-          .hero-ctas-wrap { flex-direction: column !important; width: 100% !important; }
+          .hero-ctas-row { flex-direction: column !important; width: 100% !important; }
           .hero-cta-solid, .hero-cta-ghost { width: 100% !important; justify-content: center !important; }
-          .hero-sub { text-align: left !important; }
+          .hero-sub-text { text-align: left !important; }
           .hero-stat { padding: 14px 18px !important; }
           .hero-stats { border-radius: 16px !important; }
         }
@@ -463,103 +449,76 @@ export default function Home() {
       <UrgencyBanner />
       <Navbar />
 
-      {/* ════════════════════════════════════════════
-          HERO SECTION
-          ════════════════════════════════════════════ */}
+      {/* ════════════════════ HERO ════════════════════ */}
       <section
         ref={heroRef}
         style={{
-          position: "relative",
-          overflow: "hidden",
+          position: "relative", overflow: "hidden",
           background: bg,
           minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          display: "flex", alignItems: "center", justifyContent: "center",
         }}
       >
-        {/* Grid overlay */}
+        {/* SVG waves */}
+        <AnimatedWaves dark={dark} />
+
+        {/* Grid */}
         <div className="hero-grid" />
 
-        {/* Floating particles */}
-        <FloatingParticles dark={dark} />
+        {/* Particles */}
+        <Particles dark={dark} />
 
-        {/* Ambient glow — purple top-left */}
+        {/* Glows */}
         <div className="hero-glow" style={{
-          width: 720, height: 720,
+          width: 700, height: 700,
           background: dark
             ? "radial-gradient(circle, rgba(122,63,209,0.22) 0%, transparent 70%)"
             : "radial-gradient(circle, rgba(122,63,209,0.10) 0%, transparent 70%)",
-          top: -270, left: -220,
-          filter: "blur(90px)",
+          top: -260, left: -200, filter: "blur(90px)",
         }} />
-        {/* Warm glow — orange top-right */}
         <div className="hero-glow" style={{
-          width: 520, height: 520,
+          width: 500, height: 500,
           background: dark
             ? "radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%)"
             : "radial-gradient(circle, rgba(245,166,35,0.07) 0%, transparent 70%)",
-          top: -170, right: -200,
-          filter: "blur(100px)",
-          animationDelay: "2.5s",
+          top: -160, right: -180, filter: "blur(100px)", animationDelay: "2.5s",
         }} />
-        {/* Cool glow — bottom */}
         <div className="hero-glow" style={{
-          width: 550, height: 380,
+          width: 500, height: 350,
           background: dark
             ? "radial-gradient(circle, rgba(155,135,245,0.10) 0%, transparent 70%)"
             : "radial-gradient(circle, rgba(155,135,245,0.06) 0%, transparent 70%)",
-          bottom: -90, left: "28%",
-          filter: "blur(110px)",
-          animationDelay: "4.5s",
+          bottom: -80, left: "28%", filter: "blur(110px)", animationDelay: "4s",
         }} />
 
-        {/* ── PARALLAX-WRAPPED CONTENT ── */}
+        {/* ── PARALLAX CONTENT ── */}
         <motion.div
           style={{
             y: heroY,
             opacity: heroOpacity,
-            scale: heroScale,
-            position: "relative",
-            zIndex: 5,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            position: "relative", zIndex: 5,
+            display: "flex", flexDirection: "column", alignItems: "center",
             textAlign: "center",
             padding: "clamp(6rem, 10vw, 9rem) 6% clamp(4rem, 7vw, 6rem)",
-            maxWidth: 920,
-            margin: "0 auto",
-            width: "100%",
+            maxWidth: 920, margin: "0 auto", width: "100%",
           }}
         >
-          {/* ── STAGGER CONTAINER ── */}
           <motion.div
-            variants={containerVariants}
+            variants={container}
             initial="hidden"
             animate="visible"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              width: "100%",
-            }}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}
           >
-            {/* Eyebrow badge */}
+            {/* Badge */}
             <motion.div
-              variants={itemBlur}
+              variants={blurSlide}
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "8px 22px",
-                borderRadius: 999,
-                background: pillBg,
-                border: "1px solid " + pillBdr,
+                display: "inline-flex", alignItems: "center", gap: 10,
+                padding: "8px 22px", borderRadius: 999,
+                background: pillBg, border: "1px solid " + pillBdr,
                 color: accent,
-                fontSize: "0.7rem",
-                fontWeight: 700,
-                letterSpacing: "1.8px",
-                textTransform: "uppercase",
+                fontSize: "0.7rem", fontWeight: 700,
+                letterSpacing: "1.8px", textTransform: "uppercase",
                 marginBottom: "2rem",
                 backdropFilter: "blur(10px)",
               }}
@@ -574,16 +533,14 @@ export default function Home() {
             </motion.div>
 
             {/* Logo */}
-            <motion.div variants={itemBlur} style={{ marginBottom: "1.6rem" }}>
+            <motion.div variants={blurSlide} style={{ marginBottom: "1.6rem" }}>
               <img
                 src={dark
                   ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
                   : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
                 alt="The Tech Festival Canada"
                 style={{
-                  width: "100%",
-                  maxWidth: 520,
-                  height: "auto",
+                  width: "100%", maxWidth: 520, height: "auto",
                   objectFit: "contain",
                   filter: dark
                     ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))"
@@ -592,84 +549,71 @@ export default function Home() {
               />
             </motion.div>
 
-            {/* Headline: MEET · BUILD · SCALE */}
+            {/* ── HEADLINE ── */}
             <motion.h1
-              variants={itemFade}
+              variants={gentleFade}
               style={{
                 fontFamily: "'Orbitron', sans-serif",
                 fontSize: "clamp(2.3rem, 5.5vw, 4.4rem)",
-                fontWeight: 900,
-                lineHeight: 1.08,
-                marginBottom: "0.4rem",
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "center",
-                gap: "0.55rem",
+                fontWeight: 900, lineHeight: 1.08,
+                marginBottom: "0.3rem",
+                display: "flex", flexWrap: "wrap",
+                justifyContent: "center", gap: "0.5rem",
                 letterSpacing: "-0.5px",
               }}
             >
               {WORDS.map(function (word, i) {
+                var sep = i < WORDS.length - 1;
                 return (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, y: 28, scale: 0.92, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                    transition={{
-                      type: "spring",
-                      bounce: 0.35,
-                      duration: 1.4,
-                      delay: 0.7 + i * 0.16,
-                    }}
-                    style={{
-                      display: "inline-block",
-                      background: i === 0
-                        ? "linear-gradient(135deg, " + (dark ? "#fff" : "#0d0520") + " 30%, " + accent + ")"
-                        : i === 1
-                        ? "linear-gradient(135deg, " + accent + ", #9b57e8)"
-                        : "linear-gradient(135deg, var(--brand-orange, #f5a623), #f7c15e)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    {word}
-                  </motion.span>
+                  <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                    <motion.span
+                      initial={{ opacity: 0, y: 26, filter: "blur(8px)" }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      transition={{
+                        type: "spring", bounce: 0.35,
+                        duration: 1.3, delay: 0.65 + i * 0.15,
+                      }}
+                      style={{ display: "inline-block", color: wordColors[i] }}
+                    >
+                      {word}
+                    </motion.span>
+                    {sep && (
+                      <motion.span
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 0.2, scale: 1 }}
+                        transition={{ delay: 0.9 + i * 0.15, duration: 0.4 }}
+                        style={{
+                          display: "inline-block", color: accent,
+                          fontWeight: 300, fontSize: "0.5em", lineHeight: 1,
+                        }}
+                      >
+                        ·
+                      </motion.span>
+                    )}
+                  </span>
                 );
               })}
-
-              {/* Interpunct separators */}
-              <style>{`
-                .hero-headline-dots {
-                  display: flex; align-items: center; gap: 0.55rem;
-                }
-              `}</style>
             </motion.h1>
 
-            {/* Decorative divider */}
+            {/* Divider */}
             <motion.div
-              variants={itemFade}
+              variants={gentleFade}
               style={{
-                width: 80,
-                height: 2,
-                borderRadius: 2,
+                width: 80, height: 2, borderRadius: 2,
                 background: "linear-gradient(90deg, " + accent + ", var(--brand-orange, #f5a623))",
                 margin: "1.2rem auto 1.8rem",
-                transformOrigin: "center",
               }}
             />
 
             {/* Subtitle */}
             <motion.p
-              variants={itemSlow}
-              className="hero-sub"
+              variants={slowReveal}
+              className="hero-sub-text"
               style={{
                 fontSize: "clamp(1rem, 1.6vw, 1.15rem)",
-                lineHeight: 1.85,
-                fontWeight: 400,
-                maxWidth: 600,
-                color: textMid,
-                textAlign: "justify",
-                hyphens: "auto",
+                lineHeight: 1.85, fontWeight: 400,
+                maxWidth: 600, color: textMid,
+                textAlign: "justify", hyphens: "auto",
                 marginBottom: "2.6rem",
               }}
             >
@@ -679,18 +623,12 @@ export default function Home() {
               Unlimited momentum.
             </motion.p>
 
-            {/* CTA Buttons */}
+            {/* CTAs */}
             <motion.div
-              variants={itemFade}
-              className="hero-ctas-wrap"
-              style={{
-                display: "flex",
-                gap: 14,
-                flexWrap: "wrap",
-                justifyContent: "center",
-              }}
+              variants={gentleFade}
+              className="hero-ctas-row"
+              style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center" }}
             >
-              {/* Solid CTA */}
               <motion.a
                 href="/tickets"
                 className="hero-cta-solid"
@@ -700,15 +638,15 @@ export default function Home() {
                   background: dark ? textMain : "#0d0520",
                   color: dark ? "#0d0520" : "#ffffff",
                   boxShadow: dark
-                    ? "0 6px 28px rgba(155,135,245,0.2), 0 2px 8px rgba(0,0,0,0.2)"
-                    : "0 6px 28px rgba(13,5,32,0.18), 0 2px 8px rgba(0,0,0,0.08)",
+                    ? "0 6px 28px rgba(155,135,245,0.2)"
+                    : "0 6px 28px rgba(13,5,32,0.18)",
                 }}
                 onMouseEnter={function (e) {
                   e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)";
                   e.currentTarget.style.color = "#fff";
                 }}
                 onMouseLeave={function (e) {
-                  e.currentTarget.style.background = dark ? textMain : "#0d0520";
+                  e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520";
                   e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff";
                 }}
               >
@@ -718,7 +656,6 @@ export default function Home() {
                 </svg>
               </motion.a>
 
-              {/* Ghost CTA */}
               <motion.a
                 href="/speakers"
                 className="hero-cta-ghost"
@@ -727,8 +664,7 @@ export default function Home() {
                 style={{
                   border: "1.5px solid " + (dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)"),
                   color: dark ? "rgba(200,185,255,0.85)" : "rgba(90,40,180,0.8)",
-                  background: "transparent",
-                  borderRadius: 14,
+                  background: "transparent", borderRadius: 14,
                 }}
                 onMouseEnter={function (e) {
                   e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.55)" : "rgba(122,63,209,0.55)";
@@ -748,26 +684,18 @@ export default function Home() {
 
             {/* Stat strip */}
             <motion.div
-              variants={scaleUp}
+              variants={slowReveal}
               className="hero-stats"
-              style={{
-                marginTop: "3.5rem",
-                border: "1px solid " + cardBdr,
-              }}
+              style={{ marginTop: "3.5rem", border: "1px solid " + cardBdr }}
             >
               {stats.map(function (s) {
                 return (
                   <div
                     className="hero-stat"
                     key={s.label}
-                    style={{
-                      background: cardBg,
-                      borderRight: "1px solid " + cardBdr,
-                    }}
+                    style={{ background: cardBg, borderRight: "1px solid " + cardBdr }}
                     onMouseEnter={function (e) {
-                      e.currentTarget.style.background = dark
-                        ? "rgba(155,135,245,0.09)"
-                        : "rgba(122,63,209,0.07)";
+                      e.currentTarget.style.background = dark ? "rgba(155,135,245,0.09)" : "rgba(122,63,209,0.07)";
                     }}
                     onMouseLeave={function (e) {
                       e.currentTarget.style.background = cardBg;
@@ -775,23 +703,18 @@ export default function Home() {
                   >
                     <span style={{
                       fontFamily: "'Orbitron', sans-serif",
-                      fontWeight: 900,
-                      fontSize: "1.08rem",
+                      fontWeight: 900, fontSize: "1.08rem",
                       background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
                       WebkitBackgroundClip: "text",
                       WebkitTextFillColor: "transparent",
                       backgroundClip: "text",
                       marginBottom: 4,
                     }}>
-                      {s.isText ? s.num : (
-                        <AnimatedCounter target={s.num} suffix={s.suffix} />
-                      )}
+                      {s.isText ? s.num : <AnimatedCounter target={s.num} suffix={s.suffix} />}
                     </span>
                     <span style={{
-                      fontSize: "0.6rem",
-                      fontWeight: 700,
-                      letterSpacing: "1px",
-                      textTransform: "uppercase",
+                      fontSize: "0.6rem", fontWeight: 700,
+                      letterSpacing: "1px", textTransform: "uppercase",
                       color: textSoft,
                     }}>
                       {s.label}
@@ -801,87 +724,54 @@ export default function Home() {
               })}
             </motion.div>
 
-            {/* Scroll cue — animated mouse wheel */}
+            {/* Scroll cue */}
             <motion.button
-              variants={itemSlow}
+              variants={slowReveal}
               onClick={scrollDown}
               whileHover={{ scale: 1.08 }}
               style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 8,
-                marginTop: "3rem",
-                border: "none",
-                background: "none",
-                cursor: "pointer",
+                display: "flex", flexDirection: "column", alignItems: "center",
+                gap: 8, marginTop: "3rem",
+                border: "none", background: "none", cursor: "pointer",
                 color: dark ? "rgba(155,135,245,0.38)" : "rgba(122,63,209,0.35)",
               }}
             >
-              <svg
-                width="22" height="34" viewBox="0 0 22 34" fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect x="1" y="1" width="20" height="32" rx="10"
-                  stroke="currentColor" strokeWidth="1.5" />
-                <circle cx="11" cy="10" r="2" fill="currentColor"
-                  style={{ animation: "wheel-scroll 2s ease infinite" }} />
+              <svg width="22" height="34" viewBox="0 0 22 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="1" width="20" height="32" rx="10" stroke="currentColor" strokeWidth="1.5" />
+                <circle cx="11" cy="10" r="2" fill="currentColor" style={{ animation: "wheel-bob 2s ease infinite" }} />
               </svg>
               <span style={{
-                fontSize: "0.58rem",
-                fontWeight: 700,
-                letterSpacing: "1.6px",
-                textTransform: "uppercase",
-              }}>
-                Scroll
-              </span>
+                fontSize: "0.58rem", fontWeight: 700,
+                letterSpacing: "1.6px", textTransform: "uppercase",
+              }}>Scroll</span>
             </motion.button>
 
           </motion.div>
         </motion.div>
 
-        {/* ── Radial bottom arc (Doc 4 style) ── */}
-        <div
-          className="hero-arc"
-          style={{
-            width: "140%",
-            maxWidth: 1400,
-            height: 180,
-            background: bg,
-            bottom: -90,
-          }}
-        />
+        {/* Bottom arc */}
+        <div className="hero-arc" style={{ width: "140%", maxWidth: 1400, height: 180, background: bg, bottom: -90 }} />
 
-        {/* Bottom divider line */}
+        {/* Bottom line */}
         <div style={{
-          position: "absolute",
-          bottom: 0, left: 0, right: 0,
-          height: 1,
-          zIndex: 4,
+          position: "absolute", bottom: 0, left: 0, right: 0, height: 1, zIndex: 4,
           background: "linear-gradient(90deg, transparent 0%, rgba(122,63,209,0.2) 30%, rgba(245,166,35,0.12) 70%, transparent 100%)",
         }} />
 
         {/* Bottom fade */}
         <div style={{
-          position: "absolute",
-          bottom: 0, left: 0, right: 0,
-          height: 100,
-          zIndex: 4,
+          position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 4,
           background: "linear-gradient(to bottom, transparent, " + bg + ")",
           pointerEvents: "none",
         }} />
       </section>
 
-      {/* ════════════════════════════════════════════
-          PILLAR SHOWCASE — scroll-revealed section
-          ════════════════════════════════════════════ */}
+      {/* ════════════════════ PILLARS ════════════════════ */}
       <section style={{ background: bg }}>
         <PillarShowcase dark={dark} />
       </section>
 
-      {/* ════════════════════════════════════════════
-          ABOUT / FOOTER / MODALS
-          ════════════════════════════════════════════ */}
+      {/* ════════════════════ ABOUT / FOOTER / MODALS ════════════════════ */}
       <div id="about-section">
         <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
       </div>

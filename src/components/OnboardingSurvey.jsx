@@ -88,6 +88,10 @@ export default function OnboardingSurvey({ isOpen, onClose, userName = "" }) {
     try {
       const token = localStorage.getItem("token");
       if (token) {
+        // Save to localStorage so Dashboard can read it immediately
+        localStorage.setItem("tfc_field", field);
+        if (linkedin) localStorage.setItem("tfc_linkedin", linkedin);
+
         await fetch(`${API}/profile`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

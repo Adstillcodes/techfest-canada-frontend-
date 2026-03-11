@@ -50,8 +50,8 @@ export default function AdminAnalytics() {
   }, [range]);
 
   const avgPrice =
-    totals?.totalTickets?.toLocaleString() > 0
-      ? (totals?.totalRevenue?.toLocaleString() / totals?.totalTickets?.toLocaleString()).toFixed(2)
+    totals?.totalTickets > 0
+      ? (totals?.totalRevenue / totals?.totalTickets).toFixed(2)
       : 0;
 
   return (

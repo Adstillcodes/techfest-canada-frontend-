@@ -271,124 +271,78 @@ export default function Home() {
       <style>{`
         /* ──────────── AURORA BACKGROUND ──────────── */
 
-        /*
-         * CSS custom properties for the aurora gradients.
-         * Light mode: white-based mask + brand-tinted aurora.
-         * Dark mode: dark mask + vivid aurora.
-         */
-        :root {
-          --aurora-white: #ffffff;
-          --aurora-black: #06020f;
-          --aurora-transparent: transparent;
-          --aurora-purple: #7a3fd1;
-          --aurora-violet: #9b57e8;
-          --aurora-lilac: #c4a0f5;
-          --aurora-orange: #f5a623;
-          --aurora-amber: #f7c15e;
+        @keyframes aurora-drift-1 {
+          0%   { transform: translate(0%, 0%) scale(1); }
+          33%  { transform: translate(8%, -6%) scale(1.1); }
+          66%  { transform: translate(-5%, 4%) scale(0.95); }
+          100% { transform: translate(0%, 0%) scale(1); }
+        }
+        @keyframes aurora-drift-2 {
+          0%   { transform: translate(0%, 0%) scale(1); }
+          33%  { transform: translate(-10%, 5%) scale(1.05); }
+          66%  { transform: translate(6%, -8%) scale(1.12); }
+          100% { transform: translate(0%, 0%) scale(1); }
+        }
+        @keyframes aurora-drift-3 {
+          0%   { transform: translate(0%, 0%) scale(1.05); }
+          33%  { transform: translate(5%, 7%) scale(0.95); }
+          66%  { transform: translate(-8%, -3%) scale(1.08); }
+          100% { transform: translate(0%, 0%) scale(1.05); }
         }
 
-        @keyframes aurora-shift {
-          from { background-position: 50% 50%, 50% 50%; }
-          to   { background-position: 350% 50%, 350% 50%; }
-        }
-
-        .aurora-layer {
+        .aurora-wrap {
           position: absolute;
-          inset: -10px;
+          inset: 0;
+          overflow: hidden;
           pointer-events: none;
+          z-index: 0;
+        }
+
+        .aurora-blob {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(80px);
           will-change: transform;
-          background-size: 300% 200%;
-          background-position: 50% 50%;
-          filter: blur(10px);
-          opacity: 0.4;
         }
 
-        /* Light-mode aurora */
-        .aurora-layer--light {
-          background-image:
-            repeating-linear-gradient(
-              100deg,
-              var(--aurora-white) 0%, var(--aurora-white) 7%,
-              var(--aurora-transparent) 10%, var(--aurora-transparent) 12%,
-              var(--aurora-white) 16%
-            ),
-            repeating-linear-gradient(
-              100deg,
-              var(--aurora-purple) 10%, var(--aurora-lilac) 15%,
-              var(--aurora-orange) 20%, var(--aurora-amber) 25%,
-              var(--aurora-violet) 30%
-            );
-          opacity: 0.35;
-          filter: blur(12px);
-          mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
-          -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
+        /* Light mode blobs */
+        .aurora-wrap--light .aurora-blob-1 {
+          width: 55vw; height: 55vw; max-width: 700px; max-height: 700px;
+          top: -18%; right: -8%;
+          background: radial-gradient(circle, rgba(122,63,209,0.18) 0%, rgba(155,135,245,0.08) 50%, transparent 70%);
+          animation: aurora-drift-1 25s ease-in-out infinite;
+        }
+        .aurora-wrap--light .aurora-blob-2 {
+          width: 45vw; height: 45vw; max-width: 550px; max-height: 550px;
+          top: 10%; left: -10%;
+          background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, rgba(247,193,94,0.06) 50%, transparent 70%);
+          animation: aurora-drift-2 30s ease-in-out infinite;
+        }
+        .aurora-wrap--light .aurora-blob-3 {
+          width: 40vw; height: 40vw; max-width: 500px; max-height: 500px;
+          bottom: -5%; right: 15%;
+          background: radial-gradient(circle, rgba(155,87,232,0.10) 0%, rgba(196,160,245,0.05) 50%, transparent 70%);
+          animation: aurora-drift-3 35s ease-in-out infinite;
         }
 
-        .aurora-layer--light::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background-image:
-            repeating-linear-gradient(
-              100deg,
-              var(--aurora-white) 0%, var(--aurora-white) 7%,
-              var(--aurora-transparent) 10%, var(--aurora-transparent) 12%,
-              var(--aurora-white) 16%
-            ),
-            repeating-linear-gradient(
-              100deg,
-              var(--aurora-purple) 10%, var(--aurora-lilac) 15%,
-              var(--aurora-orange) 20%, var(--aurora-amber) 25%,
-              var(--aurora-violet) 30%
-            );
-          background-size: 200% 100%;
-          background-attachment: fixed;
-          animation: aurora-shift 60s linear infinite;
-          mix-blend-mode: difference;
+        /* Dark mode blobs — more vivid */
+        .aurora-wrap--dark .aurora-blob-1 {
+          width: 55vw; height: 55vw; max-width: 700px; max-height: 700px;
+          top: -18%; right: -8%;
+          background: radial-gradient(circle, rgba(122,63,209,0.30) 0%, rgba(155,135,245,0.12) 50%, transparent 70%);
+          animation: aurora-drift-1 25s ease-in-out infinite;
         }
-
-        /* Dark-mode aurora */
-        .aurora-layer--dark {
-          background-image:
-            repeating-linear-gradient(
-              100deg,
-              var(--aurora-black) 0%, var(--aurora-black) 7%,
-              var(--aurora-transparent) 10%, var(--aurora-transparent) 12%,
-              var(--aurora-black) 16%
-            ),
-            repeating-linear-gradient(
-              100deg,
-              var(--aurora-purple) 10%, var(--aurora-lilac) 15%,
-              var(--aurora-orange) 20%, var(--aurora-amber) 25%,
-              var(--aurora-violet) 30%
-            );
-          opacity: 0.5;
-          filter: blur(10px) invert(0);
-          mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
-          -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
+        .aurora-wrap--dark .aurora-blob-2 {
+          width: 45vw; height: 45vw; max-width: 550px; max-height: 550px;
+          top: 10%; left: -10%;
+          background: radial-gradient(circle, rgba(245,166,35,0.18) 0%, rgba(247,193,94,0.08) 50%, transparent 70%);
+          animation: aurora-drift-2 30s ease-in-out infinite;
         }
-
-        .aurora-layer--dark::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background-image:
-            repeating-linear-gradient(
-              100deg,
-              var(--aurora-black) 0%, var(--aurora-black) 7%,
-              var(--aurora-transparent) 10%, var(--aurora-transparent) 12%,
-              var(--aurora-black) 16%
-            ),
-            repeating-linear-gradient(
-              100deg,
-              var(--aurora-purple) 10%, var(--aurora-lilac) 15%,
-              var(--aurora-orange) 20%, var(--aurora-amber) 25%,
-              var(--aurora-violet) 30%
-            );
-          background-size: 200% 100%;
-          background-attachment: fixed;
-          animation: aurora-shift 60s linear infinite;
-          mix-blend-mode: difference;
+        .aurora-wrap--dark .aurora-blob-3 {
+          width: 40vw; height: 40vw; max-width: 500px; max-height: 500px;
+          bottom: -5%; right: 15%;
+          background: radial-gradient(circle, rgba(155,87,232,0.20) 0%, rgba(196,160,245,0.08) 50%, transparent 70%);
+          animation: aurora-drift-3 35s ease-in-out infinite;
         }
 
         /* ──────────── KEYFRAMES ──────────── */
@@ -501,9 +455,11 @@ export default function Home() {
           justifyContent: "center",
         }}
       >
-        {/* ── AURORA BACKGROUND ── */}
-        <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
-          <div className={dark ? "aurora-layer aurora-layer--dark" : "aurora-layer aurora-layer--light"} />
+        {/* ── AURORA BACKGROUND LIGHTS ── */}
+        <div className={dark ? "aurora-wrap aurora-wrap--dark" : "aurora-wrap aurora-wrap--light"}>
+          <div className="aurora-blob aurora-blob-1" />
+          <div className="aurora-blob aurora-blob-2" />
+          <div className="aurora-blob aurora-blob-3" />
         </div>
 
         {/* Grid overlay */}
@@ -602,6 +558,22 @@ export default function Home() {
                 }}
               />
             </motion.div>
+
+            {/* Event date */}
+            <motion.p
+              variants={itemBlur}
+              style={{
+                fontFamily: "'Orbitron', sans-serif",
+                fontSize: "clamp(1.1rem, 2.2vw, 1.5rem)",
+                fontWeight: 800,
+                letterSpacing: "2px",
+                textTransform: "uppercase",
+                color: textMain,
+                marginBottom: "1.8rem",
+              }}
+            >
+              Oct 28, 2026
+            </motion.p>
 
             {/* Headline: MEET · BUILD · SCALE */}
             <motion.h1

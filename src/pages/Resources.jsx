@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+
 // ── DATA ─────────────────────────────────────────────────────────────────────
 
 const PILLARS = [
@@ -210,7 +211,7 @@ export default function FirstTimers() {
   const textMuted= isDark ? "rgba(200,180,255,0.65)": "rgba(60,30,110,0.75)";
 
   return (
-    <div style={{ background: bg, minHeight: "100vh", color: textMain, fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
+    <div style={{ background: bg, minHeight: "100vh", color: textMain, fontFamily: "'DM Sans', sans-serif", overflowX: "hidden" }}>
       <style>{`
         /* ── FIRST TIMERS MOBILE ── */
         @media (max-width: 900px) {

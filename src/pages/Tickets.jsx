@@ -86,7 +86,7 @@ const handlePurchase = async (tier) => {
           {/* ================= EARLY ================= */}
           <div className="ticket-card disabled">
             <h3>Early Adopter</h3>
-            <div className="ticket-price">CAD 149</div>
+            <div className="ticket-price">CAD {early.price?.toLocaleString()}</div>
 
             <div className="ticket-badge expired">
               UNAVAILABLE - EXPIRED
@@ -107,7 +107,7 @@ const handlePurchase = async (tier) => {
             <div className="most-popular">MOST POPULAR</div>
 
             <h3>Festival Pass</h3>
-            <div className="ticket-price">CAD 750</div>
+            <div className="ticket-price">CAD CAD {festival.price?.toLocaleString()}</div>
 
             <div className="ticket-badge remaining">
               {festival.remaining} TICKETS REMAINING
@@ -132,7 +132,7 @@ const handlePurchase = async (tier) => {
           {/* ================= VIP ================= */}
           <div className="ticket-card">
             <h3>VIP Experience</h3>
-            <div className="ticket-price">CAD 1,899</div>
+            <div className="ticket-price">CAD CAD {vip.price?.toLocaleString()}</div>
 
             <div className="ticket-badge vip">
               ONLY {vip.remaining} VIP SPOTS LEFT

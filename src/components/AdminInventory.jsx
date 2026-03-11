@@ -115,24 +115,24 @@ export default function AdminInventory() {
 
       {/* ===== DASHBOARD STATS ===== */}
 
-      <div className="inventory-stats">
+     <div className="inventory-stats">
 
-        <div className="stat-card">
-          <p>Total Revenue</p>
-          <h3>${totalRevenue}</h3>
-        </div>
+  <div className="stat-card">
+    <p>Total Revenue</p>
+    <h2>${totalRevenue.toLocaleString()}</h2>
+  </div>
 
-        <div className="stat-card">
-          <p>Tickets Sold</p>
-          <h3>{totalSold}</h3>
-        </div>
+  <div className="stat-card">
+    <p>Tickets Sold</p>
+    <h2>{totalSold}</h2>
+  </div>
 
-        <div className="stat-card">
-          <p>Tickets Remaining</p>
-          <h3>{totalRemaining}</h3>
-        </div>
+  <div className="stat-card">
+    <p>Tickets Remaining</p>
+    <h2>{totalRemaining}</h2>
+  </div>
 
-      </div>
+</div>
 
       {/* ===== TABLE ===== */}
 

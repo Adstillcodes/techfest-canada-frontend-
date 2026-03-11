@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API } from "../utils/api";
 
 import {
   LineChart,
@@ -27,13 +28,13 @@ export default function AdminAnalytics() {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        `/api/admin/analytics?range=${range}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+  `${API}/admin/analytics`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+);
 
       setData(res.data.sales);
       setTotals(res.data.totals);

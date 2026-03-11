@@ -15,8 +15,8 @@ import OnboardingSurvey from "../components/OnboardingSurvey";
    on top of the visual panel, no Three.js needed.
 ───────────────────────────────────────── */
 function ScanCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef    = useRef<number>(0);
+  const canvasRef = useRef(null);
+  const rafRef    = useRef(0);
   const tRef      = useRef(0);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ function ScanCanvas() {
     const DOT_SPACING = 28;
     const DOT_R       = 1.1;
 
-    const draw = (ts: number) => {
+    const draw = (ts) => {
       tRef.current = ts * 0.001;
       ctx.clearRect(0, 0, W, H);
 
@@ -113,7 +113,7 @@ function ScanCanvas() {
 ───────────────────────────────────────── */
 const HEADLINE_WORDS = ["MEET", "|", "BUILD", "|", "SCALE"];
 
-function AnimatedHeadline({ isDark }: { isDark: boolean }) {
+function AnimatedHeadline({ isDark }) {
   const [visible, setVisible] = useState(0);
 
   useEffect(() => {
@@ -174,7 +174,7 @@ export default function Home() {
   );
   // Mouse parallax for visual panel
   const [mouse, setMouse]   = useState({ x: 0, y: 0 });
-  const heroRef             = useRef<HTMLElement>(null);
+  const heroRef             = useRef(null);
 
   // Dark mode observer
   useEffect(() => {
@@ -186,7 +186,7 @@ export default function Home() {
   }, []);
 
   // Mouse parallax
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  const handleMouseMove = useCallback((e) => {
     const rect = heroRef.current?.getBoundingClientRect();
     if (!rect) return;
     setMouse({
@@ -195,20 +195,20 @@ export default function Home() {
     });
   }, []);
   useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove as any);
-    return () => window.removeEventListener("mousemove", handleMouseMove as any);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [handleMouseMove]);
 
   // Survey event
   useEffect(() => {
-    const h = (e: any) => { setSurveyName(e.detail?.name || ""); setSurveyOpen(true); };
+    const h = (e) => { setSurveyName(e.detail?.name || ""); setSurveyOpen(true); };
     window.addEventListener("showSurvey", h);
     return () => window.removeEventListener("showSurvey", h);
   }, []);
 
   // Purchase event
   useEffect(() => {
-    const h = (e: any) => {
+    const h = (e) => {
       setPurchaseTicketType(e.detail?.ticketType || "Delegate Pass");
       setPurchaseOpen(true);
     };

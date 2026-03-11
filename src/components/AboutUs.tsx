@@ -92,8 +92,20 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
     const fetchData = async () => {
       try {
         const result = await client.fetch(`*[_type == "aboutContent"][0]`)
+        const FIXED_SERVICES = [
+          { title: "Healthcare & Lifesciences", description: "Connecting health innovators with buyers, policymakers, and capital to deploy at scale.", iconName: "heart", position: "left" },
+          { title: "Banking, Financial Services & Insurance", description: "Where fintech meets enterprise — driving real procurement and partnerships.", iconName: "building", position: "left" },
+          { title: "Supply Chain, Manufacturing & Infrastructure", description: "Bringing tech solutions to the backbone of Canada's industrial economy.", iconName: "tool", position: "left" },
+          { title: "Defence & Public Safety", description: "Bridging the gap between cutting-edge tech and national security priorities.", iconName: "shield", position: "left" },
+          { title: "Energy & Utilities", description: "Accelerating Canada's clean energy transition through applied innovation.", iconName: "zap", position: "left" },
+          { title: "Artificial Intelligence", description: "Unlocking the Future of Innovation — from models to real-world deployment.", iconName: "cpu", position: "right" },
+          { title: "Quantum Computing", description: "Unleashing Infinite Possibilities — Canada's quantum advantage on the world stage.", iconName: "atom", position: "right" },
+          { title: "Cybersecurity", description: "Building resilient digital infrastructure for enterprise and government.", iconName: "lock", position: "right" },
+          { title: "Robotics & Automation", description: "From factory floors to smart cities — automation that drives real ROI.", iconName: "settings", position: "right" },
+          { title: "Sustainability & CleanTech", description: "Pioneering a Greener, Smarter Future through technology-led climate action.", iconName: "leaf", position: "right" },
+        ]
         if (result) {
-          setData(result)
+          setData({ ...result, services: FIXED_SERVICES })
         } else {
           setData({
             headline: "Beyond Theory",

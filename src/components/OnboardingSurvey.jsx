@@ -50,6 +50,13 @@ export default function OnboardingSurvey({ isOpen, onClose, userName = "" }) {
 
   if (!isOpen) return null;
 
+  const mobileStyle = `
+    @media (max-width: 520px) {
+      .survey-card { padding: 28px 20px !important; margin: 10px !important; max-width: 100% !important; }
+      .survey-perks-grid { grid-template-columns: 1fr !important; }
+    }
+  `;
+
   const cardBg   = isDark ? "#160c2c"               : "#f8f6ff";
   const border   = isDark ? "rgba(122,63,209,0.30)"  : "rgba(122,63,209,0.20)";
   const text     = isDark ? "#ffffff"                : "#1a0a40";
@@ -102,6 +109,7 @@ export default function OnboardingSurvey({ isOpen, onClose, userName = "" }) {
       display: "flex", alignItems: "center", justifyContent: "center",
       padding: 20, zIndex: 99998,
     }}>
+      <style>{mobileStyle}</style>
       <AnimatePresence mode="wait">
 
         {/* STEP 0 — SURVEY */}
@@ -112,6 +120,7 @@ export default function OnboardingSurvey({ isOpen, onClose, userName = "" }) {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.92, opacity: 0, y: -24 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
+            className="survey-card"
             style={{
               width: "100%", maxWidth: 480,
               background: cardBg, border: `1.5px solid ${border}`,

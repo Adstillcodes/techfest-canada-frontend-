@@ -97,16 +97,18 @@ function AnimatedCounter(props) {
 function AnimatedWaves(props) {
   var dark = props.dark;
   var layers = [
-    { opacity: dark ? 0.08 : 0.05, speed: "32s", dy: 0,  color: dark ? "155,135,245" : "122,63,209" },
-    { opacity: dark ? 0.06 : 0.04, speed: "26s", dy: 20, color: dark ? "122,63,209" : "155,135,245" },
-    { opacity: dark ? 0.05 : 0.035, speed: "20s", dy: 40, color: dark ? "245,166,35" : "245,166,35" },
-    { opacity: dark ? 0.04 : 0.025, speed: "36s", dy: 10, color: dark ? "192,132,252" : "192,132,252" },
+    { alpha: dark ? 0.06 : 0.035, speed: "34s", dy: -30, color: dark ? "155,135,245" : "122,63,209" },
+    { alpha: dark ? 0.045 : 0.025, speed: "28s", dy: -10, color: dark ? "122,63,209" : "155,135,245" },
+    { alpha: dark ? 0.035 : 0.02,  speed: "22s", dy: 10,  color: dark ? "245,166,35" : "245,166,35" },
   ];
 
   return (
     <div style={{
-      position: "absolute", inset: 0, zIndex: 1,
+      position: "absolute", bottom: 0, left: 0, right: 0,
+      height: "35%", zIndex: 1,
       overflow: "hidden", pointerEvents: "none",
+      maskImage: "linear-gradient(to top, black 30%, transparent 100%)",
+      WebkitMaskImage: "linear-gradient(to top, black 30%, transparent 100%)",
     }}>
       {layers.map(function (l, i) {
         return (
@@ -119,8 +121,7 @@ function AnimatedWaves(props) {
               bottom: l.dy,
               left: "-5%",
               width: "110%",
-              height: "45%",
-              opacity: l.opacity,
+              height: "100%",
               animation: "wave-drift-" + (i % 2 === 0 ? "left" : "right") + " " + l.speed + " linear infinite",
             }}
           >
@@ -129,7 +130,7 @@ function AnimatedWaves(props) {
                 ? "M0,160 C180,80 360,260 540,160 C720,60 900,240 1080,160 C1260,80 1350,200 1440,160 L1440,320 L0,320 Z"
                 : "M0,200 C160,120 320,280 480,180 C640,80 800,260 960,180 C1120,100 1280,240 1440,180 L1440,320 L0,320 Z"
               }
-              fill={"rgba(" + l.color + ",1)"}
+              fill={"rgba(" + l.color + "," + l.alpha + ")"}
             />
           </svg>
         );
@@ -310,7 +311,7 @@ export default function Home() {
   /* ── tokens ── */
   var bg       = dark ? "#06020f"                  : "#ffffff";
   var textMain = dark ? "#ffffff"                  : "#0d0520";
-  var textMid  = dark ? "rgba(255,255,255,0.55)"   : "rgba(13,5,32,0.58)";
+  var textMid  = dark ? "rgba(255,255,255,0.65)"   : "rgba(13,5,32,0.58)";
   var textSoft = dark ? "rgba(200,185,255,0.45)"   : "rgba(90,40,180,0.42)";
   var accent   = dark ? "#b99eff"                   : "#7a3fd1";
   var pillBg   = dark ? "rgba(122,63,209,0.10)"     : "rgba(122,63,209,0.06)";
@@ -499,8 +500,8 @@ export default function Home() {
             position: "relative", zIndex: 5,
             display: "flex", flexDirection: "column", alignItems: "center",
             textAlign: "center",
-            padding: "clamp(6rem, 10vw, 9rem) 6% clamp(4rem, 7vw, 6rem)",
-            maxWidth: 920, margin: "0 auto", width: "100%",
+            padding: "clamp(6rem, 10vw, 9rem) 5% clamp(4rem, 7vw, 6rem)",
+            maxWidth: 1080, margin: "0 auto", width: "100%",
           }}
         >
           <motion.div
@@ -612,7 +613,7 @@ export default function Home() {
               style={{
                 fontSize: "clamp(1rem, 1.6vw, 1.15rem)",
                 lineHeight: 1.85, fontWeight: 400,
-                maxWidth: 600, color: textMid,
+                maxWidth: 680, color: textMid,
                 textAlign: "justify", hyphens: "auto",
                 marginBottom: "2.6rem",
               }}

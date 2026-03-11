@@ -476,7 +476,7 @@ export default function Dashboard() {
         }} />
 
         <div className="db-hero-pad" style={{ maxWidth: 1200, margin: "0 auto" }}>
-          {/* Greeting */
+          {/* Greeting */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,

@@ -255,154 +255,16 @@ export default function Sponsor() {
       </section>
 
       {/* ═══════════ COMPARISON TABLE ═══════════ */}
-      <section style={{ background: bg, padding: "5rem 6% 5rem" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <RevealHeader
-            eyebrow="Sponsorship Tiers"
-            title="Compare Packages"
-            subtitle="Every benefit at a glance — pick the partnership level that matches your ambitions."
-            textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent}
-          />
-
-          {/* Table — no overflow:hidden wrapper so sticky works */}
-          <div style={{ marginTop: "2.5rem", overflowX: "auto" }}>
-            <table style={{
-              width: "100%", minWidth: 860,
-              borderCollapse: "separate",
-              borderSpacing: 0,
-              tableLayout: "fixed",
-            }}>
-              {/* ── STICKY HEADER — sticks below navbar (80px) ── */}
-              <thead>
-                <tr>
-                  <th style={{
-                    position: "sticky", top: 80, zIndex: 20,
-                    background: dark ? "#0d0620" : "#f4f0ff",
-                    padding: "22px 24px",
-                    textAlign: "left",
-                    borderBottom: "2px solid " + cardBdr,
-                    width: "28%",
-                    boxShadow: "0 2px 12px " + (dark ? "rgba(0,0,0,0.5)" : "rgba(122,63,209,0.06)"),
-                  }}>
-                    <span style={{
-                      fontFamily: "'Orbitron', sans-serif",
-                      fontSize: "0.78rem", fontWeight: 800,
-                      letterSpacing: "1.5px", textTransform: "uppercase",
-                      color: textSoft,
-                    }}>Benefit</span>
-                  </th>
-                  {TIERS.map(function (tier) {
-                    return (
-                      <th key={tier.name} style={{
-                        position: "sticky", top: 80, zIndex: 20,
-                        background: dark ? "#0d0620" : "#f4f0ff",
-                        padding: "20px 16px",
-                        textAlign: "center",
-                        borderBottom: "2px solid " + cardBdr,
-                        borderLeft: "1px solid " + cardBdr,
-                        width: "18%",
-                        boxShadow: "0 2px 12px " + (dark ? "rgba(0,0,0,0.5)" : "rgba(122,63,209,0.06)"),
-                      }}>
-                        <div style={{
-                          width: 32, height: 4, borderRadius: 4,
-                          background: tier.color,
-                          margin: "0 auto 12px",
-                          boxShadow: "0 0 14px " + tier.color + "60",
-                        }} />
-                        <span style={{
-                          fontFamily: "'Orbitron', sans-serif",
-                          fontSize: "0.88rem", fontWeight: 900,
-                          color: textMain, display: "block",
-                        }}>{tier.name}</span>
-                        <span style={{
-                          fontFamily: "'Orbitron', sans-serif",
-                          fontSize: "1.15rem", fontWeight: 900,
-                          color: tier.color, display: "block",
-                          marginTop: 5,
-                        }}>{tier.price}</span>
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-
-              {/* ── BODY ── */}
-              <tbody>
-                {ROWS.map(function (row, ri) {
-                  var isGroup = row.group;
-                  if (isGroup) {
-                    return (
-                      <tr key={ri}>
-                        <td colSpan={TIERS.length + 1} style={{
-                          padding: "20px 24px 12px",
-                          background: dark ? "rgba(122,63,209,0.08)" : "rgba(122,63,209,0.04)",
-                          borderTop: ri > 0 ? "2px solid " + cardBdr : "none",
-                        }}>
-                          <span style={{
-                            fontFamily: "'Orbitron', sans-serif",
-                            fontSize: "0.72rem", fontWeight: 800,
-                            letterSpacing: "2.5px", textTransform: "uppercase",
-                            color: accent,
-                          }}>{row.group}</span>
-                        </td>
-                      </tr>
-                    );
-                  }
-                  return (
-                    <tr key={ri} style={{
-                      background: ri % 2 === 0
-                        ? "transparent"
-                        : (dark ? "rgba(155,135,245,0.03)" : "rgba(122,63,209,0.018)"),
-                    }}
-                    onMouseEnter={function (e) {
-                      e.currentTarget.style.background = dark
-                        ? "rgba(155,135,245,0.07)"
-                        : "rgba(122,63,209,0.04)";
-                    }}
-                    onMouseLeave={function (e) {
-                      e.currentTarget.style.background = ri % 2 === 0
-                        ? "transparent"
-                        : (dark ? "rgba(155,135,245,0.03)" : "rgba(122,63,209,0.018)");
-                    }}
-                    >
-                      <td style={{
-                        padding: "16px 24px",
-                        fontSize: "0.95rem", fontWeight: 500,
-                        color: dark ? "rgba(255,255,255,0.78)" : "rgba(13,5,32,0.72)",
-                        borderTop: "1px solid " + (dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)"),
-                        lineHeight: 1.4,
-                      }}>{row.label}</td>
-                      {row.values.map(function (val, vi) {
-                        return (
-                          <td key={vi} style={{
-                            padding: "16px 14px",
-                            textAlign: "center",
-                            borderTop: "1px solid " + (dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)"),
-                            borderLeft: "1px solid " + (dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)"),
-                            fontSize: "0.92rem",
-                          }}>
-                            {val === true ? (
-                              <span style={{ color: "#4ade80", fontSize: "1.3rem", fontWeight: 700 }}>✓</span>
-                            ) : val === false ? (
-                              <span style={{ color: dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.15)", fontSize: "1rem" }}>—</span>
-                            ) : (
-                              <span style={{
-                                fontWeight: 700,
-                                fontSize: "0.92rem",
-                                color: dark ? "rgba(255,255,255,0.88)" : "#0d0520",
-                              }}>{val}</span>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+      <ComparisonTable
+        dark={dark}
+        bg={bg}
+        textMain={textMain}
+        textMid={textMid}
+        textSoft={textSoft}
+        accent={accent}
+        cardBg={cardBg}
+        cardBdr={cardBdr}
+      />
 
       {/* ═══════════ BOTTOM CTA ═══════════ */}
       <section style={{ background: bg, padding: "0 6% 5rem" }}>
@@ -529,5 +391,257 @@ function RevealHeader(props) {
         color: props.textMid, maxWidth: 600, margin: "0 auto",
       }}>{props.subtitle}</p>
     </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   COMPARISON TABLE — with fixed floating header bar
+   ═══════════════════════════════════════════════════════ */
+
+function ComparisonTable(props) {
+  var dark = props.dark;
+  var bg = props.bg;
+  var textMain = props.textMain;
+  var textMid = props.textMid;
+  var textSoft = props.textSoft;
+  var accent = props.accent;
+  var cardBdr = props.cardBdr;
+
+  var sectionRef = useRef(null);
+  var s1 = useState(false); var showBar = s1[0]; var setShowBar = s1[1];
+
+  useEffect(function () {
+    function onScroll() {
+      var el = sectionRef.current;
+      if (!el) return;
+      var rect = el.getBoundingClientRect();
+      // Show bar when table section top is above navbar (80px) and bottom is still below viewport
+      setShowBar(rect.top < 80 && rect.bottom > 200);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return function () { window.removeEventListener("scroll", onScroll); };
+  }, []);
+
+  var barBg = dark ? "rgba(10,5,24,0.95)" : "rgba(248,246,255,0.97)";
+
+  return (
+    <>
+      {/* ── FIXED FLOATING TIER BAR ── */}
+      <div style={{
+        position: "fixed",
+        top: 80,
+        left: 0, right: 0,
+        zIndex: 900,
+        transform: showBar ? "translateY(0)" : "translateY(-100%)",
+        opacity: showBar ? 1 : 0,
+        transition: "transform 0.3s ease, opacity 0.25s ease",
+        pointerEvents: showBar ? "auto" : "none",
+      }}>
+        <div style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: "0 6%",
+        }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "28% repeat(4, 1fr)",
+            background: barBg,
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            borderBottom: "1px solid " + cardBdr,
+            boxShadow: dark
+              ? "0 4px 24px rgba(0,0,0,0.6)"
+              : "0 4px 24px rgba(122,63,209,0.08)",
+          }}>
+            {/* Benefit label */}
+            <div style={{
+              padding: "16px 24px",
+              display: "flex", alignItems: "center",
+            }}>
+              <span style={{
+                fontFamily: "'Orbitron', sans-serif",
+                fontSize: "0.72rem", fontWeight: 800,
+                letterSpacing: "1.5px", textTransform: "uppercase",
+                color: textSoft,
+              }}>Benefit</span>
+            </div>
+            {/* Tier columns */}
+            {TIERS.map(function (tier) {
+              return (
+                <div key={tier.name} style={{
+                  padding: "14px 12px",
+                  textAlign: "center",
+                  borderLeft: "1px solid " + cardBdr,
+                  display: "flex", flexDirection: "column",
+                  alignItems: "center", justifyContent: "center", gap: 3,
+                }}>
+                  <div style={{
+                    width: 24, height: 3, borderRadius: 3,
+                    background: tier.color,
+                    boxShadow: "0 0 10px " + tier.color + "50",
+                    marginBottom: 4,
+                  }} />
+                  <span style={{
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.78rem", fontWeight: 900,
+                    color: textMain,
+                  }}>{tier.name}</span>
+                  <span style={{
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.95rem", fontWeight: 900,
+                    color: tier.color,
+                  }}>{tier.price}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── TABLE SECTION ── */}
+      <section ref={sectionRef} style={{ background: bg, padding: "5rem 6% 5rem" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <RevealHeader
+            eyebrow="Sponsorship Tiers"
+            title="Compare Packages"
+            subtitle="Every benefit at a glance — pick the partnership level that matches your ambitions."
+            textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent}
+          />
+
+          {/* Static header row inside table (visible before sticky kicks in) */}
+          <div style={{ marginTop: "2.5rem", overflowX: "auto" }}>
+            <table style={{
+              width: "100%", minWidth: 860,
+              borderCollapse: "separate",
+              borderSpacing: 0,
+              tableLayout: "fixed",
+            }}>
+              <thead>
+                <tr>
+                  <th style={{
+                    background: dark ? "#0d0620" : "#f4f0ff",
+                    padding: "22px 24px",
+                    textAlign: "left",
+                    borderBottom: "2px solid " + cardBdr,
+                    width: "28%",
+                  }}>
+                    <span style={{
+                      fontFamily: "'Orbitron', sans-serif",
+                      fontSize: "0.78rem", fontWeight: 800,
+                      letterSpacing: "1.5px", textTransform: "uppercase",
+                      color: textSoft,
+                    }}>Benefit</span>
+                  </th>
+                  {TIERS.map(function (tier) {
+                    return (
+                      <th key={tier.name} style={{
+                        background: dark ? "#0d0620" : "#f4f0ff",
+                        padding: "20px 16px",
+                        textAlign: "center",
+                        borderBottom: "2px solid " + cardBdr,
+                        borderLeft: "1px solid " + cardBdr,
+                        width: "18%",
+                      }}>
+                        <div style={{
+                          width: 32, height: 4, borderRadius: 4,
+                          background: tier.color,
+                          margin: "0 auto 12px",
+                          boxShadow: "0 0 14px " + tier.color + "60",
+                        }} />
+                        <span style={{
+                          fontFamily: "'Orbitron', sans-serif",
+                          fontSize: "0.88rem", fontWeight: 900,
+                          color: textMain, display: "block",
+                        }}>{tier.name}</span>
+                        <span style={{
+                          fontFamily: "'Orbitron', sans-serif",
+                          fontSize: "1.15rem", fontWeight: 900,
+                          color: tier.color, display: "block",
+                          marginTop: 5,
+                        }}>{tier.price}</span>
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+
+              <tbody>
+                {ROWS.map(function (row, ri) {
+                  var isGroup = row.group;
+                  if (isGroup) {
+                    return (
+                      <tr key={ri}>
+                        <td colSpan={TIERS.length + 1} style={{
+                          padding: "20px 24px 12px",
+                          background: dark ? "rgba(122,63,209,0.08)" : "rgba(122,63,209,0.04)",
+                          borderTop: ri > 0 ? "2px solid " + cardBdr : "none",
+                        }}>
+                          <span style={{
+                            fontFamily: "'Orbitron', sans-serif",
+                            fontSize: "0.72rem", fontWeight: 800,
+                            letterSpacing: "2.5px", textTransform: "uppercase",
+                            color: accent,
+                          }}>{row.group}</span>
+                        </td>
+                      </tr>
+                    );
+                  }
+                  return (
+                    <tr key={ri} style={{
+                      background: ri % 2 === 0
+                        ? "transparent"
+                        : (dark ? "rgba(155,135,245,0.03)" : "rgba(122,63,209,0.018)"),
+                    }}
+                    onMouseEnter={function (e) {
+                      e.currentTarget.style.background = dark
+                        ? "rgba(155,135,245,0.07)"
+                        : "rgba(122,63,209,0.04)";
+                    }}
+                    onMouseLeave={function (e) {
+                      e.currentTarget.style.background = ri % 2 === 0
+                        ? "transparent"
+                        : (dark ? "rgba(155,135,245,0.03)" : "rgba(122,63,209,0.018)");
+                    }}
+                    >
+                      <td style={{
+                        padding: "16px 24px",
+                        fontSize: "0.95rem", fontWeight: 500,
+                        color: dark ? "rgba(255,255,255,0.78)" : "rgba(13,5,32,0.72)",
+                        borderTop: "1px solid " + (dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)"),
+                        lineHeight: 1.4,
+                      }}>{row.label}</td>
+                      {row.values.map(function (val, vi) {
+                        return (
+                          <td key={vi} style={{
+                            padding: "16px 14px",
+                            textAlign: "center",
+                            borderTop: "1px solid " + (dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)"),
+                            borderLeft: "1px solid " + (dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)"),
+                            fontSize: "0.92rem",
+                          }}>
+                            {val === true ? (
+                              <span style={{ color: "#4ade80", fontSize: "1.3rem", fontWeight: 700 }}>✓</span>
+                            ) : val === false ? (
+                              <span style={{ color: dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.15)", fontSize: "1rem" }}>—</span>
+                            ) : (
+                              <span style={{
+                                fontWeight: 700,
+                                fontSize: "0.92rem",
+                                color: dark ? "rgba(255,255,255,0.88)" : "#0d0520",
+                              }}>{val}</span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

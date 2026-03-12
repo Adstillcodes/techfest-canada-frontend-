@@ -10,75 +10,166 @@ import OnboardingSurvey from "../components/OnboardingSurvey";
 import { motion, useInView } from "framer-motion";
 
 /* ═══════════════════════════════════════════════════════
-   STAGGER VARIANTS — entrance only, no scroll
+   STAGGER VARIANTS
    ═══════════════════════════════════════════════════════ */
 
 var containerVariants = {
   hidden: {},
   visible: {
-    transition: {
-      staggerChildren: 0.13,
-      delayChildren: 0.25,
-    },
+    transition: { staggerChildren: 0.14, delayChildren: 0.3 },
   },
 };
 
 var itemBlur = {
   hidden: { opacity: 0, filter: "blur(12px)", y: 22 },
   visible: {
-    opacity: 1,
-    filter: "blur(0px)",
-    y: 0,
+    opacity: 1, filter: "blur(0px)", y: 0,
     transition: { type: "spring", bounce: 0.3, duration: 1.5 },
-  },
-};
-
-var itemFade = {
-  hidden: { opacity: 0, y: 16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", bounce: 0.25, duration: 1.2 },
   },
 };
 
 var itemSlow = {
   hidden: { opacity: 0, y: 14 },
   visible: {
-    opacity: 1,
-    y: 0,
+    opacity: 1, y: 0,
     transition: { type: "spring", bounce: 0.2, duration: 1.8, delay: 0.08 },
   },
 };
 
-var scaleUp = {
-  hidden: { opacity: 0, scale: 0.92 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { type: "spring", stiffness: 120, damping: 18 },
-  },
-};
+/* ═══════════════════════════════════════════════════════
+   SCROLL-TRIGGERED TEXT REVEAL (dev21 TextEffect)
+   Word-by-word blur + slide + scale
+   ═══════════════════════════════════════════════════════ */
+
+function TextReveal(props) {
+  var text = props.text;
+  var colors = props.colors || [];
+  var style = props.style || {};
+  var delay = props.delay || 0;
+
+  var ref = useRef(null);
+  var isInView = useInView(ref, { once: true, margin: "-60px" });
+
+  var words = text.split(" ");
+
+  return (
+    <motion.h2
+      ref={ref}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={{
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: { staggerChildren: 0.14, delayChildren: delay },
+        },
+      }}
+      style={{
+        display: "flex",
+        flexWrap: "nowrap",
+        justifyContent: "center",
+        gap: "0.4em",
+        whiteSpace: "nowrap",
+        ...style,
+      }}
+    >
+      {words.map(function (word, i) {
+        return (
+          <motion.span
+            key={i}
+            variants={{
+              hidden: {
+                opacity: 0,
+                y: 50,
+                filter: "blur(16px)",
+                scale: 0.8,
+              },
+              visible: {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                scale: 1,
+                transition: {
+                  type: "spring",
+                  damping: 14,
+                  stiffness: 100,
+                  duration: 1,
+                },
+              },
+            }}
+            style={{
+              display: "inline-block",
+              color: colors[i] || "inherit",
+              willChange: "transform, opacity, filter",
+            }}
+          >
+            {word}
+          </motion.span>
+        );
+      })}
+    </motion.h2>
+  );
+}
 
 /* ═══════════════════════════════════════════════════════
-   HEADLINE
+   KEYWORD MARQUEE — infinite CSS scroll
    ═══════════════════════════════════════════════════════ */
-var WORDS = ["MEET", "BUILD", "SCALE"];
+
+var KEYWORDS_A = [
+  "ARTIFICIAL INTELLIGENCE", "FINTECH", "BLOCKCHAIN", "CYBERSECURITY",
+  "CLOUD", "HEALTHCARE", "DEEP TECH", "SaaS", "QUANTUM", "ROBOTICS",
+];
+
+var KEYWORDS_B = [
+  "MACHINE LEARNING", "WEB3", "BIOTECH", "ENTERPRISE", "IoT",
+  "CLEAN ENERGY", "EDGE COMPUTING", "AUTONOMOUS", "AR / VR", "SPACE TECH",
+];
+
+function KeywordMarquee(props) {
+  var words = props.words;
+  var direction = props.direction || "left";
+  var speed = props.speed || 45;
+  var dark = props.dark;
+  var doubled = words.concat(words);
+  var animName = direction === "left" ? "marquee-left" : "marquee-right";
+
+  return (
+    <div style={{ overflow: "hidden", whiteSpace: "nowrap", width: "100%", pointerEvents: "none" }}>
+      <div style={{
+        display: "inline-flex",
+        gap: "3rem",
+        animation: animName + " " + speed + "s linear infinite",
+        willChange: "transform",
+      }}>
+        {doubled.map(function (w, i) {
+          return (
+            <span key={i} style={{
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "0.68rem",
+              fontWeight: 800,
+              letterSpacing: "3.5px",
+              color: dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)",
+              textTransform: "uppercase",
+              flexShrink: 0,
+            }}>{w}</span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 /* ═══════════════════════════════════════════════════════
    ANIMATED COUNTER
    ═══════════════════════════════════════════════════════ */
+
 function AnimatedCounter(props) {
   var target = props.target;
   var suffix = props.suffix || "";
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-50px" });
-  var s = useState(0);
-  var count = s[0];
-  var setCount = s[1];
-  var s2 = useState(false);
-  var done = s2[0];
-  var setDone = s2[1];
+  var s = useState(0);  var count = s[0]; var setCount = s[1];
+  var s2 = useState(false); var done = s2[0]; var setDone = s2[1];
 
   useEffect(function () {
     if (!isInView || done) return;
@@ -89,27 +180,178 @@ function AnimatedCounter(props) {
     var step = 0;
     var t = setInterval(function () {
       step++;
-      if (step >= steps) {
-        setCount(num);
-        setDone(true);
-        clearInterval(t);
-      } else {
-        setCount(Math.round(inc * step));
-      }
+      if (step >= steps) { setCount(num); setDone(true); clearInterval(t); }
+      else { setCount(Math.round(inc * step)); }
     }, 1400 / steps);
     return function () { clearInterval(t); };
   }, [isInView, done, target]);
 
+  return <span ref={ref}>{typeof count === "number" ? count + suffix : target}</span>;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCROLL-TRIGGERED SUB-COMPONENTS
+   ═══════════════════════════════════════════════════════ */
+
+function DividerReveal(props) {
+  var ref = useRef(null);
+  var isInView = useInView(ref, { once: true, margin: "-40px" });
   return (
-    <span ref={ref}>
-      {typeof count === "number" ? count + suffix : target}
-    </span>
+    <motion.div
+      ref={ref}
+      initial={{ scaleX: 0, opacity: 0 }}
+      animate={isInView ? { scaleX: 1, opacity: 1 } : {}}
+      transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.4 }}
+      style={{
+        width: 80, height: 2, borderRadius: 2,
+        background: "linear-gradient(90deg, " + props.accent + ", var(--brand-orange, #f5a623))",
+        margin: "1.4rem auto 2.2rem",
+        transformOrigin: "center",
+      }}
+    />
+  );
+}
+
+function SubtitleReveal(props) {
+  var ref = useRef(null);
+  var isInView = useInView(ref, { once: true, margin: "-40px" });
+  return (
+    <motion.p
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ type: "spring", bounce: 0.2, duration: 1.4, delay: 0.5 }}
+      className="hero-sub"
+      style={{
+        fontSize: "clamp(1rem, 1.6vw, 1.15rem)",
+        lineHeight: 1.85, fontWeight: 400, maxWidth: 600,
+        color: props.textMid,
+        textAlign: "justify", hyphens: "auto",
+        marginBottom: "2.6rem",
+      }}
+    >
+      Canada's first-of-its-kind deal-making platform — where innovators,
+      buyers, investors, and policymakers turn emerging technology into
+      real partnerships, pilots, and contracts. One day. One venue.
+      Unlimited momentum.
+    </motion.p>
+  );
+}
+
+function CTAReveal(props) {
+  var dark = props.dark;
+  var textMain = props.textMain;
+  var ref = useRef(null);
+  var isInView = useInView(ref, { once: true, margin: "-40px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 18 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ type: "spring", bounce: 0.2, duration: 1.2, delay: 0.6 }}
+      className="hero-ctas-wrap"
+      style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center" }}
+    >
+      <motion.a
+        href="/tickets"
+        className="hero-cta-solid"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        style={{
+          background: dark ? textMain : "#0d0520",
+          color: dark ? "#0d0520" : "#ffffff",
+          boxShadow: dark
+            ? "0 6px 28px rgba(155,135,245,0.2), 0 2px 8px rgba(0,0,0,0.2)"
+            : "0 6px 28px rgba(13,5,32,0.18), 0 2px 8px rgba(0,0,0,0.08)",
+        }}
+        onMouseEnter={function (e) {
+          e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)";
+          e.currentTarget.style.color = "#fff";
+        }}
+        onMouseLeave={function (e) {
+          e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520";
+          e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff";
+        }}
+      >
+        Get Your Tickets
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </motion.a>
+      <motion.a
+        href="/speakers"
+        className="hero-cta-ghost"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        style={{
+          border: "1.5px solid " + (dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)"),
+          color: dark ? "rgba(200,185,255,0.85)" : "rgba(90,40,180,0.8)",
+          background: "transparent", borderRadius: 14,
+        }}
+        onMouseEnter={function (e) {
+          e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.55)" : "rgba(122,63,209,0.55)";
+          e.currentTarget.style.background = dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)";
+        }}
+        onMouseLeave={function (e) {
+          e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)";
+          e.currentTarget.style.background = "transparent";
+        }}
+      >
+        Partner With Us
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M7 17L17 7M17 7H7M17 7v10" />
+        </svg>
+      </motion.a>
+    </motion.div>
+  );
+}
+
+function StatsReveal(props) {
+  var ref = useRef(null);
+  var isInView = useInView(ref, { once: true, margin: "-40px" });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={isInView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ type: "spring", stiffness: 120, damping: 18, delay: 0.7 }}
+      className="hero-stats"
+      style={{ marginTop: "3.5rem", border: "1px solid " + props.cardBdr }}
+    >
+      {props.stats.map(function (s) {
+        return (
+          <div
+            className="hero-stat"
+            key={s.label}
+            style={{ background: props.cardBg, borderRight: "1px solid " + props.cardBdr }}
+            onMouseEnter={function (e) {
+              e.currentTarget.style.background = props.dark ? "rgba(155,135,245,0.09)" : "rgba(122,63,209,0.07)";
+            }}
+            onMouseLeave={function (e) { e.currentTarget.style.background = props.cardBg; }}
+          >
+            <span style={{
+              fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "1.08rem",
+              background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              backgroundClip: "text", marginBottom: 4,
+            }}>
+              {s.isText ? s.num : <AnimatedCounter target={s.num} suffix={s.suffix} />}
+            </span>
+            <span style={{
+              fontSize: "0.6rem", fontWeight: 700, letterSpacing: "1px",
+              textTransform: "uppercase", color: props.textSoft,
+            }}>{s.label}</span>
+          </div>
+        );
+      })}
+    </motion.div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════
    HOME PAGE
    ═══════════════════════════════════════════════════════ */
+
 export default function Home() {
   var s1  = useState(false);  var inquiryOpen = s1[0];         var setInquiryOpen = s1[1];
   var s2  = useState(false);  var surveyOpen = s2[0];          var setSurveyOpen = s2[1];
@@ -118,7 +360,6 @@ export default function Home() {
   var s5  = useState("");     var purchaseTicketType = s5[0];  var setPurchaseTicketType = s5[1];
   var s6  = useState(false);  var dark = s6[0];                var setDark = s6[1];
 
-  /* ── dark mode observer ── */
   useEffect(function () {
     setDark(document.body.classList.contains("dark-mode"));
     var obs = new MutationObserver(function () {
@@ -128,7 +369,6 @@ export default function Home() {
     return function () { obs.disconnect(); };
   }, []);
 
-  /* ── custom events ── */
   useEffect(function () {
     function h(e) { setSurveyName(e.detail && e.detail.name ? e.detail.name : ""); setSurveyOpen(true); }
     window.addEventListener("showSurvey", h);
@@ -142,22 +382,18 @@ export default function Home() {
   }, []);
 
   function scrollDown() {
-    var el = document.getElementById("about-section");
+    var el = document.getElementById("hero-lower");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   }
 
-  /* ── theme tokens ── */
   var bg       = dark ? "#06020f"                  : "#ffffff";
   var textMain = dark ? "#ffffff"                  : "#0d0520";
   var textMid  = dark ? "rgba(255,255,255,0.55)"   : "rgba(13,5,32,0.58)";
   var textSoft = dark ? "rgba(200,185,255,0.45)"   : "rgba(90,40,180,0.42)";
   var accent   = dark ? "#b99eff"                   : "#7a3fd1";
-  var pillBg   = dark ? "rgba(122,63,209,0.10)"     : "rgba(122,63,209,0.06)";
-  var pillBdr  = dark ? "rgba(122,63,209,0.22)"     : "rgba(122,63,209,0.18)";
   var cardBg   = dark ? "rgba(155,135,245,0.04)"    : "rgba(122,63,209,0.025)";
   var cardBdr  = dark ? "rgba(155,135,245,0.12)"    : "rgba(122,63,209,0.12)";
 
-  /* ── stat data ── */
   var stats = [
     { num: "500", suffix: "+", label: "Decision Makers" },
     { num: "5",   suffix: "",  label: "Tech Pillars" },
@@ -167,43 +403,28 @@ export default function Home() {
 
   return (
     <>
-      {/* ═══ STYLES ═══ */}
       <style>{`
-        /* ──────────── AURORA BACKGROUND ──────────── */
-
+        /* ──── AURORA ──── */
         :root {
-          --aurora-white: #ffffff;
-          --aurora-black: #06020f;
-          --aurora-transparent: transparent;
-          --aurora-purple: #7a3fd1;
-          --aurora-violet: #9b57e8;
-          --aurora-lilac: #c4a0f5;
-          --aurora-orange: #f5a623;
-          --aurora-amber: #f7c15e;
+          --aurora-white: #ffffff; --aurora-black: #06020f;
+          --aurora-transparent: transparent; --aurora-purple: #7a3fd1;
+          --aurora-violet: #9b57e8; --aurora-lilac: #c4a0f5;
+          --aurora-orange: #f5a623; --aurora-amber: #f7c15e;
         }
-
         @keyframes aurora-shift {
           from { background-position: 50% 50%, 50% 50%; }
           to   { background-position: 350% 50%, 350% 50%; }
         }
-
         .aurora-layer {
-          position: absolute;
-          inset: -10px;
-          pointer-events: none;
-          will-change: transform;
-          background-size: 300% 200%;
-          background-position: 50% 50%;
-          filter: blur(10px);
-          opacity: 0.4;
+          position: absolute; inset: -10px; pointer-events: none;
+          will-change: transform; background-size: 300% 200%;
+          background-position: 50% 50%; filter: blur(10px); opacity: 0.4;
         }
-
         .aurora-layer--light {
           background-image:
             repeating-linear-gradient(100deg, var(--aurora-white) 0%, var(--aurora-white) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-white) 16%),
             repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          opacity: 0.35;
-          filter: blur(12px);
+          opacity: 0.35; filter: blur(12px);
           mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
           -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
         }
@@ -212,18 +433,14 @@ export default function Home() {
           background-image:
             repeating-linear-gradient(100deg, var(--aurora-white) 0%, var(--aurora-white) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-white) 16%),
             repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          background-size: 200% 100%;
-          background-attachment: fixed;
-          animation: aurora-shift 60s linear infinite;
-          mix-blend-mode: difference;
+          background-size: 200% 100%; background-attachment: fixed;
+          animation: aurora-shift 60s linear infinite; mix-blend-mode: difference;
         }
-
         .aurora-layer--dark {
           background-image:
             repeating-linear-gradient(100deg, var(--aurora-black) 0%, var(--aurora-black) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-black) 16%),
             repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          opacity: 0.5;
-          filter: blur(10px);
+          opacity: 0.5; filter: blur(10px);
           mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
           -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
         }
@@ -232,26 +449,11 @@ export default function Home() {
           background-image:
             repeating-linear-gradient(100deg, var(--aurora-black) 0%, var(--aurora-black) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-black) 16%),
             repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          background-size: 200% 100%;
-          background-attachment: fixed;
-          animation: aurora-shift 60s linear infinite;
-          mix-blend-mode: difference;
+          background-size: 200% 100%; background-attachment: fixed;
+          animation: aurora-shift 60s linear infinite; mix-blend-mode: difference;
         }
 
-        /* ──────────── KEYFRAMES ──────────── */
-
-        @keyframes dot-pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50%      { transform: scale(1.8); opacity: 0.4; }
-        }
-
-        @keyframes wheel-scroll {
-          0%   { transform: translateY(0); opacity: 1; }
-          50%  { transform: translateY(6px); opacity: 0.3; }
-          100% { transform: translateY(0); opacity: 1; }
-        }
-
-        /* ──────────── GRID OVERLAY ──────────── */
+        /* ──── GRID ──── */
         .hero-grid {
           position: absolute; inset: 0; z-index: 1; pointer-events: none;
           background-image:
@@ -261,16 +463,28 @@ export default function Home() {
           mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, black 15%, transparent 100%);
           -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, black 15%, transparent 100%);
         }
-
-        /* ──────────── RADIAL GLOWS ──────────── */
         .hero-glow {
-          position: absolute;
-          border-radius: 50%;
-          pointer-events: none;
-          z-index: 1;
+          position: absolute; border-radius: 50%; pointer-events: none; z-index: 1;
         }
 
-        /* ──────────── CTA BUTTONS ──────────── */
+        /* ──── MARQUEE ──── */
+        @keyframes marquee-left {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+        @keyframes marquee-right {
+          from { transform: translateX(-50%); }
+          to   { transform: translateX(0); }
+        }
+
+        /* ──── SCROLL CUE ──── */
+        @keyframes wheel-scroll {
+          0%   { transform: translateY(0); opacity: 1; }
+          50%  { transform: translateY(6px); opacity: 0.3; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* ──── CTAs ──── */
         .hero-cta-solid {
           position: relative; overflow: hidden;
           display: inline-flex; align-items: center; gap: 10px;
@@ -282,7 +496,6 @@ export default function Home() {
           transition: transform 0.25s ease, box-shadow 0.35s ease;
         }
         .hero-cta-solid:hover { transform: translateY(-3px); }
-
         .hero-cta-ghost {
           display: inline-flex; align-items: center; gap: 8px;
           padding: 15px 32px; border-radius: 14px;
@@ -292,69 +505,22 @@ export default function Home() {
         }
         .hero-cta-ghost:hover { transform: translateY(-2px); }
 
-        /* ──────────── STAT STRIP ──────────── */
+        /* ──── STATS ──── */
         .hero-stats {
-          display: flex; flex-wrap: wrap;
-          justify-content: center; gap: 1px;
+          display: flex; flex-wrap: wrap; justify-content: center; gap: 1px;
           border-radius: 20px; overflow: hidden;
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
         .hero-stat {
           display: flex; flex-direction: column; align-items: center;
           padding: 20px 34px; flex: 1; min-width: 135px;
-          transition: background 0.25s ease;
-          cursor: default;
+          transition: background 0.25s ease; cursor: default;
         }
         .hero-stat:last-child { border-right: none !important; }
 
-        /* ──────────── NAVBAR OVERRIDE ──────────── */
         .tfc-navbar-wrap { border-bottom: none !important; box-shadow: none !important; }
 
-        /* ──────────── RADIAL BOTTOM ARC ──────────── */
-        .hero-arc {
-          position: absolute;
-          left: 50%; bottom: -2px;
-          transform: translateX(-50%);
-          border-radius: 100%;
-          z-index: 3;
-          pointer-events: none;
-        }
-
-        /* ──────────── FLOATING SIDE CARDS ──────────── */
-        .hero-float {
-          position: absolute;
-          z-index: 6;
-          pointer-events: none;
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          padding: 16px 20px;
-          border-radius: 16px;
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-        }
-        .hero-float-num {
-          font-family: 'Orbitron', sans-serif;
-          font-weight: 900;
-          font-size: 1.3rem;
-          line-height: 1;
-        }
-        .hero-float-label {
-          font-size: 0.58rem;
-          font-weight: 700;
-          letter-spacing: 1.2px;
-          text-transform: uppercase;
-          line-height: 1.2;
-        }
-        .hero-float-icon {
-          width: 28px; height: 28px;
-          border-radius: 8px;
-          display: flex; align-items: center; justify-content: center;
-          margin-bottom: 4px;
-        }
-
-        /* ──────────── RESPONSIVE ──────────── */
+        /* ──── RESPONSIVE ──── */
         @media (max-width: 640px) {
           .hero-ctas-wrap { flex-direction: column !important; width: 100% !important; }
           .hero-cta-solid, .hero-cta-ghost { width: 100% !important; justify-content: center !important; }
@@ -362,531 +528,167 @@ export default function Home() {
           .hero-stat { padding: 14px 18px !important; }
           .hero-stats { border-radius: 16px !important; }
         }
-        @media (max-width: 1100px) {
-          .hero-float { display: none !important; }
-        }
       `}</style>
 
       <UrgencyBanner />
       <Navbar />
 
-      {/* ════════════════════════════════════════════
-          HERO SECTION
-          ════════════════════════════════════════════ */}
-      <section
-        style={{
-          position: "relative",
-          overflow: "hidden",
-          background: bg,
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {/* ── AURORA BACKGROUND LIGHTS ── */}
+      {/* ═══════════ HERO UPPER — Logo + Date/City ═══════════ */}
+      <section style={{
+        position: "relative", overflow: "hidden", background: bg,
+        minHeight: "100vh", display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+      }}>
+        {/* Aurora */}
         <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
           <div className={dark ? "aurora-layer aurora-layer--dark" : "aurora-layer aurora-layer--light"} />
         </div>
 
-        {/* Grid overlay */}
         <div className="hero-grid" />
 
-        {/* Ambient glow — purple top-left */}
         <div className="hero-glow" style={{
           width: 720, height: 720,
           background: dark
             ? "radial-gradient(circle, rgba(122,63,209,0.18) 0%, transparent 70%)"
             : "radial-gradient(circle, rgba(122,63,209,0.08) 0%, transparent 70%)",
-          top: -270, left: -220,
-          filter: "blur(90px)",
+          top: -270, left: -220, filter: "blur(90px)",
         }} />
-        {/* Warm glow — orange top-right */}
         <div className="hero-glow" style={{
           width: 520, height: 520,
           background: dark
             ? "radial-gradient(circle, rgba(245,166,35,0.10) 0%, transparent 70%)"
             : "radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%)",
-          top: -170, right: -200,
-          filter: "blur(100px)",
+          top: -170, right: -200, filter: "blur(100px)",
         }} />
 
-        {/* ── FLOATING SIDE ELEMENTS ── */}
-
-        {/* LEFT — top: Decision Makers */}
-        <motion.div
-          className="hero-float"
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ type: "spring", bounce: 0.25, duration: 1.6, delay: 1.6 }}
-          style={{
-            left: "3%",
-            top: "28%",
-            background: dark ? "rgba(122,63,209,0.08)" : "rgba(122,63,209,0.04)",
-            border: "1px solid " + (dark ? "rgba(155,135,245,0.15)" : "rgba(122,63,209,0.10)"),
-          }}
-        >
-          <div className="hero-float-icon" style={{
-            background: dark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.10)",
-          }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-          </div>
-          <span className="hero-float-num" style={{ color: dark ? "#ffffff" : "#0d0520" }}>500+</span>
-          <span className="hero-float-label" style={{ color: textSoft }}>Decision Makers</span>
-        </motion.div>
-
-        {/* LEFT — bottom: One Day Format */}
-        <motion.div
-          className="hero-float"
-          initial={{ opacity: 0, x: -25 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ type: "spring", bounce: 0.25, duration: 1.6, delay: 2.0 }}
-          style={{
-            left: "5%",
-            top: "55%",
-            background: dark ? "rgba(245,166,35,0.06)" : "rgba(245,166,35,0.04)",
-            border: "1px solid " + (dark ? "rgba(245,166,35,0.15)" : "rgba(245,166,35,0.10)"),
-          }}
-        >
-          <div className="hero-float-icon" style={{
-            background: dark ? "rgba(245,166,35,0.15)" : "rgba(245,166,35,0.08)",
-          }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange, #f5a623)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-          </div>
-          <span className="hero-float-num" style={{ color: dark ? "#ffffff" : "#0d0520" }}>1 Day</span>
-          <span className="hero-float-label" style={{ color: textSoft }}>Unlimited Momentum</span>
-        </motion.div>
-
-        {/* RIGHT — top: Tech Pillars */}
-        <motion.div
-          className="hero-float"
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ type: "spring", bounce: 0.25, duration: 1.6, delay: 1.8 }}
-          style={{
-            right: "3%",
-            top: "28%",
-            alignItems: "flex-end",
-            textAlign: "right",
-            background: dark ? "rgba(155,135,245,0.06)" : "rgba(155,135,245,0.04)",
-            border: "1px solid " + (dark ? "rgba(155,135,245,0.15)" : "rgba(155,135,245,0.08)"),
-          }}
-        >
-          <div className="hero-float-icon" style={{
-            background: dark ? "rgba(155,135,245,0.15)" : "rgba(155,135,245,0.08)",
-          }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg>
-          </div>
-          <span className="hero-float-num" style={{ color: dark ? "#ffffff" : "#0d0520" }}>5</span>
-          <span className="hero-float-label" style={{ color: textSoft }}>Tech Pillars</span>
-        </motion.div>
-
-        {/* RIGHT — bottom: Venue */}
-        <motion.div
-          className="hero-float"
-          initial={{ opacity: 0, x: 25 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ type: "spring", bounce: 0.25, duration: 1.6, delay: 2.2 }}
-          style={{
-            right: "5%",
-            top: "55%",
-            alignItems: "flex-end",
-            textAlign: "right",
-            background: dark ? "rgba(122,63,209,0.06)" : "rgba(122,63,209,0.03)",
-            border: "1px solid " + (dark ? "rgba(122,63,209,0.15)" : "rgba(122,63,209,0.08)"),
-          }}
-        >
-          <div className="hero-float-icon" style={{
-            background: dark ? "rgba(122,63,209,0.15)" : "rgba(122,63,209,0.08)",
-          }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-              <circle cx="12" cy="10" r="3" />
-            </svg>
-          </div>
-          <span className="hero-float-num" style={{ color: dark ? "#ffffff" : "#0d0520", fontSize: "1rem" }}>The Carlu</span>
-          <span className="hero-float-label" style={{ color: textSoft }}>Historic Venue</span>
-        </motion.div>
-
-        {/* ── HERO CONTENT ── */}
-        <div
-          style={{
-            position: "relative",
-            zIndex: 5,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-            padding: "clamp(6rem, 10vw, 9rem) 6% clamp(4rem, 7vw, 6rem)",
-            maxWidth: 920,
-            margin: "0 auto",
-            width: "100%",
-          }}
-        >
-          {/* ── STAGGER CONTAINER ── */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            {/* Logo */}
-            <motion.div variants={itemBlur} style={{ marginBottom: "0.6rem" }}>
-              <img
-                src={dark
-                  ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
-                  : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
-                alt="The Tech Festival Canada"
-                style={{
-                  width: "100%",
-                  maxWidth: 520,
-                  height: "auto",
-                  objectFit: "contain",
-                  filter: dark
-                    ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))"
-                    : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))",
-                }}
-              />
-            </motion.div>
-
-            {/* Event pills row */}
-            <motion.div
-              variants={itemBlur}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                marginBottom: "1.6rem",
-                flexWrap: "wrap",
-                justifyContent: "center",
-              }}
-            >
-              <div style={{
-                display: "inline-flex",
-                alignItems: "center",
-                padding: "10px 28px",
-                borderRadius: 999,
-                background: dark ? "rgba(255,255,255,0.06)" : "rgba(13,5,32,0.05)",
-                border: "1px solid " + (dark ? "rgba(255,255,255,0.12)" : "rgba(13,5,32,0.12)"),
-              }}>
-                <span style={{
-                  fontFamily: "'Orbitron', sans-serif",
-                  fontSize: "clamp(0.85rem, 1.8vw, 1.1rem)",
-                  fontWeight: 800,
-                  letterSpacing: "1.5px",
-                  color: dark ? "#ffffff" : "#0d0520",
-                }}>
-                  Oct 28, 2026
-                </span>
-              </div>
-              <div style={{
-                display: "inline-flex",
-                alignItems: "center",
-                padding: "10px 28px",
-                borderRadius: 999,
-                background: dark ? "rgba(255,255,255,0.06)" : "rgba(13,5,32,0.05)",
-                border: "1px solid " + (dark ? "rgba(255,255,255,0.12)" : "rgba(13,5,32,0.12)"),
-              }}>
-                <span style={{
-                  fontFamily: "'Orbitron', sans-serif",
-                  fontSize: "clamp(0.85rem, 1.8vw, 1.1rem)",
-                  fontWeight: 800,
-                  letterSpacing: "1.5px",
-                  color: dark ? "#ffffff" : "#0d0520",
-                }}>
-                  Toronto, ON
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Headline: MEET · BUILD · SCALE */}
-            <motion.h1
-              variants={itemFade}
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: "clamp(2.3rem, 5.5vw, 4.4rem)",
-                fontWeight: 900,
-                lineHeight: 1.08,
-                marginBottom: "0.4rem",
-                display: "flex",
-                flexWrap: "nowrap",
-                justifyContent: "center",
-                gap: "0.5em",
-                letterSpacing: "-0.5px",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {WORDS.map(function (word, i) {
-                return (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, y: 28, scale: 0.92 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{
-                      type: "spring",
-                      bounce: 0.35,
-                      duration: 1.4,
-                      delay: 0.7 + i * 0.16,
-                    }}
-                    style={{
-                      display: "inline-block",
-                      color: i === 0
-                        ? (dark ? "#ffffff" : "#0d0520")
-                        : i === 1
-                        ? accent
-                        : "var(--brand-orange, #f5a623)",
-                    }}
-                  >
-                    {word}
-                  </motion.span>
-                );
-              })}
-            </motion.h1>
-
-            {/* Decorative divider */}
-            <motion.div
-              variants={itemFade}
-              style={{
-                width: 80,
-                height: 2,
-                borderRadius: 2,
-                background: "linear-gradient(90deg, " + accent + ", var(--brand-orange, #f5a623))",
-                margin: "1.2rem auto 1.8rem",
-              }}
-            />
-
-            {/* Subtitle */}
-            <motion.p
-              variants={itemSlow}
-              className="hero-sub"
-              style={{
-                fontSize: "clamp(1rem, 1.6vw, 1.15rem)",
-                lineHeight: 1.85,
-                fontWeight: 400,
-                maxWidth: 600,
-                color: textMid,
-                textAlign: "justify",
-                hyphens: "auto",
-                marginBottom: "2.6rem",
-              }}
-            >
-              Canada's first-of-its-kind deal-making platform — where innovators,
-              buyers, investors, and policymakers turn emerging technology into
-              real partnerships, pilots, and contracts. One day. One venue.
-              Unlimited momentum.
-            </motion.p>
-
-            {/* CTA Buttons */}
-            <motion.div
-              variants={itemFade}
-              className="hero-ctas-wrap"
-              style={{
-                display: "flex",
-                gap: 14,
-                flexWrap: "wrap",
-                justifyContent: "center",
-              }}
-            >
-              {/* Solid CTA */}
-              <motion.a
-                href="/tickets"
-                className="hero-cta-solid"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  background: dark ? textMain : "#0d0520",
-                  color: dark ? "#0d0520" : "#ffffff",
-                  boxShadow: dark
-                    ? "0 6px 28px rgba(155,135,245,0.2), 0 2px 8px rgba(0,0,0,0.2)"
-                    : "0 6px 28px rgba(13,5,32,0.18), 0 2px 8px rgba(0,0,0,0.08)",
-                }}
-                onMouseEnter={function (e) {
-                  e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)";
-                  e.currentTarget.style.color = "#fff";
-                }}
-                onMouseLeave={function (e) {
-                  e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520";
-                  e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff";
-                }}
-              >
-                Get Your Tickets
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </motion.a>
-
-              {/* Ghost CTA */}
-              <motion.a
-                href="/speakers"
-                className="hero-cta-ghost"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  border: "1.5px solid " + (dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)"),
-                  color: dark ? "rgba(200,185,255,0.85)" : "rgba(90,40,180,0.8)",
-                  background: "transparent",
-                  borderRadius: 14,
-                }}
-                onMouseEnter={function (e) {
-                  e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.55)" : "rgba(122,63,209,0.55)";
-                  e.currentTarget.style.background = dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)";
-                }}
-                onMouseLeave={function (e) {
-                  e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)";
-                  e.currentTarget.style.background = "transparent";
-                }}
-              >
-                Partner With Us
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M7 17L17 7M17 7H7M17 7v10" />
-                </svg>
-              </motion.a>
-            </motion.div>
-
-            {/* Stat strip */}
-            <motion.div
-              variants={scaleUp}
-              className="hero-stats"
-              style={{
-                marginTop: "3.5rem",
-                border: "1px solid " + cardBdr,
-              }}
-            >
-              {stats.map(function (s) {
-                return (
-                  <div
-                    className="hero-stat"
-                    key={s.label}
-                    style={{
-                      background: cardBg,
-                      borderRight: "1px solid " + cardBdr,
-                    }}
-                    onMouseEnter={function (e) {
-                      e.currentTarget.style.background = dark
-                        ? "rgba(155,135,245,0.09)"
-                        : "rgba(122,63,209,0.07)";
-                    }}
-                    onMouseLeave={function (e) {
-                      e.currentTarget.style.background = cardBg;
-                    }}
-                  >
-                    <span style={{
-                      fontFamily: "'Orbitron', sans-serif",
-                      fontWeight: 900,
-                      fontSize: "1.08rem",
-                      background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                      marginBottom: 4,
-                    }}>
-                      {s.isText ? s.num : (
-                        <AnimatedCounter target={s.num} suffix={s.suffix} />
-                      )}
-                    </span>
-                    <span style={{
-                      fontSize: "0.6rem",
-                      fontWeight: 700,
-                      letterSpacing: "1px",
-                      textTransform: "uppercase",
-                      color: textSoft,
-                    }}>
-                      {s.label}
-                    </span>
-                  </div>
-                );
-              })}
-            </motion.div>
-
-            {/* Scroll cue — animated mouse wheel */}
-            <motion.button
-              variants={itemSlow}
-              onClick={scrollDown}
-              whileHover={{ scale: 1.08 }}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 8,
-                marginTop: "3rem",
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-                color: dark ? "rgba(155,135,245,0.38)" : "rgba(122,63,209,0.35)",
-              }}
-            >
-              <svg
-                width="22" height="34" viewBox="0 0 22 34" fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect x="1" y="1" width="20" height="32" rx="10"
-                  stroke="currentColor" strokeWidth="1.5" />
-                <circle cx="11" cy="10" r="2" fill="currentColor"
-                  style={{ animation: "wheel-scroll 2s ease infinite" }} />
-              </svg>
-              <span style={{
-                fontSize: "0.58rem",
-                fontWeight: 700,
-                letterSpacing: "1.6px",
-                textTransform: "uppercase",
-              }}>
-                Scroll
-              </span>
-            </motion.button>
-
-          </motion.div>
+        {/* Marquee rows — very subtle behind everything */}
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 2,
+          display: "flex", flexDirection: "column",
+          justifyContent: "center", gap: "3.5rem",
+          pointerEvents: "none", overflow: "hidden",
+        }}>
+          <KeywordMarquee words={KEYWORDS_A} direction="left" speed={50} dark={dark} />
+          <KeywordMarquee words={KEYWORDS_B} direction="right" speed={55} dark={dark} />
+          <KeywordMarquee words={KEYWORDS_A.slice().reverse()} direction="left" speed={45} dark={dark} />
+          <KeywordMarquee words={KEYWORDS_B.slice().reverse()} direction="right" speed={60} dark={dark} />
         </div>
 
-        {/* Radial bottom arc */}
-        <div
-          className="hero-arc"
+        {/* Centered content */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
           style={{
-            width: "140%",
-            maxWidth: 1400,
-            height: 180,
-            background: bg,
-            bottom: -90,
+            position: "relative", zIndex: 5,
+            display: "flex", flexDirection: "column",
+            alignItems: "center", textAlign: "center",
+            padding: "0 6%", maxWidth: 920, width: "100%",
           }}
-        />
+        >
+          {/* Logo */}
+          <motion.div variants={itemBlur} style={{ marginBottom: "2.2rem" }}>
+            <img
+              src={dark
+                ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
+                : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
+              alt="The Tech Festival Canada"
+              style={{
+                width: "100%", maxWidth: 480, height: "auto", objectFit: "contain",
+                filter: dark
+                  ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))"
+                  : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))",
+              }}
+            />
+          </motion.div>
 
-        {/* Bottom divider line */}
-        <div style={{
-          position: "absolute",
-          bottom: 0, left: 0, right: 0,
-          height: 1,
-          zIndex: 4,
-          background: "linear-gradient(90deg, transparent 0%, rgba(122,63,209,0.2) 30%, rgba(245,166,35,0.12) 70%, transparent 100%)",
-        }} />
+          {/* Date + City pills */}
+          <motion.div
+            variants={itemBlur}
+            style={{
+              display: "flex", alignItems: "center", gap: 10,
+              flexWrap: "wrap", justifyContent: "center", marginBottom: "2.5rem",
+            }}
+          >
+            {["Oct 28, 2026", "Toronto, ON"].map(function (label) {
+              return (
+                <div key={label} style={{
+                  display: "inline-flex", alignItems: "center",
+                  padding: "10px 28px", borderRadius: 999,
+                  background: dark ? "rgba(255,255,255,0.06)" : "rgba(13,5,32,0.05)",
+                  border: "1px solid " + (dark ? "rgba(255,255,255,0.12)" : "rgba(13,5,32,0.12)"),
+                }}>
+                  <span style={{
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "clamp(0.85rem, 1.8vw, 1.05rem)",
+                    fontWeight: 800, letterSpacing: "1.5px",
+                    color: dark ? "#ffffff" : "#0d0520",
+                  }}>{label}</span>
+                </div>
+              );
+            })}
+          </motion.div>
+
+          {/* Scroll cue */}
+          <motion.button
+            variants={itemSlow}
+            onClick={scrollDown}
+            whileHover={{ scale: 1.08 }}
+            style={{
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+              border: "none", background: "none", cursor: "pointer",
+              color: dark ? "rgba(155,135,245,0.38)" : "rgba(122,63,209,0.35)",
+            }}
+          >
+            <svg width="22" height="34" viewBox="0 0 22 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="1" width="20" height="32" rx="10" stroke="currentColor" strokeWidth="1.5" />
+              <circle cx="11" cy="10" r="2" fill="currentColor" style={{ animation: "wheel-scroll 2s ease infinite" }} />
+            </svg>
+            <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "1.6px", textTransform: "uppercase" }}>Scroll</span>
+          </motion.button>
+        </motion.div>
 
         {/* Bottom fade */}
         <div style={{
-          position: "absolute",
-          bottom: 0, left: 0, right: 0,
-          height: 100,
-          zIndex: 4,
+          position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 4,
           background: "linear-gradient(to bottom, transparent, " + bg + ")",
           pointerEvents: "none",
         }} />
       </section>
 
-      {/* ════════════════════════════════════════════
-          ABOUT / FOOTER / MODALS
-          ════════════════════════════════════════════ */}
+      {/* ═══════════ HERO LOWER — MEET BUILD SCALE + CTAs ═══════════ */}
+      <section id="hero-lower" style={{
+        position: "relative", background: bg, overflow: "hidden",
+        padding: "6rem 6% 5rem",
+      }}>
+        <div style={{
+          maxWidth: 920, margin: "0 auto",
+          display: "flex", flexDirection: "column",
+          alignItems: "center", textAlign: "center",
+        }}>
+          <TextReveal
+            text="MEET BUILD SCALE"
+            colors={[
+              dark ? "#ffffff" : "#0d0520",
+              accent,
+              "var(--brand-orange, #f5a623)",
+            ]}
+            style={{
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "clamp(2.4rem, 6vw, 4.8rem)",
+              fontWeight: 900, lineHeight: 1.08,
+              letterSpacing: "-0.5px", marginBottom: "1rem",
+            }}
+          />
+
+          <DividerReveal accent={accent} />
+          <SubtitleReveal textMid={textMid} />
+          <CTAReveal dark={dark} textMain={textMain} accent={accent} />
+          <StatsReveal stats={stats} dark={dark} cardBg={cardBg} cardBdr={cardBdr} textSoft={textSoft} />
+        </div>
+      </section>
+
+      {/* ═══════════ ABOUT / FOOTER / MODALS ═══════════ */}
       <div id="about-section">
         <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
       </div>

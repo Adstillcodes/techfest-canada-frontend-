@@ -394,7 +394,7 @@ export default function Home() {
             padding: "0 6%", maxWidth: 920, width: "100%",
           }}
         >
-          {/* Logo */}
+          {/* Logo - Size increased via maxWidth */}
           <motion.div variants={itemBlur} style={{ marginBottom: "2.2rem" }}>
             <img
               src={dark
@@ -402,7 +402,7 @@ export default function Home() {
                 : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
               alt="The Tech Festival Canada"
               style={{
-                width: "100%", maxWidth: 580, height: "auto", objectFit: "contain",
+                width: "100%", maxWidth: 720, height: "auto", objectFit: "contain",
                 filter: dark
                   ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))"
                   : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))",

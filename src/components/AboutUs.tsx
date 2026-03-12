@@ -25,7 +25,10 @@ import {
   Atom,
   Lock,
   Settings,
-  Leaf
+  Leaf,
+  Clock,
+  Trophy,
+  Target
 } from "lucide-react"
 import { 
   motion, 
@@ -61,7 +64,7 @@ const iconMap: Record<string, React.ReactNode> = {
   tool: <PenTool className="w-5 h-5" />,
   building: <Building2 className="w-5 h-5" />,
   award: <Award className="w-5 h-5" />,
-  users: <Users className="w-5 h-5" />,
+  users: <Users className="w-6 h-6" />,
   calendar: <Calendar className="w-5 h-5" />,
   trending: <TrendingUp className="w-5 h-5" />,
   star: <Star className="w-5 h-5" />,
@@ -69,12 +72,15 @@ const iconMap: Record<string, React.ReactNode> = {
   check: <CheckCircle className="w-5 h-5" />,
   heart: <Heart className="w-5 h-5" />,
   shield: <Shield className="w-5 h-5" />,
-  zap: <Zap className="w-5 h-5" />,
+  zap: <Zap className="w-6 h-6" />,
   cpu: <Cpu className="w-5 h-5" />,
   atom: <Atom className="w-5 h-5" />,
   lock: <Lock className="w-5 h-5" />,
   settings: <Settings className="w-5 h-5" />,
-  leaf: <Leaf className="w-5 h-5" />
+  leaf: <Leaf className="w-5 h-5" />,
+  clock: <Clock className="w-6 h-6" />,
+  trophy: <Trophy className="w-6 h-6" />,
+  target: <Target className="w-6 h-6" />
 }
 
 // Accept onWriteToUs prop to open the inquiry modal from Home
@@ -245,17 +251,6 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
                 <InteractiveGlobe size={320} isDarkMode={true} autoRotateSpeed={0.0012} />
                 <style>{`@keyframes aboutGlobeSpin { to { transform: rotate(360deg); } }`}</style>
               </div>
-              {/* Legend */}
-              <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: "rgba(245,166,35,0.9)", boxShadow: "0 0 5px rgba(245,166,35,0.5)", display: "inline-block" }} />
-                  Tech Pillars
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: "rgba(160,100,255,0.9)", boxShadow: "0 0 5px rgba(160,100,255,0.5)", display: "inline-block" }} />
-                  Applied Sectors
-                </div>
-              </div>
             </div>
             <motion.div 
               className="absolute -inset-4 border-2 border-[var(--brand-purple)]/10 rounded-3xl z-[-1]"
@@ -284,7 +279,7 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
         {/* Stats */}
         <div ref={statsRef} className="mt-32 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {data.stats?.map((stat: any, index: number) => (
-            <StatBox key={index} {...stat} delay={index * 0.1} />
+            <StatBox key={index} {...stat} index={index} delay={index * 0.1} />
           ))}
         </div>
 
@@ -379,7 +374,15 @@ function ServiceCard({ iconName, title, description, align }: any) {
   )
 }
 
-function StatBox({ iconName, value, suffix, label, delay }: any) {
+/* ── Unique icons per stat index ── */
+const statIcons = [
+  <Users className="w-7 h-7" />,
+  <Sparkles className="w-7 h-7" />,
+  <Clock className="w-7 h-7" />,
+  <Trophy className="w-7 h-7" />,
+]
+
+function StatBox({ iconName, value, suffix, label, delay, index }: any) {
   const [displayValue, setDisplayValue] = useState(0)
   const ref = useRef(null)
   const isVisible = useInView(ref, { once: true })
@@ -400,15 +403,15 @@ function StatBox({ iconName, value, suffix, label, delay }: any) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.8 }}
       viewport={{ once: true }}
-      className="bg-[var(--bg-card)] border border-[var(--border-main)] p-10 rounded-3xl flex flex-col items-center group hover:bg-[var(--bg-card)] hover:shadow-2xl hover:border-[var(--brand-orange)]/20 transition-all duration-500"
+      className="bg-[var(--bg-card)] border border-[var(--border-main)] p-10 rounded-3xl flex flex-col items-center group hover:shadow-2xl hover:border-[var(--brand-orange)]/20 transition-all duration-500"
     >
       <div className="w-16 h-16 rounded-2xl bg-[var(--brand-orange)]/5 flex items-center justify-center text-[var(--brand-orange)] mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-sm">
-        {iconMap[iconName] || <TrendingUp className="w-6 h-6" />}
+        {statIcons[index] || iconMap[iconName] || <TrendingUp className="w-7 h-7" />}
       </div>
-      <div className="text-4xl font-black font-['Orbitron'] mb-2 text-[var(--text-main)] tracking-tighter">
+      <div className="text-4xl font-black font-['Orbitron'] mb-3 text-[var(--text-main)] tracking-tighter">
         {displayValue}{suffix}
       </div>
-      <div className="text-[var(--text-muted)] text-[10px] uppercase tracking-[0.2em] font-black">
+      <div className="text-[var(--text-muted)] text-sm uppercase tracking-[0.15em] font-bold text-center leading-snug">
         {label}
       </div>
     </motion.div>

@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -17,8 +17,7 @@ const BOOTH_TIERS = [
       "Perfect for lead generation, networking, and market validation",
       "A sharp entry point into Canada’s innovation ecosystem"
     ],
-    // Rename your first 4 images (the smallest booths) to match these names in your public folder
-    images: ["/booths/single-1.png", "/booths/single-2.png", "/booths/single-3.png", "/booths/single-4.png"]
+    image: "/booths/single.jpg"
   },
   {
     id: "double",
@@ -33,8 +32,7 @@ const BOOTH_TIERS = [
       "Ideal for companies with multiple products or services",
       "Positions your brand as established, credible, and growth ready"
     ],
-    // Rename your next 4 images (the 2-unit booths)
-    images: ["/booths/double-1.png", "/booths/double-2.png", "/booths/double-3.png", "/booths/double-4.png"]
+    image: "/booths/double.jpg"
   },
   {
     id: "triple",
@@ -49,8 +47,7 @@ const BOOTH_TIERS = [
       "Supports stronger traffic flow and richer visitor engagement",
       "Ideal for brands looking to signal scale, depth, and leadership"
     ],
-    // Rename your next 4 images (the 3-unit booths)
-    images: ["/booths/triple-1.png", "/booths/triple-2.png", "/booths/triple-3.png", "/booths/triple-4.png"]
+    image: "/booths/triple.jpg"
   },
   {
     id: "quadruple",
@@ -65,8 +62,7 @@ const BOOTH_TIERS = [
       "Enables premium experiences, larger teams, and stronger engagement",
       "Best choice for companies looking to dominate attention and drive momentum"
     ],
-    // Rename your final 4 images (the largest 4-unit island/backwall booths)
-    images: ["/booths/quad-1.png", "/booths/quad-2.png", "/booths/quad-3.png", "/booths/quad-4.png"]
+    image: "/booths/quad.jpg"
   }
 ];
 
@@ -98,7 +94,6 @@ export default function Exhibit() {
         @media (max-width: 540px) {
           .cta-row { flex-direction: column !important; align-items: stretch !important; }
           .cta-row a { width: 100% !important; text-align: center !important; justify-content: center !important; }
-          .image-grid { grid-template-columns: 1fr !important; }
         }
         
         /* AURORA BACKGROUND */
@@ -175,11 +170,14 @@ export default function Exhibit() {
           position: "relative", zIndex: 10, textAlign: "center", padding: "0 5%",
           maxWidth: 900, margin: "0 auto", paddingTop: "clamp(120px, 15vw, 160px)", paddingBottom: "80px",
         }}
-          initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, y: 30 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
         >
           <h1 style={{
             fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(3rem, 7vw, 5rem)",
-            fontWeight: 900, lineHeight: 1.1, marginBottom: 24, letterSpacing: "-0.5px",
+            fontWeight: 900, lineHeight: 1.1, marginBottom: 24, letterSpacing: "-0.5px", color: textMain
           }}>
             Exhibit{" "}
             <span style={{
@@ -197,7 +195,13 @@ export default function Exhibit() {
       </section>
 
       {/* ═══════════ INTRO TEXT ═══════════ */}
-      <section style={{ padding: "80px 5%", maxWidth: 1000, margin: "0 auto" }}>
+      <motion.section 
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.8 }}
+        style={{ padding: "80px 5%", maxWidth: 1000, margin: "0 auto" }}
+      >
         <div style={{ display: "flex", flexDirection: "column", gap: 24, fontSize: "1.1rem", color: textMuted, lineHeight: 1.8, textAlign: "justify" }}>
           <p>
             The Tech Festival Canada is where innovation meets influence. It is where technology companies, founders, investors, enterprises, policymakers, industry leaders, public sector stakeholders, and solution buyers come together to discover what is next and decide who they want to work with.
@@ -209,7 +213,7 @@ export default function Exhibit() {
             Whether you are entering the market, scaling your reach, launching a new solution, or strengthening enterprise relationships, The Tech Festival Canada gives you the platform to be seen, remembered, and engaged. From ambitious startups to global brands, our booth options are designed to match your growth stage, commercial goals, and branding ambition.
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* ═══════════ BOOTH TIERS ═══════════ */}
       <div style={{ paddingBottom: "80px" }}>
@@ -229,7 +233,10 @@ export default function Exhibit() {
 
       {/* ═══════════ CLOSING ARGUMENT ═══════════ */}
       <section style={{ padding: "60px 5% 100px", maxWidth: 900, margin: "0 auto" }}>
-        <div style={{ marginBottom: 60 }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
+          style={{ marginBottom: 60 }}
+        >
           <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", fontWeight: 900, marginBottom: 16, color: textMain }}>
             Why Exhibit at <GradientSpan>The Tech Festival Canada</GradientSpan>
           </h2>
@@ -239,9 +246,12 @@ export default function Exhibit() {
           <p style={{ fontSize: "1.05rem", color: textMuted, lineHeight: 1.8, textAlign: "justify" }}>
             At The Tech Festival Canada, your booth is more than a branded space. It becomes a live business development platform where conversations turn into opportunities. You gain access to an ecosystem of decision makers, innovators, buyers, investors, policymakers, founders, and industry influencers who are actively exploring technologies, partnerships, and future focused solutions. This is where brands come to accelerate visibility, build authority, open doors, and create commercial outcomes.
           </p>
-        </div>
+        </motion.div>
 
-        <div style={{ marginBottom: 60 }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
+          style={{ marginBottom: 60 }}
+        >
           <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", fontWeight: 900, marginBottom: 24, color: textMain }}>
             Choose Your <GradientSpan>Presence</GradientSpan>
           </h2>
@@ -261,21 +271,22 @@ export default function Exhibit() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        <div>
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}>
           <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", fontWeight: 900, marginBottom: 16, color: textMain }}>
             Secure Your <GradientSpan>Booth</GradientSpan>
           </h2>
           <p style={{ fontSize: "1.05rem", color: textMuted, lineHeight: 1.8, textAlign: "justify" }}>
             Prime exhibition spaces are limited and high visibility locations will be allocated on a first come first served basis. If your company is ready to be seen by the right audience, build strategic relationships, and stand out at one of Canada’s most ambitious technology platforms, now is the time to reserve your space.
           </p>
-        </div>
+        </motion.div>
       </section>
 
       {/* ═══════════ BOTTOM CTA ═══════════ */}
       <section style={{ padding: "0 5% 120px", maxWidth: 1200, margin: "0 auto" }}>
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
           className="bottom-cta-grid"
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 28, overflow: "hidden", border: `1px solid ${border}`, background: cardBg, minHeight: 400 }}
         >
@@ -302,7 +313,7 @@ export default function Exhibit() {
               >Buy Tickets</motion.a>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <Footer />
@@ -315,12 +326,10 @@ export default function Exhibit() {
    ═══════════════════════════════════════════════════════ */
 
 function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
   const hasBg = index % 2 === 0;
 
   return (
-    <section ref={ref} style={{
+    <section style={{
       padding: "clamp(60px, 8vw, 100px) 5%",
       background: hasBg ? (isDark ? "rgba(122,63,209,0.03)" : "rgba(122,63,209,0.02)") : "transparent",
       borderTop: hasBg ? `1px solid ${border}` : "none",
@@ -329,38 +338,32 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index }) 
       <div className="exhibit-row" style={{
         maxWidth: 1300, margin: "0 auto",
         display: "grid", gridTemplateColumns: "1fr 1fr",
-        gap: "clamp(40px, 6vw, 80px)", alignItems: "start",
+        gap: "clamp(40px, 6vw, 80px)", alignItems: "center",
       }}>
         
-        {/* LEFT: IMAGE GRID */}
+        {/* LEFT: SINGLE IMAGE */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
-          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ type: "spring", bounce: 0.2, duration: 1.2 }}
         >
-          <div className="image-grid" style={{
-            display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16,
+          <div style={{
+            borderRadius: 24, overflow: "hidden", aspectRatio: "4/3",
+            border: `1px solid ${border}`, background: cardBg,
+            position: "relative"
           }}>
-            {tier.images.map((imgSrc, i) => (
-              <div key={i} style={{
-                borderRadius: 16, overflow: "hidden", aspectRatio: "4/3",
-                border: `1px solid ${border}`, background: cardBg,
-                position: "relative"
-              }}>
-                {/* Fallback styling in case images are missing before you rename them */}
-                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: textMuted, fontSize: "0.8rem", opacity: 0.5 }}>Image {i+1}</div>
-                <img src={imgSrc} alt={`${tier.title} setup ${i+1}`} style={{ width: "100%", height: "100%", objectFit: "cover", position: "relative", zIndex: 2 }} 
-                  onError={(e) => e.target.style.display = 'none'} // Hides broken image icon if path is wrong
-                />
-              </div>
-            ))}
+            <img src={tier.image} alt={tier.title} style={{ width: "100%", height: "100%", objectFit: "cover", position: "relative", zIndex: 2 }} 
+              onError={(e) => e.target.style.display = 'none'}
+            />
           </div>
         </motion.div>
 
         {/* RIGHT: TEXT CONTENT */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
           transition={{ type: "spring", bounce: 0.2, duration: 1.2, delay: 0.2 }}
           style={{ display: "flex", flexDirection: "column" }}
         >

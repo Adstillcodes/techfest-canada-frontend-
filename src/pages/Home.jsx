@@ -259,48 +259,6 @@ function CTAReveal(props) {
   );
 }
 
-function StatsReveal(props) {
-  var ref = useRef(null);
-  var isInView = useInView(ref, { once: true, margin: "-40px" });
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, scale: 0.92 }}
-      animate={isInView ? { opacity: 1, scale: 1 } : {}}
-      transition={{ type: "spring", stiffness: 120, damping: 18, delay: 0.7 }}
-      className="hero-stats"
-      style={{ marginTop: "3.5rem", border: "1px solid " + props.cardBdr }}
-    >
-      {props.stats.map(function (s) {
-        return (
-          <div
-            className="hero-stat"
-            key={s.label}
-            style={{ background: props.cardBg, borderRight: "1px solid " + props.cardBdr }}
-            onMouseEnter={function (e) {
-              e.currentTarget.style.background = props.dark ? "rgba(155,135,245,0.09)" : "rgba(122,63,209,0.07)";
-            }}
-            onMouseLeave={function (e) { e.currentTarget.style.background = props.cardBg; }}
-          >
-            <span style={{
-              fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "1.08rem",
-              background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              backgroundClip: "text", marginBottom: 4,
-            }}>
-              {s.isText ? s.num : <AnimatedCounter target={s.num} suffix={s.suffix} />}
-            </span>
-            <span style={{
-              fontSize: "0.6rem", fontWeight: 700, letterSpacing: "1px",
-              textTransform: "uppercase", color: props.textSoft,
-            }}>{s.label}</span>
-          </div>
-        );
-      })}
-    </motion.div>
-  );
-}
-
 /* ═══════════════════════════════════════════════════════
    HOME PAGE
    ═══════════════════════════════════════════════════════ */
@@ -347,13 +305,6 @@ export default function Home() {
   var cardBg   = dark ? "rgba(155,135,245,0.04)"    : "rgba(122,63,209,0.025)";
   var cardBdr  = dark ? "rgba(155,135,245,0.12)"    : "rgba(122,63,209,0.12)";
 
-  var stats = [
-    { num: "500", suffix: "+", label: "Decision Makers" },
-    { num: "5",   suffix: "",  label: "Tech Pillars" },
-    { num: "27-28 Oct",         label: "2026", isText: true },
-    { num: "The Carlu",        label: "Toronto, ON", isText: true },
-  ];
-
   return (
     <>
       <style>{`
@@ -385,19 +336,6 @@ export default function Home() {
         }
         .hero-cta-ghost:hover { transform: translateY(-2px); }
 
-        /* ──── STATS ──── */
-        .hero-stats {
-          display: flex; flex-wrap: wrap; justify-content: center; gap: 1px;
-          border-radius: 20px; overflow: hidden;
-          backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-        }
-        .hero-stat {
-          display: flex; flex-direction: column; align-items: center;
-          padding: 20px 34px; flex: 1; min-width: 135px;
-          transition: background 0.25s ease; cursor: default;
-        }
-        .hero-stat:last-child { border-right: none !important; }
-
         .tfc-navbar-wrap { border-bottom: none !important; box-shadow: none !important; }
 
         /* ──── RESPONSIVE ──── */
@@ -405,8 +343,6 @@ export default function Home() {
           .hero-ctas-wrap { flex-direction: column !important; width: 100% !important; }
           .hero-cta-solid, .hero-cta-ghost { width: 100% !important; justify-content: center !important; }
           .hero-sub { text-align: left !important; }
-          .hero-stat { padding: 14px 18px !important; }
-          .hero-stats { border-radius: 16px !important; }
         }
       `}</style>
 
@@ -511,7 +447,6 @@ export default function Home() {
           <DividerReveal accent={accent} />
           <SubtitleReveal textMid={textMid} />
           <CTAReveal dark={dark} textMain={textMain} accent={accent} />
-          <StatsReveal stats={stats} dark={dark} cardBg={cardBg} cardBdr={cardBdr} textSoft={textSoft} />
         </div>
       </section>
 

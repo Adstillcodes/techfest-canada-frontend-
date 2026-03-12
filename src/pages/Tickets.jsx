@@ -265,26 +265,36 @@ export default function Tickets() {
 
   const getTier = (tier) => inventory.find((i) => i.tier === tier) || null;
 
-  const handlePurchase = async (tier) => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) { alert("Please sign in first"); return; }
-      const res = await fetch(`${API}/payments/create-checkout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ tier }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      window.location.href = data.url;
-    } catch (err) {
-      console.error("Purchase error:", err);
-      alert(err.message || "Purchase failed");
+const handlePurchase = async (tier) => {
+  try {
+
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`${API}/payments/create-checkout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }) // send token only if logged in
+      },
+      body: JSON.stringify({ tier }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Checkout failed");
     }
-  };
+
+    // redirect to Stripe checkout
+    window.location.href = data.url;
+
+  } catch (err) {
+
+    console.error("Purchase error:", err);
+    alert(err.message || "Purchase failed");
+
+  }
+};
 
   const passes      = ["discover", "connect", "influence", "power"];
   const passLabels  = { discover: "Discover", connect: "Connect", influence: "Influence", power: "Power" };

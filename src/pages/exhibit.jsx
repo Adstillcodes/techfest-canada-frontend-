@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import emailjs from "@emailjs/browser";
 
 const BOOTH_TIERS = [
   {
@@ -10,7 +11,7 @@ const BOOTH_TIERS = [
     specs: "10 ft x 10 ft",
     price: "$2,499",
     tagline: "A smart, strategic entry into the market.",
-    description: "The Single Booth is ideal for companies that want focused visibility and high value face time without overextending budget. It is perfect for startups, emerging tech companies, niche solution providers, consultancies, and first time exhibitors looking to establish a presence in a serious business environment.\n\nThis format gives you the opportunity to introduce your brand, showcase your solution, meet prospects, and start meaningful conversations with buyers, partners, and ecosystem stakeholders. For companies looking to test the market, build awareness, and create a strong first impression, this is an efficient and high impact starting point.",
+    description: "The Single Booth is ideal for companies that want focused visibility and high value face time without overextending budget. It is perfect for startups, emerging tech companies, niche solution providers, consultancies, and first time exhibitors looking to establish a presence in a serious business environment.",
     whyItWorks: [
       "Strong brand presence at an accessible investment level",
       "Ideal for first time exhibitors and emerging companies",
@@ -25,7 +26,7 @@ const BOOTH_TIERS = [
     specs: "20 ft x 10 ft",
     price: "$4,499",
     tagline: "More space. More visibility. More commercial opportunity.",
-    description: "The Double Booth is built for companies that want to move beyond presence and start making a statement. With added space comes greater flexibility to showcase multiple products, create a stronger visual brand experience, host more conversations, and engage visitors with greater confidence.\n\nThis option is ideal for growth stage companies, established SMEs, international brands entering Canada, and solution providers with broader offerings to present. It allows your team to create a more polished, immersive environment that draws traffic, supports demonstrations, and increases the time visitors spend with your brand.",
+    description: "The Double Booth is built for companies that want to move beyond presence and start making a statement. With added space comes greater flexibility to showcase multiple products, create a stronger visual brand experience, host more conversations, and engage visitors with greater confidence.",
     whyItWorks: [
       "Delivers stronger visibility on the exhibition floor",
       "Creates room for demos, displays, and deeper engagement",
@@ -40,7 +41,7 @@ const BOOTH_TIERS = [
     specs: "30 ft x 10 ft",
     price: "$5,999",
     tagline: "For brands that want to be noticed, remembered, and taken seriously.",
-    description: "The Triple Booth is for exhibitors with bigger ambitions and a stronger market story to tell. It gives you the space to create a real destination on the floor rather than just a booth. This is where your brand begins to command attention.\n\nIdeal for larger technology companies, multi solution providers, innovation clusters, country pavilions, scaleups, and businesses with aggressive growth objectives, the Triple Booth enables a more dynamic presence. You can create dedicated areas for demonstrations, discussions, meetings, and brand storytelling while comfortably managing higher footfall and a larger on site team.\n\nIf your objective is to stand apart from the crowd and present your company as a serious market leader, this is where that begins.",
+    description: "The Triple Booth is for exhibitors with bigger ambitions and a stronger market story to tell. It gives you the space to create a real destination on the floor rather than just a booth. This is where your brand begins to command attention.\n\nIf your objective is to stand apart from the crowd and present your company as a serious market leader, this is where that begins.",
     whyItWorks: [
       "Builds a commanding and credible show floor presence",
       "Excellent for live demonstrations and multi zone interaction",
@@ -55,7 +56,7 @@ const BOOTH_TIERS = [
     specs: "40 ft x 10 ft",
     price: "$7,499",
     tagline: "Maximum presence for brands that intend to lead the room.",
-    description: "The Quadruple Booth is our flagship exhibition option for companies that want scale, authority, and visibility that cannot be ignored. This is for major brands, strategic partners, global companies, ecosystem leaders, and organizations ready to own a significant share of attention at The Tech Festival Canada.\n\nWith a large footprint, your team can build a premium brand environment with the space to host meetings, run immersive demonstrations, showcase multiple solutions, create hospitality moments, and engage high value attendees at volume. It allows your company to move beyond exhibiting and into commanding a presence.\n\nIf you are launching in a major way, building strategic partnerships, attracting enterprise buyers, or reinforcing leadership in your category, the Quadruple Booth gives you the stage to do it with impact.",
+    description: "The Quadruple Booth is our flagship exhibition option for companies that want scale, authority, and visibility that cannot be ignored. This is for major brands, strategic partners, global companies, ecosystem leaders, and organizations ready to own a significant share of attention at The Tech Festival Canada.\n\nIf you are launching in a major way, building strategic partnerships, attracting enterprise buyers, or reinforcing leadership in your category, the Quadruple Booth gives you the stage to do it with impact.",
     whyItWorks: [
       "Delivers the strongest visual and commercial presence",
       "Ideal for enterprises, anchor exhibitors, and strategic brands",
@@ -68,6 +69,7 @@ const BOOTH_TIERS = [
 
 export default function Exhibit() {
   const [isDark, setIsDark] = useState(true);
+  const [selectedBooth, setSelectedBooth] = useState(null);
 
   useEffect(() => {
     setIsDark(document.body.classList.contains("dark-mode"));
@@ -131,30 +133,15 @@ export default function Exhibit() {
           background-size: 200%, 100%; background-attachment: fixed;
           animation: aurora-flow 60s linear infinite; mix-blend-mode: difference;
         }
-        .aurora-layer--light {
-          background-image:
-            repeating-linear-gradient(100deg, var(--aurora-white) 0%, var(--aurora-white) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-white) 16%),
-            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          opacity: 0.35; filter: blur(12px);
-          mask-image: radial-gradient(ellipse at 100% 0%, black 10%, var(--aurora-transparent) 70%);
-          -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, var(--aurora-transparent) 70%);
-        }
-        .aurora-layer--light::after {
-          content: ""; position: absolute; inset: 0;
-          background-image:
-            repeating-linear-gradient(100deg, var(--aurora-white) 0%, var(--aurora-white) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-white) 16%),
-            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          background-size: 200%, 100%; background-attachment: fixed;
-          animation: aurora-flow 60s linear infinite; mix-blend-mode: difference;
-        }
       `}</style>
 
       <Navbar />
 
       {/* ═══════════ HERO SECTION ═══════════ */}
       <section style={{
-        position: "relative", display: "flex", alignItems: "center", justifyContent: "center",
-        overflow: "hidden", minHeight: "75vh", background: isDark ? "#06020f" : "#f4f0ff",
+        position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end",
+        overflow: "hidden", background: isDark ? "#06020f" : "#f4f0ff",
+        paddingTop: "clamp(120px, 15vw, 160px)", paddingBottom: "20px"
       }}>
         <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
           <div className={isDark ? "aurora-layer aurora-layer--dark" : "aurora-layer aurora-layer--light"} />
@@ -168,7 +155,7 @@ export default function Exhibit() {
 
         <motion.div style={{
           position: "relative", zIndex: 10, textAlign: "center", padding: "0 5%",
-          maxWidth: 900, margin: "0 auto", paddingTop: "clamp(120px, 15vw, 160px)", paddingBottom: "80px",
+          maxWidth: 900, margin: "0 auto"
         }}
           initial={{ opacity: 0, y: 30 }} 
           whileInView={{ opacity: 1, y: 0 }} 
@@ -200,17 +187,11 @@ export default function Exhibit() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.8 }}
-        style={{ padding: "80px 5%", maxWidth: 1000, margin: "0 auto" }}
+        style={{ padding: "20px 5% 80px", maxWidth: 1000, margin: "0 auto", position: "relative", zIndex: 10 }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 24, fontSize: "1.1rem", color: textMuted, lineHeight: 1.8, textAlign: "justify" }}>
           <p>
-            The Tech Festival Canada is where innovation meets influence. It is where technology companies, founders, investors, enterprises, policymakers, industry leaders, public sector stakeholders, and solution buyers come together to discover what is next and decide who they want to work with.
-          </p>
-          <p>
             Exhibiting here is not just about taking space on a show floor. It is about claiming visibility in front of a high value audience that matters. It is about creating direct conversations, building market credibility, launching solutions, generating qualified leads, and positioning your company as a serious player in the future of technology.
-          </p>
-          <p>
-            Whether you are entering the market, scaling your reach, launching a new solution, or strengthening enterprise relationships, The Tech Festival Canada gives you the platform to be seen, remembered, and engaged. From ambitious startups to global brands, our booth options are designed to match your growth stage, commercial goals, and branding ambition.
           </p>
         </div>
       </motion.section>
@@ -227,6 +208,7 @@ export default function Exhibit() {
             border={border} 
             cardBg={cardBg}
             index={index}
+            onOpenModal={() => setSelectedBooth(tier)}
           />
         ))}
       </div>
@@ -316,6 +298,20 @@ export default function Exhibit() {
         </motion.div>
       </section>
 
+      {/* ═══════════ ENQUIRE MODAL ═══════════ */}
+      <AnimatePresence>
+        {selectedBooth && (
+          <EnquireModal 
+            booth={selectedBooth} 
+            onClose={() => setSelectedBooth(null)} 
+            isDark={isDark} 
+            textMain={textMain} 
+            border={border}
+            cardBg={cardBg}
+          />
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );
@@ -325,7 +321,7 @@ export default function Exhibit() {
    BOOTH ROW COMPONENT
    ═══════════════════════════════════════════════════════ */
 
-function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index }) {
+function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, onOpenModal }) {
   const hasBg = index % 2 === 0;
 
   return (
@@ -399,20 +395,110 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index }) 
             </div>
           </div>
           
-          <motion.a href="/sponsor" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+          {/* ENQUIRE NOW BUTTON */}
+          <motion.button 
+            onClick={onOpenModal}
+            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             style={{
-              display: "inline-block", textAlign: "center", marginTop: 32, padding: "16px 32px", borderRadius: 12,
+              display: "inline-block", textAlign: "center", marginTop: 32, padding: "16px 32px", borderRadius: 12, border: "none", cursor: "pointer",
               fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "1px", textTransform: "uppercase",
-              background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#ffffff", textDecoration: "none"
+              background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#ffffff",
             }}
           >
-            Inquire Now
-          </motion.a>
+            Enquire Now
+          </motion.button>
 
         </motion.div>
 
       </div>
     </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   ENQUIRE MODAL COMPONENT (WITH EMAILJS)
+   ═══════════════════════════════════════════════════════ */
+
+function EnquireModal({ booth, onClose, isDark, textMain, border, cardBg }) {
+  const form = useRef();
+  const [status, setStatus] = useState("");
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+    setStatus("Sending...");
+
+    // 🔴 REPLACE THESE 3 STRINGS WITH YOUR EMAILJS CREDENTIALS 🔴
+    emailjs.sendForm(
+      'YOUR_SERVICE_ID', 
+      'YOUR_TEMPLATE_ID', 
+      form.current, 
+      'YOUR_PUBLIC_KEY'
+    )
+    .then((result) => {
+        setStatus("Success! We will be in touch shortly.");
+        setTimeout(() => {
+          onClose();
+        }, 2500);
+    }, (error) => {
+        console.error(error.text);
+        setStatus("Failed to send. Please try again.");
+    });
+  };
+
+  const inputStyle = {
+    width: "100%", padding: "12px 16px", borderRadius: "8px",
+    background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
+    border: `1px solid ${border}`, color: textMain, fontSize: "0.95rem",
+    outline: "none", marginBottom: "16px"
+  };
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center",
+      background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", padding: "24px"
+    }}>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        style={{
+          background: isDark ? "#120a22" : "#ffffff", width: "100%", maxWidth: "500px", borderRadius: "20px",
+          padding: "32px", position: "relative", border: `1px solid ${border}`, boxShadow: "0 20px 40px rgba(0,0,0,0.4)"
+        }}
+      >
+        <button onClick={onClose} style={{
+          position: "absolute", top: "20px", right: "24px", background: "transparent", border: "none",
+          color: textMain, fontSize: "1.5rem", cursor: "pointer", opacity: 0.6
+        }}>✕</button>
+
+        <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.4rem", fontWeight: 800, color: textMain, marginBottom: "8px" }}>
+          Enquire about <GradientSpan>{booth.specs}</GradientSpan>
+        </h3>
+        <p style={{ fontSize: "0.9rem", color: isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)", marginBottom: "24px" }}>
+          Leave your details below and our partnership team will reach out.
+        </p>
+
+        <form ref={form} onSubmit={sendEmail}>
+          {/* Hidden input to pass the booth size directly to the email template */}
+          <input type="hidden" name="booth_size" value={booth.specs} />
+
+          <div style={{ display: "flex", gap: "16px" }}>
+            <input type="text" name="first_name" placeholder="First Name" required style={inputStyle} />
+            <input type="text" name="last_name" placeholder="Last Name" required style={inputStyle} />
+          </div>
+          <input type="email" name="user_email" placeholder="Email Address" required style={inputStyle} />
+          
+          <textarea name="message" placeholder="Optional: Tell us a bit about your goals" rows="4" style={{...inputStyle, resize: "none"}}></textarea>
+
+          <button type="submit" disabled={status === "Sending..."} style={{
+            width: "100%", padding: "14px", borderRadius: "10px", border: "none", cursor: status === "Sending..." ? "not-allowed" : "pointer",
+            fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: "0.9rem", textTransform: "uppercase", letterSpacing: "1px",
+            background: status === "Success! We will be in touch shortly." ? "#2e9e54" : "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#ffffff",
+            opacity: status === "Sending..." ? 0.7 : 1
+          }}>
+            {status || "Submit Enquiry"}
+          </button>
+        </form>
+      </motion.div>
+    </div>
   );
 }
 

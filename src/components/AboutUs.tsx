@@ -83,7 +83,7 @@ const iconMap: Record<string, React.ReactNode> = {
   target: <Target className="w-6 h-6" />
 }
 
-// Always use these fixed values — never pulled from Sanity
+// Services are always fixed (never from Sanity)
 const FIXED_SERVICES = [
   { title: "Healthcare & Lifesciences", description: "Connecting health innovators with buyers, policymakers, and capital to deploy at scale.", iconName: "heart", position: "left" },
   { title: "Banking, Financial Services & Insurance", description: "Where fintech meets enterprise — driving real procurement and partnerships.", iconName: "building", position: "left" },
@@ -97,12 +97,24 @@ const FIXED_SERVICES = [
   { title: "Sustainability & CleanTech", description: "Pioneering a Greener, Smarter Future through technology-led climate action.", iconName: "leaf", position: "right" },
 ]
 
-const FIXED_STATS = [
+// The one stat we always force — replaces whatever is at index 1 from Sanity
+const MINUTES_STAT = { value: 1000, suffix: "+", label: "minutes of high quality content", iconName: "sparkles" }
+
+// Fallback stats used only when Sanity returns nothing
+const FALLBACK_STATS = [
   { value: 150, suffix: "+", label: "Builds Completed", iconName: "award" },
-  { value: 1000, suffix: "+", label: "minutes of high quality content", iconName: "users" },
+  MINUTES_STAT,
   { value: 12, suffix: "", label: "Event Years", iconName: "calendar" },
   { value: 98, suffix: "%", label: "Success Rate", iconName: "trending" },
 ]
+
+function injectMinutesStat(stats: any[]): any[] {
+  if (!stats || stats.length === 0) return FALLBACK_STATS
+  const result = [...stats]
+  // Always force index 1 to be the 1000 minutes stat
+  result[1] = MINUTES_STAT
+  return result
+}
 
 // Accept onWriteToUs prop to open the inquiry modal from Home
 export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
@@ -119,16 +131,22 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
     const fetchData = async () => {
       try {
         const result = await client.fetch(`*[_type == "aboutContent"][0]`)
-        // Always override services and stats with fixed values regardless of CMS data
-        setData({
-          ...(result || {}),
-          headline: result?.headline || "Beyond Theory",
-          services: FIXED_SERVICES,
-          stats: FIXED_STATS,
-        })
+        if (result) {
+          setData({
+            ...result,
+            services: FIXED_SERVICES,
+            stats: injectMinutesStat(result.stats),
+          })
+        } else {
+          setData({
+            headline: "Beyond Theory",
+            services: FIXED_SERVICES,
+            stats: FALLBACK_STATS,
+          })
+        }
       } catch (error) {
         console.error("Sanity About Content Fetch Error:", error)
-        setData({ headline: "Beyond Theory", services: FIXED_SERVICES, stats: FIXED_STATS })
+        setData({ headline: "Beyond Theory", services: FIXED_SERVICES, stats: FALLBACK_STATS })
       } finally {
         setLoading(false)
       }

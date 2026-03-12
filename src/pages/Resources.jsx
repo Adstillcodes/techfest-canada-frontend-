@@ -19,12 +19,12 @@ export default function FirstTimers() {
     return function () { obs.disconnect(); };
   }, []);
 
-  var bg        = isDark ? "#07030f"               : "#f4f0ff";
+  var bg        = isDark ? "#07030f"                : "#f4f0ff";
   var cardBg    = isDark ? "rgba(255,255,255,0.03)" : "rgba(122,63,209,0.04)";
   var border    = isDark ? "rgba(255,255,255,0.08)" : "rgba(122,63,209,0.18)";
-  var textMain  = isDark ? "#ffffff"               : "#0f0520";
+  var textMain  = isDark ? "#ffffff"                : "#0f0520";
   var textMuted = isDark ? "rgba(200,180,255,0.65)" : "rgba(60,30,110,0.75)";
-  var accent    = isDark ? "#b99eff"                : "#7a3fd1";
+  var accent    = isDark ? "#b99eff"                 : "#7a3fd1";
 
   return (
     <div style={{ background: bg, minHeight: "100vh", color: textMain, overflowX: "hidden" }}>
@@ -218,7 +218,7 @@ export default function FirstTimers() {
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
         reverse={true} hasBg={true}
         image="/ft-expo.jpg" imageAlt="The Tech Festival Canada expo and networking floor"
-        cta={{ label: "Partner With Us", href: "/sponsors" }}
+        cta={{ label: "Partner With Us", href: "/sponsor" }}
       >
         <h2 style={headingStyle(textMain)}>
           The <GradientSpan>Expo</GradientSpan>
@@ -274,7 +274,7 @@ export default function FirstTimers() {
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
         reverse={true} hasBg={true}
         image="/ft-clinic.jpg" imageAlt="Consultation Clinic at The Tech Festival Canada"
-        cta={{ label: "Partner With Us", href: "/sponsors" }}
+        cta={{ label: "Partner With Us", href: "/sponsor" }}
       >
         <h2 style={headingStyle(textMain)}>
           Consultation <GradientSpan>Clinic</GradientSpan>
@@ -292,7 +292,7 @@ export default function FirstTimers() {
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 28, overflow: "hidden", border: "1px solid " + border, background: cardBg, minHeight: 380 }}
         >
           <div style={{ position: "relative", background: isDark ? "#120a22" : "#ede8f7", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", minHeight: 280 }}>
-            <img src={isDark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada"
+            <img src={isDark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada"
               style={{ width: "65%", maxWidth: 280, height: "auto", objectFit: "contain", filter: isDark ? "drop-shadow(0 0 40px rgba(122,63,209,0.25))" : "drop-shadow(0 8px 24px rgba(122,63,209,0.12))" }} />
             <div style={{ position: "absolute", width: "70%", height: "70%", borderRadius: "50%", background: isDark ? "radial-gradient(circle, rgba(122,63,209,0.15) 0%, transparent 70%)" : "radial-gradient(circle, rgba(122,63,209,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
           </div>
@@ -309,7 +309,7 @@ export default function FirstTimers() {
                 onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)"; e.currentTarget.style.color = "#fff"; }}
                 onMouseLeave={function (e) { e.currentTarget.style.background = isDark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = isDark ? "#0d0520" : "#ffffff"; }}
               >Get Your Tickets</motion.a>
-              <motion.a href="/sponsors" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+              <motion.a href="/sponsor" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                 style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: "1.5px solid " + (isDark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.5)"), color: isDark ? textMain : "#1a0a40", padding: "14px 32px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}
               >Partner With Us</motion.a>
             </div>

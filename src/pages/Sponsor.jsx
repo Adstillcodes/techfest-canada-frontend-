@@ -408,15 +408,18 @@ function ComparisonTable(props) {
   var cardBdr = props.cardBdr;
 
   var sectionRef = useRef(null);
+  var theadRef = useRef(null);
   var s1 = useState(false); var showBar = s1[0]; var setShowBar = s1[1];
 
   useEffect(function () {
     function onScroll() {
-      var el = sectionRef.current;
-      if (!el) return;
-      var rect = el.getBoundingClientRect();
-      // Show bar when table section top is above navbar (80px) and bottom is still below viewport
-      setShowBar(rect.top < 80 && rect.bottom > 80);
+      var section = sectionRef.current;
+      var thead = theadRef.current;
+      if (!section || !thead) return;
+      var sectionRect = section.getBoundingClientRect();
+      var theadRect = thead.getBoundingClientRect();
+      // Show only when thead bottom has scrolled behind navbar AND section bottom is still visible
+      setShowBar(theadRect.bottom < 80 && sectionRect.bottom > 80);
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
@@ -517,7 +520,7 @@ function ComparisonTable(props) {
               borderSpacing: 0,
               tableLayout: "fixed",
             }}>
-              <thead style={{
+              <thead ref={theadRef} style={{
                 visibility: showBar ? "hidden" : "visible",
                 opacity: showBar ? 0 : 1,
                 transition: "opacity 0.2s ease",

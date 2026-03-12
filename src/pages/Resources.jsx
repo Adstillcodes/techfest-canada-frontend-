@@ -167,7 +167,7 @@ export default function FirstTimers() {
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
         reverse={true} hasBg={true}
         image="/ft-expo.jpg" imageAlt="The Tech Festival Canada expo and networking floor"
-        cta={{ label: "Partner With Us", href: "/sponsors" }}
+        cta={{ label: "Partner With Us", href: "/sponsor" }}
       >
         <h2 style={headingStyle(textMain)}>
           The <GradientSpan>Expo</GradientSpan>
@@ -223,7 +223,7 @@ export default function FirstTimers() {
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
         reverse={true} hasBg={true}
         image="/ft-clinic.jpg" imageAlt="Consultation Clinic at The Tech Festival Canada"
-        cta={{ label: "Partner With Us", href: "/sponsors" }}
+        cta={{ label: "Partner With Us", href: "/sponsor" }}
       >
         <h2 style={headingStyle(textMain)}>
           Consultation <GradientSpan>Clinic</GradientSpan>
@@ -258,7 +258,7 @@ export default function FirstTimers() {
                 onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)"; e.currentTarget.style.color = "#fff"; }}
                 onMouseLeave={function (e) { e.currentTarget.style.background = isDark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = isDark ? "#0d0520" : "#ffffff"; }}
               >Get Your Tickets</motion.a>
-              <motion.a href="/sponsors" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+              <motion.a href="/sponsor" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                 style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: "1.5px solid " + (isDark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.5)"), color: isDark ? textMain : "#1a0a40", padding: "14px 32px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}
               >Partner With Us</motion.a>
             </div>

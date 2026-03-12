@@ -301,9 +301,9 @@ export default function Home() {
   var textMain = dark ? "#ffffff"                  : "#0d0520";
   var textMid  = dark ? "rgba(255,255,255,0.55)"   : "rgba(13,5,32,0.58)";
   var textSoft = dark ? "rgba(200,185,255,0.45)"   : "rgba(90,40,180,0.42)";
-  var accent   = dark ? "#b99eff"                   : "#7a3fd1";
-  var cardBg   = dark ? "rgba(155,135,245,0.04)"    : "rgba(122,63,209,0.025)";
-  var cardBdr  = dark ? "rgba(155,135,245,0.12)"    : "rgba(122,63,209,0.12)";
+  var accent   = dark ? "#b99eff"                  : "#7a3fd1";
+  var cardBg   = dark ? "rgba(155,135,245,0.04)"   : "rgba(122,63,209,0.025)";
+  var cardBdr  = dark ? "rgba(155,135,245,0.12)"   : "rgba(122,63,209,0.12)";
 
   return (
     <>
@@ -398,7 +398,7 @@ export default function Home() {
           <motion.div variants={itemBlur} style={{ marginBottom: "2.2rem" }}>
             <img
               src={dark
-                ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
+                ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png"
                 : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
               alt="The Tech Festival Canada"
               style={{

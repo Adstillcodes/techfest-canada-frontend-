@@ -129,7 +129,7 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
             ],
             stats: [
               { value: 150, suffix: "+", label: "Builds Completed", iconName: "award" },
-              { value: 1200, suffix: "+", label: "Elite Delegates", iconName: "users" },
+              { value: 1000, suffix: "+", label: "minutes of high quality content", iconName: "users" },
               { value: 12, suffix: "", label: "Event Years", iconName: "calendar" },
               { value: 98, suffix: "%", label: "Success Rate", iconName: "trending" }
             ]
@@ -363,7 +363,6 @@ function ServiceCard({ iconName, title, description, align }: any) {
           {title}
         </h3>
       </div>
-
     </motion.div>
   )
 }
@@ -402,11 +401,13 @@ function StatBox({ iconName, value, suffix, label, delay, index }: any) {
       <div className="w-16 h-16 rounded-2xl bg-[var(--brand-orange)]/5 flex items-center justify-center text-[var(--brand-orange)] mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-sm">
         {statIcons[index] || iconMap[iconName] || <TrendingUp className="w-7 h-7" />}
       </div>
-      <div className="text-4xl font-black font-['Orbitron'] mb-3 text-[var(--text-main)]" style={{ letterSpacing: "0.05em" }}>
-        {displayValue}{suffix}
-      </div>
-      <div className="text-[var(--text-muted)] text-sm uppercase tracking-[0.15em] font-bold text-center leading-snug" style={{ maxWidth: 140 }}>
-        {label?.replace(/-/g, " ")}
+      <div className="flex flex-col items-center text-center">
+        <div className="text-4xl font-black font-['Orbitron'] mb-3 text-[var(--text-main)]" style={{ letterSpacing: "0.05em" }}>
+          {displayValue}{suffix}
+        </div>
+        <div className="text-[var(--text-muted)] text-sm uppercase tracking-[0.15em] font-bold text-center leading-snug">
+          {label?.replace(/-/g, " ")}
+        </div>
       </div>
     </motion.div>
   )

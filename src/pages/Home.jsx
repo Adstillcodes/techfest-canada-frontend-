@@ -232,7 +232,7 @@ function CTAReveal(props) {
         </svg>
       </motion.a>
       <motion.a
-        href="/sponsors"
+        href="/sponsor"
         className="hero-cta-ghost"
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}

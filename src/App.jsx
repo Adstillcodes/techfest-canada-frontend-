@@ -18,6 +18,10 @@ import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import Sponsor from "./pages/Sponsor";
 
+// 👇 Added your new Exhibit import right here
+import Exhibit from "./pages/exhibit"; 
+
+
 /* ================= SYSTEM THEME DETECTOR ================= */
 
 function applySystemTheme() {
@@ -83,6 +87,9 @@ function App() {
 
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
+        
+        {/* 👇 Added your new Exhibit route right here */}
+        <Route path="/exhibit" element={<Exhibit />} />
 
         {/* RESET PASSWORD ROUTE */}
         <Route path="/reset-password/:token" element={<ResetPassword />} />

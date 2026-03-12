@@ -87,7 +87,7 @@ export default function FirstTimers() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(122,63,209,0.12)", border: "1px solid rgba(122,63,209,0.30)", borderRadius: 999, padding: "6px 18px", marginBottom: 28 }}>
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px #f5a623", display: "inline-block" }} />
-            <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: accent }}>First Timers Guide</span>
+            <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: accent }}>First Timers</span>
           </motion.div>
 
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}
@@ -123,171 +123,131 @@ export default function FirstTimers() {
         </motion.div>
       </section>
 
-      {/* ═══════════ 1. THE CONFERENCE — text left, image right ═══════════ */}
+      {/* ═══════════ ROW 1 — THE CONFERENCE (text left, image right) ═══════════ */}
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
-        reverse={false} label="The Conference"
-        title="Five tech pillars. Five applied sectors."
-        titleGradient="Real-world impact."
-        body={(
-          <div>
-            <p style={{ color: textMuted, lineHeight: 1.85, fontSize: "0.95rem", marginBottom: 20 }}>
-              Our conference is curated around five tech pillars and the real world sectors where they are being adopted. Every session is designed to unpack opportunities, challenges, and practical solutions you can take back to your organization.
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              <BulletItem isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent}
-                heading="Artificial Intelligence and Generative AI"
-                text="From automation to decision intelligence, we focus on where AI is delivering measurable impact, what it takes to deploy responsibly, and how to move from pilots to enterprise scale." />
-              <BulletItem isDark={isDark} textMain={textMain} textMuted={textMuted} accent="#a855f7"
-                heading="Quantum Computing"
-                text="Understand what is real today, what is coming next, and how to prepare for quantum readiness across security, optimization, and next generation computing." />
-              <BulletItem isDark={isDark} textMain={textMain} textMuted={textMuted} accent="#22c55e"
-                heading="Sustainability and Climate Tech"
-                text="Learn how technology is helping organizations cut emissions, improve efficiency, modernize infrastructure, and meet compliance and reporting expectations while staying competitive." />
-              <BulletItem isDark={isDark} textMain={textMain} textMuted={textMuted} accent="#f5a623"
-                heading="Cybersecurity and Digital Trust"
-                text="Go beyond tools and talk about trust, resilience, and modern security programs that protect data, operations, and critical systems in a rapidly changing threat landscape." />
-              <BulletItem isDark={isDark} textMain={textMain} textMuted={textMuted} accent="#06b6d4"
-                heading="Robotics and Intelligent Infrastructure"
-                text="Explore robotics, automation, and connected systems that raise productivity, improve safety, and modernize operations across industries." />
-            </div>
-          </div>
-        )}
-        image="/ft-conference.jpg" imageAlt="Keynote presentation showing five tech pillars"
+        reverse={false}
+        image="/ft-conference.jpg" imageAlt="Keynote presentation showing five tech pillars and applied sectors"
         cta={{ label: "Get Your Pass", href: "/tickets" }}
-      />
+      >
+        <h2 style={headingStyle(textMain)}>
+          The <GradientSpan>Conference</GradientSpan>
+        </h2>
+        <p style={paraStyle(textMuted)}>
+          Our conference is curated around five tech pillars and the real world sectors where they are being adopted. Every session is designed to unpack opportunities, challenges, and practical solutions you can take back to your organization.
+        </p>
 
-      {/* ═══════════ 2. APPLIED SECTORS — image left, text right ═══════════ */}
-      <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
-        reverse={true} hasBg={true} label="Applied Sectors"
-        title="Where the demand is urgent and"
-        titleGradient="budgets are real."
-        body={(
-          <div>
-            <p style={{ color: textMuted, lineHeight: 1.85, fontSize: "0.95rem", marginBottom: 18 }}>
-              We bring these conversations into the sectors where the demand is urgent and budgets are real:
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {["Energy and Utilities", "Healthcare and Life Sciences", "Defence and National Security", "Financial Services and Insurance", "Supply Chain, Manufacturing, and Critical Infrastructure"].map(function (s) {
-                return (
-                  <div key={s} style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: accent, flexShrink: 0 }} />
-                    <span style={{ fontSize: "0.92rem", fontWeight: 600, color: textMain }}>{s}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-        image="/ft-sectors.jpg" imageAlt="Conference audience with tech pillars on screen"
-        cta={{ label: "Get Your Pass", href: "/tickets" }}
-      />
+        <SubHeading textMain={textMain}>5 Tech Pillars</SubHeading>
+        <ListBlock textMain={textMain} items={[
+          "Artificial Intelligence and Generative AI",
+          "Quantum Computing",
+          "Sustainability and Climate Tech",
+          "Cybersecurity and Digital Trust",
+          "Robotics and Intelligent Infrastructure",
+        ]} />
 
-      {/* ═══════════ 3. WHERE PILLARS MEET SECTORS — text left, image right ═══════════ */}
+        <SubHeading textMain={textMain}>5 Applied Sectors</SubHeading>
+        <p style={paraStyle(textMuted)}>
+          We bring these conversations into the sectors where the demand is urgent and budgets are real:
+        </p>
+        <ListBlock textMain={textMain} items={[
+          "Energy and Utilities",
+          "Healthcare and Life Sciences",
+          "Defence and National Security",
+          "Financial Services and Insurance",
+          "Supply Chain, Manufacturing, and Critical Infrastructure",
+        ]} />
+
+        <SubHeading textMain={textMain}>Where Pillars Meet Sectors</SubHeading>
+        <p style={paraStyle(textMuted)}>
+          This is where the magic happens. You will see how each pillar translates into real use cases inside each sector, who is buying, what procurement looks like, and what it takes to implement successfully. The goal is to connect solution providers with decision makers who need outcomes, so conversations can move from interest to pilots to partnerships and contracts.
+        </p>
+      </ContentRow>
+
+      {/* ═══════════ ROW 2 — THE EXPO (image left, text right) ═══════════ */}
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
-        reverse={false} label="Where Pillars Meet Sectors"
-        title="This is where the"
-        titleGradient="magic happens."
-        body={(
-          <div>
-            <p style={{ color: textMuted, lineHeight: 1.85, fontSize: "0.95rem", marginBottom: 16 }}>
-              You will see how each pillar translates into real use cases inside each sector, who is buying, what procurement looks like, and what it takes to implement successfully.
-            </p>
-            <p style={{ color: textMuted, lineHeight: 1.85, fontSize: "0.95rem" }}>
-              The goal is to connect solution providers with decision makers who need outcomes, so conversations can move from interest to pilots to partnerships and contracts.
-            </p>
-          </div>
-        )}
-        image="/ft-expo.jpg" imageAlt="Networking at The Tech Festival Canada"
+        reverse={true} hasBg={true}
+        image="/ft-expo.jpg" imageAlt="The Tech Festival Canada expo and networking floor"
         cta={{ label: "Partner With Us", href: "/sponsors" }}
-      />
+      >
+        <h2 style={headingStyle(textMain)}>
+          The <GradientSpan>Expo</GradientSpan>
+        </h2>
+        <p style={paraStyle(textMuted)}>
+          The Expo is where technology comes alive. Companies from across Canada and around the world showcase products, platforms, and solutions. Expect demos, live conversations with builders, and a front row view of what is being deployed now, not someday.
+        </p>
+      </ContentRow>
 
-      {/* ═══════════ 4. THE EXPO — image left, text right ═══════════ */}
+      {/* ═══════════ ROW 3 — AWARDS NIGHT (text left, image right) ═══════════ */}
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
-        reverse={true} hasBg={true} label="The Expo"
-        title="Where technology"
-        titleGradient="comes alive."
-        body="Companies from across Canada and around the world showcase products, platforms, and solutions. Expect demos, live conversations with builders, and a front row view of what is being deployed now, not someday."
-        image="/ft-clinic.jpg" imageAlt="The Tech Festival Canada Consultation Clinic and expo floor"
-        cta={{ label: "Partner With Us", href: "/sponsors" }}
-      />
-
-      {/* ═══════════ 5. AWARDS NIGHT — text left, image right ═══════════ */}
-      <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
-        reverse={false} label="Awards Night"
-        title="Celebrating the"
-        titleGradient="Tech Titans of Canada."
-        body="We recognize the innovators, builders, researchers, and leaders who are shaping the future and delivering real impact across the country."
+        reverse={false}
         image="/ft-awards.jpg" imageAlt="Canada Tech Titans Awards Night ceremony"
         cta={{ label: "Get Your Pass", href: "/tickets" }}
-      />
+      >
+        <h2 style={headingStyle(textMain)}>
+          Awards <GradientSpan>Night</GradientSpan>
+        </h2>
+        <p style={paraStyle(textMuted)}>
+          Our Awards Night celebrates the Tech Titans of Canada. We recognize the innovators, builders, researchers, and leaders who are shaping the future and delivering real impact across the country.
+        </p>
+      </ContentRow>
 
-      {/* ═══════════ 6. CxO BREAKFAST — image left, text right ═══════════ */}
+      {/* ═══════════ ROW 4 — CxO BREAKFAST (image left, text right) ═══════════ */}
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
-        reverse={true} hasBg={true} label="CxO Breakfast"
-        title="Strategic conversations."
-        titleGradient="Peer connections."
-        body="An exclusive invitation only breakfast for CxOs and senior leaders. This is where business happens in a quieter, higher trust setting. Think strategic conversations, peer connections, and deal making over breakfast."
-        image="/ft-breakfast.jpg" imageAlt="CxO Breakfast at The Tech Festival Canada"
+        reverse={true} hasBg={true}
+        image="/ft-breakfast.jpg" imageAlt="CxO Breakfast with senior leaders"
         cta={{ label: "Get Your Pass", href: "/tickets" }}
-      />
+      >
+        <h2 style={headingStyle(textMain)}>
+          CxO <GradientSpan>Breakfast</GradientSpan>
+        </h2>
+        <p style={paraStyle(textMuted)}>
+          An exclusive invitation only breakfast for CxOs and senior leaders. This is where business happens in a quieter, higher trust setting. Think strategic conversations, peer connections, and deal making over breakfast.
+        </p>
+      </ContentRow>
 
-      {/* ═══════════ 7. GALA DINNER — text left, image right ═══════════ */}
+      {/* ═══════════ ROW 5 — GALA DINNER (text left, image right) ═══════════ */}
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
-        reverse={false} label="Gala Dinner"
-        title="Where stronger"
-        titleGradient="connections form."
-        body="A premium evening to deepen relationships with speakers, exhibitors, partners, and senior attendees. If you want stronger connections, this is where they form."
+        reverse={false}
         image="/ft-gala.jpg" imageAlt="Gala Dinner and Networking Reception"
         cta={{ label: "Get Your Pass", href: "/tickets" }}
-      />
+      >
+        <h2 style={headingStyle(textMain)}>
+          Gala Dinner and <GradientSpan>Networking Reception</GradientSpan>
+        </h2>
+        <p style={paraStyle(textMuted)}>
+          A premium evening to deepen relationships with speakers, exhibitors, partners, and senior attendees. If you want stronger connections, this is where they form.
+        </p>
+      </ContentRow>
 
-      {/* ═══════════ 8. CONSULTATION CLINIC — image left, text right ═══════════ */}
+      {/* ═══════════ ROW 6 — CONSULTATION CLINIC (image left, text right) ═══════════ */}
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
-        reverse={true} hasBg={true} label="Consultation Clinic"
-        title="Credible direction."
-        titleGradient="Clear next steps."
-        body="In collaboration with government bodies, associations, and academic institutes, our Consultation Clinic helps you move forward with clarity. Whether you are looking for guidance on funding, programs, partnerships, talent, standards, research support, or market entry, you will find credible direction and next steps."
+        reverse={true} hasBg={true}
         image="/ft-clinic.jpg" imageAlt="Consultation Clinic at The Tech Festival Canada"
         cta={{ label: "Partner With Us", href: "/sponsors" }}
-      />
+      >
+        <h2 style={headingStyle(textMain)}>
+          Consultation <GradientSpan>Clinic</GradientSpan>
+        </h2>
+        <p style={paraStyle(textMuted)}>
+          In collaboration with government bodies, associations, and academic institutes, our Consultation Clinic helps you move forward with clarity. Whether you are looking for guidance on funding, programs, partnerships, talent, standards, research support, or market entry, you will find credible direction and next steps.
+        </p>
+      </ContentRow>
 
       {/* ═══════════ BOTTOM CTA ═══════════ */}
       <section style={{ padding: "80px 5%", maxWidth: 1200, margin: "0 auto" }}>
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
+          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           className="ft-bottom-cta-grid"
-          style={{
-            display: "grid", gridTemplateColumns: "1fr 1fr",
-            gap: 0, borderRadius: 28, overflow: "hidden",
-            border: "1px solid " + border,
-            background: cardBg, minHeight: 380,
-          }}
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 28, overflow: "hidden", border: "1px solid " + border, background: cardBg, minHeight: 380 }}
         >
-          <div style={{
-            position: "relative",
-            background: isDark ? "#120a22" : "#ede8f7",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            overflow: "hidden", minHeight: 280,
-          }}>
-            <img
-              src={isDark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
-              alt="The Tech Festival Canada"
-              style={{ width: "65%", maxWidth: 280, height: "auto", objectFit: "contain",
-                filter: isDark ? "drop-shadow(0 0 40px rgba(122,63,209,0.25))" : "drop-shadow(0 8px 24px rgba(122,63,209,0.12))",
-              }}
-            />
-            <div style={{ position: "absolute", width: "70%", height: "70%", borderRadius: "50%",
-              background: isDark ? "radial-gradient(circle, rgba(122,63,209,0.15) 0%, transparent 70%)" : "radial-gradient(circle, rgba(122,63,209,0.08) 0%, transparent 70%)",
-              pointerEvents: "none",
-            }} />
+          <div style={{ position: "relative", background: isDark ? "#120a22" : "#ede8f7", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", minHeight: 280 }}>
+            <img src={isDark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada"
+              style={{ width: "65%", maxWidth: 280, height: "auto", objectFit: "contain", filter: isDark ? "drop-shadow(0 0 40px rgba(122,63,209,0.25))" : "drop-shadow(0 8px 24px rgba(122,63,209,0.12))" }} />
+            <div style={{ position: "absolute", width: "70%", height: "70%", borderRadius: "50%", background: isDark ? "radial-gradient(circle, rgba(122,63,209,0.15) 0%, transparent 70%)" : "radial-gradient(circle, rgba(122,63,209,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
           </div>
           <div style={{ padding: "clamp(32px, 5vw, 56px)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.4rem, 2.5vw, 2rem)", fontWeight: 900, lineHeight: 1.2, marginBottom: 16, color: textMain }}>
-              Ready to{" "}
-              <span style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>show up prepared?</span>
+              Ready to{" "}<GradientSpan>show up prepared?</GradientSpan>
             </h2>
             <p style={{ color: textMuted, lineHeight: 1.85, fontSize: "0.95rem", marginBottom: 32, maxWidth: 440 }}>
               Secure your seat at The Carlu, Toronto on October 27–28, 2026. Spaces are limited — this is not a conference you attend passively.
@@ -312,27 +272,67 @@ export default function FirstTimers() {
 }
 
 /* ═══════════════════════════════════════════════════════
-   BULLET ITEM — for pillar descriptions
+   SHARED HELPERS
    ═══════════════════════════════════════════════════════ */
 
-function BulletItem(props) {
+function headingStyle(textMain) {
+  return {
+    fontFamily: "'Orbitron', sans-serif",
+    fontSize: "clamp(1.3rem, 2.8vw, 1.8rem)",
+    fontWeight: 900, lineHeight: 1.25,
+    marginBottom: 20, color: textMain,
+  };
+}
+
+function paraStyle(textMuted) {
+  return {
+    color: textMuted, lineHeight: 1.85, fontSize: "0.95rem",
+    marginBottom: 18, textAlign: "justify", hyphens: "auto",
+  };
+}
+
+function GradientSpan(props) {
   return (
-    <div style={{ paddingLeft: 18, borderLeft: "2px solid " + props.accent, marginBottom: 2 }}>
-      <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.82rem", fontWeight: 800, color: props.textMain, marginBottom: 4 }}>{props.heading}</p>
-      <p style={{ fontSize: "0.88rem", lineHeight: 1.7, color: props.textMuted }}>{props.text}</p>
+    <span style={{
+      background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
+      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+    }}>{props.children}</span>
+  );
+}
+
+function SubHeading(props) {
+  return (
+    <p style={{
+      fontFamily: "'Orbitron', sans-serif",
+      fontSize: "0.82rem", fontWeight: 800,
+      color: props.textMain, marginBottom: 10, marginTop: 24,
+    }}>{props.children}</p>
+  );
+}
+
+function ListBlock(props) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 8 }}>
+      {props.items.map(function (item) {
+        return (
+          <div key={item} style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 4 }}>
+            <div style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--brand-orange, #f5a623)", flexShrink: 0 }} />
+            <span style={{ fontSize: "0.9rem", fontWeight: 600, color: props.textMain }}>{item}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════
-   CONTENT ROW — alternating text + image with CTA
+   CONTENT ROW — alternating text + image
    ═══════════════════════════════════════════════════════ */
 
 function ContentRow(props) {
   var isDark = props.isDark;
   var textMain = props.textMain;
   var textMuted = props.textMuted;
-  var accent = props.accent;
   var border = props.border;
   var reverse = props.reverse;
   var hasBg = props.hasBg;
@@ -359,43 +359,19 @@ function ContentRow(props) {
           transition={{ type: "spring", bounce: 0.2, duration: 1.2 }}
           style={{ direction: "ltr" }}
         >
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 8,
-            background: isDark ? "rgba(122,63,209,0.10)" : "rgba(122,63,209,0.08)",
-            border: "1px solid " + (isDark ? "rgba(122,63,209,0.25)" : "rgba(122,63,209,0.35)"),
-            borderRadius: 999, padding: "5px 16px", marginBottom: 22,
-          }}>
-            <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 6px #f5a623", display: "inline-block" }} />
-            <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.62rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: accent }}>{props.label}</span>
-          </div>
-
-          <h2 style={{
-            fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.3rem, 2.8vw, 1.8rem)",
-            fontWeight: 900, lineHeight: 1.25, marginBottom: 22, color: textMain,
-          }}>
-            {props.title}{" "}
-            <span style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{props.titleGradient}</span>
-          </h2>
-
-          {typeof props.body === "string" ? (
-            <p style={{ color: textMuted, lineHeight: 1.85, fontSize: "0.95rem", marginBottom: 28, textAlign: "justify", hyphens: "auto" }}>{props.body}</p>
-          ) : (
-            <div style={{ marginBottom: 28 }}>{props.body}</div>
-          )}
+          {props.children}
 
           <motion.a
             href={props.cta.href}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
             style={{
               display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "14px 32px", borderRadius: 14,
+              padding: "14px 32px", borderRadius: 14, marginTop: 10,
               fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.76rem",
               letterSpacing: "0.5px", textDecoration: "none", transition: "all 0.25s ease",
               background: props.cta.label === "Get Your Pass" ? (isDark ? "#ffffff" : "#0d0520") : "transparent",
               color: props.cta.label === "Get Your Pass" ? (isDark ? "#0d0520" : "#ffffff") : (isDark ? "#ffffff" : "#0d0520"),
               border: props.cta.label === "Get Your Pass" ? "none" : "1.5px solid " + (isDark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.5)"),
-              boxShadow: props.cta.label === "Get Your Pass" ? (isDark ? "0 4px 20px rgba(155,135,245,0.15)" : "0 4px 20px rgba(13,5,32,0.12)") : "none",
             }}
             onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "transparent"; }}
             onMouseLeave={function (e) {
@@ -418,8 +394,7 @@ function ContentRow(props) {
             minHeight: 360, position: "relative",
           }}>
             <img src={props.image} alt={props.imageAlt}
-              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", minHeight: 360 }}
-            />
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", minHeight: 360 }} />
             <div style={{
               position: "absolute", inset: 0,
               background: isDark ? "linear-gradient(to top, rgba(7,3,15,0.3) 0%, transparent 40%)" : "linear-gradient(to top, rgba(244,240,255,0.15) 0%, transparent 40%)",

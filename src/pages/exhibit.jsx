@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import emailjs from "@emailjs/browser";
 
 const BOOTH_TIERS = [
   {
@@ -416,33 +415,51 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
 }
 
 /* ═══════════════════════════════════════════════════════
-   ENQUIRE MODAL COMPONENT (WITH EMAILJS)
+   ENQUIRE MODAL COMPONENT (WITHOUT EMAILJS)
    ═══════════════════════════════════════════════════════ */
 
-function EnquireModal({ booth, onClose, isDark, textMain, border, cardBg }) {
-  const form = useRef();
+function EnquireModal({ booth, onClose, isDark, textMain, border }) {
   const [status, setStatus] = useState("");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    message: ""
+  });
 
-  const sendEmail = (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("Sending...");
 
-    // 🔴 REPLACE THESE 3 STRINGS WITH YOUR EMAILJS CREDENTIALS 🔴
-    emailjs.sendForm(
-      'YOUR_SERVICE_ID', 
-      'YOUR_TEMPLATE_ID', 
-      form.current, 
-      'YOUR_PUBLIC_KEY'
-    )
-    .then((result) => {
-        setStatus("Success! We will be in touch shortly.");
-        setTimeout(() => {
-          onClose();
-        }, 2500);
-    }, (error) => {
-        console.error(error.text);
-        setStatus("Failed to send. Please try again.");
-    });
+    // TODO: Replace this setTimeout with an actual fetch call to your backend
+    /* Example:
+      try {
+        const response = await fetch("YOUR_API_ENDPOINT/enquire", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...formData, boothSize: booth.specs })
+        });
+        if (response.ok) {
+           setStatus("Success! We will be in touch shortly.");
+        } else {
+           setStatus("Failed to send. Please try again.");
+        }
+      } catch(err) {
+         setStatus("Failed to send. Please try again.");
+      }
+    */
+    
+    // Simulating a successful network request for now
+    setTimeout(() => {
+      setStatus("Success! We will be in touch shortly.");
+      setTimeout(() => {
+        onClose();
+      }, 2500);
+    }, 1000);
   };
 
   const inputStyle = {
@@ -476,17 +493,14 @@ function EnquireModal({ booth, onClose, isDark, textMain, border, cardBg }) {
           Leave your details below and our partnership team will reach out.
         </p>
 
-        <form ref={form} onSubmit={sendEmail}>
-          {/* Hidden input to pass the booth size directly to the email template */}
-          <input type="hidden" name="booth_size" value={booth.specs} />
-
+        <form onSubmit={handleSubmit}>
           <div style={{ display: "flex", gap: "16px" }}>
-            <input type="text" name="first_name" placeholder="First Name" required style={inputStyle} />
-            <input type="text" name="last_name" placeholder="Last Name" required style={inputStyle} />
+            <input type="text" name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} required style={inputStyle} />
+            <input type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} required style={inputStyle} />
           </div>
-          <input type="email" name="user_email" placeholder="Email Address" required style={inputStyle} />
+          <input type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required style={inputStyle} />
           
-          <textarea name="message" placeholder="Optional: Tell us a bit about your goals" rows="4" style={{...inputStyle, resize: "none"}}></textarea>
+          <textarea name="message" placeholder="Optional: Tell us a bit about your goals" rows="4" value={formData.message} onChange={handleChange} style={{...inputStyle, resize: "none"}}></textarea>
 
           <button type="submit" disabled={status === "Sending..."} style={{
             width: "100%", padding: "14px", borderRadius: "10px", border: "none", cursor: status === "Sending..." ? "not-allowed" : "pointer",

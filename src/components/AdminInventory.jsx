@@ -169,13 +169,13 @@ export default function AdminInventory() {
 
                   <td>
                     <input
-                      type="number"
-                      className="inventory-input"
-                      defaultValue={item.total}
-                      onBlur={(e) =>
-                        updatePrice(item.tier, e.target.value)
-                      }
-                    />
+  type="number"
+  className="inventory-input"
+  defaultValue={item.price}
+  onBlur={(e) =>
+    updatePrice(item.tier, e.target.value)
+  }
+/>
                   </td>
 
                   {/* TOTAL */}

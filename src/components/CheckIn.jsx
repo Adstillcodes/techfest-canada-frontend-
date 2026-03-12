@@ -23,7 +23,7 @@ export default function CheckIn() {
 
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`${API}/checkin`, {
+      const res = await fetch(`${API}/checkin/scan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

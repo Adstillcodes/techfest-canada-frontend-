@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import QRCode from "react-qr-code";
 import { API } from "../utils/api";
 
 // ── Check icon ───────────────────────────────────────────────────────────────
@@ -71,55 +70,6 @@ const PASS_META = {
     featured: false,
   },
 };
-
-// ── Ticket Pass Component ────────────────────────────────────────────────────
-function TicketPass({ 
-  name = "Gunant Singh Pahwa", 
-  passType = "FESTIVAL PASS", 
-  location = "The Carlu | Toronto", 
-  ticketId = "9165fa0dc8d4" 
-}) {
-  return (
-    <div style={{
-      background: "linear-gradient(135deg, #8154a6 0%, #c98a55 100%)",
-      borderRadius: "16px",
-      padding: "32px",
-      color: "#ffffff",
-      fontFamily: "sans-serif",
-      width: "100%",
-      maxWidth: "380px",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-      display: "flex",
-      flexDirection: "column",
-      gap: "24px",
-      textAlign: "left"
-    }}>
-      <div>
-        <p style={{ fontSize: "0.75rem", letterSpacing: "2px", textTransform: "uppercase", margin: "0 0 16px 0", opacity: 0.9 }}>
-          Official Delegate Pass
-        </p>
-        <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2.2rem", fontWeight: 900, lineHeight: 1.1, margin: "0 0 16px 0", textTransform: "capitalize" }}>
-          {name.split(' ').map((part, i) => (
-            <span key={i}>{part}<br/></span>
-          ))}
-        </h2>
-        <p style={{ fontSize: "1.1rem", fontWeight: 700, margin: "0 0 16px 0" }}>{passType}</p>
-        <p style={{ fontSize: "1rem", margin: "0", opacity: 0.9 }}>{location}</p>
-      </div>
-
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "8px" }}>
-        <span style={{ fontSize: "1.1rem", fontFamily: "monospace" }}>{ticketId}</span>
-        <span style={{ background: "rgba(255, 255, 255, 0.25)", padding: "6px 14px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.5px" }}>
-          CONFIRMED
-        </span>
-      </div>
-
-      <div style={{ background: "#ffffff", padding: "16px", borderRadius: "12px", display: "inline-block", alignSelf: "flex-start", marginTop: "8px" }}>
-        <QRCode value={ticketId} size={120} bgColor="#ffffff" fgColor="#000000" level="L" />
-      </div>
-    </div>
-  );
-}
 
 // ── Single glassy pass card ──────────────────────────────────────────────────
 function PassCard({ meta, inventoryItem, onPurchase, isDark }) {
@@ -502,29 +452,33 @@ export default function Tickets() {
             display: "flex", alignItems: "center", justifyContent: "center", padding: "24px",
             background: "rgba(0,0,0,0.8)", backdropFilter: "blur(10px)"
           }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "24px", width: "100%", maxWidth: "420px" }}>
-              <div style={{ textAlign: "center", color: "white" }}>
-                <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", margin: "0 0 8px 0" }}>Congratulations!</h2>
-                <p style={{ opacity: 0.8, margin: 0 }}>Your ticket has been confirmed.</p>
+            <div style={{ 
+              display: "flex", flexDirection: "column", alignItems: "center", gap: "24px", 
+              width: "100%", maxWidth: "420px", background: isDark ? "#120a22" : "#ffffff", 
+              padding: "40px 32px", borderRadius: "24px", 
+              border: isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(122,63,209,0.1)" 
+            }}>
+              <div style={{ textAlign: "center", color: textMain }}>
+                <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", margin: "0 0 12px 0", color: isDark ? "#f5a623" : "#d98a14" }}>
+                  Congratulations!
+                </h2>
+                <p style={{ opacity: 0.8, margin: 0, fontSize: "1.1rem", lineHeight: 1.6 }}>
+                  Your ticket has been confirmed successfully.
+                </p>
               </div>
-              
-              {/* Replace the hardcoded data below with your actual API response data when ready */}
-              <TicketPass 
-                name="Gunant Singh Pahwa"
-                passType="FESTIVAL PASS"
-                location="The Carlu | Toronto"
-                ticketId="9165fa0dc8d4"
-              />
 
               <button 
-                onClick={() => setShowSuccessModal(false)}
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  window.location.href = "/dashboard";
+                }}
                 style={{
-                  background: "transparent", border: "1px solid rgba(255,255,255,0.3)", color: "white",
-                  padding: "12px 24px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif",
-                  textTransform: "uppercase", fontSize: "0.8rem", letterSpacing: "1px"
+                  background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white",
+                  padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif",
+                  textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%"
                 }}
               >
-                Close & View Dashboard
+                View Dashboard
               </button>
             </div>
           </div>

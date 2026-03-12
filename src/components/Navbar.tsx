@@ -3,16 +3,16 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "./AuthModal";
 import { fetchMe } from "../utils/api";
-
+ 
 type User = { _id: string; name: string; email: string; role?: string };
-
+ 
 export default function Navbar() {
   const [authOpen, setAuthOpen]     = useState(false);
   const [theme, setTheme]           = useState<"light" | "dark">("light");
   const [user, setUser]             = useState<User | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location                    = useLocation();
-
+ 
   const navItems = [
     { label: "HOME",         path: "/" },
     { label: "First Timers", path: "/on-demand" },
@@ -20,12 +20,12 @@ export default function Navbar() {
     { label: "SPEAKERS",     path: "/speakers" },
     { label: "AGENDA",       path: "/agenda" },
   ];
-
+ 
   const loggedIn = !!user;
   const isAdmin  = user?.role === "admin";
   if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
   const activeIndex = navItems.findIndex(i => i.path === location.pathname);
-
+ 
   useEffect(() => {
     const load = async () => {
       const token = localStorage.getItem("token");
@@ -40,14 +40,14 @@ export default function Navbar() {
       window.removeEventListener("authStateChanged", load);
     };
   }, []);
-
+ 
   useEffect(() => {
     const saved = (localStorage.getItem("theme") as "light" | "dark") || "light";
     setTheme(saved);
     document.body.classList.toggle("dark-mode", saved === "dark");
     document.documentElement.classList.toggle("dark", saved === "dark");
   }, []);
-
+ 
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
@@ -64,8 +64,7 @@ export default function Navbar() {
       document.body.style.width    = "";
     };
   }, [mobileOpen]);
-
-  
+ 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
@@ -73,17 +72,17 @@ export default function Navbar() {
     document.body.classList.toggle("dark-mode", next === "dark");
     document.documentElement.classList.toggle("dark", next === "dark");
   };
-
+ 
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.dispatchEvent(new Event("authChanged"));
     setUser(null);
     setMobileOpen(false);
   };
-
+ 
   const isDark = theme === "dark";
   const borderCol = isDark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.12)";
-
+ 
   return (
     <>
       {/* ════ STICKY NAV ════ */}
@@ -99,7 +98,7 @@ export default function Navbar() {
           width: "100%", maxWidth: 1400, margin: "0 auto", padding: "0 3%",
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
-
+ 
           {/* LOGO */}
           <Link to="/" style={{ flexShrink: 0 }}>
             <img
@@ -110,7 +109,7 @@ export default function Navbar() {
               style={{ height: 52, width: "auto", objectFit: "contain", display: "block" }}
             />
           </Link>
-
+ 
           {/* DESKTOP TABS — tubelight pill */}
           <div className="tfc-desk-nav">
             <div style={{
@@ -150,14 +149,17 @@ export default function Navbar() {
                         transition={{ type: "spring", stiffness: 380, damping: 32 }}
                       />
                     )}
-                    {/* Tubelight glow above active tab */}
+                    {/* Tubelight glow — centered via margin:auto (transform gets overridden by layoutId) */}
                     {isActive && (
                       <motion.span
                         layoutId="tfc-lamp-glow"
                         style={{
                           position: "absolute",
-                          top: -2, left: "50%",
-                          transform: "translateX(-50%)",
+                          top: -2,
+                          left: 0,
+                          right: 0,
+                          marginLeft: "auto",
+                          marginRight: "auto",
                           width: 32, height: 3,
                           borderRadius: "0 0 4px 4px",
                           background: "var(--brand-orange)",
@@ -171,10 +173,10 @@ export default function Navbar() {
               })}
             </div>
           </div>
-
+ 
           {/* RIGHT ACTIONS */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-
+ 
             <div className="tfc-desk-actions">
               {!loggedIn ? (
                 <button onClick={() => setAuthOpen(true)} style={{
@@ -203,13 +205,13 @@ export default function Navbar() {
                 display: "flex", alignItems: "center", textTransform: "uppercase",
               }}>TICKETS</Link>
             </div>
-
+ 
             <button onClick={toggleTheme} style={{
               width: 38, height: 38, borderRadius: "50%", border: `1px solid ${borderCol}`,
               background: "transparent", cursor: "pointer", fontSize: "1rem",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>{isDark ? "☀️" : "🌙"}</button>
-
+ 
             {/* Hamburger */}
             <button
               onClick={() => setMobileOpen(v => !v)}
@@ -232,7 +234,7 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-
+ 
       {/* ════ MOBILE SHEET ════ */}
       <AnimatePresence>
         {mobileOpen && (
@@ -280,7 +282,7 @@ export default function Navbar() {
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>✕</button>
               </div>
-
+ 
               {/* Nav links */}
               <div style={{ padding: "22px 20px", flex: 1 }}>
                 <p style={{
@@ -289,7 +291,7 @@ export default function Navbar() {
                   color: isDark ? "rgba(196,168,255,0.45)" : "rgba(122,63,209,0.45)",
                   marginBottom: 12,
                 }}>Navigation</p>
-
+ 
                 <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 28 }}>
                   {navItems.map((item, i) => (
                     <Link
@@ -324,16 +326,16 @@ export default function Navbar() {
                     </Link>
                   ))}
                 </div>
-
+ 
                 <div style={{ height: 1, background: borderCol, marginBottom: 22 }} />
-
+ 
                 <p style={{
                   fontSize: "0.58rem", fontWeight: 800, letterSpacing: "1.6px",
                   textTransform: "uppercase",
                   color: isDark ? "rgba(196,168,255,0.45)" : "rgba(122,63,209,0.45)",
                   marginBottom: 12,
                 }}>Account</p>
-
+ 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {!loggedIn ? (
                     <button onClick={() => { setAuthOpen(true); setMobileOpen(false); }} style={{
@@ -367,20 +369,20 @@ export default function Navbar() {
                   }}>✦ Get Your Tickets</Link>
                 </div>
               </div>
-
+ 
               <div style={{
                 padding: "14px 20px", borderTop: `1px solid ${borderCol}`,
                 fontSize: "0.65rem",
                 color: isDark ? "rgba(200,180,255,0.35)" : "rgba(122,63,209,0.40)",
                 textAlign: "center",
               }}>
-                The Tech Festival Canada · Oct 28, 2026 · The Carlu, Toronto
+                The Tech Festival Canada · 27-28 Oct, 2026 · The Carlu, Toronto
               </div>
             </motion.aside>
           </>
         )}
       </AnimatePresence>
-
+ 
       <style>{`
         .tfc-desk-nav { display: none; }
         .tfc-desk-actions { display: none; align-items: center; gap: 10px; }
@@ -391,8 +393,9 @@ export default function Navbar() {
           .tfc-hamburger { display: none !important; }
         }
       `}</style>
-
+ 
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
 }
+ 

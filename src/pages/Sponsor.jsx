@@ -1,13 +1,13 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import InquiryModal from "../components/InquiryModal";
+import SponsorInquiryModal from "../components/SponsorInquiryModal";
 import { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
- 
+
 /* ═══════════════════════════════════════════════════════
    PACKAGE DATA — from spreadsheet
    ═══════════════════════════════════════════════════════ */
- 
+
 var FEATURED = [
   {
     name: "Platinum Partner",
@@ -104,7 +104,7 @@ var FEATURED = [
     ],
   },
 ];
- 
+
 var SPECIALTY = [
   {
     name: "Delegate Kit Partner",
@@ -161,15 +161,15 @@ var SPECIALTY = [
     benefits: ["1 Booth Space", "2 Delegate Passes", "2 scheduled 1:1 Meetings", "3 VIP Lounge Access passes", "Full Page Delegate Bag Insert", "Half Page e-Show Directory", "Press Release & Media Interview", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
   },
 ];
- 
+
 /* ═══════════════════════════════════════════════════════
    SPONSOR PAGE
    ═══════════════════════════════════════════════════════ */
- 
+
 export default function Sponsor() {
   var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
   var s2 = useState(false); var inquiryOpen = s2[0]; var setInquiryOpen = s2[1];
- 
+
   useEffect(function () {
     setDark(document.body.classList.contains("dark-mode"));
     var obs = new MutationObserver(function () {
@@ -178,7 +178,7 @@ export default function Sponsor() {
     obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     return function () { obs.disconnect(); };
   }, []);
- 
+
   var bg = dark ? "#06020f" : "#ffffff";
   var textMain = dark ? "#ffffff" : "#0d0520";
   var textMid = dark ? "rgba(255,255,255,0.60)" : "rgba(13,5,32,0.62)";
@@ -186,7 +186,7 @@ export default function Sponsor() {
   var cardBg = dark ? "rgba(155,135,245,0.06)" : "rgba(122,63,209,0.03)";
   var cardBdr = dark ? "rgba(155,135,245,0.12)" : "rgba(122,63,209,0.10)";
   var accent = dark ? "#b99eff" : "#7a3fd1";
- 
+
   return (
     <>
       <style>{`
@@ -234,14 +234,14 @@ export default function Sponsor() {
           .pkg-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
       `}</style>
- 
+
       <Navbar />
- 
+
       {/* ═══════════ HERO ═══════════ */}
       <section className="sponsor-hero" style={{ background: bg }}>
         {/* Grid */}
         <div className="sponsor-hero-grid" />
- 
+
         {/* Glows */}
         <div className="sponsor-hero-glow" style={{
           width: 650, height: 650,
@@ -264,7 +264,7 @@ export default function Sponsor() {
             : "radial-gradient(circle, rgba(155,135,245,0.06) 0%, transparent 70%)",
           bottom: -60, left: "30%", filter: "blur(100px)", animationDelay: "5s",
         }} />
- 
+
         {/* Content */}
         <div style={{
           position: "relative", zIndex: 5,
@@ -273,32 +273,6 @@ export default function Sponsor() {
           display: "flex", flexDirection: "column",
           alignItems: "center", textAlign: "center",
         }}>
-          {/* Eyebrow pill */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ type: "spring", bounce: 0.3, duration: 1.4, delay: 0.1 }}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "7px 20px", borderRadius: 999,
-              background: dark ? "rgba(122,63,209,0.10)" : "rgba(122,63,209,0.06)",
-              border: "1px solid " + (dark ? "rgba(122,63,209,0.22)" : "rgba(122,63,209,0.18)"),
-              marginBottom: 28,
-            }}
-          >
-            <span style={{
-              width: 6, height: 6, borderRadius: "50%",
-              background: "var(--brand-orange, #f5a623)",
-              boxShadow: "0 0 8px var(--brand-orange, #f5a623)",
-            }} />
-            <span style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: "0.65rem", fontWeight: 800,
-              letterSpacing: "2px", textTransform: "uppercase",
-              color: accent,
-            }}>TFC 2026 Sponsorship</span>
-          </motion.div>
- 
           {/* Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 28 }}
@@ -319,7 +293,7 @@ export default function Sponsor() {
               backgroundClip: "text",
             }}>To Lead The Future</span>
           </motion.h1>
- 
+
           {/* Divider */}
           <motion.div
             initial={{ scaleX: 0 }}
@@ -332,7 +306,7 @@ export default function Sponsor() {
               transformOrigin: "center",
             }}
           />
- 
+
           {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 18 }}
@@ -350,7 +324,7 @@ export default function Sponsor() {
             unparalleled branding, networking, and thought-leadership opportunities,
             helping your company stay ahead in a competitive market.
           </motion.p>
- 
+
           {/* CTA + Stats row */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -390,7 +364,7 @@ export default function Sponsor() {
               Write to Us
               <span style={{ marginLeft: 10, display: "inline-block" }}>→</span>
             </button>
- 
+
             {/* Stat pills */}
             <div className="sponsor-hero-stats" style={{
               display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center",
@@ -425,7 +399,7 @@ export default function Sponsor() {
             </div>
           </motion.div>
         </div>
- 
+
         {/* Bottom fade */}
         <div style={{
           position: "absolute", bottom: 0, left: 0, right: 0,
@@ -433,7 +407,7 @@ export default function Sponsor() {
           background: "linear-gradient(to bottom, transparent, " + bg + ")",
         }} />
       </section>
- 
+
       {/* ═══════════ FEATURED PACKAGES ═══════════ */}
       <section style={{ background: bg, padding: "5rem 6% 3rem" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
@@ -443,7 +417,7 @@ export default function Sponsor() {
             subtitle="From title sponsorship to category-specific partnerships — choose the level of visibility that matches your ambitions."
             textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent}
           />
- 
+
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
@@ -455,7 +429,7 @@ export default function Sponsor() {
           </div>
         </div>
       </section>
- 
+
       {/* ═══════════ SPECIALTY PACKAGES ═══════════ */}
       <section style={{ background: bg, padding: "3rem 6% 5rem" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
@@ -465,7 +439,7 @@ export default function Sponsor() {
             subtitle="Targeted visibility tied to key event touchpoints — from delegate kits to gala dinners."
             textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent}
           />
- 
+
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
@@ -477,7 +451,7 @@ export default function Sponsor() {
           </div>
         </div>
       </section>
- 
+
       {/* ═══════════ BOTTOM CTA ═══════════ */}
       <section style={{ background: bg, padding: "0 6% 5rem" }}>
         <div style={{
@@ -520,17 +494,17 @@ export default function Sponsor() {
           </button>
         </div>
       </section>
- 
+
       <Footer />
-      <InquiryModal isOpen={inquiryOpen} onClose={function () { setInquiryOpen(false); }} />
+      <SponsorInquiryModal isOpen={inquiryOpen} onClose={function () { setInquiryOpen(false); }} />
     </>
   );
 }
- 
+
 /* ═══════════════════════════════════════════════════════
    SUB-COMPONENTS
    ═══════════════════════════════════════════════════════ */
- 
+
 function RevealHeader(props) {
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-60px" });
@@ -565,13 +539,13 @@ function RevealHeader(props) {
     </motion.div>
   );
 }
- 
+
 function PackageCard(props) {
   var pkg = props.pkg;
   var dark = props.dark;
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-40px" });
- 
+
   return (
     <motion.div
       ref={ref}
@@ -632,13 +606,13 @@ function PackageCard(props) {
     </motion.div>
   );
 }
- 
+
 function SpecialtyCard(props) {
   var pkg = props.pkg;
   var dark = props.dark;
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-30px" });
- 
+
   return (
     <motion.div
       ref={ref}
@@ -693,4 +667,3 @@ function SpecialtyCard(props) {
     </motion.div>
   );
 }
- 

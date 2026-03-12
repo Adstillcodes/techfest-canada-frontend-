@@ -465,21 +465,40 @@ export default function Tickets() {
                 <p style={{ opacity: 0.8, margin: 0, fontSize: "1.1rem", lineHeight: 1.6 }}>
                   Your ticket has been confirmed successfully.
                 </p>
+                <p style={{ opacity: 0.6, marginTop: "8px", fontSize: "0.95rem" }}>
+                  Please visit your email for more info.
+                </p>
               </div>
 
-              <button 
-                onClick={() => {
-                  setShowSuccessModal(false);
-                  window.location.href = "/dashboard";
-                }}
-                style={{
-                  background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white",
-                  padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif",
-                  textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%"
-                }}
-              >
-                View Dashboard
-              </button>
+              {localStorage.getItem("token") ? (
+                <button 
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    window.location.href = "/dashboard";
+                  }}
+                  style={{
+                    background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white",
+                    padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif",
+                    textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%"
+                  }}
+                >
+                  View Dashboard
+                </button>
+              ) : (
+                <button 
+                  onClick={() => {
+                    setShowSuccessModal(false);
+                    window.location.href = "/register"; // Change this route if your signup page is named differently
+                  }}
+                  style={{
+                    background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white",
+                    padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif",
+                    textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%"
+                  }}
+                >
+                  Sign Up Now
+                </button>
+              )}
             </div>
           </div>
         )}

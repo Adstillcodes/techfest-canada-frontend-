@@ -83,6 +83,27 @@ const iconMap: Record<string, React.ReactNode> = {
   target: <Target className="w-6 h-6" />
 }
 
+// Always use these fixed values — never pulled from Sanity
+const FIXED_SERVICES = [
+  { title: "Healthcare & Lifesciences", description: "Connecting health innovators with buyers, policymakers, and capital to deploy at scale.", iconName: "heart", position: "left" },
+  { title: "Banking, Financial Services & Insurance", description: "Where fintech meets enterprise — driving real procurement and partnerships.", iconName: "building", position: "left" },
+  { title: "Supply Chain, Manufacturing & Infrastructure", description: "Bringing tech solutions to the backbone of Canada's industrial economy.", iconName: "tool", position: "left" },
+  { title: "Defence & Public Safety", description: "Bridging the gap between cutting-edge tech and national security priorities.", iconName: "shield", position: "left" },
+  { title: "Energy & Utilities", description: "Accelerating Canada's clean energy transition through applied innovation.", iconName: "zap", position: "left" },
+  { title: "Artificial Intelligence", description: "Unlocking the Future of Innovation — from models to real-world deployment.", iconName: "cpu", position: "right" },
+  { title: "Quantum Computing", description: "Unleashing Infinite Possibilities — Canada's quantum advantage on the world stage.", iconName: "atom", position: "right" },
+  { title: "Cybersecurity", description: "Building resilient digital infrastructure for enterprise and government.", iconName: "lock", position: "right" },
+  { title: "Robotics & Automation", description: "From factory floors to smart cities — automation that drives real ROI.", iconName: "settings", position: "right" },
+  { title: "Sustainability & CleanTech", description: "Pioneering a Greener, Smarter Future through technology-led climate action.", iconName: "leaf", position: "right" },
+]
+
+const FIXED_STATS = [
+  { value: 150, suffix: "+", label: "Builds Completed", iconName: "award" },
+  { value: 1000, suffix: "+", label: "minutes of high quality content", iconName: "users" },
+  { value: 12, suffix: "", label: "Event Years", iconName: "calendar" },
+  { value: 98, suffix: "%", label: "Success Rate", iconName: "trending" },
+]
+
 // Accept onWriteToUs prop to open the inquiry modal from Home
 export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
   const [data, setData] = useState<any>(null)
@@ -98,46 +119,16 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
     const fetchData = async () => {
       try {
         const result = await client.fetch(`*[_type == "aboutContent"][0]`)
-        const FIXED_SERVICES = [
-          { title: "Healthcare & Lifesciences", description: "Connecting health innovators with buyers, policymakers, and capital to deploy at scale.", iconName: "heart", position: "left" },
-          { title: "Banking, Financial Services & Insurance", description: "Where fintech meets enterprise — driving real procurement and partnerships.", iconName: "building", position: "left" },
-          { title: "Supply Chain, Manufacturing & Infrastructure", description: "Bringing tech solutions to the backbone of Canada's industrial economy.", iconName: "tool", position: "left" },
-          { title: "Defence & Public Safety", description: "Bridging the gap between cutting-edge tech and national security priorities.", iconName: "shield", position: "left" },
-          { title: "Energy & Utilities", description: "Accelerating Canada's clean energy transition through applied innovation.", iconName: "zap", position: "left" },
-          { title: "Artificial Intelligence", description: "Unlocking the Future of Innovation — from models to real-world deployment.", iconName: "cpu", position: "right" },
-          { title: "Quantum Computing", description: "Unleashing Infinite Possibilities — Canada's quantum advantage on the world stage.", iconName: "atom", position: "right" },
-          { title: "Cybersecurity", description: "Building resilient digital infrastructure for enterprise and government.", iconName: "lock", position: "right" },
-          { title: "Robotics & Automation", description: "From factory floors to smart cities — automation that drives real ROI.", iconName: "settings", position: "right" },
-          { title: "Sustainability & CleanTech", description: "Pioneering a Greener, Smarter Future through technology-led climate action.", iconName: "leaf", position: "right" },
-        ]
-        if (result) {
-          setData({ ...result, services: FIXED_SERVICES })
-        } else {
-          setData({
-            headline: "Beyond Theory",
-            services: [
-              { title: "Healthcare & Lifesciences", description: "Connecting health innovators with buyers, policymakers, and capital to deploy at scale.", iconName: "heart", position: "left" },
-              { title: "Banking, Financial Services & Insurance", description: "Where fintech meets enterprise — driving real procurement and partnerships.", iconName: "building", position: "left" },
-              { title: "Supply Chain, Manufacturing & Infrastructure", description: "Bringing tech solutions to the backbone of Canada's industrial economy.", iconName: "tool", position: "left" },
-              { title: "Defence & Public Safety", description: "Bridging the gap between cutting-edge tech and national security priorities.", iconName: "shield", position: "left" },
-              { title: "Energy & Utilities", description: "Accelerating Canada's clean energy transition through applied innovation.", iconName: "zap", position: "left" },
-              { title: "Artificial Intelligence", description: "Unlocking the Future of Innovation — from models to real-world deployment.", iconName: "cpu", position: "right" },
-              { title: "Quantum Computing", description: "Unleashing Infinite Possibilities — Canada's quantum advantage on the world stage.", iconName: "atom", position: "right" },
-              { title: "Cybersecurity", description: "Building resilient digital infrastructure for enterprise and government.", iconName: "lock", position: "right" },
-              { title: "Robotics & Automation", description: "From factory floors to smart cities — automation that drives real ROI.", iconName: "settings", position: "right" },
-              { title: "Sustainability & CleanTech", description: "Pioneering a Greener, Smarter Future through technology-led climate action.", iconName: "leaf", position: "right" }
-            ],
-            stats: [
-              { value: 150, suffix: "+", label: "Builds Completed", iconName: "award" },
-              { value: 1000, suffix: "+", label: "minutes of high quality content", iconName: "users" },
-              { value: 12, suffix: "", label: "Event Years", iconName: "calendar" },
-              { value: 98, suffix: "%", label: "Success Rate", iconName: "trending" }
-            ]
-          })
-        }
+        // Always override services and stats with fixed values regardless of CMS data
+        setData({
+          ...(result || {}),
+          headline: result?.headline || "Beyond Theory",
+          services: FIXED_SERVICES,
+          stats: FIXED_STATS,
+        })
       } catch (error) {
         console.error("Sanity About Content Fetch Error:", error)
-        setData({ headline: "Beyond Theory", services: [], stats: [] })
+        setData({ headline: "Beyond Theory", services: FIXED_SERVICES, stats: FIXED_STATS })
       } finally {
         setLoading(false)
       }
@@ -233,9 +224,7 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
             className="relative flex justify-center items-center py-6"
           >
             <div className="relative w-full max-w-[340px] flex flex-col items-center gap-4">
-              {/* Globe */}
               <div style={{ position: "relative", width: 320, height: 320 }}>
-                {/* Spinning conic border */}
                 <div style={{
                   position: "absolute", inset: -2, borderRadius: "50%",
                   background: "conic-gradient(from 0deg, rgba(122,63,209,0.5), rgba(245,166,35,0.4), rgba(122,63,209,0.5), rgba(245,166,35,0.4), rgba(122,63,209,0.5))",
@@ -282,14 +271,12 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
           className="mt-28 relative overflow-hidden bg-[var(--bg-card)] border border-[var(--border-main)] p-12 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-10 shadow-sm"
           variants={itemVariants}
         >
-          {/* Ambient glow */}
           <div style={{
             position: "absolute", inset: 0, pointerEvents: "none",
             background: "radial-gradient(ellipse 60% 80% at 0% 50%, rgba(122,63,209,0.10), transparent)",
           }} />
 
           <div className="flex-1 text-center md:text-left relative z-10">
-            {/* Eyebrow */}
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 6,
               background: "rgba(122,63,209,0.12)", border: "1px solid rgba(122,63,209,0.28)",
@@ -305,7 +292,6 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
               GET <span style={{ color: "#f5a623" }}>INVOLVED</span>
             </h3>
 
-            {/* Three sub-tags */}
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "inherit" }}>
               {["Volunteer", "Collaborate", "Become a Community Partner"].map((tag) => (
                 <span key={tag} style={{
@@ -321,7 +307,6 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
             </div>
           </div>
 
-          {/* Write to Us button — opens inquiry modal */}
           <button
             onClick={onWriteToUs}
             className="relative z-10 flex items-center gap-3 font-bold transition-all hover:scale-105 active:scale-95 shadow-xl"
@@ -367,7 +352,6 @@ function ServiceCard({ iconName, title, description, align }: any) {
   )
 }
 
-/* ── Unique icons per stat index ── */
 const statIcons = [
   <Users className="w-7 h-7" />,
   <Sparkles className="w-7 h-7" />,

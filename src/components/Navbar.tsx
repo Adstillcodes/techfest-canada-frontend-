@@ -7,8 +7,8 @@ import { fetchMe } from "../utils/api";
 type User = { _id: string; name: string; email: string; role?: string };
  
 const PARTNER_SUBS = [
-  { label: "Exhibit", path: "/sponsors#exhibit" },
-  { label: "Sponsor", path: "/sponsors#sponsor" },
+  { label: "Exhibit", path: "/exhibit" },
+  { label: "Sponsor", path: "/sponsor" },
 ];
  
 export default function Navbar() {
@@ -33,7 +33,12 @@ export default function Navbar() {
   const loggedIn = !!user;
   const isAdmin  = user?.role === "admin";
   if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
-  const activeIndex = navItems.findIndex(i => i.path === location.pathname);
+  const activeIndex = navItems.findIndex(function(item) {
+    if (item.path === "/sponsors") {
+      return location.pathname === "/sponsors" || location.pathname === "/exhibit" || location.pathname === "/sponsor";
+    }
+    return item.path === location.pathname;
+  });
  
   useEffect(() => {
     const load = async () => {
@@ -98,19 +103,6 @@ export default function Navbar() {
     partnersTimeout.current = window.setTimeout(() => {
       setPartnersOpen(false);
     }, 180);
-  };
- 
-  const handleSubClick = (path: string) => {
-    setPartnersOpen(false);
-    setMobileOpen(false);
-    const [route, hash] = path.split("#");
-    navigate(route);
-    if (hash) {
-      setTimeout(() => {
-        const el = document.getElementById(hash);
-        if (el) el.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
   };
  
   const isDark = theme === "dark";
@@ -269,9 +261,13 @@ export default function Navbar() {
                             }} />
  
                             {PARTNER_SUBS.map((sub) => (
-                              <button
+                              <Link
                                 key={sub.label}
-                                onClick={() => handleSubClick(sub.path)}
+                                to={sub.path}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setPartnersOpen(false);
+                                }}
                                 style={{
                                   display: "flex", alignItems: "center", gap: 10,
                                   width: "100%", padding: "12px 16px",
@@ -282,6 +278,7 @@ export default function Navbar() {
                                   letterSpacing: "0.6px", textTransform: "uppercase",
                                   color: isDark ? "rgba(255,255,255,0.75)" : "rgba(15,5,32,0.70)",
                                   transition: "all 0.15s",
+                                  textDecoration: "none",
                                 }}
                                 onMouseEnter={(e) => {
                                   e.currentTarget.style.background = isDark
@@ -307,7 +304,7 @@ export default function Navbar() {
                                   flexShrink: 0,
                                 }} />
                                 {sub.label}
-                              </button>
+                              </Link>
                             ))}
                           </motion.div>
                         )}
@@ -525,9 +522,10 @@ export default function Navbar() {
                         {isPartners && mobilePartnersOpen && (
                           <div style={{ paddingLeft: 20, display: "flex", flexDirection: "column", gap: 2 }}>
                             {PARTNER_SUBS.map((sub) => (
-                              <button
+                              <Link
                                 key={sub.label}
-                                onClick={() => handleSubClick(sub.path)}
+                                to={sub.path}
+                                onClick={() => { setMobileOpen(false); setMobilePartnersOpen(false); }}
                                 style={{
                                   display: "flex", alignItems: "center", gap: 10,
                                   padding: "11px 16px", borderRadius: 10,
@@ -538,6 +536,7 @@ export default function Navbar() {
                                   letterSpacing: "0.5px", textTransform: "uppercase",
                                   color: isDark ? "rgba(255,255,255,0.60)" : "rgba(15,5,32,0.55)",
                                   transition: "all 0.15s",
+                                  textDecoration: "none",
                                 }}
                               >
                                 <span style={{
@@ -548,7 +547,7 @@ export default function Navbar() {
                                   flexShrink: 0,
                                 }} />
                                 {sub.label}
-                              </button>
+                              </Link>
                             ))}
                           </div>
                         )}
@@ -628,4 +627,3 @@ export default function Navbar() {
     </>
   );
 }
- 

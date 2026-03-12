@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
- 
+
 var JOB_TITLES = [
   "Head of AI / ML",
   "Director of Data Science",
@@ -39,7 +39,7 @@ var JOB_TITLES = [
   "Climate Risk and Resilience Lead",
   "Other",
 ];
- 
+
 var INDUSTRIES = {
   "Artificial Intelligence": [
     "Infrastructure and Compute",
@@ -90,11 +90,11 @@ var INDUSTRIES = {
     "Water, Air, and Climate Resilience",
   ],
 };
- 
+
 export default function SponsorInquiryModal(props) {
   var isOpen = props.isOpen;
   var onClose = props.onClose;
- 
+
   var s1 = useState(""); var firstName = s1[0]; var setFirstName = s1[1];
   var s2 = useState(""); var lastName = s2[0]; var setLastName = s2[1];
   var s3 = useState(""); var email = s3[0]; var setEmail = s3[1];
@@ -105,7 +105,7 @@ export default function SponsorInquiryModal(props) {
   var s8 = useState(false); var sending = s8[0]; var setSending = s8[1];
   var s9 = useState(false); var sent = s9[0]; var setSent = s9[1];
   var s10 = useState(false); var dark = s10[0]; var setDark = s10[1];
- 
+
   useEffect(function () {
     setDark(document.body.classList.contains("dark-mode"));
     var obs = new MutationObserver(function () {
@@ -114,7 +114,7 @@ export default function SponsorInquiryModal(props) {
     obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     return function () { obs.disconnect(); };
   }, []);
- 
+
   useEffect(function () {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -123,7 +123,7 @@ export default function SponsorInquiryModal(props) {
     }
     return function () { document.body.style.overflow = ""; };
   }, [isOpen]);
- 
+
   function handleSubmit() {
     if (!firstName.trim() || !lastName.trim()) return;
     setSending(true);
@@ -139,7 +139,7 @@ export default function SponsorInquiryModal(props) {
       }, 2000);
     }, 1200);
   }
- 
+
   var bgCard = dark ? "#0d0620" : "#ffffff";
   var borderCol = dark ? "rgba(122,63,209,0.22)" : "rgba(122,63,209,0.12)";
   var inputBg = dark ? "rgba(155,135,245,0.08)" : "rgba(122,63,209,0.04)";
@@ -147,7 +147,7 @@ export default function SponsorInquiryModal(props) {
   var textMain = dark ? "#ffffff" : "#0d0520";
   var textMid = dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.55)";
   var accent = dark ? "#b99eff" : "#7a3fd1";
- 
+
   var inputStyle = {
     width: "100%",
     padding: "14px 16px",
@@ -161,7 +161,7 @@ export default function SponsorInquiryModal(props) {
     transition: "border-color 0.2s",
     boxSizing: "border-box",
   };
- 
+
   var selectStyle = {
     width: "100%",
     padding: "14px 16px",
@@ -180,7 +180,7 @@ export default function SponsorInquiryModal(props) {
     cursor: "pointer",
     boxSizing: "border-box",
   };
- 
+
   var labelStyle = {
     fontFamily: "'Orbitron', sans-serif",
     fontSize: "0.62rem",
@@ -191,9 +191,9 @@ export default function SponsorInquiryModal(props) {
     marginBottom: 8,
     display: "block",
   };
- 
+
   var industryKeys = Object.keys(INDUSTRIES);
- 
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -213,8 +213,19 @@ export default function SponsorInquiryModal(props) {
               WebkitBackdropFilter: "blur(8px)",
             }}
           />
- 
-          {/* Modal */}
+
+          {/* Modal wrapper — flex centered */}
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 10001,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              pointerEvents: "none",
+            }}
+          >
           <motion.div
             key="sponsor-modal"
             initial={{ opacity: 0, y: 40, scale: 0.96 }}
@@ -222,10 +233,6 @@ export default function SponsorInquiryModal(props) {
             exit={{ opacity: 0, y: 40, scale: 0.96 }}
             transition={{ type: "spring", damping: 24, stiffness: 260 }}
             style={{
-              position: "fixed",
-              top: "50%", left: "50%",
-              transform: "translate(-50%, -50%)",
-              zIndex: 10001,
               width: "min(520px, 92vw)",
               maxHeight: "90vh",
               overflowY: "auto",
@@ -236,6 +243,7 @@ export default function SponsorInquiryModal(props) {
               boxShadow: dark
                 ? "0 24px 80px rgba(0,0,0,0.7)"
                 : "0 24px 80px rgba(122,63,209,0.12)",
+              pointerEvents: "auto",
             }}
           >
             {/* Close */}
@@ -251,7 +259,7 @@ export default function SponsorInquiryModal(props) {
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}
             >✕</button>
- 
+
             {/* Header */}
             <h2 style={{
               fontFamily: "'Orbitron', sans-serif",
@@ -266,7 +274,7 @@ export default function SponsorInquiryModal(props) {
             }}>
               Interested in sponsoring or exhibiting? Fill in your details and our partnerships team will be in touch.
             </p>
- 
+
             {sent ? (
               <div style={{
                 textAlign: "center", padding: "40px 0",
@@ -308,7 +316,7 @@ export default function SponsorInquiryModal(props) {
                     />
                   </div>
                 </div>
- 
+
                 {/* Row: Email + Phone */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 18 }}>
                   <div>
@@ -332,7 +340,7 @@ export default function SponsorInquiryModal(props) {
                     />
                   </div>
                 </div>
- 
+
                 {/* Company */}
                 <div style={{ marginBottom: 18 }}>
                   <label style={labelStyle}>Company</label>
@@ -344,7 +352,7 @@ export default function SponsorInquiryModal(props) {
                     style={inputStyle}
                   />
                 </div>
- 
+
                 {/* Row: Job Title + Industry */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 28 }}>
                   <div>
@@ -380,7 +388,7 @@ export default function SponsorInquiryModal(props) {
                     </select>
                   </div>
                 </div>
- 
+
                 {/* Submit */}
                 <button
                   onClick={handleSubmit}
@@ -414,6 +422,7 @@ export default function SponsorInquiryModal(props) {
               </>
             )}
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>

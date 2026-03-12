@@ -8,18 +8,18 @@ import CookieConsent from "../components/CookieConsent";
 import PostPurchaseModal from "../components/PostPurchaseModal";
 import OnboardingSurvey from "../components/OnboardingSurvey";
 import { motion, useInView } from "framer-motion";
- 
+
 /* ═══════════════════════════════════════════════════════
    STAGGER VARIANTS
    ═══════════════════════════════════════════════════════ */
- 
+
 var containerVariants = {
   hidden: {},
   visible: {
     transition: { staggerChildren: 0.14, delayChildren: 0.3 },
   },
 };
- 
+
 var itemBlur = {
   hidden: { opacity: 0, filter: "blur(12px)", y: 22 },
   visible: {
@@ -27,7 +27,7 @@ var itemBlur = {
     transition: { type: "spring", bounce: 0.3, duration: 1.5 },
   },
 };
- 
+
 var itemSlow = {
   hidden: { opacity: 0, y: 14 },
   visible: {
@@ -35,23 +35,23 @@ var itemSlow = {
     transition: { type: "spring", bounce: 0.2, duration: 1.8, delay: 0.08 },
   },
 };
- 
+
 /* ═══════════════════════════════════════════════════════
    SCROLL-TRIGGERED TEXT REVEAL (dev21 TextEffect)
    Word-by-word blur + slide + scale
    ═══════════════════════════════════════════════════════ */
- 
+
 function TextReveal(props) {
   var text = props.text;
   var colors = props.colors || [];
   var style = props.style || {};
   var delay = props.delay || 0;
- 
+
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-60px" });
- 
+
   var words = text.split(" ");
- 
+
   return (
     <motion.h2
       ref={ref}
@@ -110,59 +110,11 @@ function TextReveal(props) {
     </motion.h2>
   );
 }
- 
-/* ═══════════════════════════════════════════════════════
-   KEYWORD MARQUEE — infinite CSS scroll
-   ═══════════════════════════════════════════════════════ */
- 
-var KEYWORDS_A = [
-  "ARTIFICIAL INTELLIGENCE", "FINTECH", "BLOCKCHAIN", "CYBERSECURITY",
-  "CLOUD", "HEALTHCARE", "DEEP TECH", "SaaS", "QUANTUM", "ROBOTICS",
-];
- 
-var KEYWORDS_B = [
-  "MACHINE LEARNING", "WEB3", "BIOTECH", "ENTERPRISE", "IoT",
-  "CLEAN ENERGY", "EDGE COMPUTING", "AUTONOMOUS", "AR / VR", "SPACE TECH",
-];
- 
-function KeywordMarquee(props) {
-  var words = props.words;
-  var direction = props.direction || "left";
-  var speed = props.speed || 45;
-  var dark = props.dark;
-  var doubled = words.concat(words);
-  var animName = direction === "left" ? "marquee-left" : "marquee-right";
- 
-  return (
-    <div style={{ overflow: "hidden", whiteSpace: "nowrap", width: "100%", pointerEvents: "none" }}>
-      <div style={{
-        display: "inline-flex",
-        gap: "3rem",
-        animation: animName + " " + speed + "s linear infinite",
-        willChange: "transform",
-      }}>
-        {doubled.map(function (w, i) {
-          return (
-            <span key={i} style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: "0.68rem",
-              fontWeight: 800,
-              letterSpacing: "3.5px",
-              color: dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)",
-              textTransform: "uppercase",
-              flexShrink: 0,
-            }}>{w}</span>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
- 
+
 /* ═══════════════════════════════════════════════════════
    ANIMATED COUNTER
    ═══════════════════════════════════════════════════════ */
- 
+
 function AnimatedCounter(props) {
   var target = props.target;
   var suffix = props.suffix || "";
@@ -170,7 +122,7 @@ function AnimatedCounter(props) {
   var isInView = useInView(ref, { once: true, margin: "-50px" });
   var s = useState(0);  var count = s[0]; var setCount = s[1];
   var s2 = useState(false); var done = s2[0]; var setDone = s2[1];
- 
+
   useEffect(function () {
     if (!isInView || done) return;
     var num = parseInt(target);
@@ -185,14 +137,14 @@ function AnimatedCounter(props) {
     }, 1400 / steps);
     return function () { clearInterval(t); };
   }, [isInView, done, target]);
- 
+
   return <span ref={ref}>{typeof count === "number" ? count + suffix : target}</span>;
 }
- 
+
 /* ═══════════════════════════════════════════════════════
    SCROLL-TRIGGERED SUB-COMPONENTS
    ═══════════════════════════════════════════════════════ */
- 
+
 function DividerReveal(props) {
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-40px" });
@@ -211,7 +163,7 @@ function DividerReveal(props) {
     />
   );
 }
- 
+
 function SubtitleReveal(props) {
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-40px" });
@@ -238,7 +190,7 @@ function SubtitleReveal(props) {
     </motion.p>
   );
 }
- 
+
 function CTAReveal(props) {
   var dark = props.dark;
   var textMain = props.textMain;
@@ -306,7 +258,7 @@ function CTAReveal(props) {
     </motion.div>
   );
 }
- 
+
 function StatsReveal(props) {
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-40px" });
@@ -348,11 +300,11 @@ function StatsReveal(props) {
     </motion.div>
   );
 }
- 
+
 /* ═══════════════════════════════════════════════════════
    HOME PAGE
    ═══════════════════════════════════════════════════════ */
- 
+
 export default function Home() {
   var s1  = useState(false);  var inquiryOpen = s1[0];         var setInquiryOpen = s1[1];
   var s2  = useState(false);  var surveyOpen = s2[0];          var setSurveyOpen = s2[1];
@@ -360,7 +312,7 @@ export default function Home() {
   var s4  = useState(false);  var purchaseOpen = s4[0];        var setPurchaseOpen = s4[1];
   var s5  = useState("");     var purchaseTicketType = s5[0];  var setPurchaseTicketType = s5[1];
   var s6  = useState(false);  var dark = s6[0];                var setDark = s6[1];
- 
+
   useEffect(function () {
     setDark(document.body.classList.contains("dark-mode"));
     var obs = new MutationObserver(function () {
@@ -369,24 +321,24 @@ export default function Home() {
     obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     return function () { obs.disconnect(); };
   }, []);
- 
+
   useEffect(function () {
     function h(e) { setSurveyName(e.detail && e.detail.name ? e.detail.name : ""); setSurveyOpen(true); }
     window.addEventListener("showSurvey", h);
     return function () { window.removeEventListener("showSurvey", h); };
   }, []);
- 
+
   useEffect(function () {
     function h(e) { setPurchaseTicketType(e.detail && e.detail.ticketType ? e.detail.ticketType : "Delegate Pass"); setPurchaseOpen(true); }
     window.addEventListener("purchaseComplete", h);
     return function () { window.removeEventListener("purchaseComplete", h); };
   }, []);
- 
+
   function scrollDown() {
     var el = document.getElementById("hero-lower");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   }
- 
+
   var bg       = dark ? "#06020f"                  : "#ffffff";
   var textMain = dark ? "#ffffff"                  : "#0d0520";
   var textMid  = dark ? "rgba(255,255,255,0.55)"   : "rgba(13,5,32,0.58)";
@@ -394,97 +346,24 @@ export default function Home() {
   var accent   = dark ? "#b99eff"                   : "#7a3fd1";
   var cardBg   = dark ? "rgba(155,135,245,0.04)"    : "rgba(122,63,209,0.025)";
   var cardBdr  = dark ? "rgba(155,135,245,0.12)"    : "rgba(122,63,209,0.12)";
- 
+
   var stats = [
     { num: "500", suffix: "+", label: "Decision Makers" },
     { num: "5",   suffix: "",  label: "Tech Pillars" },
     { num: "27-28 Oct",         label: "2026", isText: true },
     { num: "The Carlu",        label: "Toronto, ON", isText: true },
   ];
- 
+
   return (
     <>
       <style>{`
-        /* ──── AURORA ──── */
-        :root {
-          --aurora-white: #ffffff; --aurora-black: #06020f;
-          --aurora-transparent: transparent; --aurora-purple: #7a3fd1;
-          --aurora-violet: #9b57e8; --aurora-lilac: #c4a0f5;
-          --aurora-orange: #f5a623; --aurora-amber: #f7c15e;
-        }
-        @keyframes aurora-shift {
-          from { background-position: 50% 50%, 50% 50%; }
-          to   { background-position: 350% 50%, 350% 50%; }
-        }
-        .aurora-layer {
-          position: absolute; inset: -10px; pointer-events: none;
-          will-change: transform; background-size: 300% 200%;
-          background-position: 50% 50%; filter: blur(10px); opacity: 0.4;
-        }
-        .aurora-layer--light {
-          background-image:
-            repeating-linear-gradient(100deg, var(--aurora-white) 0%, var(--aurora-white) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-white) 16%),
-            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          opacity: 0.35; filter: blur(12px);
-          mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
-          -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
-        }
-        .aurora-layer--light::after {
-          content: ""; position: absolute; inset: 0;
-          background-image:
-            repeating-linear-gradient(100deg, var(--aurora-white) 0%, var(--aurora-white) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-white) 16%),
-            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          background-size: 200% 100%; background-attachment: fixed;
-          animation: aurora-shift 60s linear infinite; mix-blend-mode: difference;
-        }
-        .aurora-layer--dark {
-          background-image:
-            repeating-linear-gradient(100deg, var(--aurora-black) 0%, var(--aurora-black) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-black) 16%),
-            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          opacity: 0.5; filter: blur(10px);
-          mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
-          -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, transparent 70%);
-        }
-        .aurora-layer--dark::after {
-          content: ""; position: absolute; inset: 0;
-          background-image:
-            repeating-linear-gradient(100deg, var(--aurora-black) 0%, var(--aurora-black) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-black) 16%),
-            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
-          background-size: 200% 100%; background-attachment: fixed;
-          animation: aurora-shift 60s linear infinite; mix-blend-mode: difference;
-        }
- 
-        /* ──── GRID ──── */
-        .hero-grid {
-          position: absolute; inset: 0; z-index: 1; pointer-events: none;
-          background-image:
-            linear-gradient(rgba(122,63,209,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(122,63,209,0.04) 1px, transparent 1px);
-          background-size: 68px 68px;
-          mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, black 15%, transparent 100%);
-          -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, black 15%, transparent 100%);
-        }
-        .hero-glow {
-          position: absolute; border-radius: 50%; pointer-events: none; z-index: 1;
-        }
- 
-        /* ──── MARQUEE ──── */
-        @keyframes marquee-left {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
-        }
-        @keyframes marquee-right {
-          from { transform: translateX(-50%); }
-          to   { transform: translateX(0); }
-        }
- 
         /* ──── SCROLL CUE ──── */
         @keyframes wheel-scroll {
           0%   { transform: translateY(0); opacity: 1; }
           50%  { transform: translateY(6px); opacity: 0.3; }
           100% { transform: translateY(0); opacity: 1; }
         }
- 
+
         /* ──── CTAs ──── */
         .hero-cta-solid {
           position: relative; overflow: hidden;
@@ -505,7 +384,7 @@ export default function Home() {
           transition: all 0.3s ease;
         }
         .hero-cta-ghost:hover { transform: translateY(-2px); }
- 
+
         /* ──── STATS ──── */
         .hero-stats {
           display: flex; flex-wrap: wrap; justify-content: center; gap: 1px;
@@ -518,9 +397,9 @@ export default function Home() {
           transition: background 0.25s ease; cursor: default;
         }
         .hero-stat:last-child { border-right: none !important; }
- 
+
         .tfc-navbar-wrap { border-bottom: none !important; box-shadow: none !important; }
- 
+
         /* ──── RESPONSIVE ──── */
         @media (max-width: 640px) {
           .hero-ctas-wrap { flex-direction: column !important; width: 100% !important; }
@@ -530,52 +409,43 @@ export default function Home() {
           .hero-stats { border-radius: 16px !important; }
         }
       `}</style>
- 
+
       <UrgencyBanner />
       <Navbar />
- 
+
       {/* ═══════════ HERO UPPER — Logo + Date/City ═══════════ */}
       <section style={{
         position: "relative", overflow: "hidden", background: bg,
         minHeight: "100vh", display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
       }}>
-        {/* Aurora */}
-        <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
-          <div className={dark ? "aurora-layer aurora-layer--dark" : "aurora-layer aurora-layer--light"} />
+        {/* Video background */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden" }}>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{
+              position: "absolute",
+              top: "50%", left: "50%",
+              minWidth: "100%", minHeight: "100%",
+              width: "auto", height: "auto",
+              transform: "translate(-50%, -50%)",
+              objectFit: "cover",
+            }}
+          >
+            <source src="/hero-bg.mp4" type="video/mp4" />
+          </video>
+          {/* Dark overlay for text readability */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: dark
+              ? "rgba(6,2,15,0.65)"
+              : "rgba(244,240,255,0.75)",
+          }} />
         </div>
- 
-        <div className="hero-grid" />
- 
-        <div className="hero-glow" style={{
-          width: 720, height: 720,
-          background: dark
-            ? "radial-gradient(circle, rgba(122,63,209,0.18) 0%, transparent 70%)"
-            : "radial-gradient(circle, rgba(122,63,209,0.08) 0%, transparent 70%)",
-          top: -270, left: -220, filter: "blur(90px)",
-        }} />
-        <div className="hero-glow" style={{
-          width: 520, height: 520,
-          background: dark
-            ? "radial-gradient(circle, rgba(245,166,35,0.10) 0%, transparent 70%)"
-            : "radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%)",
-          top: -170, right: -200, filter: "blur(100px)",
-        }} />
- 
-        {/* Marquee rows — very subtle behind everything */}
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 2,
-          display: "flex", flexDirection: "column",
-          justifyContent: "center", alignItems: "center",
-          gap: "4.5rem",
-          pointerEvents: "none", overflow: "hidden",
-        }}>
-          <KeywordMarquee words={KEYWORDS_A} direction="left" speed={50} dark={dark} />
-          <KeywordMarquee words={KEYWORDS_B} direction="right" speed={55} dark={dark} />
-          <KeywordMarquee words={KEYWORDS_A.slice().reverse()} direction="left" speed={45} dark={dark} />
-          <KeywordMarquee words={KEYWORDS_B.slice().reverse()} direction="right" speed={60} dark={dark} />
-        </div>
- 
+
         {/* Centered content */}
         <motion.div
           variants={containerVariants}
@@ -604,7 +474,7 @@ export default function Home() {
             />
           </motion.div>
         </motion.div>
- 
+
         {/* Bottom fade */}
         <div style={{
           position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 4,
@@ -612,7 +482,7 @@ export default function Home() {
           pointerEvents: "none",
         }} />
       </section>
- 
+
       {/* ═══════════ HERO LOWER — MEET BUILD SCALE + CTAs ═══════════ */}
       <section id="hero-lower" style={{
         position: "relative", background: bg, overflow: "hidden",
@@ -637,21 +507,21 @@ export default function Home() {
               letterSpacing: "-0.5px", marginBottom: "1rem",
             }}
           />
- 
+
           <DividerReveal accent={accent} />
           <SubtitleReveal textMid={textMid} />
           <CTAReveal dark={dark} textMain={textMain} accent={accent} />
           <StatsReveal stats={stats} dark={dark} cardBg={cardBg} cardBdr={cardBdr} textSoft={textSoft} />
         </div>
       </section>
- 
+
       {/* ═══════════ ABOUT / FOOTER / MODALS ═══════════ */}
       <div id="about-section">
         <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
       </div>
- 
+
       <Footer />
- 
+
       <InquiryModal isOpen={inquiryOpen} onClose={function () { setInquiryOpen(false); }} />
       <CookieConsent />
       <PostPurchaseModal

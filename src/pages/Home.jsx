@@ -397,7 +397,7 @@ export default function Home() {
   var stats = [
     { num: "500", suffix: "+", label: "Decision Makers" },
     { num: "5",   suffix: "",  label: "Tech Pillars" },
-    { num: "Oct 28",           label: "2026", isText: true },
+    { num: "27-28 Oct",         label: "2026", isText: true },
     { num: "The Carlu",        label: "Toronto, ON", isText: true },
   ];
 
@@ -565,7 +565,8 @@ export default function Home() {
         <div style={{
           position: "absolute", inset: 0, zIndex: 2,
           display: "flex", flexDirection: "column",
-          justifyContent: "center", gap: "3.5rem",
+          justifyContent: "center", alignItems: "center",
+          gap: "4.5rem",
           pointerEvents: "none", overflow: "hidden",
         }}>
           <KeywordMarquee words={KEYWORDS_A} direction="left" speed={50} dark={dark} />
@@ -594,7 +595,7 @@ export default function Home() {
                 : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
               alt="The Tech Festival Canada"
               style={{
-                width: "100%", maxWidth: 480, height: "auto", objectFit: "contain",
+                width: "100%", maxWidth: 580, height: "auto", objectFit: "contain",
                 filter: dark
                   ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))"
                   : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))",
@@ -610,7 +611,7 @@ export default function Home() {
               flexWrap: "wrap", justifyContent: "center", marginBottom: "2.5rem",
             }}
           >
-            {["Oct 28, 2026", "Toronto, ON"].map(function (label) {
+            {["27-28 Oct, 2026", "Toronto, ON"].map(function (label) {
               return (
                 <div key={label} style={{
                   display: "inline-flex", alignItems: "center",

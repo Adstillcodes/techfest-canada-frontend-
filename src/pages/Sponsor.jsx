@@ -517,7 +517,11 @@ function ComparisonTable(props) {
               borderSpacing: 0,
               tableLayout: "fixed",
             }}>
-              <thead>
+              <thead style={{
+                visibility: showBar ? "hidden" : "visible",
+                opacity: showBar ? 0 : 1,
+                transition: "opacity 0.2s ease",
+              }}>
                 <tr>
                   <th style={{
                     background: dark ? "#0d0620" : "#f4f0ff",

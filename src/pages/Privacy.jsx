@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useEffect, useState } from "react";
  
 var SECTIONS_PRIVACY = [
   {
@@ -207,8 +208,8 @@ var SECTIONS_COOKIES = [
 function PolicySection(props) {
   var s = props.section;
   var dark = props.dark;
-  var cardBg = dark ? "rgba(155,135,245,0.04)" : "rgba(122,63,209,0.025)";
-  var cardBdr = dark ? "rgba(155,135,245,0.10)" : "rgba(122,63,209,0.08)";
+  var cardBg = dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.025)";
+  var cardBdr = dark ? "rgba(155,135,245,0.14)" : "rgba(122,63,209,0.08)";
  
   return (
     <div style={{
@@ -230,7 +231,7 @@ function PolicySection(props) {
       <p style={{
         fontSize: "0.94rem",
         lineHeight: 1.8,
-        color: dark ? "rgba(255,255,255,0.70)" : "rgba(13,5,32,0.72)",
+        color: dark ? "rgba(255,255,255,0.78)" : "rgba(13,5,32,0.72)",
         marginBottom: s.list ? 14 : 0,
       }}>{s.body}</p>
  
@@ -247,7 +248,7 @@ function PolicySection(props) {
               <li key={i} style={{
                 fontSize: "0.9rem",
                 lineHeight: 1.75,
-                color: dark ? "rgba(255,255,255,0.62)" : "rgba(13,5,32,0.65)",
+                color: dark ? "rgba(255,255,255,0.72)" : "rgba(13,5,32,0.65)",
               }}>{item}</li>
             );
           })}
@@ -258,7 +259,7 @@ function PolicySection(props) {
         <p style={{
           fontSize: "0.9rem",
           lineHeight: 1.75,
-          color: dark ? "rgba(255,255,255,0.62)" : "rgba(13,5,32,0.65)",
+          color: dark ? "rgba(255,255,255,0.72)" : "rgba(13,5,32,0.65)",
           marginTop: 14,
         }}>{s.after}</p>
       )}
@@ -319,7 +320,7 @@ function PolicyBlock(props) {
         <p style={{
           fontSize: "0.95rem",
           lineHeight: 1.85,
-          color: dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.68)",
+          color: dark ? "rgba(255,255,255,0.75)" : "rgba(13,5,32,0.68)",
           marginBottom: "2.5rem",
           textAlign: "justify",
         }}>{props.intro}</p>
@@ -334,13 +335,16 @@ function PolicyBlock(props) {
 }
  
 export default function Privacy() {
-  var s = typeof document !== "undefined" && document.body.classList.contains("dark-mode");
-  var dark = s;
+  var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
  
-  // Re-check on render (simple approach for SSR-safe)
-  if (typeof window !== "undefined") {
-    dark = document.body.classList.contains("dark-mode");
-  }
+  useEffect(function () {
+    setDark(document.body.classList.contains("dark-mode"));
+    var obs = new MutationObserver(function () {
+      setDark(document.body.classList.contains("dark-mode"));
+    });
+    obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    return function () { obs.disconnect(); };
+  }, []);
  
   var bg = dark ? "#06020f" : "#ffffff";
  
@@ -348,13 +352,12 @@ export default function Privacy() {
     <>
       <Navbar />
  
-      <div style={{
-        background: bg,
-        minHeight: "100vh",
-        padding: "4rem 6% 6rem",
-        maxWidth: 860,
-        margin: "0 auto",
-      }}>
+      <div style={{ background: bg, minHeight: "100vh" }}>
+        <div style={{
+          padding: "4rem 6% 6rem",
+          maxWidth: 860,
+          margin: "0 auto",
+        }}>
  
         {/* ═══ PRIVACY POLICY ═══ */}
         <PolicyBlock
@@ -406,6 +409,7 @@ export default function Privacy() {
           dark={dark}
         />
  
+        </div>
       </div>
  
       <Footer />

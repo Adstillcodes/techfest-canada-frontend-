@@ -192,13 +192,6 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
       >
         {/* Header */}
         <div className="flex flex-col items-center mb-20">
-          <motion.span 
-            variants={itemVariants}
-            className="text-[var(--brand-orange)] font-bold tracking-[0.4em] uppercase text-[10px] md:text-xs mb-4 flex items-center gap-2"
-          >
-            <Zap className="w-4 h-4 fill-[var(--brand-orange)]" />
-            Our Vision
-          </motion.span>
           <motion.h2 
             variants={itemVariants}
             className="text-4xl md:text-7xl font-black text-center mb-8 font-['Orbitron'] tracking-tighter text-[var(--text-main)] leading-tight uppercase"
@@ -212,6 +205,7 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
           <motion.p
             variants={itemVariants}
             className="text-center max-w-3xl mt-8 text-[var(--text-muted)] text-base leading-relaxed"
+            style={{ textAlign: "justify", hyphens: "auto" as const }}
           >
             The Tech Festival Canada's <strong style={{ color: "var(--brand-orange)" }}>5 tech pillars</strong> aren't discussed in isolation. They're showcased through <strong style={{ color: "var(--brand-purple)" }}>5 applied sectors</strong> where the demand is urgent and budgets are real. Every session, showcase, and networking moment is designed to answer one question: <em style={{ color: "var(--text-main)", fontWeight: 600 }}>How does this technology get deployed, scaled, and procured in Canada, NOW?</em>
           </motion.p>
@@ -220,14 +214,14 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-center">
           
-          {/* Left Column */}
+          {/* Left Column — Tech Pillars */}
           <div className="space-y-4">
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:"12px" }}>
-              <span style={{ width:8, height:8, borderRadius:"50%", background:"rgba(160,100,255,0.9)", boxShadow:"0 0 6px rgba(160,100,255,0.6)", display:"inline-block", flexShrink:0 }} />
-              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(160,100,255,0.85)" }}>5 APPLIED SECTORS</span>
+              <span style={{ width:8, height:8, borderRadius:"50%", background:"rgba(245,166,35,0.9)", boxShadow:"0 0 6px rgba(245,166,35,0.6)", display:"inline-block", flexShrink:0 }} />
+              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(245,166,35,0.85)" }}>5 TECH PILLARS</span>
             </div>
             {data.services
-              ?.filter((s: any) => s.position === 'left')
+              ?.filter((s: any) => s.position === 'right')
               .map((service: any, i: number) => (
                 <ServiceCard key={i} {...service} align="left" />
               ))}
@@ -262,14 +256,14 @@ export default function AboutUs({ onWriteToUs }: { onWriteToUs?: () => void }) {
             />
           </motion.div>
 
-          {/* Right Column */}
+          {/* Right Column — Applied Sectors */}
           <div className="space-y-4">
             <div style={{ display:"flex", alignItems:"center", justifyContent:"flex-end", gap:8, marginBottom:"12px" }}>
-              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(245,166,35,0.85)" }}>5 TECH PILLARS</span>
-              <span style={{ width:8, height:8, borderRadius:"50%", background:"rgba(245,166,35,0.9)", boxShadow:"0 0 6px rgba(245,166,35,0.6)", display:"inline-block", flexShrink:0 }} />
+              <span style={{ fontSize:"0.7rem", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"rgba(160,100,255,0.85)" }}>5 APPLIED SECTORS</span>
+              <span style={{ width:8, height:8, borderRadius:"50%", background:"rgba(160,100,255,0.9)", boxShadow:"0 0 6px rgba(160,100,255,0.6)", display:"inline-block", flexShrink:0 }} />
             </div>
             {data.services
-              ?.filter((s: any) => s.position === 'right')
+              ?.filter((s: any) => s.position === 'left')
               .map((service: any, i: number) => (
                 <ServiceCard key={i} {...service} align="right" />
               ))}
@@ -408,11 +402,11 @@ function StatBox({ iconName, value, suffix, label, delay, index }: any) {
       <div className="w-16 h-16 rounded-2xl bg-[var(--brand-orange)]/5 flex items-center justify-center text-[var(--brand-orange)] mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-sm">
         {statIcons[index] || iconMap[iconName] || <TrendingUp className="w-7 h-7" />}
       </div>
-      <div className="text-4xl font-black font-['Orbitron'] mb-3 text-[var(--text-main)] tracking-tighter">
+      <div className="text-4xl font-black font-['Orbitron'] mb-3 text-[var(--text-main)]" style={{ letterSpacing: "0.05em" }}>
         {displayValue}{suffix}
       </div>
-      <div className="text-[var(--text-muted)] text-sm uppercase tracking-[0.15em] font-bold text-center leading-snug">
-        {label}
+      <div className="text-[var(--text-muted)] text-sm uppercase tracking-[0.15em] font-bold text-center leading-snug" style={{ maxWidth: 140 }}>
+        {label?.replace(/-/g, " ")}
       </div>
     </motion.div>
   )

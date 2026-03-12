@@ -28,8 +28,15 @@
     --shadow-main: 0 10px 30px rgba(17, 17, 17, 0.08);
 }
 [data-theme="dark"] {
-  --bg: #0b0b0f;
-  --text: #ffffff;
+    --bg-main: #0D0A1A;
+    --bg-card: rgba(28, 16, 52, 0.75);
+    --bg-nav: rgba(10, 7, 20, 0.92);
+    --bg-modal: #1A1030;
+
+    --text-main: #FFFFFF;
+    --text-muted: #BFC5CC;
+    --border-main: rgba(122, 63, 209, 0.22);
+    --shadow-main: 0 15px 40px rgba(0, 0, 0, 0.7);
 }
 /* 🔐 Modal overlay — MUST be on top */
 .modal-overlay {
@@ -78,17 +85,7 @@ nav {
   box-shadow: 0 0 0 2px rgba(122, 63, 209, 0.15);
 }
 
-body.dark-mode {
-    /* Dark Mode Settings */
-    --bg-main: #0D0A1A;
-    --bg-card: rgba(28, 16, 52, 0.75);
-    --bg-nav: rgba(10, 7, 20, 0.92);
-    --bg-modal: #1A1030;
-
-    --text-main: var(--brand-white);
-    --text-muted: var(--brand-silver);
-    --border-main: rgba(122, 63, 209, 0.22);
-    --shadow-main: 0 15px 40px rgba(0, 0, 0, 0.7);
+   --shadow-main: 0 15px 40px rgba(0, 0, 0, 0.7);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -102,15 +99,7 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body.dark-mode {
-    background-color: #0D0A1A;
-    background-image:
-        radial-gradient(ellipse at 20% 0%,   rgba(122, 63, 209, 0.28) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 10%,  rgba(245, 166, 35, 0.12) 0%, transparent 45%),
-        radial-gradient(ellipse at 50% 100%, rgba(217, 70, 143, 0.10) 0%, transparent 50%),
-        linear-gradient(180deg, #0D0A1A 0%, #070512 100%);
-    background-attachment: fixed;
-}
+
 
 h1, h2, h3, h4 { font-family: 'Orbitron', sans-serif; font-weight: 700; letter-spacing: 0.5px; }
 a { text-decoration: none; color: inherit; }

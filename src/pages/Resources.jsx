@@ -3,26 +3,6 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-function Counter(props) {
-  var to = props.to;
-  var suffix = props.suffix || "";
-  var s = useState(0); var val = s[0]; var setVal = s[1];
-  var ref = useRef(null);
-  var inView = useInView(ref, { once: true });
-  useEffect(function () {
-    if (!inView) return;
-    var start = 0;
-    var step = Math.ceil(to / 40);
-    var id = setInterval(function () {
-      start += step;
-      if (start >= to) { setVal(to); clearInterval(id); }
-      else setVal(start);
-    }, 30);
-    return function () { clearInterval(id); };
-  }, [inView, to]);
-  return <span ref={ref}>{val}{suffix}</span>;
-}
-
 export default function FirstTimers() {
   var s1 = useState(true); var isDark = s1[0]; var setIsDark = s1[1];
   var heroRef = useRef(null);
@@ -51,15 +31,11 @@ export default function FirstTimers() {
       <style>{`
         @media (max-width: 900px) {
           .ft-row { grid-template-columns: 1fr !important; direction: ltr !important; gap: 28px !important; }
-          .ft-hero-stats { flex-wrap: wrap !important; justify-content: center !important; gap: 10px !important; }
-          .ft-hero-stats > * { flex: 1 1 140px !important; min-width: 130px !important; max-width: 180px !important; }
           .ft-bottom-cta-grid { grid-template-columns: 1fr !important; }
           .ft-img { min-height: 260px !important; }
         }
         @media (max-width: 540px) {
           .ft-hero-h1 { font-size: 1.5rem !important; line-height: 1.25 !important; }
-          .ft-hero-stats { gap: 8px !important; }
-          .ft-hero-stats > * { flex: 1 1 110px !important; min-width: 100px !important; padding: 10px 10px !important; }
           .ft-cta-row { flex-direction: column !important; align-items: stretch !important; }
           .ft-cta-row a { width: 100% !important; text-align: center !important; justify-content: center !important; }
           .ft-bottom-cta-grid { min-height: auto !important; }
@@ -162,17 +138,6 @@ export default function FirstTimers() {
             transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
             style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}
           >
-            {/* Eyebrow */}
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              background: "rgba(122,63,209,0.15)", border: "1px solid rgba(122,63,209,0.35)",
-              borderRadius: 999, padding: "6px 18px", marginBottom: 28,
-              backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px #f5a623", display: "inline-block" }} />
-              <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: accent }}>First Timers</span>
-            </div>
-
             {/* Heading */}
             <h1 className="ft-hero-h1" style={{
               fontFamily: "'Orbitron', sans-serif",
@@ -195,34 +160,6 @@ export default function FirstTimers() {
             }}>
               If this is your first time, here is what to expect and how to get the most value from the experience. This is built for outcomes: clearer decisions, faster partnerships, and real momentum after the event.
             </p>
-
-            {/* Stats */}
-            <div className="ft-hero-stats" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-              {[
-                { val: 500, suffix: "+", label: "Decision Makers" },
-                { val: 5, suffix: "", label: "Tech Pillars" },
-                { val: 5, suffix: "", label: "Applied Sectors" },
-                { val: 2, suffix: " Days", label: "27-28 Oct, 2026" },
-              ].map(function (s, i) {
-                return (
-                  <motion.div key={s.label}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.6 + i * 0.1 }}
-                    style={{
-                      background: isDark ? "rgba(122,63,209,0.12)" : "rgba(122,63,209,0.08)",
-                      border: "1px solid " + (isDark ? "rgba(122,63,209,0.25)" : "rgba(122,63,209,0.22)"),
-                      borderRadius: 14, padding: "14px 24px", textAlign: "center",
-                      backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-                    }}>
-                    <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.4rem", fontWeight: 900, color: "#f5a623" }}>
-                      <Counter to={s.val} suffix={s.suffix} />
-                    </div>
-                    <div style={{ fontSize: "0.7rem", color: textMuted, letterSpacing: "0.8px", textTransform: "uppercase", marginTop: 2 }}>{s.label}</div>
-                  </motion.div>
-                );
-              })}
-            </div>
 
             {/* Scroll cue */}
             <motion.div

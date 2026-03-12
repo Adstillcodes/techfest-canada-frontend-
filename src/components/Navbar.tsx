@@ -16,7 +16,7 @@ export default function Navbar() {
   const navItems = [
     { label: "HOME",         path: "/" },
     { label: "First Timers", path: "/on-demand" },
-    { label: "EXHIBITION",   path: "/sponsors" },
+    { label: "PARTNERS",     path: "/sponsors" },
     { label: "SPEAKERS",     path: "/speakers" },
     { label: "AGENDA",       path: "/agenda" },
   ];
@@ -398,4 +398,3 @@ export default function Navbar() {
     </>
   );
 }
- 

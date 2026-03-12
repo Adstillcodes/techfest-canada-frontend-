@@ -152,7 +152,7 @@ function PassCard({ meta, inventoryItem, onPurchase, isDark }) {
       </div>
 
       {/* Remaining badge */}
-      {remaining !== null && (
+      {/*remaining !== null && (
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 5, marginBottom: 16, marginTop: 6,
           fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
@@ -164,7 +164,7 @@ function PassCard({ meta, inventoryItem, onPurchase, isDark }) {
           <span style={{ width: 5, height: 5, borderRadius: "50%", background: "currentColor", display: "inline-block" }} />
           {soldOut ? "Sold Out" : `${remaining} spots left`}
         </div>
-      )}
+      )*/}
 
       {/* Divider */}
       <div style={{ width: "100%", height: 1, background: dividerBg, margin: remaining !== null ? "4px 0 16px" : "14px 0 16px" }} />

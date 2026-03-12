@@ -416,7 +416,7 @@ function ComparisonTable(props) {
       if (!el) return;
       var rect = el.getBoundingClientRect();
       // Show bar when table section top is above navbar (80px) and bottom is still below viewport
-      setShowBar(rect.top < 80 && rect.bottom > 200);
+      setShowBar(rect.top < 80 && rect.bottom > 80);
     }
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
@@ -437,11 +437,11 @@ function ComparisonTable(props) {
         opacity: showBar ? 1 : 0,
         transition: "transform 0.3s ease, opacity 0.25s ease",
         pointerEvents: showBar ? "auto" : "none",
+        padding: "0 6%",
       }}>
         <div style={{
           maxWidth: 1200,
           margin: "0 auto",
-          padding: "0 6%",
         }}>
           <div style={{
             display: "grid",

@@ -65,60 +65,174 @@ export default function FirstTimers() {
           .ft-bottom-cta-grid { min-height: auto !important; }
         }
         @media (max-width: 380px) { .ft-hero-h1 { font-size: 1.25rem !important; } }
+
+        /* ──── AURORA ──── */
+        :root {
+          --aurora-white: #ffffff;
+          --aurora-black: #06020f;
+          --aurora-transparent: transparent;
+          --aurora-purple: #7a3fd1;
+          --aurora-violet: #9b57e8;
+          --aurora-lilac: #c4a0f5;
+          --aurora-orange: #f5a623;
+          --aurora-amber: #f7c15e;
+        }
+        @keyframes ft-aurora {
+          from { background-position: 50% 50%, 50% 50%; }
+          to   { background-position: 350% 50%, 350% 50%; }
+        }
+        .ft-aurora-layer {
+          position: absolute; inset: -10px; pointer-events: none;
+          will-change: transform;
+          background-size: 300%, 200%;
+          background-position: 50% 50%;
+          filter: blur(10px);
+          opacity: 0.50;
+        }
+        .ft-aurora-layer--dark {
+          background-image:
+            repeating-linear-gradient(100deg, var(--aurora-black) 0%, var(--aurora-black) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-black) 16%),
+            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
+          mask-image: radial-gradient(ellipse at 100% 0%, black 10%, var(--aurora-transparent) 70%);
+          -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, var(--aurora-transparent) 70%);
+        }
+        .ft-aurora-layer--dark::after {
+          content: ""; position: absolute; inset: 0;
+          background-image:
+            repeating-linear-gradient(100deg, var(--aurora-black) 0%, var(--aurora-black) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-black) 16%),
+            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
+          background-size: 200%, 100%;
+          background-attachment: fixed;
+          animation: ft-aurora 60s linear infinite;
+          mix-blend-mode: difference;
+        }
+        .ft-aurora-layer--light {
+          background-image:
+            repeating-linear-gradient(100deg, var(--aurora-white) 0%, var(--aurora-white) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-white) 16%),
+            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
+          opacity: 0.35; filter: blur(12px);
+          mask-image: radial-gradient(ellipse at 100% 0%, black 10%, var(--aurora-transparent) 70%);
+          -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 10%, var(--aurora-transparent) 70%);
+        }
+        .ft-aurora-layer--light::after {
+          content: ""; position: absolute; inset: 0;
+          background-image:
+            repeating-linear-gradient(100deg, var(--aurora-white) 0%, var(--aurora-white) 7%, var(--aurora-transparent) 10%, var(--aurora-transparent) 12%, var(--aurora-white) 16%),
+            repeating-linear-gradient(100deg, var(--aurora-purple) 10%, var(--aurora-lilac) 15%, var(--aurora-orange) 20%, var(--aurora-amber) 25%, var(--aurora-violet) 30%);
+          background-size: 200%, 100%;
+          background-attachment: fixed;
+          animation: ft-aurora 60s linear infinite;
+          mix-blend-mode: difference;
+        }
       `}</style>
 
       <Navbar />
 
-      {/* ═══════════ HERO ═══════════ */}
+      {/* ═══════════ HERO — Aurora Background ═══════════ */}
       <section ref={heroRef} style={{
         position: "relative", display: "flex", alignItems: "center", justifyContent: "center",
-        overflow: "hidden", paddingTop: "clamp(80px, 15vw, 130px)", paddingBottom: "clamp(40px, 8vw, 80px)",
+        overflow: "hidden", minHeight: "100vh",
+        background: isDark ? "#06020f" : "#f4f0ff",
       }}>
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none",
-          backgroundImage: isDark
-            ? "linear-gradient(rgba(122,63,209,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(122,63,209,0.06) 1px, transparent 1px)"
-            : "linear-gradient(rgba(122,63,209,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(122,63,209,0.10) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+        {/* Aurora layer */}
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
+          <div className={isDark ? "ft-aurora-layer ft-aurora-layer--dark" : "ft-aurora-layer ft-aurora-layer--light"} />
+        </div>
+
+        {/* Radial mask for depth */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          background: isDark
+            ? "radial-gradient(ellipse 80% 60% at 50% 50%, transparent 20%, #06020f 100%)"
+            : "radial-gradient(ellipse 80% 60% at 50% 50%, transparent 20%, #f4f0ff 100%)",
         }} />
-        <div style={{ position: "absolute", top: "10%", left: "5%", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(122,63,209,0.15), transparent 70%)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: "10%", right: "5%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(245,166,35,0.10), transparent 70%)", pointerEvents: "none" }} />
 
-        <motion.div style={{ y: heroY, opacity: heroOpacity, position: "relative", zIndex: 1, textAlign: "center", padding: "0 5%", maxWidth: 900, margin: "0 auto" }}>
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(122,63,209,0.12)", border: "1px solid rgba(122,63,209,0.30)", borderRadius: 999, padding: "6px 18px", marginBottom: 28 }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px #f5a623", display: "inline-block" }} />
-            <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: accent }}>First Timers</span>
-          </motion.div>
+        {/* Content */}
+        <motion.div style={{
+          y: heroY, opacity: heroOpacity,
+          position: "relative", zIndex: 10,
+          textAlign: "center", padding: "0 5%",
+          maxWidth: 900, margin: "0 auto",
+          paddingTop: "clamp(80px, 12vw, 120px)",
+          paddingBottom: "clamp(40px, 8vw, 80px)",
+        }}>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.8, ease: "easeInOut" }}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}
+          >
+            {/* Eyebrow */}
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: "rgba(122,63,209,0.15)", border: "1px solid rgba(122,63,209,0.35)",
+              borderRadius: 999, padding: "6px 18px", marginBottom: 28,
+              backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px #f5a623", display: "inline-block" }} />
+              <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: accent }}>First Timers</span>
+            </div>
 
-          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}
-            className="ft-hero-h1" style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2.2rem, 5vw, 4rem)", fontWeight: 900, lineHeight: 1.1, marginBottom: 24 }}>
-            Welcome to{" "}
-            <span style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>The Tech Festival Canada</span>
-          </motion.h1>
+            {/* Heading */}
+            <h1 className="ft-hero-h1" style={{
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "clamp(2.2rem, 5.5vw, 4.2rem)",
+              fontWeight: 900, lineHeight: 1.08,
+              marginBottom: 24, letterSpacing: "-0.5px",
+            }}>
+              Welcome to{" "}
+              <span style={{
+                background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+              }}>The Tech Festival Canada</span>
+            </h1>
 
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.6 }}
-            style={{ fontSize: "1.05rem", color: textMuted, lineHeight: 1.8, maxWidth: 680, margin: "0 auto 40px" }}>
-            If this is your first time, here is what to expect and how to get the most value from the experience. This is built for outcomes: clearer decisions, faster partnerships, and real momentum after the event.
-          </motion.p>
+            {/* Subtitle */}
+            <p style={{
+              fontSize: "clamp(0.95rem, 1.6vw, 1.12rem)",
+              color: textMuted, lineHeight: 1.85,
+              maxWidth: 660, marginBottom: 40,
+            }}>
+              If this is your first time, here is what to expect and how to get the most value from the experience. This is built for outcomes: clearer decisions, faster partnerships, and real momentum after the event.
+            </p>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-            className="ft-hero-stats" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            {[
-              { val: 500, suffix: "+", label: "Decision Makers" },
-              { val: 5, suffix: "", label: "Tech Pillars" },
-              { val: 5, suffix: "", label: "Applied Sectors" },
-              { val: 2, suffix: " Days", label: "27-28 Oct, 2026" },
-            ].map(function (s, i) {
-              return (
-                <motion.div key={s.label} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 + i * 0.1 }}
-                  style={{ background: "rgba(122,63,209,0.10)", border: "1px solid rgba(122,63,209,0.20)", borderRadius: 14, padding: "14px 24px", textAlign: "center" }}>
-                  <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.4rem", fontWeight: 900, color: "#f5a623" }}>
-                    <Counter to={s.val} suffix={s.suffix} />
-                  </div>
-                  <div style={{ fontSize: "0.7rem", color: textMuted, letterSpacing: "0.8px", textTransform: "uppercase", marginTop: 2 }}>{s.label}</div>
-                </motion.div>
-              );
-            })}
+            {/* Stats */}
+            <div className="ft-hero-stats" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+              {[
+                { val: 500, suffix: "+", label: "Decision Makers" },
+                { val: 5, suffix: "", label: "Tech Pillars" },
+                { val: 5, suffix: "", label: "Applied Sectors" },
+                { val: 2, suffix: " Days", label: "27-28 Oct, 2026" },
+              ].map(function (s, i) {
+                return (
+                  <motion.div key={s.label}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.6 + i * 0.1 }}
+                    style={{
+                      background: isDark ? "rgba(122,63,209,0.12)" : "rgba(122,63,209,0.08)",
+                      border: "1px solid " + (isDark ? "rgba(122,63,209,0.25)" : "rgba(122,63,209,0.22)"),
+                      borderRadius: 14, padding: "14px 24px", textAlign: "center",
+                      backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+                    }}>
+                    <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.4rem", fontWeight: 900, color: "#f5a623" }}>
+                      <Counter to={s.val} suffix={s.suffix} />
+                    </div>
+                    <div style={{ fontSize: "0.7rem", color: textMuted, letterSpacing: "0.8px", textTransform: "uppercase", marginTop: 2 }}>{s.label}</div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Scroll cue */}
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 1.8 }}
+              style={{ marginTop: 48, color: textMuted, fontSize: "0.7rem", textAlign: "center", opacity: 0.6 }}
+            >
+              <div style={{ fontSize: "1.1rem" }}>↓</div>
+              <div style={{ letterSpacing: "1.5px", marginTop: 4, fontFamily: "'Orbitron', sans-serif", fontSize: "0.55rem", fontWeight: 700 }}>SCROLL</div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </section>
@@ -167,7 +281,7 @@ export default function FirstTimers() {
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
         reverse={true} hasBg={true}
         image="/ft-expo.jpg" imageAlt="The Tech Festival Canada expo and networking floor"
-        cta={{ label: "Partner With Us", href: "/sponsor" }}
+        cta={{ label: "Partner With Us", href: "/sponsors" }}
       >
         <h2 style={headingStyle(textMain)}>
           The <GradientSpan>Expo</GradientSpan>
@@ -223,7 +337,7 @@ export default function FirstTimers() {
       <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
         reverse={true} hasBg={true}
         image="/ft-clinic.jpg" imageAlt="Consultation Clinic at The Tech Festival Canada"
-        cta={{ label: "Partner With Us", href: "/sponsor" }}
+        cta={{ label: "Partner With Us", href: "/sponsors" }}
       >
         <h2 style={headingStyle(textMain)}>
           Consultation <GradientSpan>Clinic</GradientSpan>
@@ -258,7 +372,7 @@ export default function FirstTimers() {
                 onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)"; e.currentTarget.style.color = "#fff"; }}
                 onMouseLeave={function (e) { e.currentTarget.style.background = isDark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = isDark ? "#0d0520" : "#ffffff"; }}
               >Get Your Tickets</motion.a>
-              <motion.a href="/sponsor" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+              <motion.a href="/sponsors" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                 style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: "1.5px solid " + (isDark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.5)"), color: isDark ? textMain : "#1a0a40", padding: "14px 32px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: "0.78rem", textDecoration: "none" }}
               >Partner With Us</motion.a>
             </div>

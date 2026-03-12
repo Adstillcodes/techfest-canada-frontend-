@@ -32,6 +32,7 @@ function App() {
         <Route path="/agenda" element={<Agenda />} />
         <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
         <Route path="/auth-success" element={<AuthSuccess />} />
+        <Route path="/sponsor" element={<Sponsor />} />
 
         {/* RESET PASSWORD ROUTE */}
         <Route path="/reset-password/:token" element={<ResetPassword />} />

@@ -190,20 +190,27 @@ export default function Sponsor() {
   return (
     <>
       <style>{`
-        @keyframes gradient-shift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+        @keyframes sponsor-glow-breathe {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
         }
         .sponsor-hero {
           position: relative; overflow: hidden;
-          background: linear-gradient(135deg, #7a3fd1 0%, #9b57e8 25%, #f5a623 50%, #e8437a 75%, #7a3fd1 100%);
-          background-size: 300% 300%;
-          animation: gradient-shift 12s ease infinite;
+          min-height: 80vh;
+          display: flex; align-items: center; justify-content: center;
         }
-        .sponsor-hero::before {
-          content: ''; position: absolute; inset: 0;
-          background: rgba(0,0,0,0.35); z-index: 1;
+        .sponsor-hero-grid {
+          position: absolute; inset: 0; z-index: 1; pointer-events: none;
+          background-image:
+            linear-gradient(rgba(122,63,209,0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(122,63,209,0.04) 1px, transparent 1px);
+          background-size: 68px 68px;
+          mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 10%, transparent 100%);
+          -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 10%, transparent 100%);
+        }
+        .sponsor-hero-glow {
+          position: absolute; border-radius: 50%; pointer-events: none; z-index: 1;
+          animation: sponsor-glow-breathe 8s ease-in-out infinite;
         }
         .pkg-card {
           border-radius: 24px; padding: 36px 32px;
@@ -220,6 +227,8 @@ export default function Sponsor() {
         @media (max-width: 768px) {
           .pkg-grid { grid-template-columns: 1fr !important; }
           .spec-grid { grid-template-columns: 1fr !important; }
+          .sponsor-hero { min-height: auto; padding-top: 5rem; padding-bottom: 4rem; }
+          .sponsor-hero-stats { flex-direction: column !important; }
         }
         @media (min-width: 769px) and (max-width: 1100px) {
           .pkg-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -229,61 +238,200 @@ export default function Sponsor() {
       <Navbar />
  
       {/* ═══════════ HERO ═══════════ */}
-      <section className="sponsor-hero" style={{
-        padding: "clamp(5rem, 10vw, 8rem) 6% clamp(4rem, 8vw, 6rem)",
-      }}>
-        <div style={{ position: "relative", zIndex: 2, maxWidth: 1200, margin: "0 auto" }}>
+      <section className="sponsor-hero" style={{ background: bg }}>
+        {/* Grid */}
+        <div className="sponsor-hero-grid" />
+ 
+        {/* Glows */}
+        <div className="sponsor-hero-glow" style={{
+          width: 650, height: 650,
+          background: dark
+            ? "radial-gradient(circle, rgba(122,63,209,0.22) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(122,63,209,0.10) 0%, transparent 70%)",
+          top: -200, left: -150, filter: "blur(90px)",
+        }} />
+        <div className="sponsor-hero-glow" style={{
+          width: 500, height: 500,
+          background: dark
+            ? "radial-gradient(circle, rgba(245,166,35,0.14) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(245,166,35,0.08) 0%, transparent 70%)",
+          top: -100, right: -180, filter: "blur(100px)", animationDelay: "3s",
+        }} />
+        <div className="sponsor-hero-glow" style={{
+          width: 400, height: 300,
+          background: dark
+            ? "radial-gradient(circle, rgba(155,135,245,0.10) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(155,135,245,0.06) 0%, transparent 70%)",
+          bottom: -60, left: "30%", filter: "blur(100px)", animationDelay: "5s",
+        }} />
+ 
+        {/* Content */}
+        <div style={{
+          position: "relative", zIndex: 5,
+          maxWidth: 900, margin: "0 auto",
+          padding: "clamp(5rem, 10vw, 8rem) 6%",
+          display: "flex", flexDirection: "column",
+          alignItems: "center", textAlign: "center",
+        }}>
+          {/* Eyebrow pill */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", bounce: 0.25, duration: 1.5 }}
-            style={{ maxWidth: 650 }}
+            initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ type: "spring", bounce: 0.3, duration: 1.4, delay: 0.1 }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              padding: "7px 20px", borderRadius: 999,
+              background: dark ? "rgba(122,63,209,0.10)" : "rgba(122,63,209,0.06)",
+              border: "1px solid " + (dark ? "rgba(122,63,209,0.22)" : "rgba(122,63,209,0.18)"),
+              marginBottom: 28,
+            }}
           >
-            <p style={{
+            <span style={{
+              width: 6, height: 6, borderRadius: "50%",
+              background: "var(--brand-orange, #f5a623)",
+              boxShadow: "0 0 8px var(--brand-orange, #f5a623)",
+            }} />
+            <span style={{
               fontFamily: "'Orbitron', sans-serif",
-              fontSize: "0.72rem", fontWeight: 800,
-              letterSpacing: "3px", textTransform: "uppercase",
-              color: "rgba(255,255,255,0.75)", marginBottom: 16,
-            }}>TFC 2026 Sponsorship Packages</p>
+              fontSize: "0.65rem", fontWeight: 800,
+              letterSpacing: "2px", textTransform: "uppercase",
+              color: accent,
+            }}>TFC 2026 Sponsorship</span>
+          </motion.div>
  
-            <h1 style={{
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", bounce: 0.25, duration: 1.5, delay: 0.25 }}
+            style={{
               fontFamily: "'Orbitron', sans-serif",
-              fontSize: "clamp(2rem, 5vw, 3.6rem)",
+              fontSize: "clamp(2.2rem, 5.5vw, 4rem)",
               fontWeight: 900, lineHeight: 1.08,
-              color: "#ffffff", marginBottom: 24,
-              textTransform: "uppercase", letterSpacing: "-0.5px",
-            }}>Partner With Us To Lead The Future</h1>
+              letterSpacing: "-0.5px",
+              marginBottom: 10,
+            }}
+          >
+            <span style={{ color: textMain }}>Partner With Us </span>
+            <span style={{
+              background: "linear-gradient(135deg, var(--brand-purple, #7a3fd1), var(--brand-orange, #f5a623))",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>To Lead The Future</span>
+          </motion.h1>
  
-            <p style={{
+          {/* Divider */}
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.5 }}
+            style={{
+              width: 70, height: 2, borderRadius: 2,
+              background: "linear-gradient(90deg, " + accent + ", var(--brand-orange, #f5a623))",
+              margin: "18px auto 24px",
+              transformOrigin: "center",
+            }}
+          />
+ 
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", bounce: 0.2, duration: 1.4, delay: 0.45 }}
+            style={{
               fontSize: "clamp(0.95rem, 1.5vw, 1.1rem)",
-              lineHeight: 1.8, color: "rgba(255,255,255,0.85)",
-              marginBottom: 36, maxWidth: 560,
-            }}>
-              The Tech Festival Canada is the ultimate platform for companies to showcase
-              their leadership in emerging technologies. Our sponsorship packages provide
-              unparalleled branding, networking, and thought-leadership opportunities,
-              helping your company stay ahead in a competitive market.
-            </p>
+              lineHeight: 1.85, color: textMid,
+              maxWidth: 600, marginBottom: 36,
+              textAlign: "justify", hyphens: "auto",
+            }}
+          >
+            The Tech Festival Canada is the ultimate platform for companies to showcase
+            their leadership in emerging technologies. Our sponsorship packages provide
+            unparalleled branding, networking, and thought-leadership opportunities,
+            helping your company stay ahead in a competitive market.
+          </motion.p>
  
+          {/* CTA + Stats row */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", bounce: 0.2, duration: 1.2, delay: 0.6 }}
+            style={{
+              display: "flex", flexDirection: "column",
+              alignItems: "center", gap: 32,
+            }}
+          >
             <button
               onClick={function () { setInquiryOpen(true); }}
               style={{
                 fontFamily: "'Orbitron', sans-serif",
                 fontSize: "0.78rem", fontWeight: 800,
                 letterSpacing: "1px", textTransform: "uppercase",
-                padding: "16px 38px", borderRadius: 14,
+                padding: "17px 42px", borderRadius: 14,
                 border: "none", cursor: "pointer",
-                background: "#ffffff", color: "#0d0520",
-                boxShadow: "0 6px 24px rgba(0,0,0,0.25)",
-                transition: "transform 0.2s ease",
+                background: dark ? "#ffffff" : "#0d0520",
+                color: dark ? "#0d0520" : "#ffffff",
+                boxShadow: dark
+                  ? "0 6px 28px rgba(155,135,245,0.2)"
+                  : "0 6px 28px rgba(13,5,32,0.18)",
+                transition: "all 0.25s ease",
               }}
-              onMouseEnter={function (e) { e.currentTarget.style.transform = "translateY(-2px)"; }}
-              onMouseLeave={function (e) { e.currentTarget.style.transform = "translateY(0)"; }}
+              onMouseEnter={function (e) {
+                e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)";
+                e.currentTarget.style.color = "#fff";
+                e.currentTarget.style.transform = "translateY(-3px)";
+              }}
+              onMouseLeave={function (e) {
+                e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520";
+                e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
             >
               Write to Us
+              <span style={{ marginLeft: 10, display: "inline-block" }}>→</span>
             </button>
+ 
+            {/* Stat pills */}
+            <div className="sponsor-hero-stats" style={{
+              display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center",
+            }}>
+              {[
+                { num: "13", label: "Packages" },
+                { num: "500+", label: "Decision Makers" },
+                { num: "27-28 Oct", label: "2026" },
+              ].map(function (s) {
+                return (
+                  <div key={s.label} style={{
+                    display: "flex", alignItems: "center", gap: 10,
+                    padding: "10px 22px", borderRadius: 14,
+                    background: cardBg,
+                    border: "1px solid " + cardBdr,
+                  }}>
+                    <span style={{
+                      fontFamily: "'Orbitron', sans-serif",
+                      fontSize: "0.88rem", fontWeight: 900,
+                      background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
+                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}>{s.num}</span>
+                    <span style={{
+                      fontSize: "0.62rem", fontWeight: 700,
+                      letterSpacing: "0.8px", textTransform: "uppercase",
+                      color: textSoft,
+                    }}>{s.label}</span>
+                  </div>
+                );
+              })}
+            </div>
           </motion.div>
         </div>
+ 
+        {/* Bottom fade */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0,
+          height: 100, zIndex: 4, pointerEvents: "none",
+          background: "linear-gradient(to bottom, transparent, " + bg + ")",
+        }} />
       </section>
  
       {/* ═══════════ FEATURED PACKAGES ═══════════ */}
@@ -545,3 +693,4 @@ function SpecialtyCard(props) {
     </motion.div>
   );
 }
+ 

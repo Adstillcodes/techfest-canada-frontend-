@@ -8,160 +8,6 @@ import { motion, useInView } from "framer-motion";
    PACKAGE DATA — from spreadsheet
    ═══════════════════════════════════════════════════════ */
 
-var FEATURED = [
-  {
-    name: "Platinum Partner",
-    price: "$24,999",
-    spots: "Limited",
-    tagline: "Position your brand as the face of The Tech Festival Canada.",
-    color: "#b99eff",
-    benefits: [
-      "4 Booth Spaces (10ft × 10ft)",
-      "2 Curated Conference Sessions",
-      "15 Delegate Passes",
-      "15 VIP Lounge Access passes",
-      "10 scheduled 1:1 Meetings",
-      "2 Award Presenting Opportunities",
-      "Opening Ceremony Guest of Honour",
-      "Press Release & Media Interview",
-      "Double Spread in e-Show Directory",
-      "Full Page Delegate & Visitor Bag Insert",
-      "4 EDM Spotlights",
-      "Large LED Screen Booth Wall & Signage",
-      "Product Demo slot",
-      "Live Podcast Recording",
-      "Website Showcase (50 words)",
-      "Post Event Social Media Video",
-    ],
-  },
-  {
-    name: "Gold Partner",
-    price: "$19,999",
-    spots: "Limited",
-    tagline: "Highlight your commitment to driving innovation at scale.",
-    color: "#f5a623",
-    benefits: [
-      "3 Booth Spaces (10ft × 10ft)",
-      "1 Curated Conference Session",
-      "8 Delegate Passes",
-      "8 VIP Lounge Access passes",
-      "7 scheduled 1:1 Meetings",
-      "1 Award Presenting Opportunity",
-      "Opening Ceremony Guest of Honour",
-      "Press Release & Media Interview",
-      "Full Page in e-Show Directory",
-      "Full Page Delegate & Visitor Bag Insert",
-      "3 EDM Spotlights",
-      "Medium LED Screen Booth Wall & Signage",
-      "Product Demo slot",
-      "Live Podcast Recording",
-      "Website Showcase (50 words)",
-      "Post Event Social Media Video",
-    ],
-  },
-  {
-    name: "Silver Partner",
-    price: "$14,999",
-    spots: "Limited",
-    tagline: "Elevate your presence among Canada's top tech decision-makers.",
-    color: "#c0c0c0",
-    benefits: [
-      "2 Booth Spaces (10ft × 10ft)",
-      "6 Delegate Passes",
-      "5 VIP Lounge Access passes",
-      "3 scheduled 1:1 Meetings",
-      "Press Release & Media Interview",
-      "Full Page in e-Show Directory",
-      "Full Page Delegate & Visitor Bag Insert",
-      "3 EDM Spotlights",
-      "Small LED Screen Booth Wall & Signage",
-      "Product Demo slot",
-      "Live Podcast Recording",
-      "Website Showcase (50 words)",
-      "Post Event Social Media Video",
-    ],
-  },
-  {
-    name: "Bronze Partner",
-    price: "$9,999",
-    spots: "Available",
-    tagline: "Get in the room with the buyers and decision-makers who matter.",
-    color: "#cd7f32",
-    benefits: [
-      "1 Booth Space (10ft × 10ft)",
-      "4 Delegate Passes",
-      "3 VIP Lounge Access passes",
-      "2 scheduled 1:1 Meetings",
-      "Press Release & Media Interview",
-      "Half Page in e-Show Directory",
-      "Full Page Delegate & Visitor Bag Insert",
-      "1 EDM Spotlight",
-      "Thumbnail LED Screen & Signage",
-      "Product Demo slot",
-      "Live Podcast Recording",
-      "Website Showcase (50 words)",
-      "Post Event Social Media Video",
-    ],
-  },
-];
-
-var SPECIALTY = [
-  {
-    name: "Delegate Kit Partner",
-    price: "$4,999",
-    spots: "1",
-    benefits: ["1 Booth Space", "2 Delegate Passes", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
-  },
-  {
-    name: "Lanyard & Badge Partner",
-    price: "$4,999",
-    spots: "1",
-    benefits: ["1 Booth Space", "2 Delegate Passes", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
-  },
-  {
-    name: "Luncheon Partner",
-    price: "$14,999",
-    spots: "2",
-    benefits: ["1 Booth Space", "2 Delegate Passes", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
-  },
-  {
-    name: "CxO Breakfast Partner",
-    price: "$9,999",
-    spots: "2",
-    benefits: ["1 Booth Space", "2 Delegate Passes", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
-  },
-  {
-    name: "Gala Dinner Partner",
-    price: "$19,999",
-    spots: "1",
-    benefits: ["1 Booth Space", "2 Delegate Passes", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
-  },
-  {
-    name: "WiFi Partner",
-    price: "$2,499",
-    spots: "1",
-    benefits: ["2 Delegate Passes", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
-  },
-  {
-    name: "Registration Partner",
-    price: "$4,999",
-    spots: "1",
-    benefits: ["1 Booth Space", "2 Delegate Passes", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
-  },
-  {
-    name: "Visitor Bag Partner",
-    price: "$4,999",
-    spots: "1",
-    benefits: ["1 Booth Space", "2 Delegate Passes", "Full Page Visitor Bag Insert", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
-  },
-  {
-    name: "Custom Category Sponsor",
-    price: "$7,499",
-    spots: "10",
-    benefits: ["1 Booth Space", "2 Delegate Passes", "2 scheduled 1:1 Meetings", "3 VIP Lounge Access passes", "Full Page Delegate Bag Insert", "Half Page e-Show Directory", "Press Release & Media Interview", "1 EDM Spotlight", "Thumbnail Signage", "Live Podcast Recording", "Website Showcase", "Post Event Video"],
-  },
-];
-
 /* ═══════════════════════════════════════════════════════
    SPONSOR PAGE
    ═══════════════════════════════════════════════════════ */
@@ -408,46 +254,144 @@ export default function Sponsor() {
         }} />
       </section>
 
-      {/* ═══════════ FEATURED PACKAGES ═══════════ */}
-      <section style={{ background: bg, padding: "5rem 6% 3rem" }}>
+      {/* ═══════════ COMPARISON TABLE ═══════════ */}
+      <section style={{ background: bg, padding: "5rem 6% 5rem" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <RevealHeader
             eyebrow="Sponsorship Tiers"
-            title="Partnership Packages"
-            subtitle="From title sponsorship to category-specific partnerships — choose the level of visibility that matches your ambitions."
+            title="Compare Packages"
+            subtitle="Every benefit at a glance — pick the partnership level that matches your ambitions."
             textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent}
           />
 
+          {/* Scrollable table wrapper */}
           <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: 20, marginTop: "3rem",
-          }} className="pkg-grid">
-            {FEATURED.map(function (pkg) {
-              return <PackageCard key={pkg.name} pkg={pkg} dark={dark} textMain={textMain} textMid={textMid} />;
-            })}
-          </div>
-        </div>
-      </section>
+            marginTop: "2.5rem",
+            border: "1px solid " + cardBdr,
+            borderRadius: 20,
+            overflow: "hidden",
+          }}>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{
+                width: "100%", minWidth: 820,
+                borderCollapse: "collapse",
+                tableLayout: "fixed",
+              }}>
+                {/* ── STICKY HEADER ── */}
+                <thead>
+                  <tr>
+                    <th style={{
+                      position: "sticky", top: 0, zIndex: 10,
+                      background: dark ? "#0a0518" : "#f8f6ff",
+                      padding: "20px 22px",
+                      textAlign: "left",
+                      borderBottom: "1px solid " + cardBdr,
+                      width: "28%",
+                    }}>
+                      <span style={{
+                        fontFamily: "'Orbitron', sans-serif",
+                        fontSize: "0.72rem", fontWeight: 800,
+                        letterSpacing: "1.5px", textTransform: "uppercase",
+                        color: textSoft,
+                      }}>Benefit</span>
+                    </th>
+                    {TIERS.map(function (tier) {
+                      return (
+                        <th key={tier.name} style={{
+                          position: "sticky", top: 0, zIndex: 10,
+                          background: dark ? "#0a0518" : "#f8f6ff",
+                          padding: "18px 12px",
+                          textAlign: "center",
+                          borderBottom: "1px solid " + cardBdr,
+                          borderLeft: "1px solid " + cardBdr,
+                          width: "18%",
+                        }}>
+                          <div style={{
+                            width: 28, height: 3, borderRadius: 3,
+                            background: tier.color,
+                            margin: "0 auto 10px",
+                            boxShadow: "0 0 10px " + tier.color + "50",
+                          }} />
+                          <span style={{
+                            fontFamily: "'Orbitron', sans-serif",
+                            fontSize: "0.74rem", fontWeight: 900,
+                            color: textMain, display: "block",
+                          }}>{tier.name}</span>
+                          <span style={{
+                            fontFamily: "'Orbitron', sans-serif",
+                            fontSize: "1rem", fontWeight: 900,
+                            color: tier.color, display: "block",
+                            marginTop: 4,
+                          }}>{tier.price}</span>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
 
-      {/* ═══════════ SPECIALTY PACKAGES ═══════════ */}
-      <section style={{ background: bg, padding: "3rem 6% 5rem" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <RevealHeader
-            eyebrow="Specialty Partnerships"
-            title="Category-Specific Opportunities"
-            subtitle="Targeted visibility tied to key event touchpoints — from delegate kits to gala dinners."
-            textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent}
-          />
-
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 16, marginTop: "2.5rem",
-          }} className="spec-grid">
-            {SPECIALTY.map(function (pkg) {
-              return <SpecialtyCard key={pkg.name} pkg={pkg} dark={dark} textMain={textMain} textMid={textMid} />;
-            })}
+                {/* ── BODY ── */}
+                <tbody>
+                  {ROWS.map(function (row, ri) {
+                    var isGroup = row.group;
+                    if (isGroup) {
+                      return (
+                        <tr key={ri}>
+                          <td colSpan={TIERS.length + 1} style={{
+                            padding: "16px 22px 10px",
+                            background: dark ? "rgba(122,63,209,0.06)" : "rgba(122,63,209,0.03)",
+                            borderTop: ri > 0 ? "1px solid " + cardBdr : "none",
+                          }}>
+                            <span style={{
+                              fontFamily: "'Orbitron', sans-serif",
+                              fontSize: "0.62rem", fontWeight: 800,
+                              letterSpacing: "2px", textTransform: "uppercase",
+                              color: accent,
+                            }}>{row.group}</span>
+                          </td>
+                        </tr>
+                      );
+                    }
+                    return (
+                      <tr key={ri} style={{
+                        background: ri % 2 === 0
+                          ? "transparent"
+                          : (dark ? "rgba(155,135,245,0.02)" : "rgba(122,63,209,0.015)"),
+                      }}>
+                        <td style={{
+                          padding: "14px 22px",
+                          fontSize: "0.84rem", fontWeight: 500,
+                          color: textMid,
+                          borderTop: "1px solid " + (dark ? "rgba(155,135,245,0.06)" : "rgba(122,63,209,0.05)"),
+                        }}>{row.label}</td>
+                        {row.values.map(function (val, vi) {
+                          return (
+                            <td key={vi} style={{
+                              padding: "14px 12px",
+                              textAlign: "center",
+                              borderTop: "1px solid " + (dark ? "rgba(155,135,245,0.06)" : "rgba(122,63,209,0.05)"),
+                              borderLeft: "1px solid " + (dark ? "rgba(155,135,245,0.06)" : "rgba(122,63,209,0.05)"),
+                              fontSize: "0.82rem",
+                              color: textMid,
+                            }}>
+                              {val === true ? (
+                                <span style={{ color: "#4ade80", fontSize: "1.1rem" }}>✓</span>
+                              ) : val === false ? (
+                                <span style={{ color: dark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)", fontSize: "0.9rem" }}>—</span>
+                              ) : (
+                                <span style={{
+                                  fontWeight: 700,
+                                  color: textMain,
+                                }}>{val}</span>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -502,6 +446,46 @@ export default function Sponsor() {
 }
 
 /* ═══════════════════════════════════════════════════════
+   COMPARISON TABLE DATA
+   ═══════════════════════════════════════════════════════ */
+
+var TIERS = [
+  { name: "Platinum", price: "$24,999", color: "#b99eff" },
+  { name: "Gold",     price: "$19,999", color: "#f5a623" },
+  { name: "Silver",   price: "$14,999", color: "#c0c0c0" },
+  { name: "Bronze",   price: "$9,999",  color: "#cd7f32" },
+];
+
+// true = ✓, false = —, string = specific value
+var ROWS = [
+  { group: "Exhibit & Presence" },
+  { label: "Booth Space (10ft × 10ft)",         values: ["4", "3", "2", "1"] },
+  { label: "Curated Conference Sessions",        values: ["2", "1", false, false] },
+  { label: "Delegate Passes",                    values: ["15", "8", "6", "4"] },
+  { label: "VIP Lounge Access",                  values: ["15", "8", "5", "3"] },
+  { label: "1:1 Curated Meetings",               values: ["10", "7", "3", "2"] },
+
+  { group: "Branding & Visibility" },
+  { label: "LED Screen Booth Wall",              values: ["Large", "Medium", "Small", "Thumbnail"] },
+  { label: "Branded Signage",                    values: ["Large", "Medium", "Small", "Thumbnail"] },
+  { label: "e-Show Directory",                   values: ["Double Spread", "Full Page", "Full Page", "Half Page"] },
+  { label: "Delegate Bag Insert",                values: ["Full Page", "Full Page", "Full Page", "Full Page"] },
+  { label: "Visitor Bag Insert",                 values: ["Full Page", "Full Page", "Full Page", "Full Page"] },
+  { label: "EDM Spotlights",                     values: ["4", "3", "3", "1"] },
+
+  { group: "Thought Leadership" },
+  { label: "Award Presenting Opportunity",       values: ["2", "1", false, false] },
+  { label: "Opening Ceremony Guest of Honour",   values: [true, true, false, false] },
+  { label: "Press Release & Media Interview",    values: [true, true, true, true] },
+  { label: "Product Demo",                       values: [true, true, true, true] },
+  { label: "Live Podcast Recording",             values: [true, true, true, true] },
+
+  { group: "Digital & Post-Event" },
+  { label: "Website Showcase (50 Words)",        values: [true, true, true, true] },
+  { label: "Post Event Social Media Video",      values: [true, true, true, true] },
+];
+
+/* ═══════════════════════════════════════════════════════
    SUB-COMPONENTS
    ═══════════════════════════════════════════════════════ */
 
@@ -536,134 +520,6 @@ function RevealHeader(props) {
         fontSize: "0.95rem", lineHeight: 1.8,
         color: props.textMid, maxWidth: 600, margin: "0 auto",
       }}>{props.subtitle}</p>
-    </motion.div>
-  );
-}
-
-function PackageCard(props) {
-  var pkg = props.pkg;
-  var dark = props.dark;
-  var ref = useRef(null);
-  var isInView = useInView(ref, { once: true, margin: "-40px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ type: "spring", bounce: 0.2, duration: 1 }}
-      className="pkg-card"
-      style={{
-        background: dark ? "rgba(155,135,245,0.06)" : "rgba(122,63,209,0.03)",
-        border: "1px solid " + (dark ? "rgba(155,135,245,0.14)" : "rgba(122,63,209,0.10)"),
-        boxShadow: dark ? "0 4px 24px rgba(0,0,0,0.3)" : "0 4px 24px rgba(122,63,209,0.06)",
-      }}
-    >
-      <div style={{
-        width: 40, height: 4, borderRadius: 4,
-        background: pkg.color, marginBottom: 18,
-        boxShadow: "0 0 12px " + pkg.color + "60",
-      }} />
-      <h3 style={{
-        fontFamily: "'Orbitron', sans-serif",
-        fontSize: "1.1rem", fontWeight: 900,
-        color: props.textMain, marginBottom: 4,
-      }}>{pkg.name}</h3>
-      <p style={{
-        fontFamily: "'Orbitron', sans-serif",
-        fontSize: "1.5rem", fontWeight: 900,
-        color: pkg.color, marginBottom: 6,
-      }}>{pkg.price}</p>
-      <p style={{
-        fontSize: "0.68rem", fontWeight: 700,
-        letterSpacing: "1px", textTransform: "uppercase",
-        color: props.textMid, marginBottom: 14, opacity: 0.7,
-      }}>{pkg.spots} spots</p>
-      <p style={{
-        fontSize: "0.88rem", lineHeight: 1.6,
-        color: props.textMid, marginBottom: 22,
-        fontWeight: 500, fontStyle: "italic",
-      }}>{pkg.tagline}</p>
-      <div style={{
-        height: 1,
-        background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
-        marginBottom: 18,
-      }} />
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
-        {pkg.benefits.map(function (b, i) {
-          return (
-            <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-              <span style={{
-                width: 6, height: 6, borderRadius: "50%",
-                background: pkg.color, flexShrink: 0,
-                marginTop: 7, opacity: 0.7,
-              }} />
-              <span style={{ fontSize: "0.82rem", lineHeight: 1.55, color: props.textMid }}>{b}</span>
-            </div>
-          );
-        })}
-      </div>
-    </motion.div>
-  );
-}
-
-function SpecialtyCard(props) {
-  var pkg = props.pkg;
-  var dark = props.dark;
-  var ref = useRef(null);
-  var isInView = useInView(ref, { once: true, margin: "-30px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ type: "spring", bounce: 0.2, duration: 0.9 }}
-      className="spec-card"
-      style={{
-        background: dark ? "rgba(155,135,245,0.05)" : "rgba(122,63,209,0.02)",
-        border: "1px solid " + (dark ? "rgba(155,135,245,0.10)" : "rgba(122,63,209,0.08)"),
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
-        <h4 style={{
-          fontFamily: "'Orbitron', sans-serif",
-          fontSize: "0.88rem", fontWeight: 800,
-          color: props.textMain, lineHeight: 1.3,
-        }}>{pkg.name}</h4>
-        <span style={{
-          fontFamily: "'Orbitron', sans-serif",
-          fontSize: "0.7rem", fontWeight: 800,
-          color: "var(--brand-orange, #f5a623)",
-          whiteSpace: "nowrap", marginLeft: 8,
-        }}>{pkg.spots} spot{pkg.spots !== "1" ? "s" : ""}</span>
-      </div>
-      <p style={{
-        fontFamily: "'Orbitron', sans-serif",
-        fontSize: "1.2rem", fontWeight: 900,
-        background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
-        WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-        backgroundClip: "text", marginBottom: 16,
-      }}>{pkg.price}</p>
-      <div style={{
-        height: 1,
-        background: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
-        marginBottom: 14,
-      }} />
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {pkg.benefits.map(function (b, i) {
-          return (
-            <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-              <span style={{
-                width: 4, height: 4, borderRadius: "50%",
-                background: dark ? "rgba(155,135,245,0.4)" : "rgba(122,63,209,0.3)",
-                flexShrink: 0, marginTop: 7,
-              }} />
-              <span style={{ fontSize: "0.8rem", lineHeight: 1.5, color: props.textMid }}>{b}</span>
-            </div>
-          );
-        })}
-      </div>
     </motion.div>
   );
 }

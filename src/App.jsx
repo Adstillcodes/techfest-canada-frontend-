@@ -14,6 +14,7 @@ import ResetPassword from "./pages/ResetPassword";
 import TicketBar from "./components/TicketBar";
 import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
+import Sponsor from "./pages/Sponsor";
 
 function App() {
   return (

@@ -43,19 +43,61 @@ export default function Speakers() {
   return (
     <>
       <style>{`
-        /* ── PAGE WRAPPER ── */
+        /* ===== THEME VARIABLES ===== */
+        :root {
+          /* Brand colors (assumed to be defined globally) */
+          --brand-purple: #7a3fd1;
+          --brand-orange: #f5a623;
+          --gradient-brand: linear-gradient(135deg, var(--brand-purple), var(--brand-orange));
+
+          /* RGB versions for opacity effects */
+          --brand-purple-rgb: 122, 63, 209;
+          --brand-orange-rgb: 245, 166, 35;
+
+          /* Component‑specific variables – light mode defaults */
+          --orb-purple: radial-gradient(circle, rgba(var(--brand-purple-rgb), 0.2) 0%, transparent 70%);
+          --orb-orange: radial-gradient(circle, rgba(var(--brand-orange-rgb), 0.1) 0%, transparent 70%);
+          --grid-line: rgba(var(--brand-purple-rgb), 0.04);
+          --eyebrow-bg: rgba(var(--brand-purple-rgb), 0.08);
+          --eyebrow-border: rgba(var(--brand-purple-rgb), 0.2);
+          --stat-icon-bg: rgba(var(--brand-purple-rgb), 0.08);
+          --stat-icon-border: rgba(var(--brand-purple-rgb), 0.15);
+          --stat-icon-color: var(--brand-purple);
+          --stat-value-color: var(--text-main);
+          --stats-strip-bg: rgba(var(--brand-purple-rgb), 0.08);
+          --stats-strip-border: rgba(var(--brand-purple-rgb), 0.15);
+          --cta-band-glow: rgba(var(--brand-purple-rgb), 0.08);
+          --loading-text: var(--text-muted);
+        }
+
+        [data-theme="dark"] {
+          --orb-purple: radial-gradient(circle, rgba(var(--brand-purple-rgb), 0.28) 0%, transparent 70%);
+          --orb-orange: radial-gradient(circle, rgba(var(--brand-orange-rgb), 0.15) 0%, transparent 70%);
+          --grid-line: rgba(var(--brand-purple-rgb), 0.1);
+          --eyebrow-bg: rgba(var(--brand-purple-rgb), 0.15);
+          --eyebrow-border: rgba(var(--brand-purple-rgb), 0.3);
+          --stat-icon-bg: rgba(var(--brand-purple-rgb), 0.15);
+          --stat-icon-border: rgba(var(--brand-purple-rgb), 0.25);
+          --stat-icon-color: #b99eff;      /* softer purple for dark mode */
+          --stat-value-color: transparent;  /* will be overridden by gradient */
+          --stats-strip-bg: rgba(var(--brand-purple-rgb), 0.15);
+          --stats-strip-border: rgba(var(--brand-purple-rgb), 0.2);
+          --cta-band-glow: rgba(var(--brand-purple-rgb), 0.2);
+          --loading-text: rgba(160, 130, 220, 0.5);
+        }
+
+        /* ===== PAGE WRAPPER ===== */
         .speakers-page {
           min-height: 100vh;
           display: flex;
           flex-direction: column;
-          /* Uses global variable from styles.css */
           background: var(--bg-main);
         }
         .speakers-main {
           flex: 1;
         }
 
-        /* ── HERO BANNER ── */
+        /* ===== HERO BANNER ===== */
         .speakers-hero {
           position: relative;
           overflow: hidden;
@@ -65,47 +107,43 @@ export default function Speakers() {
         .speakers-hero-orb-1 {
           position: absolute; pointer-events: none;
           width: 500px; height: 500px; border-radius: 50%;
-          background: radial-gradient(circle, rgba(122,63,209,0.28) 0%, transparent 70%);
+          background: var(--orb-purple);
           top: -160px; left: -100px; filter: blur(70px);
         }
         .speakers-hero-orb-2 {
           position: absolute; pointer-events: none;
           width: 400px; height: 400px; border-radius: 50%;
-          background: radial-gradient(circle, rgba(245,166,35,0.15) 0%, transparent 70%);
+          background: var(--orb-orange);
           top: -80px; right: -80px; filter: blur(70px);
         }
         .speakers-hero-grid {
           position: absolute; inset: 0; pointer-events: none;
           background-image:
-            linear-gradient(rgba(122,63,209,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(122,63,209,0.04) 1px, transparent 1px);
+            linear-gradient(var(--grid-line) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
           background-size: 60px 60px;
           mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
         }
         .speakers-eyebrow {
           display: inline-flex; align-items: center; gap: 8px;
-          background: rgba(122,63,209,0.12);
-          border: 1px solid rgba(122,63,209,0.28);
+          background: var(--eyebrow-bg);
+          border: 1px solid var(--eyebrow-border);
           color: var(--brand-purple);
           padding: 5px 16px; border-radius: 999px;
           font-size: 0.72rem; font-weight: 700;
           letter-spacing: 1.4px; text-transform: uppercase;
           margin-bottom: 1.4rem;
         }
-        [data-theme="dark"] .speakers-eyebrow {
-           color: #b99eff;
-        }
-        
         .speakers-eyebrow-dot {
           width: 6px; height: 6px; border-radius: 50%;
-          background: var(--brand-orange); box-shadow: 0 0 6px var(--brand-orange);
+          background: var(--brand-orange);
+          box-shadow: 0 0 6px var(--brand-orange);
           animation: spkPulse 2s ease infinite;
         }
         @keyframes spkPulse {
           0%,100% { opacity:1; transform:scale(1); }
           50% { opacity:0.6; transform:scale(1.4); }
         }
-        
         .speakers-hero h1 {
           font-size: clamp(2.4rem, 5vw, 4rem);
           font-weight: 900;
@@ -115,7 +153,6 @@ export default function Speakers() {
           color: var(--text-main);
         }
         .speakers-hero h1 span { color: var(--brand-orange); }
-        
         .speakers-hero-sub {
           font-size: 1rem;
           color: var(--text-muted);
@@ -123,26 +160,26 @@ export default function Speakers() {
           margin: 0 auto 2.4rem;
           line-height: 1.75;
         }
-
         .speakers-hero-cta {
           display: inline-flex; align-items: center; gap: 8px;
           background: var(--gradient-brand);
-          color: var(--brand-white); border: none; padding: 12px 28px;
+          color: var(--brand-white);
+          border: none; padding: 12px 28px;
           border-radius: 999px; font-weight: 700; font-size: 0.85rem;
           cursor: pointer; text-decoration: none;
           transition: opacity 0.2s, transform 0.2s;
         }
         .speakers-hero-cta:hover { opacity: 0.88; transform: translateY(-2px); }
 
-        /* ── STATS STRIP ── */
+        /* ===== STATS STRIP ===== */
         .speakers-stats {
           display: flex;
           justify-content: center;
           flex-wrap: wrap;
           gap: 1px;
-          background: rgba(122,63,209,0.15);
-          border-top: 1px solid rgba(122,63,209,0.15);
-          border-bottom: 1px solid rgba(122,63,209,0.15);
+          background: var(--stats-strip-bg);
+          border-top: 1px solid var(--stats-strip-border);
+          border-bottom: 1px solid var(--stats-strip-border);
           margin-bottom: 5rem;
         }
         .stat-cell {
@@ -153,28 +190,23 @@ export default function Speakers() {
         }
         .stat-icon {
           width: 42px; height: 42px; border-radius: 12px;
-          background: rgba(122,63,209,0.12);
-          border: 1px solid rgba(122,63,209,0.25);
+          background: var(--stat-icon-bg);
+          border: 1px solid var(--stat-icon-border);
           display: flex; align-items: center; justify-content: center;
           flex-shrink: 0;
-          color: var(--brand-purple);
+          color: var(--stat-icon-color);
         }
-        [data-theme="dark"] .stat-icon {
-            color: #b99eff;
-        }
-        
         .stat-value {
           font-family: 'Orbitron', sans-serif;
           font-size: 1.5rem; font-weight: 900;
           line-height: 1;
-          color: var(--text-main);
+          color: var(--stat-value-color);
         }
         [data-theme="dark"] .stat-value {
-           background: var(--gradient-brand);
+          background: var(--gradient-brand);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-           background-clip: text;
+          background-clip: text;
         }
-        
         .stat-label {
           font-size: 0.72rem; font-weight: 700;
           color: var(--text-muted);
@@ -182,7 +214,7 @@ export default function Speakers() {
           letter-spacing: 0.8px; margin-top: 3px;
         }
 
-        /* ── SECTION HEADERS ── */
+        /* ===== SECTION HEADERS ===== */
         .section-header {
           text-align: center;
           margin-bottom: 3rem;
@@ -196,7 +228,6 @@ export default function Speakers() {
           margin-bottom: 0.6rem;
         }
         .section-header h2 span { color: var(--brand-orange); }
-        
         .section-header p {
           font-size: 0.92rem;
           color: var(--text-muted);
@@ -204,7 +235,6 @@ export default function Speakers() {
           margin: 0 auto;
           line-height: 1.7;
         }
-        
         .section-divider {
           width: 48px; height: 3px;
           background: var(--gradient-brand);
@@ -212,14 +242,14 @@ export default function Speakers() {
           margin: 1rem auto 0;
         }
 
-        /* ── CAROUSEL SECTION ── */
+        /* ===== CAROUSEL SECTION ===== */
         .carousel-section {
           padding: 0 5% 5rem;
           max-width: 1200px;
           margin: 0 auto;
         }
 
-        /* ── SPEAK CTA BAND ── */
+        /* ===== SPEAK CTA BAND ===== */
         .speak-cta-band {
           margin: 5rem 5%;
           border-radius: 24px;
@@ -235,13 +265,14 @@ export default function Speakers() {
           overflow: hidden;
         }
         [data-theme="dark"] .speak-cta-band {
-           background: linear-gradient(135deg, rgba(122,63,209,0.12) 0%, rgba(245,166,35,0.06) 100%);
+          background: linear-gradient(135deg,
+            rgba(var(--brand-purple-rgb), 0.12) 0%,
+            rgba(var(--brand-orange-rgb), 0.06) 100%);
         }
-        
         .speak-cta-band::before {
           content: '';
           position: absolute; inset: 0;
-          background: radial-gradient(ellipse 60% 80% at 0% 50%, rgba(122,63,209,0.12), transparent);
+          background: radial-gradient(ellipse 60% 80% at 0% 50%, var(--cta-band-glow), transparent);
           pointer-events: none;
         }
         .speak-cta-text h3 {
@@ -251,7 +282,6 @@ export default function Speakers() {
           margin-bottom: 0.5rem;
         }
         .speak-cta-text h3 span { color: var(--brand-orange); }
-        
         .speak-cta-text p {
           font-size: 0.9rem;
           color: var(--text-muted);
@@ -271,8 +301,7 @@ export default function Speakers() {
         <Navbar />
 
         <main className="speakers-main">
-
-          {/* ── HERO ── */}
+          {/* Hero section – unchanged markup */}
           <section className="speakers-hero">
             <div className="speakers-hero-orb-1" />
             <div className="speakers-hero-orb-2" />
@@ -296,7 +325,7 @@ export default function Speakers() {
             </div>
           </section>
 
-          {/* ── STATS STRIP ── */}
+          {/* Stats strip */}
           <div className="speakers-stats">
             {stats.map(({ icon: Icon, value, label }) => (
               <div className="stat-cell" key={label}>
@@ -309,7 +338,7 @@ export default function Speakers() {
             ))}
           </div>
 
-          {/* ── FEATURED SPEAKER CAROUSEL ── */}
+          {/* Featured speaker carousel */}
           <section className="carousel-section">
             <div className="section-header">
               <h2>Featured <span>Speakers</span></h2>
@@ -319,14 +348,14 @@ export default function Speakers() {
             {speakers.length > 0
               ? <SpeakerCarousel speakers={speakers} />
               : (
-                <div style={{ textAlign:"center", padding:"3rem", color:"rgba(160,130,220,0.5)", fontSize:"0.9rem" }}>
+                <div style={{ textAlign: "center", padding: "3rem", color: "var(--loading-text)", fontSize: "0.9rem" }}>
                   Loading speakers…
                 </div>
               )
             }
           </section>
 
-          {/* ── SPEAK AT TFC CTA ── */}
+          {/* Speak at TFC CTA */}
           <div className="speak-cta-band">
             <div className="speak-cta-text">
               <h3>Want to <span>Speak</span> at TFC?</h3>
@@ -339,7 +368,6 @@ export default function Speakers() {
               Apply to Speak <ChevronRight size={16} />
             </a>
           </div>
-
         </main>
 
         <Footer />

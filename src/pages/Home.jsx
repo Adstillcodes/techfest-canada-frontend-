@@ -28,16 +28,8 @@ var itemBlur = {
   },
 };
 
-var itemSlow = {
-  hidden: { opacity: 0, y: 14 },
-  visible: {
-    opacity: 1, y: 0,
-    transition: { type: "spring", bounce: 0.2, duration: 1.8, delay: 0.08 },
-  },
-};
-
 /* ═══════════════════════════════════════════════════════
-   SCROLL-TRIGGERED TEXT REVEAL (dev21 TextEffect)
+   SCROLL-TRIGGERED TEXT REVEAL
    Word-by-word blur + slide + scale
    ═══════════════════════════════════════════════════════ */
 
@@ -66,10 +58,9 @@ function TextReveal(props) {
       }}
       style={{
         display: "flex",
-        flexWrap: "nowrap",
-        justifyContent: "center",
-        gap: "0.4em",
-        whiteSpace: "nowrap",
+        flexDirection: "column", // Forces stacking
+        alignItems: "center", // Centers the stacked words
+        gap: "0.1em",
         ...style,
       }}
     >
@@ -112,36 +103,6 @@ function TextReveal(props) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   ANIMATED COUNTER
-   ═══════════════════════════════════════════════════════ */
-
-function AnimatedCounter(props) {
-  var target = props.target;
-  var suffix = props.suffix || "";
-  var ref = useRef(null);
-  var isInView = useInView(ref, { once: true, margin: "-50px" });
-  var s = useState(0);  var count = s[0]; var setCount = s[1];
-  var s2 = useState(false); var done = s2[0]; var setDone = s2[1];
-
-  useEffect(function () {
-    if (!isInView || done) return;
-    var num = parseInt(target);
-    if (isNaN(num)) { setCount(target); setDone(true); return; }
-    var steps = 35;
-    var inc = num / steps;
-    var step = 0;
-    var t = setInterval(function () {
-      step++;
-      if (step >= steps) { setCount(num); setDone(true); clearInterval(t); }
-      else { setCount(Math.round(inc * step)); }
-    }, 1400 / steps);
-    return function () { clearInterval(t); };
-  }, [isInView, done, target]);
-
-  return <span ref={ref}>{typeof count === "number" ? count + suffix : target}</span>;
-}
-
-/* ═══════════════════════════════════════════════════════
    SCROLL-TRIGGERED SUB-COMPONENTS
    ═══════════════════════════════════════════════════════ */
 
@@ -155,9 +116,9 @@ function DividerReveal(props) {
       animate={isInView ? { scaleX: 1, opacity: 1 } : {}}
       transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.4 }}
       style={{
-        width: 80, height: 2, borderRadius: 2,
+        width: 120, height: 3, borderRadius: 2,
         background: "linear-gradient(90deg, " + props.accent + ", var(--brand-orange, #f5a623))",
-        margin: "1.4rem auto 2.2rem",
+        margin: "2rem auto 2.5rem",
         transformOrigin: "center",
       }}
     />
@@ -175,11 +136,11 @@ function SubtitleReveal(props) {
       transition={{ type: "spring", bounce: 0.2, duration: 1.4, delay: 0.5 }}
       className="hero-sub"
       style={{
-        fontSize: "clamp(1rem, 1.6vw, 1.15rem)",
-        lineHeight: 1.85, fontWeight: 400, maxWidth: 600,
+        fontSize: "clamp(1.1rem, 1.8vw, 1.3rem)",
+        lineHeight: 1.85, fontWeight: 400, maxWidth: 680,
         color: props.textMid,
         textAlign: "justify", hyphens: "auto",
-        marginBottom: "2.6rem",
+        marginBottom: "3rem",
       }}
     >
       Canada's first-of-its-kind, deal-making platform where
@@ -203,7 +164,7 @@ function CTAReveal(props) {
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ type: "spring", bounce: 0.2, duration: 1.2, delay: 0.6 }}
       className="hero-ctas-wrap"
-      style={{ display: "flex", gap: 14, flexWrap: "wrap", justifyContent: "center" }}
+      style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}
     >
       <motion.a
         href="/tickets"
@@ -292,29 +253,14 @@ export default function Home() {
     return function () { window.removeEventListener("purchaseComplete", h); };
   }, []);
 
-  function scrollDown() {
-    var el = document.getElementById("hero-lower");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  }
-
   var bg       = dark ? "#06020f"                  : "#ffffff";
   var textMain = dark ? "#ffffff"                  : "#0d0520";
-  var textMid  = dark ? "rgba(255,255,255,0.55)"   : "rgba(13,5,32,0.58)";
-  var textSoft = dark ? "rgba(200,185,255,0.45)"   : "rgba(90,40,180,0.42)";
+  var textMid  = dark ? "rgba(255,255,255,0.75)"   : "rgba(13,5,32,0.78)";
   var accent   = dark ? "#b99eff"                  : "#7a3fd1";
-  var cardBg   = dark ? "rgba(155,135,245,0.04)"   : "rgba(122,63,209,0.025)";
-  var cardBdr  = dark ? "rgba(155,135,245,0.12)"   : "rgba(122,63,209,0.12)";
 
   return (
     <>
       <style>{`
-        /* ──── SCROLL CUE ──── */
-        @keyframes wheel-scroll {
-          0%   { transform: translateY(0); opacity: 1; }
-          50%  { transform: translateY(6px); opacity: 0.3; }
-          100% { transform: translateY(0); opacity: 1; }
-        }
-
         /* ──── CTAs ──── */
         .hero-cta-solid {
           position: relative; overflow: hidden;
@@ -322,7 +268,7 @@ export default function Home() {
           padding: 16px 36px; border-radius: 14px;
           border: none; cursor: pointer; text-decoration: none;
           font-family: 'Orbitron', sans-serif;
-          font-weight: 800; font-size: 0.76rem;
+          font-weight: 800; font-size: 0.85rem;
           letter-spacing: 1.2px; text-transform: uppercase;
           transition: transform 0.25s ease, box-shadow 0.35s ease;
         }
@@ -330,7 +276,7 @@ export default function Home() {
         .hero-cta-ghost {
           display: inline-flex; align-items: center; gap: 8px;
           padding: 15px 32px; border-radius: 14px;
-          font-size: 0.86rem; font-weight: 600;
+          font-size: 0.95rem; font-weight: 700;
           text-decoration: none; cursor: pointer;
           transition: all 0.3s ease;
         }
@@ -422,13 +368,14 @@ export default function Home() {
       {/* ═══════════ HERO LOWER — MEET BUILD SCALE + CTAs ═══════════ */}
       <section id="hero-lower" style={{
         position: "relative", background: bg, overflow: "hidden",
-        padding: "6rem 6% 5rem",
+        padding: "6rem 6% 8rem",
       }}>
         <div style={{
           maxWidth: 920, margin: "0 auto",
           display: "flex", flexDirection: "column",
           alignItems: "center", textAlign: "center",
         }}>
+          {/* The flex column direction in TextReveal fixes the alignment */}
           <TextReveal
             text="MEET BUILD SCALE"
             colors={[
@@ -438,9 +385,9 @@ export default function Home() {
             ]}
             style={{
               fontFamily: "'Orbitron', sans-serif",
-              fontSize: "clamp(2.4rem, 6vw, 4.8rem)",
-              fontWeight: 900, lineHeight: 1.08,
-              letterSpacing: "-0.5px", marginBottom: "1rem",
+              fontSize: "clamp(3.5rem, 8vw, 6rem)",
+              fontWeight: 900, lineHeight: 1.1,
+              letterSpacing: "-1px", marginBottom: "0.5rem",
             }}
           />
 

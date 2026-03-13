@@ -290,8 +290,7 @@ export default function Home() {
           .hero-sub { text-align: left !important; }
         }
       `}</style>
-
-      <UrgencyBanner />
+       
       <Navbar />
 
       {/* ═══════════ HERO UPPER — Logo + Date/City ═══════════ */}

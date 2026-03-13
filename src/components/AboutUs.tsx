@@ -63,7 +63,7 @@ const FIXED_SERVICES = [
   { title: "Sustainability & CleanTech", description: "Pioneering a Greener, Smarter Future through technology-led climate action.", iconName: "leaf", position: "right" },
 ]
 
-
+const MINUTES_STAT = {value: 28-29, suffix:"", label:"Dates", iconName:"clock"},
 const FALLBACK_STATS = [
   { value: 150, suffix: "+", label: "Builds Completed", iconName: "award" },
   MINUTES_STAT,

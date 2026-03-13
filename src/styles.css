@@ -1575,17 +1575,9 @@ body.dark-mode .mobile-link {
   .tfc-hamburger { display: none !important; }
 }
 .ticket-bar {
-  display: block;
   width: 100%;
-  text-decoration: none;
   background: linear-gradient(90deg,#ff7a18,#af002d 40%,#7a3fd1);
   padding: 14px 0;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.ticket-bar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.35);
 }
 
 .ticket-bar-inner {
@@ -1603,7 +1595,25 @@ body.dark-mode .mobile-link {
   font-size: 0.95rem;
 }
 
+/* BUTTON STYLE */
 .ticket-btn {
-  font-weight: 700;
-  letter-spacing: 0.3px;
+  padding: 0 22px;
+  height: 40px;
+  border-radius: 999px;
+  background: white;
+  color: #7a3fd1;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.8px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.ticket-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }

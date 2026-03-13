@@ -17,10 +17,7 @@ import TicketBar from "./components/TicketBar";
 import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import Sponsor from "./pages/Sponsor";
-
-// Added your new Exhibit and FirstTimers imports right here
 import Exhibit from "./pages/exhibit"; 
-import FirstTimers from "./pages/FirstTimers";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
 
@@ -62,11 +59,9 @@ function App() {
         <Route path="/sponsors" element={<Sponsors />} />
         <Route path="/tickets" element={<Tickets />} />
         
-        {/* Updated routes for your new Navbar structure */}
-        <Route path="/first-timers" element={<FirstTimers />} />
+        {/* Using Resources for both since your code is inside Resources.jsx */}
+        <Route path="/first-timers" element={<Resources />} />
         <Route path="/resources" element={<Resources />} />
-        
-        {/* Kept on-demand routing to Resources just in case you have older links pointing to it */}
         <Route path="/on-demand" element={<Resources />} />
 
         <Route
@@ -93,7 +88,6 @@ function App() {
 
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
-        
         <Route path="/exhibit" element={<Exhibit />} />
 
         {/* RESET PASSWORD ROUTE */}

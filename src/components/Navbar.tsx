@@ -343,22 +343,22 @@ export default function Navbar() {
  
             <div className="tfc-desk-actions">
               {!loggedIn ? (
-                <button onClick={() => setAuthOpen(true)} style={{
-                  padding: "0 22px", height: 40, borderRadius: 999,
-                  background: "var(--brand-purple)", color: "#fff", border: "none",
-                  fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                  fontSize: "0.68rem", letterSpacing: "0.8px", cursor: "pointer",
-                  textTransform: "uppercase",
-                }}>MY ACCOUNT</button>
-              ) : (
-                <Link to="/dashboard" style={{
-                  padding: "0 22px", height: 40, borderRadius: 999,
-                  background: "var(--brand-purple)", color: "#fff",
-                  fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                  fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none",
-                  display: "flex", alignItems: "center", textTransform: "uppercase",
-                }}>MY ACCOUNT</Link>
-              )}
+               // <button onClick={() => setAuthOpen(true)} style={{
+                 // padding: "0 22px", height: 40, borderRadius: 999,
+                 // background: "var(--brand-purple)", color: "#fff", border: "none",
+                 // fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
+                 // fontSize: "0.68rem", letterSpacing: "0.8px", cursor: "pointer",
+                 // textTransform: "uppercase",
+              //  }}>MY ACCOUNT</button>
+             // ) : (
+               // <Link to="/dashboard" style={{
+                  //padding: "0 22px", height: 40, borderRadius: 999,
+                  //background: "var(--brand-purple)", color: "#fff",
+                  //fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
+                  //fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none",
+                  //display: "flex", alignItems: "center", textTransform: "uppercase",
+                //}}>MY ACCOUNT</Link>
+              //)}
               <Link to="/tickets" style={{
                 padding: "0 22px", height: 40, borderRadius: 999,
                 background: "transparent",

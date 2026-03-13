@@ -29,6 +29,7 @@ export default function Navbar() {
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
+      const isDark = theme === "dark";   // ✅ REQUIRED
     setTheme(next);
     localStorage.setItem("theme", next);
     document.body.classList.toggle("dark-mode", next === "dark");

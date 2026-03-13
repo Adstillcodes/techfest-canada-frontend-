@@ -4,16 +4,14 @@ import { isLoggedIn } from "../utils/auth";
 import useMeasure from "react-use-measure";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
-import UrgencyBanner from "../components/UrgencyBanner";
 import AuthModal from "../components/AuthModal";
 /**
  * Note: If you have these components in your local project, 
  * you can keep the imports. For the preview to function correctly here, 
- * we are using placeholders for Navbar, Footer, and UrgencyBanner.
+ * we are using placeholders for Navbar, Footer,
  */
 <Navbar />;
 <Footer />;
-<UrgencyBanner />;
 
 
 /**
@@ -123,7 +121,7 @@ export default function Sponsors() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)]">
-      <UrgencyBanner />
+      <Banner />
       <Navbar />
 
       <div className="container mx-auto px-6" style={{ textAlign: "center", paddingTop: "4rem" }}>

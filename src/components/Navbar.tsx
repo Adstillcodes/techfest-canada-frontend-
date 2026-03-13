@@ -207,7 +207,7 @@ style={{ height: 52 }}
 
   <AnimatePresence>
     {mobileOpen && (
-      <motion.aside
+      <motion.aside className="tfc-mobile-sheet"
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}

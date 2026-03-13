@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "./AuthModal";
-import { fetchMe } from "../utils/api";
+//import { fetchMe } from "../utils/api";
 
 const PARTNER_SUBS = [
 { label: "Exhibit", path: "/exhibit" },

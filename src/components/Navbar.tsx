@@ -341,40 +341,50 @@ export default function Navbar() {
           {/* RIGHT ACTIONS */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
  
-            <div className="tfc-desk-actions">
-              {!loggedIn ? (
-               // <button onClick={() => setAuthOpen(true)} style={{
-                 // padding: "0 22px", height: 40, borderRadius: 999,
-                 // background: "var(--brand-purple)", color: "#fff", border: "none",
-                 // fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                 // fontSize: "0.68rem", letterSpacing: "0.8px", cursor: "pointer",
-                 // textTransform: "uppercase",
-              //  }}>MY ACCOUNT</button>
-             // ) : (
-               // <Link to="/dashboard" style={{
-                  //padding: "0 22px", height: 40, borderRadius: 999,
-                  //background: "var(--brand-purple)", color: "#fff",
-                  //fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                  //fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none",
-                  //display: "flex", alignItems: "center", textTransform: "uppercase",
-                //}}>MY ACCOUNT</Link>
-              //)}
-              <Link to="/tickets" style={{
-                padding: "0 22px", height: 40, borderRadius: 999,
-                background: "transparent",
-                border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`,
-                color: isDark ? "#fff" : "#0f0520",
-                fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none",
-                display: "flex", alignItems: "center", textTransform: "uppercase",
-              }}>TICKETS</Link>
-           
- 
-            <button onClick={toggleTheme} style={{
-              width: 38, height: 38, borderRadius: "50%", border: `1px solid ${borderCol}`,
-              background: "transparent", cursor: "pointer", fontSize: "1rem",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>{isDark ? "☀️" : "🌙"}</button>
+           <div className="tfc-desk-actions">
+
+  <Link
+    to="/tickets"
+    style={{
+      padding: "0 22px",
+      height: 40,
+      borderRadius: 999,
+      background: "transparent",
+      border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`,
+      color: isDark ? "#fff" : "#0f0520",
+      fontFamily: "'Orbitron', sans-serif",
+      fontWeight: 800,
+      fontSize: "0.68rem",
+      letterSpacing: "0.8px",
+      textDecoration: "none",
+      display: "flex",
+      alignItems: "center",
+      textTransform: "uppercase",
+    }}
+  >
+    TICKETS
+  </Link>
+
+</div>   {/* ← THIS LINE WAS MISSING */}
+
+
+<button
+  onClick={toggleTheme}
+  style={{
+    width: 38,
+    height: 38,
+    borderRadius: "50%",
+    border: `1px solid ${borderCol}`,
+    background: "transparent",
+    cursor: "pointer",
+    fontSize: "1rem",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+  {isDark ? "☀️" : "🌙"}
+</button>
  
             {/* Hamburger */}
             <button

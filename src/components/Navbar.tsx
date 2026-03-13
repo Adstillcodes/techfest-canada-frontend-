@@ -1,85 +1,33 @@
-
 import React, { useEffect, useState, useRef } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "./AuthModal";
-import { fetchMe } from "../utils/api";
- 
+
 type User = { _id: string; name: string; email: string; role?: string };
- 
-const PARTNER_SUBS = [
-  { label: "Exhibit", path: "/exhibit" },
-  { label: "Sponsor", path: "/sponsor" },
+
+const PARTNERS_DROPDOWN = [
+  { label: "Sponsor Us",        path: "/sponsor" },
+  { label: "First Timers",      path: "/on-demand" },
+  { label: "Speakers",          path: "/speakers" },
 ];
- 
+
 export default function Navbar() {
-  const [authOpen, setAuthOpen]         = useState(false);
-  const [theme, setTheme]               = useState<"light" | "dark">("light");
-  const [user, setUser]                 = useState<User | null>(null);
-  const [mobileOpen, setMobileOpen]     = useState(false);
-  const [partnersOpen, setPartnersOpen] = useState(false);
-  const [mobilePartnersOpen, setMobilePartnersOpen] = useState(false);
-  const partnersTimeout                 = useRef<number | null>(null);
-  const location                        = useLocation();
-  const navigate                        = useNavigate();
- 
-  const navItems = [
-    { label: "HOME",         path: "/" },
-    { label: "First Timers", path: "/on-demand" },
-    { label: "PARTNERS",     path: "/sponsors", hasDropdown: true },
-    { label: "SPEAKERS",     path: "/speakers" },
-    { label: "AGENDA",       path: "/agenda" },
-  ];
- 
-  const loggedIn = !!user;
-  const isAdmin  = user?.role === "admin";
-  if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
-  const activeIndex = navItems.findIndex(function(item) {
-    if (item.path === "/sponsors") {
-      return location.pathname === "/sponsors" || location.pathname === "/exhibit" || location.pathname === "/sponsor";
-    }
-    return item.path === location.pathname;
-  });
- 
-  useEffect(() => {
-    const load = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) { setUser(null); return; }
-      try { setUser(await fetchMe()); } catch { setUser(null); }
-    };
-    load();
-    window.addEventListener("authChanged", load);
-    window.addEventListener("authStateChanged", load);
-    return () => {
-      window.removeEventListener("authChanged", load);
-      window.removeEventListener("authStateChanged", load);
-    };
-  }, []);
- 
+  const [authOpen,    setAuthOpen]    = useState(false);
+  const [theme,       setTheme]       = useState<"light" | "dark">("light");
+  const [user,        setUser]        = useState<User | null>(null);
+  const [mobileOpen,  setMobileOpen]  = useState(false);
+  const [dropOpen,    setDropOpen]    = useState(false);
+  const dropRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+
+  /* ── theme bootstrap ── */
   useEffect(() => {
     const saved = (localStorage.getItem("theme") as "light" | "dark") || "light";
     setTheme(saved);
     document.body.classList.toggle("dark-mode", saved === "dark");
     document.documentElement.classList.toggle("dark", saved === "dark");
   }, []);
- 
-  useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = "hidden";
-      document.body.style.position = "fixed";
-      document.body.style.width    = "100%";
-    } else {
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width    = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width    = "";
-    };
-  }, [mobileOpen]);
- 
+
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
@@ -87,533 +35,304 @@ export default function Navbar() {
     document.body.classList.toggle("dark-mode", next === "dark");
     document.documentElement.classList.toggle("dark", next === "dark");
   };
- 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.dispatchEvent(new Event("authChanged"));
-    setUser(null);
-    setMobileOpen(false);
+
+  /* ── auth ── */
+  useEffect(() => {
+    const load = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) { setUser(null); return; }
+      try {
+        const { fetchMe } = await import("../utils/api");
+        setUser(await fetchMe());
+      } catch { setUser(null); }
+    };
+    load();
+    window.addEventListener("authChanged", load);
+    return () => window.removeEventListener("authChanged", load);
+  }, []);
+
+  /* ── close dropdown on outside click ── */
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
+        setDropOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  /* ── close mobile on route change ── */
+  useEffect(() => { setMobileOpen(false); setDropOpen(false); }, [location.pathname]);
+
+  const dark = theme === "dark";
+  const bg          = dark ? "rgba(6,2,15,0.92)"   : "rgba(255,255,255,0.94)";
+  const border      = dark ? "rgba(155,135,245,0.12)" : "rgba(122,63,209,0.10)";
+  const textMain    = dark ? "#ffffff"              : "#0d0520";
+  const textMuted   = dark ? "rgba(200,185,255,0.70)" : "rgba(13,5,32,0.60)";
+  const pillBg      = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.06)";
+  const pillBorder  = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.18)";
+  const dropBg      = dark ? "#0e0820"              : "#ffffff";
+  const dropBorder  = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.14)";
+  const mobileBg    = dark ? "#0a0518"              : "#ffffff";
+
+  const navItems = [
+    { label: "HOME",         path: "/" },
+    { label: "PARTNERS",     path: null }, // dropdown trigger
+    { label: "SPEAKERS",     path: "/speakers" },
+    { label: "AGENDA",       path: "/agenda" },
+  ];
+
+  const isActive = (path: string | null) => {
+    if (!path) return PARTNERS_DROPDOWN.some(d => d.path === location.pathname);
+    return location.pathname === path;
   };
- 
-  const handlePartnersEnter = () => {
-    if (partnersTimeout.current) clearTimeout(partnersTimeout.current);
-    setPartnersOpen(true);
-  };
- 
-  const handlePartnersLeave = () => {
-    partnersTimeout.current = window.setTimeout(() => {
-      setPartnersOpen(false);
-    }, 180);
-  };
- 
-  const isDark = theme === "dark";
-  const borderCol = isDark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.12)";
- 
+
   return (
     <>
-      {/* ════ STICKY NAV ════ */}
-      <nav style={{
-        height: 80, display: "flex", alignItems: "center", width: "100%",
-        position: "sticky", top: 0, zIndex: 1000,
-        backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
-        borderBottom: `1px solid ${borderCol}`,
-        background: isDark ? "rgba(7,3,15,0.90)" : "rgba(255,255,255,0.93)",
-        transition: "background 0.3s",
-      }}>
-        <div style={{
-          width: "100%", maxWidth: 1400, margin: "0 auto", padding: "0 3%",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-        }}>
- 
-          {/* LOGO */}
-          <Link to="/" style={{ flexShrink: 0 }}>
+      <style>{`
+        .tfc-navbar-wrap {
+          position: sticky; top: 0; z-index: 1000; width: 100%;
+          backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+        }
+        .tfc-nav-link {
+          font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800;
+          letter-spacing: 1.2px; text-transform: uppercase;
+          padding: 9px 18px; border-radius: 999px;
+          text-decoration: none; transition: background 0.2s ease, color 0.2s ease;
+          white-space: nowrap;
+        }
+        .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
+        .tfc-nav-link.active { background: rgba(122,63,209,0.14); }
+
+        /* hamburger */
+        .tfc-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 6px; }
+        .tfc-hamburger span { display: block; width: 22px; height: 2px; border-radius: 2px; transition: all 0.25s ease; }
+        .tfc-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .tfc-hamburger.open span:nth-child(2) { opacity: 0; }
+        .tfc-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        @media (max-width: 1024px) {
+          .tfc-desktop-nav { display: none !important; }
+          .tfc-hamburger { display: flex !important; }
+        }
+        @media (max-width: 640px) {
+          .tfc-tickets-btn { display: none !important; }
+        }
+      `}</style>
+
+      <nav
+        className="tfc-navbar-wrap"
+        style={{ background: bg, borderBottom: "1px solid " + border }}
+      >
+        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 2.5%", height: 80, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+
+          {/* ── LOGO ── */}
+          <Link to="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
             <img
-              src={isDark
+              src={dark
                 ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
                 : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
-              alt="Tech Festival Canada"
-              style={{ height: 52, width: "auto", objectFit: "contain", display: "block" }}
+              alt="The Tech Festival Canada"
+              style={{ height: 52, width: "auto", objectFit: "contain" }}
             />
           </Link>
- 
-          {/* DESKTOP TABS — tubelight pill */}
-          <div className="tfc-desk-nav">
-            <div style={{
-              display: "flex", alignItems: "center", gap: 2,
-              background: isDark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.04)",
-              border: `1px solid ${borderCol}`,
-              borderRadius: 999, padding: "4px",
-            }}>
-              {navItems.map((item, i) => {
-                const isActive = activeIndex === i;
-                const isPartners = item.hasDropdown;
- 
-                const tabContent = (
-                  <>
-                    {item.label}
-                    {/* Dropdown chevron */}
-                    {isPartners && (
-                      <svg
-                        width="10" height="10" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-                        style={{
-                          marginLeft: 4, display: "inline-block", verticalAlign: "middle",
-                          transform: partnersOpen ? "rotate(180deg)" : "rotate(0deg)",
-                          transition: "transform 0.2s ease",
-                        }}
-                      >
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    )}
-                    {isActive && (
-                      <motion.span
-                        layoutId="tfc-lamp-bg"
-                        style={{
-                          position: "absolute", inset: 0, borderRadius: 999,
-                          background: "linear-gradient(135deg, var(--brand-purple), #9b68ff)",
-                          zIndex: -1,
-                        }}
-                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                      />
-                    )}
-                    {isActive && (
-                      <motion.span
-                        layoutId="tfc-lamp-glow"
-                        style={{
-                          position: "absolute",
-                          top: -2, left: 0, right: 0,
-                          marginLeft: "auto", marginRight: "auto",
-                          width: 32, height: 3,
-                          borderRadius: "0 0 4px 4px",
-                          background: "var(--brand-orange)",
-                          boxShadow: "0 0 12px 4px rgba(245,166,35,0.6)",
-                        }}
-                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                      />
-                    )}
-                  </>
-                );
- 
-                /* Partners tab with dropdown wrapper */
-                if (isPartners) {
+
+          {/* ── DESKTOP NAV ── */}
+          <div className="tfc-desktop-nav" style={{ display: "flex", alignItems: "center" }}>
+            <ul style={{ display: "flex", alignItems: "center", gap: 4, listStyle: "none", margin: 0, padding: "6px", background: pillBg, border: "1px solid " + pillBorder, borderRadius: 999 }}>
+              {navItems.map((item) => {
+                if (item.path === null) {
+                  /* Partners dropdown */
                   return (
-                    <div
-                      key={item.path}
-                      style={{ position: "relative" }}
-                      onMouseEnter={handlePartnersEnter}
-                      onMouseLeave={handlePartnersLeave}
-                    >
-                      <Link
-                        to={item.path}
+                    <li key="partners" style={{ position: "relative" }} ref={dropRef}>
+                      <button
+                        onClick={() => setDropOpen(!dropOpen)}
+                        className={"tfc-nav-link" + (isActive(null) ? " active" : "")}
                         style={{
-                          position: "relative",
-                          padding: "8px 18px",
-                          borderRadius: 999,
-                          fontSize: "0.72rem", fontWeight: 800,
-                          fontFamily: "'Orbitron', sans-serif",
-                          letterSpacing: "0.8px", textTransform: "uppercase",
-                          color: isActive ? "#fff" : (isDark ? "rgba(255,255,255,0.55)" : "rgba(15,5,32,0.55)"),
-                          textDecoration: "none", whiteSpace: "nowrap",
-                          transition: "color 0.2s",
-                          zIndex: 1,
-                          display: "inline-flex", alignItems: "center",
+                          color: isActive(null) ? (dark ? "#ffffff" : "#0d0520") : textMuted,
+                          background: "none", border: "none", cursor: "pointer",
+                          display: "flex", alignItems: "center", gap: 6,
                         }}
                       >
-                        {tabContent}
-                      </Link>
- 
-                      {/* Dropdown */}
+                        PARTNERS
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                          style={{ transform: dropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </button>
+
                       <AnimatePresence>
-                        {partnersOpen && (
+                        {dropOpen && (
                           <motion.div
                             initial={{ opacity: 0, y: 8, scale: 0.96 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                            transition={{ duration: 0.18, ease: "easeOut" }}
-                            onMouseEnter={handlePartnersEnter}
-                            onMouseLeave={handlePartnersLeave}
+                            transition={{ duration: 0.18 }}
                             style={{
-                              position: "absolute",
-                              top: "calc(100% + 12px)",
-                              left: "50%",
+                              position: "absolute", top: "calc(100% + 12px)", left: "50%",
                               transform: "translateX(-50%)",
-                              minWidth: 180,
-                              background: isDark ? "rgba(10,5,24,0.96)" : "rgba(255,255,255,0.98)",
-                              border: `1px solid ${borderCol}`,
-                              borderRadius: 16,
-                              padding: "8px",
-                              backdropFilter: "blur(20px)",
-                              WebkitBackdropFilter: "blur(20px)",
-                              boxShadow: isDark
-                                ? "0 12px 40px rgba(0,0,0,0.6)"
-                                : "0 12px 40px rgba(122,63,209,0.12)",
-                              zIndex: 100,
+                              background: dropBg, border: "1px solid " + dropBorder,
+                              borderRadius: 16, padding: "8px",
+                              minWidth: 200,
+                              boxShadow: dark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(122,63,209,0.12)",
+                              zIndex: 200,
                             }}
                           >
-                            {/* Small arrow */}
-                            <div style={{
-                              position: "absolute",
-                              top: -6, left: "50%", transform: "translateX(-50%) rotate(45deg)",
-                              width: 12, height: 12,
-                              background: isDark ? "rgba(10,5,24,0.96)" : "rgba(255,255,255,0.98)",
-                              border: `1px solid ${borderCol}`,
-                              borderRight: "none", borderBottom: "none",
-                              borderRadius: 2,
-                            }} />
- 
-                            {PARTNER_SUBS.map((sub) => (
+                            {PARTNERS_DROPDOWN.map((d) => (
                               <Link
-                                key={sub.label}
-                                to={sub.path}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setPartnersOpen(false);
-                                }}
+                                key={d.path}
+                                to={d.path}
+                                onClick={() => setDropOpen(false)}
                                 style={{
-                                  display: "flex", alignItems: "center", gap: 10,
-                                  width: "100%", padding: "12px 16px",
-                                  border: "none", borderRadius: 10,
-                                  background: "transparent", cursor: "pointer",
-                                  fontFamily: "'Orbitron', sans-serif",
-                                  fontSize: "0.72rem", fontWeight: 700,
-                                  letterSpacing: "0.6px", textTransform: "uppercase",
-                                  color: isDark ? "rgba(255,255,255,0.75)" : "rgba(15,5,32,0.70)",
-                                  transition: "all 0.15s",
-                                  textDecoration: "none",
+                                  display: "block", padding: "10px 16px", borderRadius: 10,
+                                  fontFamily: "'Orbitron', sans-serif", fontSize: "0.68rem",
+                                  fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
+                                  color: location.pathname === d.path ? "#7a3fd1" : textMain,
+                                  textDecoration: "none", background: location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent",
+                                  transition: "background 0.15s ease",
                                 }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.background = isDark
-                                    ? "rgba(122,63,209,0.15)"
-                                    : "rgba(122,63,209,0.06)";
-                                  e.currentTarget.style.color = isDark ? "#c4a8ff" : "#7a3fd1";
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.background = "transparent";
-                                  e.currentTarget.style.color = isDark
-                                    ? "rgba(255,255,255,0.75)"
-                                    : "rgba(15,5,32,0.70)";
-                                }}
+                                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(122,63,209,0.08)")}
+                                onMouseLeave={(e) => (e.currentTarget.style.background = location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent")}
                               >
-                                <span style={{
-                                  width: 6, height: 6, borderRadius: "50%",
-                                  background: sub.label === "Exhibit"
-                                    ? "var(--brand-orange, #f5a623)"
-                                    : "var(--brand-purple, #7a3fd1)",
-                                  boxShadow: sub.label === "Exhibit"
-                                    ? "0 0 6px rgba(245,166,35,0.5)"
-                                    : "0 0 6px rgba(122,63,209,0.5)",
-                                  flexShrink: 0,
-                                }} />
-                                {sub.label}
+                                {d.label}
                               </Link>
                             ))}
                           </motion.div>
                         )}
                       </AnimatePresence>
-                    </div>
+                    </li>
                   );
                 }
- 
-                /* Regular tab */
+
                 return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    style={{
-                      position: "relative",
-                      padding: "8px 18px",
-                      borderRadius: 999,
-                      fontSize: "0.72rem", fontWeight: 800,
-                      fontFamily: "'Orbitron', sans-serif",
-                      letterSpacing: "0.8px", textTransform: "uppercase",
-                      color: isActive ? "#fff" : (isDark ? "rgba(255,255,255,0.55)" : "rgba(15,5,32,0.55)"),
-                      textDecoration: "none", whiteSpace: "nowrap",
-                      transition: "color 0.2s",
-                      zIndex: 1,
-                    }}
-                  >
-                    {tabContent}
-                  </Link>
+                  <li key={item.path}>
+                    <Link
+                      to={item.path}
+                      className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
+                      style={{ color: isActive(item.path) ? textMain : textMuted }}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </div>
- 
-          {/* RIGHT ACTIONS */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
- 
-            <div className="tfc-desk-actions">
-              {!loggedIn ? (
-                <button onClick={() => setAuthOpen(true)} style={{
-                  padding: "0 22px", height: 40, borderRadius: 999,
-                  background: "var(--brand-purple)", color: "#fff", border: "none",
-                  fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                  fontSize: "0.68rem", letterSpacing: "0.8px", cursor: "pointer",
-                  textTransform: "uppercase",
-                }}>MY ACCOUNT</button>
-              ) : (
-                <Link to="/dashboard" style={{
-                  padding: "0 22px", height: 40, borderRadius: 999,
-                  background: "var(--brand-purple)", color: "#fff",
-                  fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                  fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none",
-                  display: "flex", alignItems: "center", textTransform: "uppercase",
-                }}>MY ACCOUNT</Link>
-              )}
-              <Link to="/tickets" style={{
-                padding: "0 22px", height: 40, borderRadius: 999,
-                background: "transparent",
-                border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`,
-                color: isDark ? "#fff" : "#0f0520",
-                fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none",
-                display: "flex", alignItems: "center", textTransform: "uppercase",
-              }}>TICKETS</Link>
-            </div>
- 
-            <button onClick={toggleTheme} style={{
-              width: 38, height: 38, borderRadius: "50%", border: `1px solid ${borderCol}`,
-              background: "transparent", cursor: "pointer", fontSize: "1rem",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>{isDark ? "☀️" : "🌙"}</button>
- 
+
+          {/* ── RIGHT ACTIONS ── */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            {/* Tickets */}
+            <Link
+              to="/tickets"
+              className="tfc-tickets-btn"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "10px 24px", borderRadius: 999,
+                fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800,
+                letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
+                background: dark ? "#ffffff" : "#0d0520",
+                color: dark ? "#0d0520" : "#ffffff",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; }}
+            >
+              TICKETS
+            </Link>
+
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.15rem", padding: "6px", lineHeight: 1 }}
+              aria-label="Toggle theme"
+            >
+              {dark ? "☀️" : "🌙"}
+            </button>
+
             {/* Hamburger */}
             <button
-              onClick={() => setMobileOpen(v => !v)}
-              className="tfc-hamburger"
+              className={"tfc-hamburger" + (mobileOpen ? " open" : "")}
+              onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Menu"
-              style={{
-                width: 38, height: 38, borderRadius: 8, border: "none",
-                background: isDark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.10)",
-                cursor: "pointer", display: "flex", flexDirection: "column",
-                alignItems: "center", justifyContent: "center", gap: 5, padding: 0,
-              }}
             >
-              <motion.span animate={{ rotate: mobileOpen ? 45 : 0, y: mobileOpen ? 7 : 0 }}
-                style={{ width: 20, height: 2, background: isDark ? "#fff" : "#0f0520", borderRadius: 2, display: "block", transformOrigin: "center" }} />
-              <motion.span animate={{ opacity: mobileOpen ? 0 : 1 }}
-                style={{ width: 20, height: 2, background: isDark ? "#fff" : "#0f0520", borderRadius: 2, display: "block" }} />
-              <motion.span animate={{ rotate: mobileOpen ? -45 : 0, y: mobileOpen ? -7 : 0 }}
-                style={{ width: 20, height: 2, background: isDark ? "#fff" : "#0f0520", borderRadius: 2, display: "block", transformOrigin: "center" }} />
+              <span style={{ background: textMain }} />
+              <span style={{ background: textMain }} />
+              <span style={{ background: textMain }} />
             </button>
           </div>
         </div>
-      </nav>
- 
-      {/* ════ MOBILE SHEET ════ */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
+
+        {/* ── MOBILE MENU ── */}
+        <AnimatePresence>
+          {mobileOpen && (
             <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ duration: 0.22 }}
-              onClick={() => setMobileOpen(false)}
-              style={{
-                position: "fixed", inset: 0, zIndex: 99990,
-                background: "rgba(0,0,0,0.70)",
-                backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
-              }}
-            />
-            <motion.aside
-              key="sheet"
-              initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 26, stiffness: 240 }}
-              style={{
-                position: "fixed", top: 0, right: 0, bottom: 0,
-                width: "min(340px, 90vw)", zIndex: 99999,
-                background: isDark ? "#0a0518" : "#ffffff",
-                borderLeft: `1px solid ${borderCol}`,
-                boxShadow: "-24px 0 80px rgba(0,0,0,0.5)",
-                display: "flex", flexDirection: "column", overflowY: "auto",
-              }}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              style={{ overflow: "hidden", background: mobileBg, borderTop: "1px solid " + border }}
             >
-              {/* Header */}
-              <div style={{
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "18px 22px",
-                borderBottom: `1px solid ${borderCol}`,
-              }}>
-                <img
-                  src={isDark
-                    ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
-                    : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
-                  alt="TFC" style={{ height: 34, width: "auto" }}
-                />
-                <button onClick={() => setMobileOpen(false)} style={{
-                  width: 32, height: 32, borderRadius: "50%", border: `1px solid ${borderCol}`,
-                  background: "transparent", cursor: "pointer",
-                  color: isDark ? "#fff" : "#0f0520", fontSize: "1rem",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>✕</button>
-              </div>
- 
-              {/* Nav links */}
-              <div style={{ padding: "22px 20px", flex: 1 }}>
-                <p style={{
-                  fontSize: "0.58rem", fontWeight: 800, letterSpacing: "1.6px",
-                  textTransform: "uppercase",
-                  color: isDark ? "rgba(196,168,255,0.45)" : "rgba(122,63,209,0.45)",
-                  marginBottom: 12,
-                }}>Navigation</p>
- 
-                <div style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 28 }}>
-                  {navItems.map((item, i) => {
-                    const isActive = activeIndex === i;
-                    const isPartners = (item as any).hasDropdown;
- 
-                    return (
-                      <React.Fragment key={item.path}>
-                        {/* Main nav link */}
-                        <div
-                          style={{
-                            display: "flex", alignItems: "center", justifyContent: "space-between",
-                            padding: "13px 16px", borderRadius: 12,
-                            background: isActive
-                              ? (isDark ? "rgba(122,63,209,0.16)" : "rgba(122,63,209,0.08)")
-                              : "transparent",
-                            border: `1px solid ${isActive ? "rgba(122,63,209,0.30)" : "transparent"}`,
-                            cursor: "pointer",
-                            transition: "all 0.18s",
-                          }}
-                          onClick={() => {
-                            if (isPartners) {
-                              setMobilePartnersOpen(v => !v);
-                            } else {
-                              setMobileOpen(false);
-                              navigate(item.path);
-                            }
-                          }}
-                        >
-                          <span style={{
-                            fontFamily: "'Orbitron', sans-serif",
-                            fontSize: "0.78rem", fontWeight: 800,
-                            letterSpacing: "0.5px", textTransform: "uppercase",
-                            color: isActive
-                              ? (isDark ? "#c4a8ff" : "#7a3fd1")
-                              : (isDark ? "rgba(255,255,255,0.70)" : "rgba(15,5,32,0.70)"),
-                          }}>
-                            {item.label}
-                          </span>
-                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                            {isActive && (
-                              <span style={{
-                                width: 6, height: 6, borderRadius: "50%",
-                                background: "var(--brand-orange)",
-                                boxShadow: "0 0 6px var(--brand-orange)",
-                              }} />
-                            )}
-                            {isPartners && (
-                              <svg
-                                width="12" height="12" viewBox="0 0 24 24" fill="none"
-                                stroke={isDark ? "rgba(255,255,255,0.5)" : "rgba(15,5,32,0.5)"}
-                                strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-                                style={{
-                                  transform: mobilePartnersOpen ? "rotate(180deg)" : "rotate(0deg)",
-                                  transition: "transform 0.2s ease",
-                                }}
-                              >
-                                <polyline points="6 9 12 15 18 9" />
-                              </svg>
-                            )}
-                          </div>
-                        </div>
- 
-                        {/* Partners sub-items */}
-                        {isPartners && mobilePartnersOpen && (
-                          <div style={{ paddingLeft: 20, display: "flex", flexDirection: "column", gap: 2 }}>
-                            {PARTNER_SUBS.map((sub) => (
-                              <Link
-                                key={sub.label}
-                                to={sub.path}
-                                onClick={() => { setMobileOpen(false); setMobilePartnersOpen(false); }}
-                                style={{
-                                  display: "flex", alignItems: "center", gap: 10,
-                                  padding: "11px 16px", borderRadius: 10,
-                                  border: "none", background: "transparent",
-                                  cursor: "pointer",
-                                  fontFamily: "'Orbitron', sans-serif",
-                                  fontSize: "0.72rem", fontWeight: 700,
-                                  letterSpacing: "0.5px", textTransform: "uppercase",
-                                  color: isDark ? "rgba(255,255,255,0.60)" : "rgba(15,5,32,0.55)",
-                                  transition: "all 0.15s",
-                                  textDecoration: "none",
-                                }}
-                              >
-                                <span style={{
-                                  width: 5, height: 5, borderRadius: "50%",
-                                  background: sub.label === "Exhibit"
-                                    ? "var(--brand-orange, #f5a623)"
-                                    : "var(--brand-purple, #7a3fd1)",
-                                  flexShrink: 0,
-                                }} />
-                                {sub.label}
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
+              <div style={{ padding: "20px 24px 28px", display: "flex", flexDirection: "column", gap: 4 }}>
+                {/* Regular nav items */}
+                {navItems.filter(i => i.path !== null).map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path!}
+                    onClick={() => setMobileOpen(false)}
+                    style={{
+                      fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
+                      letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
+                      padding: "12px 16px", borderRadius: 12,
+                      color: location.pathname === item.path ? "#7a3fd1" : textMain,
+                      background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent",
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+
+                {/* Partners section in mobile */}
+                <div style={{ paddingLeft: 16, marginTop: 4 }}>
+                  <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: textMuted, marginBottom: 8 }}>PARTNERS</div>
+                  {PARTNERS_DROPDOWN.map((d) => (
+                    <Link
+                      key={d.path}
+                      to={d.path}
+                      onClick={() => setMobileOpen(false)}
+                      style={{
+                        display: "block", fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem",
+                        fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
+                        textDecoration: "none", padding: "10px 16px", borderRadius: 10,
+                        color: location.pathname === d.path ? "#7a3fd1" : textMuted,
+                        background: location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent",
+                      }}
+                    >
+                      — {d.label}
+                    </Link>
+                  ))}
                 </div>
- 
-                <div style={{ height: 1, background: borderCol, marginBottom: 22 }} />
- 
-                <p style={{
-                  fontSize: "0.58rem", fontWeight: 800, letterSpacing: "1.6px",
-                  textTransform: "uppercase",
-                  color: isDark ? "rgba(196,168,255,0.45)" : "rgba(122,63,209,0.45)",
-                  marginBottom: 12,
-                }}>Account</p>
- 
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {!loggedIn ? (
-                    <button onClick={() => { setAuthOpen(true); setMobileOpen(false); }} style={{
-                      padding: "13px", borderRadius: 12, border: "none",
-                      background: "var(--brand-purple)", color: "#fff",
-                      fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                      fontSize: "0.76rem", cursor: "pointer",
-                    }}>Sign Up / Log In</button>
-                  ) : (
-                    <>
-                      <Link to="/dashboard" onClick={() => setMobileOpen(false)} style={{
-                        display: "block", padding: "13px", borderRadius: 12,
-                        background: "var(--brand-purple)", color: "#fff",
-                        textDecoration: "none", textAlign: "center",
-                        fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.76rem",
-                      }}>My Account</Link>
-                      <button onClick={handleLogout} style={{
-                        padding: "13px", borderRadius: 12, background: "transparent",
-                        border: "1.5px solid rgba(239,68,68,0.30)", color: "#f87171",
-                        fontFamily: "'Orbitron', sans-serif", fontWeight: 700,
-                        fontSize: "0.74rem", cursor: "pointer",
-                      }}>Log Out</button>
-                    </>
-                  )}
-                  <Link to="/tickets" onClick={() => setMobileOpen(false)} style={{
-                    display: "block", padding: "14px", borderRadius: 12,
-                    background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
-                    color: "#fff", textDecoration: "none", textAlign: "center",
-                    fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "0.78rem",
-                    boxShadow: "0 4px 18px rgba(245,166,35,0.28)",
-                  }}>✦ Get Your Tickets</Link>
-                </div>
+
+                {/* Mobile CTA */}
+                <Link
+                  to="/tickets"
+                  onClick={() => setMobileOpen(false)}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    marginTop: 12, padding: "14px", borderRadius: 14,
+                    fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800,
+                    letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
+                    background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff",
+                  }}
+                >
+                  GET YOUR PASS
+                </Link>
               </div>
- 
-              <div style={{
-                padding: "14px 20px", borderTop: `1px solid ${borderCol}`,
-                fontSize: "0.65rem",
-                color: isDark ? "rgba(200,180,255,0.35)" : "rgba(122,63,209,0.40)",
-                textAlign: "center",
-              }}>
-                The Tech Festival Canada · 27-28 Oct, 2026 · The Carlu, Toronto
-              </div>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
- 
- 
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );

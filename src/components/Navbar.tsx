@@ -13,11 +13,13 @@ const PARTNERS_DROPDOWN = [
 export default function Navbar() {
   const [authOpen,    setAuthOpen]    = useState(false);
   const [theme,       setTheme]       = useState("light");
+   const isDark = theme === "dark";   // ✅ REQUIRED
   const [user,        setUser]        = useState(null);
   const [mobileOpen,  setMobileOpen]  = useState(false);
   const [dropOpen,    setDropOpen]    = useState(false);
   const dropRef = useRef(null);
   const location = useLocation();
+  
 
   /* ── theme bootstrap ── */
   useEffect(() => {
@@ -29,7 +31,6 @@ export default function Navbar() {
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
-      const isDark = theme === "dark";   // ✅ REQUIRED
     setTheme(next);
     localStorage.setItem("theme", next);
     document.body.classList.toggle("dark-mode", next === "dark");
@@ -78,7 +79,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: "HOME",         path: "/" },
-    { label: "PARTNERS",     path:"/sponsors", hasDropdown: true}, // dropdown trigger
+    { label: "PARTNERS",     path:null, hasDropdown: true}, // dropdown trigger
     { label: "SPEAKERS",     path: "/speakers" },
     { label: "AGENDA",       path: "/agenda" },
   ];

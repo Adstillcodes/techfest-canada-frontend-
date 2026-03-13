@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
@@ -214,46 +214,6 @@ export default function Exhibit() {
 
       {/* ═══════════ CLOSING ARGUMENT ═══════════ */}
       <section style={{ padding: "60px 5% 100px", maxWidth: 900, margin: "0 auto" }}>
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
-          style={{ marginBottom: 60 }}
-        >
-          <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", fontWeight: 900, marginBottom: 16, color: textMain }}>
-            Why Exhibit at <GradientSpan>The Tech Festival Canada</GradientSpan>
-          </h2>
-          <p style={{ fontSize: "1.1rem", color: textMain, fontWeight: 700, marginBottom: 16 }}>
-            Because the right audience changes everything.
-          </p>
-          <p style={{ fontSize: "1.05rem", color: textMuted, lineHeight: 1.8, textAlign: "justify" }}>
-            At The Tech Festival Canada, your booth is more than a branded space. It becomes a live business development platform where conversations turn into opportunities. You gain access to an ecosystem of decision makers, innovators, buyers, investors, policymakers, founders, and industry influencers who are actively exploring technologies, partnerships, and future focused solutions. This is where brands come to accelerate visibility, build authority, open doors, and create commercial outcomes.
-          </p>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
-          style={{ marginBottom: 60 }}
-        >
-          <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", fontWeight: 900, marginBottom: 24, color: textMain }}>
-            Choose Your <GradientSpan>Presence</GradientSpan>
-          </h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {[
-              { label: "Single Booth", desc: "for focused visibility and smart market entry" },
-              { label: "Double Booth", desc: "for stronger presence and greater engagement" },
-              { label: "Triple Booth", desc: "for brands ready to create serious impact" },
-              { label: "Quadruple Booth", desc: "for companies that want to lead from the front" }
-            ].map((item, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 24px", background: cardBg, borderRadius: 12, border: `1px solid ${border}` }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#f5a623", flexShrink: 0 }} />
-                <div style={{ fontSize: "1.05rem" }}>
-                  <span style={{ fontWeight: 700, color: textMain }}>{item.label}</span>
-                  <span style={{ color: textMuted }}> {item.desc}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}>
           <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "2rem", fontWeight: 900, marginBottom: 16, color: textMain }}>
             Secure Your <GradientSpan>Booth</GradientSpan>
@@ -435,25 +395,6 @@ function EnquireModal({ booth, onClose, isDark, textMain, border }) {
     e.preventDefault();
     setStatus("Sending...");
 
-    // TODO: Replace this setTimeout with an actual fetch call to your backend
-    /* Example:
-      try {
-        const response = await fetch("YOUR_API_ENDPOINT/enquire", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...formData, boothSize: booth.specs })
-        });
-        if (response.ok) {
-           setStatus("Success! We will be in touch shortly.");
-        } else {
-           setStatus("Failed to send. Please try again.");
-        }
-      } catch(err) {
-         setStatus("Failed to send. Please try again.");
-      }
-    */
-    
-    // Simulating a successful network request for now
     setTimeout(() => {
       setStatus("Success! We will be in touch shortly.");
       setTimeout(() => {

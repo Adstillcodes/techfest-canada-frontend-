@@ -222,6 +222,23 @@ export default function Navbar() {
 
           {/* ── RIGHT ACTIONS ── */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <Link
+              to="/tickets"
+              className="tfc-tickets-btn"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "10px 24px", borderRadius: 999,
+                fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800,
+                letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
+                background: dark ? "#ffffff" : "#0d0520",
+                color: dark ? "#0d0520" : "#ffffff",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; }}
+            >
+              TICKETS
+            </Link>
             <a
               href="/Brochure.pdf"
               download
@@ -245,23 +262,6 @@ export default function Navbar() {
             >
               BROCHURE
             </a>
-            <Link
-              to="/tickets"
-              className="tfc-tickets-btn"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                padding: "10px 24px", borderRadius: 999,
-                fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800,
-                letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
-                background: dark ? "#ffffff" : "#0d0520",
-                color: dark ? "#0d0520" : "#ffffff",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; }}
-            >
-              TICKETS
-            </Link>
 
             <button
               onClick={toggleTheme}

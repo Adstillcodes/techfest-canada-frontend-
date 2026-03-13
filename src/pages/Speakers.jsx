@@ -106,17 +106,20 @@ export default function Speakers() {
           font-family: 'Orbitron', sans-serif;
           line-height: 1.05;
           margin-bottom: 1.2rem;
-          color: var(--brand-white, #fff);
+          color: #ffffff;
         }
-        body:not(.dark-mode) .speakers-hero h1 { color: var(--brand-purple, #3b1a7a); }
+        body:not(.dark-mode) .speakers-hero h1 { color: #3b1a7a; }
         .speakers-hero h1 span { color: #f5a623; }
+        
         .speakers-hero-sub {
           font-size: 1rem;
-          color: var(--text-muted);
+          color: rgba(255, 255, 255, 0.7); /* Fixed for night mode */
           max-width: 520px;
           margin: 0 auto 2.4rem;
           line-height: 1.75;
         }
+        body:not(.dark-mode) .speakers-hero-sub { color: rgba(15, 5, 32, 0.7); }
+
         .speakers-hero-cta {
           display: inline-flex; align-items: center; gap: 8px;
           background: linear-gradient(135deg, #7a3fd1, #f5a623);
@@ -142,7 +145,7 @@ export default function Speakers() {
           flex: 1; min-width: 160px; max-width: 260px;
           display: flex; align-items: center; gap: 14px;
           padding: 24px 28px;
-          background: var(--bg-main, #0d0a1a);
+          background: #0d0a1a; /* Hardcoded robust dark bg */
         }
         body:not(.dark-mode) .stat-cell { background: #f8f5ff; }
         .stat-icon {
@@ -160,11 +163,14 @@ export default function Speakers() {
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
           background-clip: text; line-height: 1;
         }
+        
         .stat-label {
           font-size: 0.72rem; font-weight: 700;
-          color: var(--text-muted); text-transform: uppercase;
+          color: rgba(255, 255, 255, 0.7); /* Fixed for night mode */
+          text-transform: uppercase;
           letter-spacing: 0.8px; margin-top: 3px;
         }
+        body:not(.dark-mode) .stat-label { color: rgba(15, 5, 32, 0.7); }
 
         /* ── SECTION HEADERS ── */
         .section-header {
@@ -176,18 +182,21 @@ export default function Speakers() {
           font-size: clamp(1.6rem, 3vw, 2.4rem);
           font-weight: 900;
           font-family: 'Orbitron', sans-serif;
-          color: var(--brand-white, #fff);
+          color: #ffffff;
           margin-bottom: 0.6rem;
         }
-        body:not(.dark-mode) .section-header h2 { color: var(--brand-purple, #3b1a7a); }
+        body:not(.dark-mode) .section-header h2 { color: #3b1a7a; }
         .section-header h2 span { color: #f5a623; }
+        
         .section-header p {
           font-size: 0.92rem;
-          color: var(--text-muted);
+          color: rgba(255, 255, 255, 0.7); /* Fixed for night mode */
           max-width: 480px;
           margin: 0 auto;
           line-height: 1.7;
         }
+        body:not(.dark-mode) .section-header p { color: rgba(15, 5, 32, 0.7); }
+        
         .section-divider {
           width: 48px; height: 3px;
           background: linear-gradient(90deg, #7a3fd1, #f5a623);
@@ -235,17 +244,19 @@ export default function Speakers() {
         .speak-cta-text h3 {
           font-size: 1.6rem; font-weight: 900;
           font-family: 'Orbitron', sans-serif;
-          color: var(--brand-white, #fff);
+          color: #ffffff;
           margin-bottom: 0.5rem;
         }
-        body:not(.dark-mode) .speak-cta-text h3 { color: var(--brand-purple, #3b1a7a); }
+        body:not(.dark-mode) .speak-cta-text h3 { color: #3b1a7a; }
         .speak-cta-text h3 span { color: #f5a623; }
+        
         .speak-cta-text p {
           font-size: 0.9rem;
-          color: var(--text-muted);
+          color: rgba(255, 255, 255, 0.7); /* Fixed for night mode */
           max-width: 420px;
           line-height: 1.65;
         }
+        body:not(.dark-mode) .speak-cta-text p { color: rgba(15, 5, 32, 0.7); }
 
         @media (max-width: 768px) {
           .speak-cta-band { padding: 2rem; text-align: center; justify-content: center; }
@@ -313,8 +324,6 @@ export default function Speakers() {
               )
             }
           </section>
-
-        
 
           {/* ── SPEAK AT TFC CTA ── */}
           <div className="speak-cta-band">

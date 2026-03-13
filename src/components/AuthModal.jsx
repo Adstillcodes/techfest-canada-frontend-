@@ -82,7 +82,7 @@ export default function AuthModal({ isOpen, onClose, onSurvey }) {
     }
   };
 
-  const handleGoogleResponse = async (response) => {
+/*  const handleGoogleResponse = async (response) => {
     try {
       const res = await fetch(`${API}/google`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ credential: response.credential }) });
       const data = await res.json();
@@ -129,7 +129,7 @@ export default function AuthModal({ isOpen, onClose, onSurvey }) {
       alert("Password reset email sent.");
       setView("login");
     } catch (err) { alert(err.message); } finally { setLoading(false); }
-  };
+  }; */
 
   // Theme-aware colors
   const bg        = isDark ? "#0f0720"         : "#ffffff";

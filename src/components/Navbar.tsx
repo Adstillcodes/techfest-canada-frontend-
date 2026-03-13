@@ -42,32 +42,6 @@ location.pathname === "/sponsor"
 return item.path === location.pathname;
 });
 
-useEffect(() => {
-const load = async () => {
-const token = localStorage.getItem("token");
-if (!token) {
-setUser(null);
-return;
-}
-try {
-setUser(await fetchMe());
-} catch {
-setUser(null);
-}
-};
-
-```
-load();
-window.addEventListener("authChanged", load);
-window.addEventListener("authStateChanged", load);
-
-return () => {
-  window.removeEventListener("authChanged", load);
-  window.removeEventListener("authStateChanged", load);
-};
-```
-
-}, []);
 
 useEffect(() => {
 const saved = localStorage.getItem("theme") || "light";

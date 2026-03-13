@@ -90,7 +90,7 @@ export default function Navbar() {
 
   return (
     <>
-      <style>{`
+      <style>{
         .tfc-navbar-wrap {
           position: sticky; top: 0; z-index: 1000; width: 100%;
           backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
@@ -119,7 +119,7 @@ export default function Navbar() {
         @media (max-width: 640px) {
           .tfc-tickets-btn { display: none !important; }
         }
-      `}</style>
+      }</style>
 
       <nav
         className="tfc-navbar-wrap"

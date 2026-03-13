@@ -132,7 +132,20 @@ body.dark-mode .nav-logo {
 .urgency-banner span { background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 4px; margin-left: 10px; }
 
 /* --- NAVIGATION --- */
-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; width: 100%; background: var(--bg-nav); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-main); position: sticky; top: 0; z-index: 1000; height: 80px; }
+nav:not(.tfc-nav) { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 1rem 5%; 
+  width: 100%; 
+  background: var(--bg-nav); 
+  backdrop-filter: blur(15px); 
+  border-bottom: 1px solid var(--border-main); 
+  position: sticky; 
+  top: 0; 
+  z-index: 1000; 
+  height: 80px; 
+}
 .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
 .nav-links a { font-size: 0.9rem; font-weight: 700; transition: 0.2s; text-transform: uppercase; }
 .nav-links a:hover { color: var(--brand-orange); }

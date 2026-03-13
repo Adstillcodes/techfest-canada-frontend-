@@ -6,7 +6,8 @@ import { motion, useInView } from "framer-motion";
 
 /* ═══════════════════════════════════════════════════════
    COMPARISON TABLE DATA (Platinum → Bronze)
-   ═══════════════════════════════════════════════════════ */
+   ══════════════════════
+   ═════════════════════════════════ */
 
 var TIERS = [
   { name: "Platinum", price: "$24,999", color: "#b99eff" },

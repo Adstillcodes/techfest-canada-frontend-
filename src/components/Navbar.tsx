@@ -338,7 +338,7 @@ export default function Navbar() {
             </div>
           </div>
  
-          {/* RIGHT ACTIONS */}
+         {/* RIGHT ACTIONS */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
  
             <div className="tfc-desk-actions">
@@ -358,7 +358,7 @@ export default function Navbar() {
                   //fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none",
                   //display: "flex", alignItems: "center", textTransform: "uppercase",
                 //}}>MY ACCOUNT</Link>
-              //)}
+              //)} */
               <Link to="/tickets" style={{
                 padding: "0 22px", height: 40, borderRadius: 999,
                 background: "transparent",
@@ -558,37 +558,7 @@ export default function Navbar() {
  
                 <div style={{ height: 1, background: borderCol, marginBottom: 22 }} />
  
-                <p style={{
-                  fontSize: "0.58rem", fontWeight: 800, letterSpacing: "1.6px",
-                  textTransform: "uppercase",
-                  color: isDark ? "rgba(196,168,255,0.45)" : "rgba(122,63,209,0.45)",
-                  marginBottom: 12,
-                }}>Account</p>
- 
-                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {!loggedIn ? (
-                    <button onClick={() => { setAuthOpen(true); setMobileOpen(false); }} style={{
-                      padding: "13px", borderRadius: 12, border: "none",
-                      background: "var(--brand-purple)", color: "#fff",
-                      fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                      fontSize: "0.76rem", cursor: "pointer",
-                    }}>Sign Up / Log In</button>
-                  ) : (
-                    <>
-                      <Link to="/dashboard" onClick={() => setMobileOpen(false)} style={{
-                        display: "block", padding: "13px", borderRadius: 12,
-                        background: "var(--brand-purple)", color: "#fff",
-                        textDecoration: "none", textAlign: "center",
-                        fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.76rem",
-                      }}>My Account</Link>
-                      <button onClick={handleLogout} style={{
-                        padding: "13px", borderRadius: 12, background: "transparent",
-                        border: "1.5px solid rgba(239,68,68,0.30)", color: "#f87171",
-                        fontFamily: "'Orbitron', sans-serif", fontWeight: 700,
-                        fontSize: "0.74rem", cursor: "pointer",
-                      }}>Log Out</button>
-                    </>
-                  )}
+                
                   <Link to="/tickets" onClick={() => setMobileOpen(false)} style={{
                     display: "block", padding: "14px", borderRadius: 12,
                     background: "linear-gradient(135deg, #7a3fd1, #f5a623)",

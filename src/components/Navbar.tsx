@@ -223,7 +223,7 @@ export default function Navbar() {
           {/* ── RIGHT ACTIONS ── */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
             <a
-  href="/brochure.pdf"
+  href="/Brochure.pdf"
   download
   style={{
     padding: "0 22px",

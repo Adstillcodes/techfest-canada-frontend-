@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 
+
 export default function Details() {
   return (
     <>

@@ -1,11 +1,9 @@
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
-import UrgencyBanner from "../components/UrgencyBanner";
 
 export default function Details() {
   return (
     <>
-      <UrgencyBanner />
       <Navbar />
 
       <div className="container">

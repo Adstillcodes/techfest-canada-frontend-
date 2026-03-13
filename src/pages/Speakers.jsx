@@ -39,6 +39,7 @@ export default function Speakers() {
     { icon: Award,    value: "10",   label: "Tech Pillars Covered" },
   ];
 
+  
   return (
     <>
       <style>{`

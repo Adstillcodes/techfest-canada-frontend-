@@ -1551,3 +1551,13 @@ body.dark-mode .mobile-link {
   font-size: 1.8rem;
   font-weight: 700;
 }
+
+.tfc-desk-nav { display: none; }
+.tfc-desk-actions { display: none; }
+.tfc-hamburger { display: flex !important; }
+
+@media (min-width: 1024px) {
+  .tfc-desk-nav { display: block; }
+  .tfc-desk-actions { display: flex; align-items: center; gap: 10px; }
+  .tfc-hamburger { display: none !important; }
+}

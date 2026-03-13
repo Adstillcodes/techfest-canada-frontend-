@@ -10,7 +10,7 @@ export default function TicketBar() {
         </div>
 
         <Link to="/tickets" className="ticket-btn">
-          Get Your Pass ->
+          Get Your Pass →
         </Link>
 
       </div>

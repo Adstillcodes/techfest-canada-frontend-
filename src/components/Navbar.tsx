@@ -223,25 +223,7 @@ export default function Navbar() {
           {/* ── RIGHT ACTIONS ── */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
             <Link
-              to="/tickets"
-              className="tfc-tickets-btn"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                padding: "10px 24px", borderRadius: 999,
-                fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800,
-                letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
-                background: dark ? "#ffffff" : "#0d0520",
-                color: dark ? "#0d0520" : "#ffffff",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; }}
-            >
-              TICKETS
-            </Link>
-            <a
-              href="/Brochure.pdf"
-              download
+              to="/brochures"
               className="tfc-brochure-btn"
               style={{
                 padding: "0 22px",
@@ -261,7 +243,25 @@ export default function Navbar() {
               }}
             >
               BROCHURE
-            </a>
+            </Link>
+            
+            <Link
+              to="/tickets"
+              className="tfc-tickets-btn"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "10px 24px", borderRadius: 999,
+                fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800,
+                letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
+                background: dark ? "#ffffff" : "#0d0520",
+                color: dark ? "#0d0520" : "#ffffff",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; }}
+            >
+              TICKETS
+            </Link>
 
             <button
               onClick={toggleTheme}
@@ -391,11 +391,26 @@ export default function Navbar() {
                 })}
 
                 <Link
-                  to="/tickets"
+                  to="/brochures"
                   onClick={() => setMobileOpen(false)}
                   style={{
                     display: "flex", alignItems: "center", justifyContent: "center",
                     marginTop: 12, padding: "14px", borderRadius: 14,
+                    fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800,
+                    letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
+                    border: `1px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`,
+                    color: isDark ? "#fff" : "#0f0520",
+                  }}
+                >
+                  BROCHURE
+                </Link>
+
+                <Link
+                  to="/tickets"
+                  onClick={() => setMobileOpen(false)}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    marginTop: 8, padding: "14px", borderRadius: 14,
                     fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800,
                     letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
                     background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff",

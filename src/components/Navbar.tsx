@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import AuthModal from "./AuthModal";
-import { fetchMe } from "../utils/api";
-
-type User = { _id: string; name: string; email: string; role?: string };
 
 const PARTNER_SUBS = [
 { label: "Exhibit", path: "/exhibit" },
@@ -12,12 +8,12 @@ const PARTNER_SUBS = [
 ];
 
 export default function Navbar() {
-const [authOpen, setAuthOpen] = useState(false);
+
 const [theme, setTheme] = useState<"light" | "dark">("light");
-const [user, setUser] = useState<User | null>(null);
 const [mobileOpen, setMobileOpen] = useState(false);
 const [partnersOpen, setPartnersOpen] = useState(false);
 const [mobilePartnersOpen, setMobilePartnersOpen] = useState(false);
+
 const partnersTimeout = useRef<number | null>(null);
 
 const location = useLocation();
@@ -31,11 +27,6 @@ const navItems = [
 { label: "AGENDA", path: "/agenda" },
 ];
 
-const loggedIn = !!user;
-const isAdmin = user?.role === "admin";
-
-if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
-
 const activeIndex = navItems.findIndex((item) => {
 if (item.path === "/sponsors") {
 return (
@@ -44,83 +35,56 @@ location.pathname === "/exhibit" ||
 location.pathname === "/sponsor"
 );
 }
-return item.path === location.pathname;
+return location.pathname === item.path;
 });
 
 useEffect(() => {
-const load = async () => {
-const token = localStorage.getItem("token");
-if (!token) {
-setUser(null);
-return;
-}
-
-
-  try {
-    const me = await fetchMe();
-    setUser(me);
-  } catch {
-    setUser(null);
-  }
-};
-
-load();
-
-window.addEventListener("authChanged", load);
-window.addEventListener("authStateChanged", load);
-
-return () => {
-  window.removeEventListener("authChanged", load);
-  window.removeEventListener("authStateChanged", load);
-};
-
-
-}, []);
-
-useEffect(() => {
 const saved = (localStorage.getItem("theme") as "light" | "dark") || "light";
+
+```
 setTheme(saved);
+
 document.body.classList.toggle("dark-mode", saved === "dark");
 document.documentElement.classList.toggle("dark", saved === "dark");
+```
+
 }, []);
 
 const toggleTheme = () => {
+
+```
 const next = theme === "dark" ? "light" : "dark";
 
-
 setTheme(next);
+
 localStorage.setItem("theme", next);
 
 document.body.classList.toggle("dark-mode", next === "dark");
 document.documentElement.classList.toggle("dark", next === "dark");
-
-
-};
-
-const handleLogout = () => {
-localStorage.removeItem("token");
-
-
-window.dispatchEvent(new Event("authChanged"));
-
-setUser(null);
-setMobileOpen(false);
-
+```
 
 };
 
 const handlePartnersEnter = () => {
+
+```
 if (partnersTimeout.current) clearTimeout(partnersTimeout.current);
 
-
 setPartnersOpen(true);
+```
 
 };
 
 const handlePartnersLeave = () => {
+
+```
 partnersTimeout.current = window.setTimeout(() => {
-setPartnersOpen(false);
+
+  setPartnersOpen(false);
+
 }, 180);
+```
+
 };
 
 const isDark = theme === "dark";
@@ -130,38 +94,42 @@ const borderCol = isDark
 : "rgba(122,63,209,0.12)";
 
 return (
+
+```
 <>
-<nav
-style={{
-height: 80,
-display: "flex",
-alignItems: "center",
-width: "100%",
-position: "sticky",
-top: 0,
-zIndex: 1000,
-backdropFilter: "blur(20px)",
-WebkitBackdropFilter: "blur(20px)",
-borderBottom: `1px solid ${borderCol}`,
-background: isDark
-? "rgba(7,3,15,0.90)"
-: "rgba(255,255,255,0.93)",
-}}
->
-<div
-style={{
-width: "100%",
-maxWidth: 1400,
-margin: "0 auto",
-padding: "0 3%",
-display: "flex",
-alignItems: "center",
-justifyContent: "space-between",
-}}
->
-{/* LOGO */}
+  <nav
+    style={{
+      height: 80,
+      display: "flex",
+      alignItems: "center",
+      width: "100%",
+      position: "sticky",
+      top: 0,
+      zIndex: 1000,
+      backdropFilter: "blur(20px)",
+      borderBottom: `1px solid ${borderCol}`,
+      background: isDark
+        ? "rgba(7,3,15,0.90)"
+        : "rgba(255,255,255,0.93)",
+    }}
+  >
+
+    <div
+      style={{
+        width: "100%",
+        maxWidth: 1400,
+        margin: "0 auto",
+        padding: "0 3%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
+
+      {/* LOGO */}
 
       <Link to="/" style={{ flexShrink: 0 }}>
+
         <img
           src={
             isDark
@@ -169,17 +137,15 @@ justifyContent: "space-between",
               : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"
           }
           alt="Tech Festival Canada"
-          style={{
-            height: 52,
-            width: "auto",
-            objectFit: "contain",
-          }}
+          style={{ height: 52 }}
         />
+
       </Link>
 
-      {/* NAV TABS */}
+      {/* NAVIGATION PILL */}
 
       <div className="tfc-desk-nav">
+
         <div
           style={{
             display: "flex",
@@ -190,17 +156,22 @@ justifyContent: "space-between",
             padding: "4px",
           }}
         >
-          {navItems.map((item) => {
+
+          {navItems.map((item, i) => {
+
             const isPartners = item.hasDropdown;
 
             if (isPartners) {
+
               return (
+
                 <div
                   key={item.path}
                   style={{ position: "relative" }}
                   onMouseEnter={handlePartnersEnter}
                   onMouseLeave={handlePartnersLeave}
                 >
+
                   <Link
                     to={item.path}
                     style={{
@@ -211,10 +182,10 @@ justifyContent: "space-between",
                       fontFamily: "'Orbitron', sans-serif",
                       letterSpacing: "0.8px",
                       textTransform: "uppercase",
+                      textDecoration: "none",
                       color: isDark
                         ? "rgba(255,255,255,0.65)"
                         : "rgba(15,5,32,0.65)",
-                      textDecoration: "none",
                     }}
                   >
                     {item.label}
@@ -222,6 +193,7 @@ justifyContent: "space-between",
 
                   <AnimatePresence>
                     {partnersOpen && (
+
                       <motion.div
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -239,7 +211,9 @@ justifyContent: "space-between",
                           zIndex: 100,
                         }}
                       >
+
                         {PARTNER_SUBS.map((sub) => (
+
                           <Link
                             key={sub.label}
                             to={sub.path}
@@ -256,15 +230,22 @@ justifyContent: "space-between",
                           >
                             {sub.label}
                           </Link>
+
                         ))}
+
                       </motion.div>
+
                     )}
                   </AnimatePresence>
+
                 </div>
+
               );
+
             }
 
             return (
+
               <Link
                 key={item.path}
                 to={item.path}
@@ -284,56 +265,18 @@ justifyContent: "space-between",
               >
                 {item.label}
               </Link>
+
             );
+
           })}
+
         </div>
+
       </div>
 
-      {/* RIGHT ACTIONS */}
+      {/* RIGHT SIDE */}
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        {!loggedIn ? (
-          <button
-            onClick={() => setAuthOpen(true)}
-            style={{
-              padding: "0 22px",
-              height: 40,
-              borderRadius: 999,
-              background: "var(--brand-purple)",
-              color: "#fff",
-              border: "none",
-              fontFamily: "'Orbitron', sans-serif",
-              fontWeight: 800,
-              fontSize: "0.68rem",
-              letterSpacing: "0.8px",
-              cursor: "pointer",
-              textTransform: "uppercase",
-            }}
-          >
-            MY ACCOUNT
-          </button>
-        ) : (
-          <Link
-            to="/dashboard"
-            style={{
-              padding: "0 22px",
-              height: 40,
-              borderRadius: 999,
-              background: "var(--brand-purple)",
-              color: "#fff",
-              fontFamily: "'Orbitron', sans-serif",
-              fontWeight: 800,
-              fontSize: "0.68rem",
-              letterSpacing: "0.8px",
-              textDecoration: "none",
-              display: "flex",
-              alignItems: "center",
-              textTransform: "uppercase",
-            }}
-          >
-            MY ACCOUNT
-          </Link>
-        )}
 
         <Link
           to="/tickets"
@@ -381,12 +324,17 @@ justifyContent: "space-between",
         >
           ☰
         </button>
+
       </div>
+
     </div>
+
   </nav>
 
   <AnimatePresence>
+
     {mobileOpen && (
+
       <motion.aside
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
@@ -402,8 +350,11 @@ justifyContent: "space-between",
           zIndex: 9999,
         }}
       >
+
         {navItems.map((item) => (
+
           <div key={item.path} style={{ marginBottom: 16 }}>
+
             <Link
               to={item.path}
               onClick={() => setMobileOpen(false)}
@@ -415,7 +366,9 @@ justifyContent: "space-between",
             >
               {item.label}
             </Link>
+
           </div>
+
         ))}
 
         <Link
@@ -437,30 +390,15 @@ justifyContent: "space-between",
           ✦ Get Your Tickets
         </Link>
 
-        {loggedIn && (
-          <button
-            onClick={handleLogout}
-            style={{
-              marginTop: 12,
-              padding: "13px",
-              borderRadius: 12,
-              border: "1.5px solid rgba(239,68,68,0.30)",
-              color: "#f87171",
-              background: "transparent",
-              fontFamily: "'Orbitron', sans-serif",
-              fontWeight: 700,
-            }}
-          >
-            LOG OUT
-          </button>
-        )}
       </motion.aside>
+
     )}
+
   </AnimatePresence>
 
-  <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
 </>
-
+```
 
 );
+
 }

@@ -9,6 +9,17 @@ import { Mic, Users, Calendar, Award, ChevronRight } from "lucide-react";
 
 export default function Speakers() {
   const [speakers, setSpeakers] = useState([]);
+  const [isDark, setIsDark] = useState(true);
+
+  // 1. Detect dark mode exactly like we do on Exhibit & Tickets pages
+  useEffect(() => {
+    setIsDark(document.body.classList.contains("dark-mode"));
+    const obs = new MutationObserver(() => {
+      setIsDark(document.body.classList.contains("dark-mode"));
+    });
+    obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     const query = '*[_type == "speaker" && isFeatured == true]';
@@ -99,25 +110,25 @@ export default function Speakers() {
           0%,100% { opacity:1; transform:scale(1); }
           50% { opacity:0.6; transform:scale(1.4); }
         }
+
+        /* Dynamically injected colors via React State */
         .speakers-hero h1 {
           font-size: clamp(2.4rem, 5vw, 4rem);
           font-weight: 900;
           font-family: 'Orbitron', sans-serif;
           line-height: 1.05;
           margin-bottom: 1.2rem;
-          color: #ffffff;
+          color: ${isDark ? "#ffffff" : "#3b1a7a"};
         }
-        [data-theme="light"] .speakers-hero h1 { color: #3b1a7a; }
         .speakers-hero h1 span { color: #f5a623; }
         
         .speakers-hero-sub {
           font-size: 1rem;
-          color: rgba(255, 255, 255, 0.7);
+          color: ${isDark ? "rgba(255, 255, 255, 0.7)" : "rgba(15, 5, 32, 0.7)"};
           max-width: 520px;
           margin: 0 auto 2.4rem;
           line-height: 1.75;
         }
-        [data-theme="light"] .speakers-hero-sub { color: rgba(15, 5, 32, 0.7); }
 
         .speakers-hero-cta {
           display: inline-flex; align-items: center; gap: 8px;
@@ -144,9 +155,8 @@ export default function Speakers() {
           flex: 1; min-width: 160px; max-width: 260px;
           display: flex; align-items: center; gap: 14px;
           padding: 24px 28px;
-          background: #0d0a1a;
+          background: ${isDark ? "#0d0a1a" : "#f8f5ff"};
         }
-        [data-theme="light"] .stat-cell { background: #f8f5ff; }
         .stat-icon {
           width: 42px; height: 42px; border-radius: 12px;
           background: rgba(122,63,209,0.12);
@@ -165,11 +175,10 @@ export default function Speakers() {
         
         .stat-label {
           font-size: 0.72rem; font-weight: 700;
-          color: rgba(255, 255, 255, 0.7);
+          color: ${isDark ? "rgba(255, 255, 255, 0.7)" : "rgba(15, 5, 32, 0.7)"};
           text-transform: uppercase;
           letter-spacing: 0.8px; margin-top: 3px;
         }
-        [data-theme="light"] .stat-label { color: rgba(15, 5, 32, 0.7); }
 
         /* ── SECTION HEADERS ── */
         .section-header {
@@ -181,20 +190,18 @@ export default function Speakers() {
           font-size: clamp(1.6rem, 3vw, 2.4rem);
           font-weight: 900;
           font-family: 'Orbitron', sans-serif;
-          color: #ffffff;
+          color: ${isDark ? "#ffffff" : "#3b1a7a"};
           margin-bottom: 0.6rem;
         }
-        [data-theme="light"] .section-header h2 { color: #3b1a7a; }
         .section-header h2 span { color: #f5a623; }
         
         .section-header p {
           font-size: 0.92rem;
-          color: rgba(255, 255, 255, 0.7);
+          color: ${isDark ? "rgba(255, 255, 255, 0.7)" : "rgba(15, 5, 32, 0.7)"};
           max-width: 480px;
           margin: 0 auto;
           line-height: 1.7;
         }
-        [data-theme="light"] .section-header p { color: rgba(15, 5, 32, 0.7); }
         
         .section-divider {
           width: 48px; height: 3px;
@@ -208,15 +215,6 @@ export default function Speakers() {
           padding: 0 5% 5rem;
           max-width: 1200px;
           margin: 0 auto;
-        }
-
-        /* ── 3D CAROUSEL SECTION ── */
-        .threed-section {
-          padding: 4rem 5% 5rem;
-          background: rgba(122,63,209,0.03);
-          border-top: 1px solid rgba(122,63,209,0.10);
-          border-bottom: 1px solid rgba(122,63,209,0.10);
-          overflow: hidden;
         }
 
         /* ── SPEAK CTA BAND ── */
@@ -243,19 +241,17 @@ export default function Speakers() {
         .speak-cta-text h3 {
           font-size: 1.6rem; font-weight: 900;
           font-family: 'Orbitron', sans-serif;
-          color: #ffffff;
+          color: ${isDark ? "#ffffff" : "#3b1a7a"};
           margin-bottom: 0.5rem;
         }
-        [data-theme="light"] .speak-cta-text h3 { color: #3b1a7a; }
         .speak-cta-text h3 span { color: #f5a623; }
         
         .speak-cta-text p {
           font-size: 0.9rem;
-          color: rgba(255, 255, 255, 0.7);
+          color: ${isDark ? "rgba(255, 255, 255, 0.7)" : "rgba(15, 5, 32, 0.7)"};
           max-width: 420px;
           line-height: 1.65;
         }
-        [data-theme="light"] .speak-cta-text p { color: rgba(15, 5, 32, 0.7); }
 
         @media (max-width: 768px) {
           .speak-cta-band { padding: 2rem; text-align: center; justify-content: center; }

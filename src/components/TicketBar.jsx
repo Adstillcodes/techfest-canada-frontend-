@@ -9,7 +9,7 @@ export default function TicketBar() {
           🎟️ Early Bird Tickets Available
         </div>
 
-        <Link to="/tickets" className="ticket-bar-btn">
+        <Link to="/tickets" className="ticket-btn">
           Get Your Pass →
         </Link>
 

@@ -63,10 +63,9 @@ const FIXED_SERVICES = [
   { title: "Sustainability & CleanTech", description: "Pioneering a Greener, Smarter Future through technology-led climate action.", iconName: "leaf", position: "right" },
 ]
 
-const MINUTES_STAT = {value: 28-29, suffix:"", label:"Dates", iconName:"clock"},
+
 const FALLBACK_STATS = [
   { value: 150, suffix: "+", label: "Builds Completed", iconName: "award" },
-  MINUTES_STAT,
   { value: 12, suffix: "", label: "Event Years", iconName: "calendar" },
   { value: 98, suffix: "%", label: "Success Rate", iconName: "trending" },
 ]
@@ -74,7 +73,6 @@ const FALLBACK_STATS = [
 function injectMinutesStat(stats) {
   if (!stats || stats.length === 0) return FALLBACK_STATS
   var result = [...stats]
-  result[1] = MINUTES_STAT
   return result
 }
 

@@ -10,6 +10,7 @@ export default function FirstTimers() {
   const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
+  
   useEffect(() => {
     setIsDark(document.body.classList.contains("dark-mode"));
     const obs = new MutationObserver(() => {

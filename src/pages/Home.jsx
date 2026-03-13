@@ -397,9 +397,9 @@ export default function Home() {
       </section>
 
       {/* ═══════════ ABOUT / FOOTER / MODALS ═══════════ */}
-      <div id="about-section">
-        <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
-      </div>
+<div id="about-section" style={{ background: bg }}>
+  <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
+</div>
 
       <Footer />
 

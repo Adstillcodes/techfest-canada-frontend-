@@ -4,23 +4,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "./AuthModal";
 
 const PARTNERS_DROPDOWN = [
-  { label: "Sponsor Us",      path: "/sponsor" },
-  { label: "First Timers",      path: "/on-demand" },
-  {label: "Sponsors", path:"/resources"},
-
+  { label: "Sponsor Us",   path: "/sponsor" },
+  { label: "First Timers", path: "/on-demand" }
 ];
 
 export default function Navbar() {
   const [authOpen,    setAuthOpen]    = useState(false);
   const [theme,       setTheme]       = useState("light");
-   const isDark = theme === "dark";   // ✅ REQUIRED
+  const isDark = theme === "dark";   // REQUIRED
   const [user,        setUser]        = useState(null);
   const [mobileOpen,  setMobileOpen]  = useState(false);
   const [dropOpen,    setDropOpen]    = useState(false);
   const dropRef = useRef(null);
   const location = useLocation();
   
-
   /* ── theme bootstrap ── */
   useEffect(() => {
     const saved = localStorage.getItem("theme") || "light";
@@ -79,7 +76,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: "HOME",         path: "/" },
-    { label: "PARTNERS",     path:null, hasDropdown: true}, // dropdown trigger
+    { label: "PARTNERS",     path: null, hasDropdown: true }, // dropdown trigger
     { label: "SPEAKERS",     path: "/speakers" },
     { label: "AGENDA",       path: "/agenda" },
   ];

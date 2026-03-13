@@ -515,3 +515,13 @@ html { font-size: 16px; }
 .stat-card { background: #1b1036; padding: 20px; border-radius: 14px; border: 1px solid #3a256d; }
 .stat-card p { color: #bba8ff; font-size: 0.9rem; }
 .stat-card h2 { font-size: 1.8rem; font-weight: 700; }
+
+.tfc-mobile-sheet {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .tfc-mobile-sheet {
+    display: none;
+  }
+}

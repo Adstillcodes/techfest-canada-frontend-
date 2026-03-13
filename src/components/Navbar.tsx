@@ -378,7 +378,7 @@ export default function Navbar() {
 }}>
   TICKETS
 </Link>
-            </div>
+     
  
             <button onClick={toggleTheme} style={{
               width: 38, height: 38, borderRadius: "50%", border: `1px solid ${borderCol}`,

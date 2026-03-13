@@ -9,12 +9,13 @@ const PARTNERS_DROPDOWN = [
 ];
 
 export default function Navbar() {
-  const [authOpen,    setAuthOpen]    = useState(false);
-  const [theme,       setTheme]       = useState("light");
+  const [authOpen,       setAuthOpen]       = useState(false);
+  const [theme,          setTheme]          = useState("light");
   const isDark = theme === "dark";
-  const [user,        setUser]        = useState(null);
-  const [mobileOpen,  setMobileOpen]  = useState(false);
-  const [dropOpen,    setDropOpen]    = useState(false);
+  const [user,           setUser]           = useState(null);
+  const [mobileOpen,     setMobileOpen]     = useState(false);
+  const [dropOpen,       setDropOpen]       = useState(false);
+  const [mobileDropOpen, setMobileDropOpen] = useState(false);
   const dropRef = useRef(null);
   const location = useLocation();
   
@@ -50,7 +51,11 @@ export default function Navbar() {
   }, []);
 
   /* ── close mobile on route change ── */
-  useEffect(() => { setMobileOpen(false); setDropOpen(false); }, [location.pathname]);
+  useEffect(() => { 
+    setMobileOpen(false); 
+    setDropOpen(false); 
+    setMobileDropOpen(false);
+  }, [location.pathname]);
 
   const dark = theme === "dark";
   const bg          = dark ? "rgba(6,2,15,0.92)"   : "rgba(255,255,255,0.94)";
@@ -299,42 +304,90 @@ export default function Navbar() {
               }}
             >
               <div style={{ padding: "20px 24px 80px", display: "flex", flexDirection: "column", gap: 4 }}>
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setMobileOpen(false)}
-                    style={{
-                      fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
-                      letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
-                      padding: "12px 16px", borderRadius: 12,
-                      color: location.pathname === item.path ? "#7a3fd1" : textMain,
-                      background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent",
-                    }}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
+                
+                {navItems.map((item) => {
+                  if (item.hasDropdown) {
+                    return (
+                      <div key={item.path} style={{ display: "flex", flexDirection: "column" }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <Link
+                            to={item.path}
+                            onClick={() => setMobileOpen(false)}
+                            style={{
+                              fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
+                              letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
+                              padding: "12px 16px", borderRadius: 12,
+                              color: location.pathname === item.path ? "#7a3fd1" : textMain,
+                              background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent",
+                              flex: 1
+                            }}
+                          >
+                            {item.label}
+                          </Link>
+                          <button
+                            onClick={() => setMobileDropOpen(!mobileDropOpen)}
+                            style={{
+                              background: "transparent", border: "none", color: textMain, cursor: "pointer",
+                              padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "center"
+                            }}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                              style={{ transform: mobileDropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
+                              <path d="M6 9l6 6 6-6" />
+                            </svg>
+                          </button>
+                        </div>
 
-                <div style={{ paddingLeft: 16, marginTop: 4 }}>
-                  <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: textMuted, marginBottom: 8 }}>PARTNER LINKS</div>
-                  {PARTNERS_DROPDOWN.map((d) => (
+                        <AnimatePresence>
+                          {mobileDropOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              style={{ overflow: "hidden" }}
+                            >
+                              <div style={{ paddingLeft: 16, marginTop: 4, display: "flex", flexDirection: "column", gap: 4 }}>
+                                {PARTNERS_DROPDOWN.map((d) => (
+                                  <Link
+                                    key={d.path}
+                                    to={d.path}
+                                    onClick={() => setMobileOpen(false)}
+                                    style={{
+                                      display: "block", fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem",
+                                      fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
+                                      textDecoration: "none", padding: "10px 16px", borderRadius: 10,
+                                      color: location.pathname === d.path ? "#7a3fd1" : textMuted,
+                                      background: location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent",
+                                    }}
+                                  >
+                                    — {d.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  }
+
+                  return (
                     <Link
-                      key={d.path}
-                      to={d.path}
+                      key={item.path}
+                      to={item.path}
                       onClick={() => setMobileOpen(false)}
                       style={{
-                        display: "block", fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem",
-                        fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
-                        textDecoration: "none", padding: "10px 16px", borderRadius: 10,
-                        color: location.pathname === d.path ? "#7a3fd1" : textMuted,
-                        background: location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent",
+                        fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
+                        letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
+                        padding: "12px 16px", borderRadius: 12,
+                        color: location.pathname === item.path ? "#7a3fd1" : textMain,
+                        background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent",
                       }}
                     >
-                      — {d.label}
+                      {item.label}
                     </Link>
-                  ))}
-                </div>
+                  );
+                })}
 
                 <Link
                   to="/tickets"

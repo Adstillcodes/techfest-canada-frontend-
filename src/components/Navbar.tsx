@@ -368,7 +368,7 @@ export default function Navbar() {
                 fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none",
                 display: "flex", alignItems: "center", textTransform: "uppercase",
               }}>TICKETS</Link>
-            </div>
+           
  
             <button onClick={toggleTheme} style={{
               width: 38, height: 38, borderRadius: "50%", border: `1px solid ${borderCol}`,

@@ -73,9 +73,7 @@ const FALLBACK_STATS = [
 
 function injectMinutesStat(stats) {
   if (!stats || stats.length === 0) return FALLBACK_STATS
-  var result = [...stats]
-  result[1] = 
-  return result
+  return [...stats]
 }
 
 export default function AboutUs({ onWriteToUs }) {

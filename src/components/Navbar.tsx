@@ -3,26 +3,24 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "./AuthModal";
 
-type User = { _id: string; name: string; email: string; role?: string };
-
 const PARTNERS_DROPDOWN = [
-  { label: "Sponsor Us",        path: "/sponsor" },
+  { label: "Sponsor Us",      path: "/sponsor" },
   { label: "First Timers",      path: "/on-demand" },
   { label: "Speakers",          path: "/speakers" },
 ];
 
 export default function Navbar() {
   const [authOpen,    setAuthOpen]    = useState(false);
-  const [theme,       setTheme]       = useState<"light" | "dark">("light");
-  const [user,        setUser]        = useState<User | null>(null);
+  const [theme,       setTheme]       = useState("light");
+  const [user,        setUser]        = useState(null);
   const [mobileOpen,  setMobileOpen]  = useState(false);
   const [dropOpen,    setDropOpen]    = useState(false);
-  const dropRef = useRef<HTMLDivElement>(null);
+  const dropRef = useRef(null);
   const location = useLocation();
 
   /* ── theme bootstrap ── */
   useEffect(() => {
-    const saved = (localStorage.getItem("theme") as "light" | "dark") || "light";
+    const saved = localStorage.getItem("theme") || "light";
     setTheme(saved);
     document.body.classList.toggle("dark-mode", saved === "dark");
     document.documentElement.classList.toggle("dark", saved === "dark");
@@ -53,8 +51,8 @@ export default function Navbar() {
 
   /* ── close dropdown on outside click ── */
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
+    const handler = (e) => {
+      if (dropRef.current && !dropRef.current.contains(e.target)) {
         setDropOpen(false);
       }
     };
@@ -74,7 +72,7 @@ export default function Navbar() {
   const pillBorder  = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.18)";
   const dropBg      = dark ? "#0e0820"              : "#ffffff";
   const dropBorder  = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.14)";
-  const mobileBg    = dark ? "#0a0518"              : "#ffffff";
+  const mobileBg    = dark ? "rgba(10,5,24,0.95)"     : "rgba(255,255,255,0.95)";
 
   const navItems = [
     { label: "HOME",         path: "/" },
@@ -83,14 +81,14 @@ export default function Navbar() {
     { label: "AGENDA",       path: "/agenda" },
   ];
 
-  const isActive = (path: string | null) => {
+  const isActive = (path) => {
     if (!path) return PARTNERS_DROPDOWN.some(d => d.path === location.pathname);
     return location.pathname === path;
   };
 
   return (
     <>
-      <style>{
+      <style>{`
         .tfc-navbar-wrap {
           position: sticky; top: 0; z-index: 1000; width: 100%;
           backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
@@ -119,7 +117,7 @@ export default function Navbar() {
         @media (max-width: 640px) {
           .tfc-tickets-btn { display: none !important; }
         }
-      }</style>
+      `}</style>
 
       <nav
         className="tfc-navbar-wrap"
@@ -131,7 +129,7 @@ export default function Navbar() {
           <Link to="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
             <img
               src={dark
-                ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
+                ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png"
                 : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
               alt="The Tech Festival Canada"
               style={{ height: 52, width: "auto", objectFit: "contain" }}
@@ -143,7 +141,6 @@ export default function Navbar() {
             <ul style={{ display: "flex", alignItems: "center", gap: 4, listStyle: "none", margin: 0, padding: "6px", background: pillBg, border: "1px solid " + pillBorder, borderRadius: 999 }}>
               {navItems.map((item) => {
                 if (item.path === null) {
-                  /* Partners dropdown */
                   return (
                     <li key="partners" style={{ position: "relative" }} ref={dropRef}>
                       <button
@@ -222,7 +219,6 @@ export default function Navbar() {
 
           {/* ── RIGHT ACTIONS ── */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-            {/* Tickets */}
             <Link
               to="/tickets"
               className="tfc-tickets-btn"
@@ -241,7 +237,6 @@ export default function Navbar() {
               TICKETS
             </Link>
 
-            {/* Theme toggle */}
             <button
               onClick={toggleTheme}
               style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.15rem", padding: "6px", lineHeight: 1 }}
@@ -250,7 +245,6 @@ export default function Navbar() {
               {dark ? "☀️" : "🌙"}
             </button>
 
-            {/* Hamburger */}
             <button
               className={"tfc-hamburger" + (mobileOpen ? " open" : "")}
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -263,22 +257,32 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* ── MOBILE MENU ── */}
+        {/* ── MOBILE MENU (OVERLAY MODE) ── */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              style={{ overflow: "hidden", background: mobileBg, borderTop: "1px solid " + border }}
+              initial={{ opacity: 0, y: -15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                width: "100%",
+                height: "calc(100vh - 80px)",
+                overflowY: "auto",
+                background: mobileBg,
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderTop: "1px solid " + border,
+              }}
             >
-              <div style={{ padding: "20px 24px 28px", display: "flex", flexDirection: "column", gap: 4 }}>
-                {/* Regular nav items */}
+              <div style={{ padding: "20px 24px 80px", display: "flex", flexDirection: "column", gap: 4 }}>
                 {navItems.filter(i => i.path !== null).map((item) => (
                   <Link
                     key={item.path}
-                    to={item.path!}
+                    to={item.path}
                     onClick={() => setMobileOpen(false)}
                     style={{
                       fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
@@ -292,7 +296,6 @@ export default function Navbar() {
                   </Link>
                 ))}
 
-                {/* Partners section in mobile */}
                 <div style={{ paddingLeft: 16, marginTop: 4 }}>
                   <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: textMuted, marginBottom: 8 }}>PARTNERS</div>
                   {PARTNERS_DROPDOWN.map((d) => (
@@ -313,7 +316,6 @@ export default function Navbar() {
                   ))}
                 </div>
 
-                {/* Mobile CTA */}
                 <Link
                   to="/tickets"
                   onClick={() => setMobileOpen(false)}

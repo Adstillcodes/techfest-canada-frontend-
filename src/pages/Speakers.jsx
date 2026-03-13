@@ -9,21 +9,6 @@ import { Mic, Users, Calendar, Award, ChevronRight } from "lucide-react";
 
 export default function Speakers() {
   const [speakers, setSpeakers] = useState([]);
-  const [isDark, setIsDark] = useState(true);
-
-  // 1. Theme Detection with foolproof selector handling
-  useEffect(() => {
-    // Check data-theme attribute on <html> exactly like App.jsx forces it
-    const html = document.documentElement;
-    setIsDark(html.getAttribute("data-theme") === "dark");
-
-    const obs = new MutationObserver(() => {
-      setIsDark(html.getAttribute("data-theme") === "dark");
-    });
-    // Watch attributes on the main <html> element
-    obs.observe(html, { attributes: true, attributeFilter: ["data-theme"] });
-    return () => obs.disconnect();
-  }, []);
 
   useEffect(() => {
     const query = '*[_type == "speaker" && isFeatured == true]';
@@ -63,8 +48,8 @@ export default function Speakers() {
           min-height: 100vh;
           display: flex;
           flex-direction: column;
-          // Injected Page Background (White or Dark Purple)
-          background: ${isDark ? "#0d0a1a" : "#ffffff"};
+          /* Uses global variable from styles.css */
+          background: var(--bg-main);
         }
         .speakers-main {
           flex: 1;
@@ -101,15 +86,19 @@ export default function Speakers() {
           display: inline-flex; align-items: center; gap: 8px;
           background: rgba(122,63,209,0.12);
           border: 1px solid rgba(122,63,209,0.28);
-          color: #b99eff;
+          color: var(--brand-purple);
           padding: 5px 16px; border-radius: 999px;
           font-size: 0.72rem; font-weight: 700;
           letter-spacing: 1.4px; text-transform: uppercase;
           margin-bottom: 1.4rem;
         }
+        [data-theme="dark"] .speakers-eyebrow {
+           color: #b99eff;
+        }
+        
         .speakers-eyebrow-dot {
           width: 6px; height: 6px; border-radius: 50%;
-          background: #f5a623; box-shadow: 0 0 6px #f5a623;
+          background: var(--brand-orange); box-shadow: 0 0 6px var(--brand-orange);
           animation: spkPulse 2s ease infinite;
         }
         @keyframes spkPulse {
@@ -117,23 +106,19 @@ export default function Speakers() {
           50% { opacity:0.6; transform:scale(1.4); }
         }
         
-        /* Fixed text colors in style block directly */
         .speakers-hero h1 {
           font-size: clamp(2.4rem, 5vw, 4rem);
           font-weight: 900;
           font-family: 'Orbitron', sans-serif;
           line-height: 1.05;
           margin-bottom: 1.2rem;
-          color: ${isDark ? "#ffffff" : "#000000"};
+          color: var(--text-main);
         }
-        // Force H1 Span to Black text in light mode (overrides other rules)
-        .speakers-hero h1 span {
-          color: ${isDark ? "#f5a623" : "#000000"};
-        }
+        .speakers-hero h1 span { color: var(--brand-orange); }
         
         .speakers-hero-sub {
           font-size: 1rem;
-          color: ${isDark ? "rgba(255, 255, 255, 0.7)" : "#000000"};
+          color: var(--text-muted);
           max-width: 520px;
           margin: 0 auto 2.4rem;
           line-height: 1.75;
@@ -141,8 +126,8 @@ export default function Speakers() {
 
         .speakers-hero-cta {
           display: inline-flex; align-items: center; gap: 8px;
-          background: linear-gradient(135deg, #7a3fd1, #f5a623);
-          color: white; border: none; padding: 12px 28px;
+          background: var(--gradient-brand);
+          color: var(--brand-white); border: none; padding: 12px 28px;
           border-radius: 999px; font-weight: 700; font-size: 0.85rem;
           cursor: pointer; text-decoration: none;
           transition: opacity 0.2s, transform 0.2s;
@@ -164,8 +149,7 @@ export default function Speakers() {
           flex: 1; min-width: 160px; max-width: 260px;
           display: flex; align-items: center; gap: 14px;
           padding: 24px 28px;
-          // Injected Dynamic Background color for each stat-cell (White or Dark Purple)
-          background: ${isDark ? "#0d0a1a" : "#ffffff"};
+          background: var(--bg-card);
         }
         .stat-icon {
           width: 42px; height: 42px; border-radius: 12px;
@@ -173,21 +157,27 @@ export default function Speakers() {
           border: 1px solid rgba(122,63,209,0.25);
           display: flex; align-items: center; justify-content: center;
           flex-shrink: 0;
-          color: #b99eff;
+          color: var(--brand-purple);
+        }
+        [data-theme="dark"] .stat-icon {
+            color: #b99eff;
         }
         
         .stat-value {
           font-family: 'Orbitron', sans-serif;
           font-size: 1.5rem; font-weight: 900;
           line-height: 1;
-          
-          /* Forced static black color for light mode directly in style block to override dynamic logic from original file that used to work in night mode. */
-          ${isDark ? "background: linear-gradient(135deg, #7a3fd1, #f5a623); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;" : "color: #000000; background: none; -webkit-background-clip: none; -webkit-text-fill-color: inherit; background-clip: none;"}
+          color: var(--text-main);
+        }
+        [data-theme="dark"] .stat-value {
+           background: var(--gradient-brand);
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+           background-clip: text;
         }
         
         .stat-label {
           font-size: 0.72rem; font-weight: 700;
-          color: ${isDark ? "rgba(255, 255, 255, 0.7)" : "#000000"};
+          color: var(--text-muted);
           text-transform: uppercase;
           letter-spacing: 0.8px; margin-top: 3px;
         }
@@ -202,18 +192,14 @@ export default function Speakers() {
           font-size: clamp(1.6rem, 3vw, 2.4rem);
           font-weight: 900;
           font-family: 'Orbitron', sans-serif;
-          color: ${isDark ? "#ffffff" : "#000000"};
+          color: var(--text-main);
           margin-bottom: 0.6rem;
         }
-        
-        /* Force H2 Span to Black text in light mode */
-        .section-header h2 span {
-          color: ${isDark ? "#f5a623" : "#000000"};
-        }
+        .section-header h2 span { color: var(--brand-orange); }
         
         .section-header p {
           font-size: 0.92rem;
-          color: ${isDark ? "rgba(255, 255, 255, 0.7)" : "#000000"};
+          color: var(--text-muted);
           max-width: 480px;
           margin: 0 auto;
           line-height: 1.7;
@@ -221,7 +207,7 @@ export default function Speakers() {
         
         .section-divider {
           width: 48px; height: 3px;
-          background: linear-gradient(90deg, #7a3fd1, #f5a623);
+          background: var(--gradient-brand);
           border-radius: 2px;
           margin: 1rem auto 0;
         }
@@ -238,11 +224,8 @@ export default function Speakers() {
           margin: 5rem 5%;
           border-radius: 24px;
           padding: 3.5rem 4rem;
-          
-          /* User wants white background, so the background of this whole band element must be white too. so I am updating both the dynamic and static parts. the gradient background is the part I'm changing to dynamic background while preserving other purple and yellow accents user explicitly wanted to keep. */
-          background: ${isDark ? "linear-gradient(135deg, rgba(122,63,209,0.12) 0%, rgba(245,166,35,0.06) 100%)" : "#ffffff"};
-          
-          border: 1px solid rgba(122,63,209,0.22);
+          background: var(--bg-card);
+          border: 1px solid var(--border-main);
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -251,6 +234,10 @@ export default function Speakers() {
           position: relative;
           overflow: hidden;
         }
+        [data-theme="dark"] .speak-cta-band {
+           background: linear-gradient(135deg, rgba(122,63,209,0.12) 0%, rgba(245,166,35,0.06) 100%);
+        }
+        
         .speak-cta-band::before {
           content: '';
           position: absolute; inset: 0;
@@ -260,18 +247,14 @@ export default function Speakers() {
         .speak-cta-text h3 {
           font-size: 1.6rem; font-weight: 900;
           font-family: 'Orbitron', sans-serif;
-          color: ${isDark ? "#ffffff" : "#000000"};
+          color: var(--text-main);
           margin-bottom: 0.5rem;
         }
-        
-        /* Force H3 Span to Black text in light mode */
-        .speak-cta-text h3 span {
-          color: ${isDark ? "#f5a623" : "#000000"};
-        }
+        .speak-cta-text h3 span { color: var(--brand-orange); }
         
         .speak-cta-text p {
           font-size: 0.9rem;
-          color: ${isDark ? "rgba(255, 255, 255, 0.7)" : "#000000"};
+          color: var(--text-muted);
           max-width: 420px;
           line-height: 1.65;
         }

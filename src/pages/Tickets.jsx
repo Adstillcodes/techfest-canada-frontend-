@@ -24,7 +24,7 @@ const PASS_META = {
       "Ideal for professionals, founders, innovators, students, and business leaders who want access to the core conference experience and the opportunity to engage with the ideas, people, and conversations shaping the future of technology.",
     features: ["Conference access", "Lunch"],
     tier: "discover",
-    defaultPrice: 299,
+    defaultPrice: 399,
     featured: false,
   },
   connect: {
@@ -34,7 +34,7 @@ const PASS_META = {
       "Designed for attendees who want to start the day in a more curated business environment. With entry to the exclusive CxO Breakfast, you can connect with senior leaders and build meaningful relationships before the main conference begins.",
     features: ["Conference access", "CxO Breakfast", "Lunch"],
     tier: "connect",
-    defaultPrice: 499,
+    defaultPrice: 599,
     featured: false,
   },
   influence: {
@@ -145,26 +145,19 @@ function PassCard({ meta, inventoryItem, onPurchase, isDark }) {
       <div style={{
         fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "2.6rem",
         color: textMain, lineHeight: 1, marginBottom: 4, letterSpacing: "-1px",
-        display: "flex", alignItems: "baseline", gap: 4,
+        display: "flex", alignItems: "baseline", gap: 6,
       }}>
         <span>${price.toLocaleString()}</span>
-        <span style={{ fontSize: "0.9rem", fontWeight: 500, color: textLight }}>CAD</span>
+        <span style={{ 
+          fontFamily: "'Orbitron', sans-serif", 
+          fontSize: "0.95rem", 
+          fontWeight: 800, 
+          color: textLight,
+          letterSpacing: "1px",
+          textTransform: "uppercase"
+        }}>CAD</span>
       </div>
 
-      {/* Remaining badge */}
-      {/*remaining !== null && (
-        <div style={{
-          display: "inline-flex", alignItems: "center", gap: 5, marginBottom: 16, marginTop: 6,
-          fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
-          color: soldOut ? "#ff6b6b" : remaining <= 20 ? "#d98a14" : "#2e9e54",
-          background: soldOut ? "rgba(255,107,107,0.1)" : remaining <= 20 ? "rgba(245,166,35,0.1)" : "rgba(74,222,128,0.1)",
-          border: `1px solid ${soldOut ? "rgba(255,107,107,0.25)" : remaining <= 20 ? "rgba(245,166,35,0.25)" : "rgba(74,222,128,0.25)"}`,
-          borderRadius: 999, padding: "3px 10px",
-        }}>
-          <span style={{ width: 5, height: 5, borderRadius: "50%", background: "currentColor", display: "inline-block" }} />
-          {soldOut ? "Sold Out" : `${remaining} spots left`}
-        </div>
-      )*/}
 
       {/* Divider */}
       <div style={{ width: "100%", height: 1, background: dividerBg, margin: remaining !== null ? "4px 0 16px" : "14px 0 16px" }} />
@@ -231,13 +224,14 @@ export default function Tickets() {
   const [isDark, setIsDark] = useState(true);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Handle theme detection
+  // Handle theme detection - Using foolproof Document attribute checking
   useEffect(() => {
-    setIsDark(document.body.classList.contains("dark-mode"));
+    const html = document.documentElement;
+    setIsDark(html.getAttribute("data-theme") === "dark");
     const obs = new MutationObserver(() => {
-      setIsDark(document.body.classList.contains("dark-mode"));
+      setIsDark(html.getAttribute("data-theme") === "dark");
     });
-    obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    obs.observe(html, { attributes: true, attributeFilter: ["data-theme"] });
     return () => obs.disconnect();
   }, []);
 
@@ -313,7 +307,6 @@ const handlePurchase = async (tier) => {
     power:     [true,  true,  true,  true,  true,  true ],
   };
 
-  const bgMain = isDark ? "var(--bg-main, #0d0b1a)" : "#f4f0ff";
   const textMain = isDark ? "white" : "#0f0520";
   const textMuted = isDark ? "rgba(255,255,255,0.6)" : "rgba(15,5,32,0.7)";
   
@@ -323,7 +316,7 @@ const handlePurchase = async (tier) => {
 
       <div style={{
         minHeight: "100vh",
-        background: bgMain,
+        background: "var(--bg-main)",
         color: textMain,
         position: "relative",
       }}>
@@ -335,7 +328,7 @@ const handlePurchase = async (tier) => {
             : "radial-gradient(ellipse 60% 50% at 20% 30%, rgba(122,63,209,0.05) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 80% 70%, rgba(245,166,35,0.04) 0%, transparent 70%)",
         }} />
 
-        <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ position: "relative", zIndex: 1, paddingBottom: "1px" }}>
 
           {/* ── Header ── */}
           <div style={{ textAlign: "center", padding: "100px 24px 60px", maxWidth: 780, margin: "0 auto" }}>
@@ -358,7 +351,7 @@ const handlePurchase = async (tier) => {
           {/* ── Cards ── */}
           <div style={{
             display: "flex", flexWrap: "wrap", gap: 20, justifyContent: "center",
-            alignItems: "flex-start", padding: "0 24px 80px", maxWidth: 1260, margin: "0 auto",
+            alignItems: "stretch", padding: "0 24px 80px", maxWidth: 1260, margin: "0 auto",
           }}>
             {passes.map((key) => (
               <PassCard
@@ -453,6 +446,9 @@ const handlePurchase = async (tier) => {
               </p>
             </div>
           </div>
+          
+          {/* Footer moved INSIDE the main wrapper so it doesn't break the layout! */}
+          <Footer />
         </div>
 
         {/* ── Success Modal Overlay ── */}
@@ -498,7 +494,7 @@ const handlePurchase = async (tier) => {
                 <button 
                   onClick={() => {
                     setShowSuccessModal(false);
-                    window.location.href = "/register"; // Change this route if your signup page is named differently
+                    window.location.href = "/register"; 
                   }}
                   style={{
                     background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white",
@@ -514,7 +510,6 @@ const handlePurchase = async (tier) => {
         )}
 
       </div>
-      <Footer />
     </>
   );
 }

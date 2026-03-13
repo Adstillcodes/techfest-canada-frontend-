@@ -33,7 +33,6 @@ export default function Speakers() {
       .catch((err) => console.error("Error fetching speakers:", err));
   }, []);
 
-  // Stats for the info strip
   const stats = [
     { icon: Mic,      value: "50+",  label: "World-Class Speakers" },
     { icon: Users,    value: "500+", label: "Expected Attendees"   },
@@ -108,17 +107,17 @@ export default function Speakers() {
           margin-bottom: 1.2rem;
           color: #ffffff;
         }
-        body:not(.dark-mode) .speakers-hero h1 { color: #3b1a7a; }
+        [data-theme="light"] .speakers-hero h1 { color: #3b1a7a; }
         .speakers-hero h1 span { color: #f5a623; }
         
         .speakers-hero-sub {
           font-size: 1rem;
-          color: rgba(255, 255, 255, 0.7); /* Fixed for night mode */
+          color: rgba(255, 255, 255, 0.7);
           max-width: 520px;
           margin: 0 auto 2.4rem;
           line-height: 1.75;
         }
-        body:not(.dark-mode) .speakers-hero-sub { color: rgba(15, 5, 32, 0.7); }
+        [data-theme="light"] .speakers-hero-sub { color: rgba(15, 5, 32, 0.7); }
 
         .speakers-hero-cta {
           display: inline-flex; align-items: center; gap: 8px;
@@ -145,9 +144,9 @@ export default function Speakers() {
           flex: 1; min-width: 160px; max-width: 260px;
           display: flex; align-items: center; gap: 14px;
           padding: 24px 28px;
-          background: #0d0a1a; /* Hardcoded robust dark bg */
+          background: #0d0a1a;
         }
-        body:not(.dark-mode) .stat-cell { background: #f8f5ff; }
+        [data-theme="light"] .stat-cell { background: #f8f5ff; }
         .stat-icon {
           width: 42px; height: 42px; border-radius: 12px;
           background: rgba(122,63,209,0.12);
@@ -166,11 +165,11 @@ export default function Speakers() {
         
         .stat-label {
           font-size: 0.72rem; font-weight: 700;
-          color: rgba(255, 255, 255, 0.7); /* Fixed for night mode */
+          color: rgba(255, 255, 255, 0.7);
           text-transform: uppercase;
           letter-spacing: 0.8px; margin-top: 3px;
         }
-        body:not(.dark-mode) .stat-label { color: rgba(15, 5, 32, 0.7); }
+        [data-theme="light"] .stat-label { color: rgba(15, 5, 32, 0.7); }
 
         /* ── SECTION HEADERS ── */
         .section-header {
@@ -185,17 +184,17 @@ export default function Speakers() {
           color: #ffffff;
           margin-bottom: 0.6rem;
         }
-        body:not(.dark-mode) .section-header h2 { color: #3b1a7a; }
+        [data-theme="light"] .section-header h2 { color: #3b1a7a; }
         .section-header h2 span { color: #f5a623; }
         
         .section-header p {
           font-size: 0.92rem;
-          color: rgba(255, 255, 255, 0.7); /* Fixed for night mode */
+          color: rgba(255, 255, 255, 0.7);
           max-width: 480px;
           margin: 0 auto;
           line-height: 1.7;
         }
-        body:not(.dark-mode) .section-header p { color: rgba(15, 5, 32, 0.7); }
+        [data-theme="light"] .section-header p { color: rgba(15, 5, 32, 0.7); }
         
         .section-divider {
           width: 48px; height: 3px;
@@ -247,16 +246,16 @@ export default function Speakers() {
           color: #ffffff;
           margin-bottom: 0.5rem;
         }
-        body:not(.dark-mode) .speak-cta-text h3 { color: #3b1a7a; }
+        [data-theme="light"] .speak-cta-text h3 { color: #3b1a7a; }
         .speak-cta-text h3 span { color: #f5a623; }
         
         .speak-cta-text p {
           font-size: 0.9rem;
-          color: rgba(255, 255, 255, 0.7); /* Fixed for night mode */
+          color: rgba(255, 255, 255, 0.7);
           max-width: 420px;
           line-height: 1.65;
         }
-        body:not(.dark-mode) .speak-cta-text p { color: rgba(15, 5, 32, 0.7); }
+        [data-theme="light"] .speak-cta-text p { color: rgba(15, 5, 32, 0.7); }
 
         @media (max-width: 768px) {
           .speak-cta-band { padding: 2rem; text-align: center; justify-content: center; }

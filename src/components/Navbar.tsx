@@ -613,16 +613,6 @@ export default function Navbar() {
         )}
       </AnimatePresence>
  
-      <style>{`
-        .tfc-desk-nav { display: none; }
-        .tfc-desk-actions { display: none; align-items: center; gap: 10px; }
-        .tfc-hamburger { display: flex !important; }
-        @media (min-width: 1024px) {
-          .tfc-desk-nav { display: block; }
-          .tfc-desk-actions { display: flex; }
-          .tfc-hamburger { display: none !important; }
-        }
-      `}</style>
  
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>

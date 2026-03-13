@@ -112,7 +112,7 @@ export default function Navbar() {
           .tfc-hamburger { display: flex !important; }
         }
         @media (max-width: 640px) {
-          .tfc-tickets-btn { display: none !important; }
+          .tfc-brochure-btn { display: none !important; }
         }
       `}</style>
 
@@ -225,6 +225,7 @@ export default function Navbar() {
             <a
               href="/Brochure.pdf"
               download
+              className="tfc-brochure-btn"
               style={{
                 padding: "0 22px",
                 height: 40,

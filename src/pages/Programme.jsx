@@ -5,13 +5,14 @@ import Footer from "../components/Footer";
 export default function Programme() {
   const [filter, setFilter] = useState("all");
 
+  
   const sessions = [
     {
       id: 1,
       type: "keynote",
       title: "Scalable Cloud Functions for the Enterprise",
       meta: "Stage A | 10:00 AM | 45 MIN",
-      desc: "Learn RBC's approach to serverless adoption and scaling.",
+      desc: "Learn RBC's approach to serverless adoption and schttps://github.com/Adstillcodes/techfest-canada-frontend-/blob/main/src/pages/Programme.jsxaling.",
     },
     {
       id: 2,

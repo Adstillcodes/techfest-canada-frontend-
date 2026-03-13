@@ -129,8 +129,7 @@ export default function AuthModal({ isOpen, onClose, onSurvey }) {
       alert("Password reset email sent.");
       setView("login");
     } catch (err) { alert(err.message); } finally { setLoading(false); }
-  }; */
-
+  }; 
   // Theme-aware colors
   const bg        = isDark ? "#0f0720"         : "#ffffff";
   const cardBg    = isDark ? "#160c2c"         : "#f8f6ff";

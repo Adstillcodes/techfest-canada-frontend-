@@ -18,9 +18,9 @@ import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import Sponsor from "./pages/Sponsor";
 
-// 👇 Added your new Exhibit import right here
+// Added your new Exhibit and FirstTimers imports right here
 import Exhibit from "./pages/exhibit"; 
-
+import FirstTimers from "./pages/FirstTimers";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
 
@@ -61,6 +61,12 @@ function App() {
         <Route path="/speakers" element={<Speakers />} />
         <Route path="/sponsors" element={<Sponsors />} />
         <Route path="/tickets" element={<Tickets />} />
+        
+        {/* Updated routes for your new Navbar structure */}
+        <Route path="/first-timers" element={<FirstTimers />} />
+        <Route path="/resources" element={<Resources />} />
+        
+        {/* Kept on-demand routing to Resources just in case you have older links pointing to it */}
         <Route path="/on-demand" element={<Resources />} />
 
         <Route
@@ -88,7 +94,6 @@ function App() {
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
         
-        {/* 👇 Added your new Exhibit route right here */}
         <Route path="/exhibit" element={<Exhibit />} />
 
         {/* RESET PASSWORD ROUTE */}

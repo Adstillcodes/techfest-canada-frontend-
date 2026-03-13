@@ -6,6 +6,7 @@ import AuthModal from "./AuthModal";
 const PARTNERS_DROPDOWN = [
   { label: "Sponsor Us",      path: "/sponsor" },
   { label: "First Timers",      path: "/on-demand" },
+  {label: "Sponsors", path:"/resources"},
 
 ];
 

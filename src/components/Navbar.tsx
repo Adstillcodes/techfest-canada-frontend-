@@ -359,15 +359,25 @@ export default function Navbar() {
                   //display: "flex", alignItems: "center", textTransform: "uppercase",
                 //}}>MY ACCOUNT</Link>
               //)} */
-              <Link to="/tickets" style={{
-                padding: "0 22px", height: 40, borderRadius: 999,
-                background: "transparent",
-                border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`,
-                color: isDark ? "#fff" : "#0f0520",
-                fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-                fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none",
-                display: "flex", alignItems: "center", textTransform: "uppercase",
-              }}>TICKETS</Link>
+            <Link to="/tickets" style={{
+  padding: "0 22px",
+  height: 40,
+  borderRadius: 999,
+  background: "transparent",
+  border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`,
+  color: isDark ? "#fff" : "#0f0520",
+  fontFamily: "'Orbitron', sans-serif",
+  fontWeight: 800,
+  fontSize: "0.68rem",
+  letterSpacing: "0.8px",
+  textDecoration: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textTransform: "uppercase",
+}}>
+  TICKETS
+</Link>
             </div>
  
             <button onClick={toggleTheme} style={{

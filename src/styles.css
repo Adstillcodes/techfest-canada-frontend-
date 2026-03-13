@@ -124,7 +124,11 @@ body.dark-mode .nav-logo {
 .urgency-banner span { background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 4px; margin-left: 10px; }
 
 /* --- NAVIGATION --- */
-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; width: 100%; background: var(--bg-nav); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border-main); position: sticky; top: 0; z-index: 1000; height: 80px; }
+nav.legacy-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .nav-links { display: flex; gap: 2rem; align-items: center; list-style: none; }
 .nav-links a { font-size: 0.9rem; font-weight: 700; transition: 0.2s; text-transform: uppercase; }
 .nav-links a:hover { color: var(--brand-orange); }
@@ -503,7 +507,7 @@ html { font-size: 16px; }
 .nav-mobile { position: fixed; top: 80px; left: 0; width: 100%; background: var(--bg-main); padding: 30px 20px; transform: translateY(-120%); transition: transform 0.35s ease; z-index: 999; }
 .nav-mobile.open { transform: translateY(0); }
 .nav-links { list-style: none; padding: 0; margin: 0 0 30px 0; display: flex; flex-direction: column; gap: 18px; }
-.mobile-link { font-family: "Orbitron", sans-serif; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; text-decoration: none; color: var(--text-main); letter-spacing: 1px; }
+.mobile-link { font-family: "Orbitron", sans-serif; font-weight: 800; font-size: 1.1rem; tenavxt-transform: uppercase; text-decoration: none; color: var(--text-main); letter-spacing: 1px; }
 .mobile-link:hover { color: var(--brand-orange); }
 @media (min-width: 1024px) { .nav-mobile { display: none; } }
 
@@ -516,3 +520,13 @@ html { font-size: 16px; }
 .stat-card p { color: #bba8ff; font-size: 0.9rem; }
 .stat-card h2 { font-size: 1.8rem; font-weight: 700; }
 
+/* ===== React Navbar Fix ===== */
+
+.tfc-hamburger {
+  display: flex;
+}
+
+@media (min-width: 1024px) {
+  .tfc-hamburger {
+    display: none !important;
+  }

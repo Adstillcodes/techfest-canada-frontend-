@@ -1,6 +1,5 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import UrgencyBanner from "../components/UrgencyBanner";
 import AboutUs from "../components/AboutUs";
 import { useEffect, useState, useRef } from "react";
 import InquiryModal from "../components/InquiryModal";

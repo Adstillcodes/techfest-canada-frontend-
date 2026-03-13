@@ -8,6 +8,7 @@ import PostPurchaseModal from "../components/PostPurchaseModal";
 import OnboardingSurvey from "../components/OnboardingSurvey";
 import { motion, useInView } from "framer-motion";
 
+
 /* ═══════════════════════════════════════════════════════
    STAGGER VARIANTS
    ═══════════════════════════════════════════════════════ */

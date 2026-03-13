@@ -2,18 +2,18 @@ import { Link } from "react-router-dom";
 
 export default function TicketBar() {
   return (
-    <div className="ticket-bar">
+    <Link to="/tickets" className="ticket-bar">
       <div className="ticket-bar-inner">
-        
-        <div className="ticket-bar-text">
-          🎟️ Early Bird Tickets Available
-        </div>
 
-        <Link to="/tickets" className="ticket-btn">
+        <span className="ticket-bar-text">
+          🎟️ Early Bird Tickets Available
+        </span>
+
+        <span className="ticket-btn">
           Get Your Pass →
-        </Link>
+        </span>
 
       </div>
-    </div>
+    </Link>
   );
 }

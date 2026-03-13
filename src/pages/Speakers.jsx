@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
-import UrgencyBanner from "../components/UrgencyBanner";
 import { ThreeDPhotoCarousel } from "../components/ui/3d-carousel";
 import { SpeakerCarousel } from "../components/ui/speaker-carousel";
 import { client, urlFor } from "../utils/sanity";
@@ -297,7 +296,6 @@ export default function Speakers() {
       `}</style>
 
       <div className="speakers-page">
-        <UrgencyBanner />
         <Navbar />
 
         <main className="speakers-main">

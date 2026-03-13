@@ -41,18 +41,18 @@ return location.pathname === item.path;
 useEffect(() => {
 const saved = (localStorage.getItem("theme") as "light" | "dark") || "light";
 
-```
+
 setTheme(saved);
 
 document.body.classList.toggle("dark-mode", saved === "dark");
 document.documentElement.classList.toggle("dark", saved === "dark");
-```
+
 
 }, []);
 
 const toggleTheme = () => {
 
-```
+
 const next = theme === "dark" ? "light" : "dark";
 
 setTheme(next);
@@ -61,29 +61,28 @@ localStorage.setItem("theme", next);
 
 document.body.classList.toggle("dark-mode", next === "dark");
 document.documentElement.classList.toggle("dark", next === "dark");
-```
+
 
 };
 
 const handlePartnersEnter = () => {
 
-```
+
 if (partnersTimeout.current) clearTimeout(partnersTimeout.current);
 
 setPartnersOpen(true);
-```
+
 
 };
 
 const handlePartnersLeave = () => {
 
-```
+
 partnersTimeout.current = window.setTimeout(() => {
 
   setPartnersOpen(false);
 
 }, 180);
-```
 
 };
 
@@ -95,7 +94,6 @@ const borderCol = isDark
 
 return (
 
-```
 <>
   <nav
     style={{
@@ -397,7 +395,6 @@ return (
   </AnimatePresence>
 
 </>
-```
 
 );
 

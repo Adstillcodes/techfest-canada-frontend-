@@ -76,7 +76,7 @@ export default function Navbar() {
 
   const navItems = [
     { label: "HOME",         path: "/" },
-    { label: "PARTNERS",     path: null }, // dropdown trigger
+    { label: "PARTNERS",     path: "/resources" }, // dropdown trigger
     { label: "SPEAKERS",     path: "/speakers" },
     { label: "AGENDA",       path: "/agenda" },
   ];

@@ -1,223 +1,466 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "./AuthModal";
 import { fetchMe } from "../utils/api";
 
-type User = { _id: string; name: string; email: string; role?: string; };
-type TabPosition = { left: number; width: number; opacity: number; };
-type TabProps = {
-  children: React.ReactNode;
-  setPosition: React.Dispatch<React.SetStateAction<TabPosition>>;
-  onClick: () => void;
-  to: string;
-  isActive: boolean;
-};
+type User = { _id: string; name: string; email: string; role?: string };
 
-const Tab = React.forwardRef<HTMLLIElement, TabProps>(
-  ({ children, setPosition, onClick, to, isActive }, ref) => (
-    <li
-      ref={ref}
-      onMouseEnter={() => {
-        if (!ref || typeof ref === "function" || !ref.current) return;
-        const { width } = ref.current.getBoundingClientRect();
-        setPosition({ left: ref.current.offsetLeft, width, opacity: 1 });
-      }}
-      className={`relative z-10 block cursor-pointer px-3 py-1.5 text-xs uppercase transition-colors duration-300 md:px-5 md:py-2 md:text-sm font-['Orbitron'] font-bold
-        ${isActive ? "text-white" : "text-gray-900 dark:text-[var(--text-main)]"}
-        dark:mix-blend-difference`}
-    >
-      <Link to={to} onClick={onClick} className="block w-full h-full">{children}</Link>
-    </li>
-  )
-);
-Tab.displayName = "Tab";
-
-const Cursor = ({ position }: { position: TabPosition }) => (
-  <motion.li animate={{ ...position }} className="absolute z-0 h-7 rounded-full bg-black dark:bg-white md:h-10" />
-);
+const PARTNER_SUBS = [
+{ label: "Exhibit", path: "/exhibit" },
+{ label: "Sponsor", path: "/sponsor" },
+];
 
 export default function Navbar() {
-  const [authOpen, setAuthOpen] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [user, setUser] = useState<User | null>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
+const [authOpen, setAuthOpen] = useState(false);
+const [theme, setTheme] = useState<"light" | "dark">("light");
+const [user, setUser] = useState<User | null>(null);
+const [mobileOpen, setMobileOpen] = useState(false);
+const [partnersOpen, setPartnersOpen] = useState(false);
+const [mobilePartnersOpen, setMobilePartnersOpen] = useState(false);
+const partnersTimeout = useRef<number | null>(null);
 
-  const loggedIn = !!user;
-  const isAdmin = user?.role === "admin";
+const location = useLocation();
+const navigate = useNavigate();
 
-  const [position, setPosition] = useState<TabPosition>({ left: 0, width: 0, opacity: 0 });
-  const tabsRef = useRef<(HTMLLIElement | null)[]>([]);
+const navItems = [
+{ label: "HOME", path: "/" },
+{ label: "FIRST TIMERS", path: "/on-demand" },
+{ label: "PARTNERS", path: "/sponsors", hasDropdown: true },
+{ label: "SPEAKERS", path: "/speakers" },
+{ label: "AGENDA", path: "/agenda" },
+];
 
-  const navItems = [
-    { label: "HOME",         path: "/" },
-    { label: "First Timers", path: "/on-demand" },
-    { label: "EXHIBITION",   path: "/sponsors" },
-    { label: "Speakers",    path: "/speakers" },
-    { label: "Agenda", path: "/agenda" }
-  ];
-  if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
+const loggedIn = !!user;
+const isAdmin = user?.role === "admin";
 
-  const activeIndex = navItems.findIndex((item) => item.path === location.pathname);
+if (isAdmin) navItems.push({ label: "ADMIN", path: "/admin" });
 
-  useEffect(() => {
-    const tab = tabsRef.current[activeIndex];
-    if (tab) {
-      const { width } = tab.getBoundingClientRect();
-      setPosition({ left: tab.offsetLeft, width, opacity: 1 });
-    }
-  }, [activeIndex, location.pathname]);
+const activeIndex = navItems.findIndex((item) => {
+if (item.path === "/sponsors") {
+return (
+location.pathname === "/sponsors" ||
+location.pathname === "/exhibit" ||
+location.pathname === "/sponsor"
+);
+}
+return item.path === location.pathname;
+});
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) { setUser(null); return; }
-      try { setUser(await fetchMe()); } catch { setUser(null); }
-    };
-    loadUser();
-    window.addEventListener("authChanged", loadUser);
-    return () => window.removeEventListener("authChanged", loadUser);
-  }, []);
+useEffect(() => {
+const load = async () => {
+const token = localStorage.getItem("token");
+if (!token) {
+setUser(null);
+return;
+}
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.dispatchEvent(new Event("authChanged"));
+
+  try {
+    const me = await fetchMe();
+    setUser(me);
+  } catch {
     setUser(null);
-  };
+  }
+};
 
-  useEffect(() => {
-    const saved = (localStorage.getItem("theme") as "light" | "dark") || "light";
-    setTheme(saved);
-    document.body.classList.toggle("dark-mode", saved === "dark");
-    document.documentElement.classList.toggle("dark", saved === "dark");
-  }, []);
+load();
 
-  const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    localStorage.setItem("theme", next);
-    document.body.classList.toggle("dark-mode", next === "dark");
-    document.documentElement.classList.toggle("dark", next === "dark");
-  };
+window.addEventListener("authChanged", load);
+window.addEventListener("authStateChanged", load);
 
-  const closeMobile = () => setMobileOpen(false);
+return () => {
+  window.removeEventListener("authChanged", load);
+  window.removeEventListener("authStateChanged", load);
+};
 
-  return (
-    <>
-      <style>{`
-        .navbar-custom {
-          height: 100px;
-          display: flex;
-          align-items: center;
-          width: 100%;
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border-bottom: 1px solid rgba(122,63,209,0.12);
-          background: rgba(var(--bg-main-rgb, 10,5,25), 0.88);
-        }
-        body:not(.dark-mode) .navbar-custom {
-          background: rgba(255,255,255,0.92);
-          border-bottom-color: rgba(122,63,209,0.10);
-        }
-        .navbar-inner {
-          width: 100%;
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 0 2.5%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          height: 100%;
-        }
-      `}</style>
 
-      <nav className="navbar navbar-custom">
-        <div className="navbar-inner">
+}, []);
 
-          {/* TABS — centre */}
-          <div className="hidden lg:block mx-auto">
-            <ul className="relative flex w-fit rounded-full border border-[var(--border-main)] bg-[var(--bg-card)] p-1">
-              {navItems.map((item, i) => (
-                <Tab
+useEffect(() => {
+const saved = (localStorage.getItem("theme") as "light" | "dark") || "light";
+setTheme(saved);
+document.body.classList.toggle("dark-mode", saved === "dark");
+document.documentElement.classList.toggle("dark", saved === "dark");
+}, []);
+
+const toggleTheme = () => {
+const next = theme === "dark" ? "light" : "dark";
+
+
+setTheme(next);
+localStorage.setItem("theme", next);
+
+document.body.classList.toggle("dark-mode", next === "dark");
+document.documentElement.classList.toggle("dark", next === "dark");
+
+
+};
+
+const handleLogout = () => {
+localStorage.removeItem("token");
+
+
+window.dispatchEvent(new Event("authChanged"));
+
+setUser(null);
+setMobileOpen(false);
+
+
+};
+
+const handlePartnersEnter = () => {
+if (partnersTimeout.current) clearTimeout(partnersTimeout.current);
+
+
+setPartnersOpen(true);
+
+};
+
+const handlePartnersLeave = () => {
+partnersTimeout.current = window.setTimeout(() => {
+setPartnersOpen(false);
+}, 180);
+};
+
+const isDark = theme === "dark";
+
+const borderCol = isDark
+? "rgba(122,63,209,0.18)"
+: "rgba(122,63,209,0.12)";
+
+return (
+<>
+<nav
+style={{
+height: 80,
+display: "flex",
+alignItems: "center",
+width: "100%",
+position: "sticky",
+top: 0,
+zIndex: 1000,
+backdropFilter: "blur(20px)",
+WebkitBackdropFilter: "blur(20px)",
+borderBottom: `1px solid ${borderCol}`,
+background: isDark
+? "rgba(7,3,15,0.90)"
+: "rgba(255,255,255,0.93)",
+}}
+>
+<div
+style={{
+width: "100%",
+maxWidth: 1400,
+margin: "0 auto",
+padding: "0 3%",
+display: "flex",
+alignItems: "center",
+justifyContent: "space-between",
+}}
+>
+{/* LOGO */}
+
+      <Link to="/" style={{ flexShrink: 0 }}>
+        <img
+          src={
+            isDark
+              ? "/Tech_Festival_Canada_Logo_Dark_Transparent.webp"
+              : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"
+          }
+          alt="Tech Festival Canada"
+          style={{
+            height: 52,
+            width: "auto",
+            objectFit: "contain",
+          }}
+        />
+      </Link>
+
+      {/* NAV TABS */}
+
+      <div className="tfc-desk-nav">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            border: `1px solid ${borderCol}`,
+            borderRadius: 999,
+            padding: "4px",
+          }}
+        >
+          {navItems.map((item) => {
+            const isPartners = item.hasDropdown;
+
+            if (isPartners) {
+              return (
+                <div
                   key={item.path}
-                  to={item.path}
-                  ref={(el: HTMLLIElement | null) => { if (el) tabsRef.current[i] = el; }}
-                  setPosition={setPosition}
-                  onClick={closeMobile}
-                  isActive={activeIndex === i}
+                  style={{ position: "relative" }}
+                  onMouseEnter={handlePartnersEnter}
+                  onMouseLeave={handlePartnersLeave}
                 >
-                  {item.label}
-                </Tab>
-              ))}
-              <Cursor position={position} />
-            </ul>
-          </div>
+                  <Link
+                    to={item.path}
+                    style={{
+                      padding: "8px 18px",
+                      borderRadius: 999,
+                      fontSize: "0.72rem",
+                      fontWeight: 800,
+                      fontFamily: "'Orbitron', sans-serif",
+                      letterSpacing: "0.8px",
+                      textTransform: "uppercase",
+                      color: isDark
+                        ? "rgba(255,255,255,0.65)"
+                        : "rgba(15,5,32,0.65)",
+                      textDecoration: "none",
+                    }}
+                  >
+                    {item.label}
+                  </Link>
 
-          {/* ACTIONS — right */}
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-3">
-              {!loggedIn ? (
-                <button
-                  className="btn-primary"
-                  onClick={() => setAuthOpen(true)}
-                  style={{ padding: "0 24px", fontSize: "0.75rem", fontWeight: 900, borderRadius: "100px", height: "44px", background: "var(--brand-purple)", color: "white" }}
-                >
-                  SIGN UP
-                </button>
-              ) : (
-                <Link to="/dashboard" className="btn-primary"
-                  style={{ padding: "0 24px", fontSize: "0.75rem", fontWeight: 900, borderRadius: "100px", height: "44px", display: "flex", alignItems: "center" }}>
-                  MY ACCOUNT
-                </Link>
-              )}
-              <Link to="/tickets" className="btn-outline"
-                style={{ padding: "0 24px", fontSize: "0.75rem", fontWeight: 900, borderRadius: "100px", height: "44px", display: "flex", alignItems: "center", border: "2px solid var(--text-main)" }}>
-                TICKETS
+                  <AnimatePresence>
+                    {partnersOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 8 }}
+                        style={{
+                          position: "absolute",
+                          top: "calc(100% + 12px)",
+                          left: "50%",
+                          transform: "translateX(-50%)",
+                          minWidth: 180,
+                          background: isDark ? "#0a0518" : "#ffffff",
+                          border: `1px solid ${borderCol}`,
+                          borderRadius: 16,
+                          padding: 8,
+                          zIndex: 100,
+                        }}
+                      >
+                        {PARTNER_SUBS.map((sub) => (
+                          <Link
+                            key={sub.label}
+                            to={sub.path}
+                            onClick={() => setPartnersOpen(false)}
+                            style={{
+                              display: "block",
+                              padding: "12px 16px",
+                              borderRadius: 10,
+                              fontFamily: "'Orbitron', sans-serif",
+                              fontSize: "0.72rem",
+                              textTransform: "uppercase",
+                              textDecoration: "none",
+                            }}
+                          >
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                style={{
+                  padding: "8px 18px",
+                  borderRadius: 999,
+                  fontSize: "0.72rem",
+                  fontWeight: 800,
+                  fontFamily: "'Orbitron', sans-serif",
+                  letterSpacing: "0.8px",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  color: isDark
+                    ? "rgba(255,255,255,0.65)"
+                    : "rgba(15,5,32,0.65)",
+                }}
+              >
+                {item.label}
               </Link>
-            </div>
+            );
+          })}
+        </div>
+      </div>
 
-            <button className="theme-toggle" onClick={toggleTheme}>
-              {theme === "dark" ? "☀️" : "🌙"}
-            </button>
+      {/* RIGHT ACTIONS */}
 
-            <button
-              className={`hamburger lg:hidden ${mobileOpen ? "active" : ""}`}
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Menu"
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        {!loggedIn ? (
+          <button
+            onClick={() => setAuthOpen(true)}
+            style={{
+              padding: "0 22px",
+              height: 40,
+              borderRadius: 999,
+              background: "var(--brand-purple)",
+              color: "#fff",
+              border: "none",
+              fontFamily: "'Orbitron', sans-serif",
+              fontWeight: 800,
+              fontSize: "0.68rem",
+              letterSpacing: "0.8px",
+              cursor: "pointer",
+              textTransform: "uppercase",
+            }}
+          >
+            MY ACCOUNT
+          </button>
+        ) : (
+          <Link
+            to="/dashboard"
+            style={{
+              padding: "0 22px",
+              height: 40,
+              borderRadius: 999,
+              background: "var(--brand-purple)",
+              color: "#fff",
+              fontFamily: "'Orbitron', sans-serif",
+              fontWeight: 800,
+              fontSize: "0.68rem",
+              letterSpacing: "0.8px",
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              textTransform: "uppercase",
+            }}
+          >
+            MY ACCOUNT
+          </Link>
+        )}
+
+        <Link
+          to="/tickets"
+          style={{
+            padding: "0 22px",
+            height: 40,
+            borderRadius: 999,
+            border: `2px solid ${
+              isDark
+                ? "rgba(255,255,255,0.22)"
+                : "rgba(0,0,0,0.18)"
+            }`,
+            color: isDark ? "#fff" : "#0f0520",
+            fontFamily: "'Orbitron', sans-serif",
+            fontWeight: 800,
+            fontSize: "0.68rem",
+            letterSpacing: "0.8px",
+            textDecoration: "none",
+            display: "flex",
+            alignItems: "center",
+            textTransform: "uppercase",
+          }}
+        >
+          TICKETS
+        </Link>
+
+        <button
+          onClick={toggleTheme}
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: "50%",
+            border: `1px solid ${borderCol}`,
+            background: "transparent",
+            cursor: "pointer",
+            fontSize: "1rem",
+          }}
+        >
+          {isDark ? "☀️" : "🌙"}
+        </button>
+
+        <button
+          onClick={() => setMobileOpen((v) => !v)}
+          className="tfc-hamburger"
+        >
+          ☰
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <AnimatePresence>
+    {mobileOpen && (
+      <motion.aside
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        style={{
+          position: "fixed",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: "min(340px, 90vw)",
+          background: isDark ? "#0a0518" : "#ffffff",
+          padding: 24,
+          zIndex: 9999,
+        }}
+      >
+        {navItems.map((item) => (
+          <div key={item.path} style={{ marginBottom: 16 }}>
+            <Link
+              to={item.path}
+              onClick={() => setMobileOpen(false)}
+              style={{
+                fontFamily: "'Orbitron', sans-serif",
+                textTransform: "uppercase",
+                textDecoration: "none",
+              }}
             >
-              <span /><span /><span />
-            </button>
+              {item.label}
+            </Link>
           </div>
-        </div>
+        ))}
 
-        {/* MOBILE MENU */}
-        <div className={`nav-mobile ${mobileOpen ? "open" : ""}`}>
-          <ul className="nav-links">
-            {navItems.map((item) => (
-              <li key={item.path}>
-                <Link to={item.path} onClick={closeMobile} className="mobile-link">{item.label}</Link>
-              </li>
-            ))}
-          </ul>
-          <div className="nav-actions">
-            {!loggedIn ? (
-              <button className="btn-primary" onClick={() => { setAuthOpen(true); closeMobile(); }}>SIGN UP</button>
-            ) : (
-              <>
-                <Link to="/dashboard" className="btn-primary" onClick={closeMobile}>MY ACCOUNT</Link>
-                <button className="btn-outline" onClick={handleLogout}>LOGOUT</button>
-              </>
-            )}
-            <Link to="/tickets" className="btn-primary" onClick={closeMobile}>GET YOUR PASS NOW</Link>
-          </div>
-        </div>
-      </nav>
+        <Link
+          to="/tickets"
+          onClick={() => setMobileOpen(false)}
+          style={{
+            display: "block",
+            padding: "14px",
+            borderRadius: 12,
+            background:
+              "linear-gradient(135deg,#7a3fd1,#f5a623)",
+            color: "#fff",
+            textDecoration: "none",
+            textAlign: "center",
+            fontFamily: "'Orbitron', sans-serif",
+            fontWeight: 900,
+          }}
+        >
+          ✦ Get Your Tickets
+        </Link>
 
-      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
-    </>
-  );
+        {loggedIn && (
+          <button
+            onClick={handleLogout}
+            style={{
+              marginTop: 12,
+              padding: "13px",
+              borderRadius: 12,
+              border: "1.5px solid rgba(239,68,68,0.30)",
+              color: "#f87171",
+              background: "transparent",
+              fontFamily: "'Orbitron', sans-serif",
+              fontWeight: 700,
+            }}
+          >
+            LOG OUT
+          </button>
+        )}
+      </motion.aside>
+    )}
+  </AnimatePresence>
+
+  <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+</>
+
+
+);
 }

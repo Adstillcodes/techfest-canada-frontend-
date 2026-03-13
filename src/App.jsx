@@ -17,7 +17,7 @@ import TicketBar from "./components/TicketBar";
 import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import Sponsor from "./pages/Sponsor";
-import Exhibit from "./pages/exhibit"; 
+import Exhibit from "./pages/Exhibit"; 
 
 /* ================= SYSTEM THEME DETECTOR ================= */
 

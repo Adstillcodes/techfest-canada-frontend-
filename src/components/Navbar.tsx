@@ -19,7 +19,6 @@ export default function Navbar() {
   const dropRef = useRef(null);
   const location = useLocation();
   
-  /* ── theme bootstrap ── */
   useEffect(() => {
     const saved = localStorage.getItem("theme") || "light";
     setTheme(saved);
@@ -35,7 +34,6 @@ export default function Navbar() {
     document.documentElement.classList.toggle("dark", next === "dark");
   };
 
-  /* ── auth ── */
   useEffect(() => {
     const load = async () => {
       const token = localStorage.getItem("token");
@@ -50,7 +48,6 @@ export default function Navbar() {
     return () => window.removeEventListener("authChanged", load);
   }, []);
 
-  /* ── close mobile on route change ── */
   useEffect(() => { 
     setMobileOpen(false); 
     setDropOpen(false); 
@@ -58,27 +55,27 @@ export default function Navbar() {
   }, [location.pathname]);
 
   const dark = theme === "dark";
-  const bg          = dark ? "rgba(6,2,15,0.92)"   : "rgba(255,255,255,0.94)";
+  const bg          = dark ? "rgba(6,2,15,0.92)"      : "rgba(255,255,255,0.94)";
   const border      = dark ? "rgba(155,135,245,0.12)" : "rgba(122,63,209,0.10)";
-  const textMain    = dark ? "#ffffff"              : "#0d0520";
+  const textMain    = dark ? "#ffffff"                : "#0d0520";
   const textMuted   = dark ? "rgba(200,185,255,0.70)" : "rgba(13,5,32,0.60)";
   const pillBg      = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.06)";
   const pillBorder  = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.18)";
-  const dropBg      = dark ? "#0e0820"              : "#ffffff";
+  const dropBg      = dark ? "#0e0820"                : "#ffffff";
   const dropBorder  = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.14)";
   const mobileBg    = dark ? "rgba(10,5,24,0.95)"     : "rgba(255,255,255,0.95)";
 
   const navItems = [
     { label: "HOME",         path: "/" },
     { label: "FIRST TIMERS", path: "/first-timers" },
-    { label: "PARTNERS",     path: "/resources", hasDropdown: true }, 
+    { label: "PARTNERS",     path: "/sponsors", hasDropdown: true },
     { label: "SPEAKERS",     path: "/speakers" },
     { label: "AGENDA",       path: "/agenda" },
   ];
 
   const isActive = (path) => {
-    if (path === "/resources") {
-      return location.pathname === "/resources" || PARTNERS_DROPDOWN.some(d => d.path === location.pathname);
+    if (path === "/sponsors") {
+      return location.pathname === "/sponsors" || PARTNERS_DROPDOWN.some(d => d.path === location.pathname);
     }
     return location.pathname === path;
   };
@@ -99,14 +96,11 @@ export default function Navbar() {
         }
         .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
         .tfc-nav-link.active { background: rgba(122,63,209,0.14); }
-
-        /* hamburger */
         .tfc-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 6px; }
         .tfc-hamburger span { display: block; width: 22px; height: 2px; border-radius: 2px; transition: all 0.25s ease; }
         .tfc-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .tfc-hamburger.open span:nth-child(2) { opacity: 0; }
         .tfc-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
         @media (max-width: 1024px) {
           .tfc-desktop-nav { display: none !important; }
           .tfc-hamburger { display: flex !important; }
@@ -116,13 +110,10 @@ export default function Navbar() {
         }
       `}</style>
 
-      <nav
-        className="tfc-navbar-wrap"
-        style={{ background: bg, borderBottom: "1px solid " + border }}
-      >
+      <nav className="tfc-navbar-wrap" style={{ background: bg, borderBottom: "1px solid " + border }}>
         <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 2.5%", height: 80, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
 
-          {/* ── LOGO ── */}
+          {/* LOGO */}
           <Link to="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
             <img
               src={dark
@@ -133,27 +124,20 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* ── DESKTOP NAV ── */}
+          {/* DESKTOP NAV */}
           <div className="tfc-desktop-nav" style={{ display: "flex", alignItems: "center" }}>
             <ul style={{ display: "flex", alignItems: "center", gap: 4, listStyle: "none", margin: 0, padding: "6px", background: pillBg, border: "1px solid " + pillBorder, borderRadius: 999 }}>
               {navItems.map((item) => {
                 if (item.hasDropdown) {
                   return (
-                    <li 
-                      key="partners" 
-                      style={{ position: "relative" }} 
-                      ref={dropRef}
+                    <li key="partners" style={{ position: "relative" }} ref={dropRef}
                       onMouseEnter={() => setDropOpen(true)}
                       onMouseLeave={() => setDropOpen(false)}
                     >
                       <Link
                         to={item.path}
                         className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
-                        style={{
-                          color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted,
-                          display: "flex", alignItems: "center", gap: 6,
-                          textDecoration: "none"
-                        }}
+                        style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}
                       >
                         {item.label}
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
@@ -169,29 +153,11 @@ export default function Navbar() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 8, scale: 0.96 }}
                             transition={{ duration: 0.18 }}
-                            style={{
-                              position: "absolute", top: "calc(100% + 12px)", left: "50%",
-                              transform: "translateX(-50%)",
-                              background: dropBg, border: "1px solid " + dropBorder,
-                              borderRadius: 16, padding: "8px",
-                              minWidth: 200,
-                              boxShadow: dark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(122,63,209,0.12)",
-                              zIndex: 200,
-                            }}
+                            style={{ position: "absolute", top: "calc(100% + 12px)", left: "50%", transform: "translateX(-50%)", background: dropBg, border: "1px solid " + dropBorder, borderRadius: 16, padding: "8px", minWidth: 200, boxShadow: dark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(122,63,209,0.12)", zIndex: 200 }}
                           >
                             {PARTNERS_DROPDOWN.map((d) => (
-                              <Link
-                                key={d.path}
-                                to={d.path}
-                                onClick={() => setDropOpen(false)}
-                                style={{
-                                  display: "block", padding: "10px 16px", borderRadius: 10,
-                                  fontFamily: "'Orbitron', sans-serif", fontSize: "0.68rem",
-                                  fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
-                                  color: location.pathname === d.path ? "#7a3fd1" : textMain,
-                                  textDecoration: "none", background: location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent",
-                                  transition: "background 0.15s ease",
-                                }}
+                              <Link key={d.path} to={d.path} onClick={() => setDropOpen(false)}
+                                style={{ display: "block", padding: "10px 16px", borderRadius: 10, fontFamily: "'Orbitron', sans-serif", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase", color: location.pathname === d.path ? "#7a3fd1" : textMain, textDecoration: "none", background: location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent", transition: "background 0.15s ease" }}
                                 onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(122,63,209,0.08)")}
                                 onMouseLeave={(e) => (e.currentTarget.style.background = location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent")}
                               >
@@ -204,14 +170,9 @@ export default function Navbar() {
                     </li>
                   );
                 }
-
                 return (
                   <li key={item.path}>
-                    <Link
-                      to={item.path}
-                      className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
-                      style={{ color: isActive(item.path) ? textMain : textMuted }}
-                    >
+                    <Link to={item.path} className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")} style={{ color: isActive(item.path) ? textMain : textMuted }}>
                       {item.label}
                     </Link>
                   </li>
@@ -220,62 +181,27 @@ export default function Navbar() {
             </ul>
           </div>
 
-          {/* ── RIGHT ACTIONS ── */}
+          {/* RIGHT ACTIONS */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-            <Link
-              to="/brochures"
-              className="tfc-brochure-btn"
-              style={{
-                padding: "0 22px",
-                height: 40,
-                borderRadius: 999,
-                background: "transparent",
-                border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`,
-                color: isDark ? "#fff" : "#0f0520",
-                fontFamily: "'Orbitron', sans-serif",
-                fontWeight: 800,
-                fontSize: "0.68rem",
-                letterSpacing: "0.8px",
-                textDecoration: "none",
-                display: "flex",
-                alignItems: "center",
-                textTransform: "uppercase",
-              }}
+            <Link to="/brochures" className="tfc-brochure-btn"
+              style={{ padding: "0 22px", height: 40, borderRadius: 999, background: "transparent", border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`, color: isDark ? "#fff" : "#0f0520", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none", display: "flex", alignItems: "center", textTransform: "uppercase" }}
             >
               BROCHURE
             </Link>
-            
-            <Link
-              to="/tickets"
-              className="tfc-tickets-btn"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                padding: "10px 24px", borderRadius: 999,
-                fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800,
-                letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
-                background: dark ? "#ffffff" : "#0d0520",
-                color: dark ? "#0d0520" : "#ffffff",
-                transition: "all 0.2s ease",
-              }}
+
+            <Link to="/tickets"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", background: dark ? "#ffffff" : "#0d0520", color: dark ? "#0d0520" : "#ffffff", transition: "all 0.2s ease" }}
               onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; }}
             >
               TICKETS
             </Link>
 
-            <button
-              onClick={toggleTheme}
-              style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.15rem", padding: "6px", lineHeight: 1 }}
-              aria-label="Toggle theme"
-            >
+            <button onClick={toggleTheme} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.15rem", padding: "6px", lineHeight: 1 }} aria-label="Toggle theme">
               {dark ? "☀️" : "🌙"}
             </button>
 
-            <button
-              className={"tfc-hamburger" + (mobileOpen ? " open" : "")}
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Menu"
-            >
+            <button className={"tfc-hamburger" + (mobileOpen ? " open" : "")} onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menu">
               <span style={{ background: textMain }} />
               <span style={{ background: textMain }} />
               <span style={{ background: textMain }} />
@@ -283,54 +209,26 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* ── MOBILE MENU (OVERLAY MODE) ── */}
+        {/* MOBILE MENU */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                position: "absolute",
-                top: "100%",
-                left: 0,
-                width: "100%",
-                height: "calc(100vh - 80px)",
-                overflowY: "auto",
-                background: mobileBg,
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderTop: "1px solid " + border,
-              }}
+              initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} transition={{ duration: 0.2 }}
+              style={{ position: "absolute", top: "100%", left: 0, width: "100%", height: "calc(100vh - 80px)", overflowY: "auto", background: mobileBg, backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderTop: "1px solid " + border }}
             >
               <div style={{ padding: "20px 24px 80px", display: "flex", flexDirection: "column", gap: 4 }}>
-                
                 {navItems.map((item) => {
                   if (item.hasDropdown) {
                     return (
                       <div key={item.path} style={{ display: "flex", flexDirection: "column" }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <Link
-                            to={item.path}
-                            onClick={() => setMobileOpen(false)}
-                            style={{
-                              fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
-                              letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
-                              padding: "12px 16px", borderRadius: 12,
-                              color: location.pathname === item.path ? "#7a3fd1" : textMain,
-                              background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent",
-                              flex: 1
-                            }}
+                          <Link to={item.path} onClick={() => setMobileOpen(false)}
+                            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", padding: "12px 16px", borderRadius: 12, flex: 1, color: location.pathname === item.path ? "#7a3fd1" : textMain, background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent" }}
                           >
                             {item.label}
                           </Link>
-                          <button
-                            onClick={() => setMobileDropOpen(!mobileDropOpen)}
-                            style={{
-                              background: "transparent", border: "none", color: textMain, cursor: "pointer",
-                              padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "center"
-                            }}
+                          <button onClick={() => setMobileDropOpen(!mobileDropOpen)}
+                            style={{ background: "transparent", border: "none", color: textMain, cursor: "pointer", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "center" }}
                           >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                               style={{ transform: mobileDropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
@@ -338,28 +236,13 @@ export default function Navbar() {
                             </svg>
                           </button>
                         </div>
-
                         <AnimatePresence>
                           {mobileDropOpen && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              style={{ overflow: "hidden" }}
-                            >
+                            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}>
                               <div style={{ paddingLeft: 16, marginTop: 4, display: "flex", flexDirection: "column", gap: 4 }}>
                                 {PARTNERS_DROPDOWN.map((d) => (
-                                  <Link
-                                    key={d.path}
-                                    to={d.path}
-                                    onClick={() => setMobileOpen(false)}
-                                    style={{
-                                      display: "block", fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem",
-                                      fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
-                                      textDecoration: "none", padding: "10px 16px", borderRadius: 10,
-                                      color: location.pathname === d.path ? "#7a3fd1" : textMuted,
-                                      background: location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent",
-                                    }}
+                                  <Link key={d.path} to={d.path} onClick={() => setMobileOpen(false)}
+                                    style={{ display: "block", fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase", textDecoration: "none", padding: "10px 16px", borderRadius: 10, color: location.pathname === d.path ? "#7a3fd1" : textMuted, background: location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent" }}
                                   >
                                     — {d.label}
                                   </Link>
@@ -371,50 +254,23 @@ export default function Navbar() {
                       </div>
                     );
                   }
-
                   return (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      onClick={() => setMobileOpen(false)}
-                      style={{
-                        fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
-                        letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
-                        padding: "12px 16px", borderRadius: 12,
-                        color: location.pathname === item.path ? "#7a3fd1" : textMain,
-                        background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent",
-                      }}
+                    <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)}
+                      style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", padding: "12px 16px", borderRadius: 12, color: location.pathname === item.path ? "#7a3fd1" : textMain, background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent" }}
                     >
                       {item.label}
                     </Link>
                   );
                 })}
 
-                <Link
-                  to="/brochures"
-                  onClick={() => setMobileOpen(false)}
-                  style={{
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    marginTop: 12, padding: "14px", borderRadius: 14,
-                    fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800,
-                    letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
-                    border: `1px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`,
-                    color: isDark ? "#fff" : "#0f0520",
-                  }}
+                <Link to="/brochures" onClick={() => setMobileOpen(false)}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: 12, padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", border: `1px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`, color: isDark ? "#fff" : "#0f0520" }}
                 >
                   BROCHURE
                 </Link>
 
-                <Link
-                  to="/tickets"
-                  onClick={() => setMobileOpen(false)}
-                  style={{
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    marginTop: 8, padding: "14px", borderRadius: 14,
-                    fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800,
-                    letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none",
-                    background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff",
-                  }}
+                <Link to="/tickets" onClick={() => setMobileOpen(false)}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: 8, padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff" }}
                 >
                   GET YOUR PASS
                 </Link>

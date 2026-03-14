@@ -83,7 +83,6 @@ export default function Brochures() {
 
       <style>{`
         @keyframes shimmer { 0%,100%{opacity:0.5} 50%{opacity:1} }
-        @keyframes cGlow   { 0%,100%{opacity:0.75} 50%{opacity:1} }
         .brochure-input {
           width:100%; box-sizing:border-box; padding:13px 16px; border-radius:12px;
           font-family:'Orbitron',sans-serif; font-size:0.72rem; font-weight:600;
@@ -102,97 +101,15 @@ export default function Brochures() {
         @media (max-width:640px) { .form-grid { grid-template-columns:1fr !important; } }
       `}</style>
 
-      <main style={{ flex:1, padding:"0 0 4rem" }}>
-        <div style={{ maxWidth:860, margin:"0 auto", padding:"0 1.5rem" }}>
+      <main style={{ flex:1, padding:"5rem 1.5rem 4rem" }}>
+        <div style={{ maxWidth:860, margin:"0 auto" }}>
 
-          {/* ── C-SHAPE HERO ── */}
-          <motion.div
-            initial={{ opacity:0, y:24 }}
-            animate={{ opacity:1, y:0 }}
-            transition={{ duration:0.9, ease:[0.215,0.61,0.355,1] }}
-            style={{ position:"relative", display:"flex", flexDirection:"column", alignItems:"center", padding:"3.5rem 0 0", overflow:"visible" }}
-          >
-            {/* ambient glow behind shape */}
-            <div style={{ position:"absolute", top:"10%", left:"50%", transform:"translateX(-50%)", width:"70%", height:"60%", background:"radial-gradient(ellipse, rgba(122,63,209,0.22) 0%, transparent 70%)", pointerEvents:"none", zIndex:0 }} />
-
-            {/* SVG clip definition */}
-            <svg width="0" height="0" style={{ position:"absolute" }}>
-              <defs>
-                <clipPath id="cClip" clipPathUnits="objectBoundingBox">
-                  <path d="M0.15,0 L0.85,0 Q1,0 1,0.15 L1,0.34 Q1,0.44 0.86,0.44 L0.70,0.44 Q0.56,0.44 0.56,0.50 Q0.56,0.56 0.70,0.56 L0.86,0.56 Q1,0.56 1,0.66 L1,0.85 Q1,1 0.85,1 L0.15,1 Q0,1 0,0.85 L0,0.15 Q0,0 0.15,0 Z" />
-                </clipPath>
-              </defs>
-            </svg>
-
-            {/* outer purple C glow ring */}
-            <motion.div
-              animate={{ opacity:[0.6,1,0.6] }}
-              transition={{ repeat:Infinity, duration:3, ease:"easeInOut" }}
-              style={{ position:"relative", width:"min(460px,88vw)", aspectRatio:"1/1", zIndex:1 }}
-            >
-              {/* purple shell */}
-              <div style={{ position:"absolute", inset:-7, background:"linear-gradient(145deg,#a855f7,#7a3fd1,#c4607a)", clipPath:"url(#cClip)", borderRadius:8, filter:"blur(1px)" }} />
-
-              {/* dark inner cutout to make shell effect */}
-              <div style={{ position:"absolute", inset:7, background:bg, clipPath:"url(#cClip)", borderRadius:8, zIndex:1 }} />
-
-              {/* city image */}
-              <div style={{ position:"absolute", inset:7, clipPath:"url(#cClip)", overflow:"hidden", zIndex:2, borderRadius:8 }}>
-                {/* number grid overlay */}
-                <div style={{ position:"absolute", inset:0, zIndex:3, pointerEvents:"none", opacity:0.18,
-                  backgroundImage:"url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ctext x='2' y='16' font-size='11' fill='%23d0c0ff' font-family='monospace'%3E7 4 1%3C/text%3E%3Ctext x='2' y='34' font-size='11' fill='%23d0c0ff' font-family='monospace'%3E2 8 5%3C/text%3E%3C/svg%3E\")",
-                }} />
-                {/* dark overlay */}
-                <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom, rgba(20,5,50,0.30) 0%, rgba(8,2,20,0.60) 100%)", zIndex:2 }} />
-                <img
-                  src="https://images.unsplash.com/photo-1517090186835-e348b621c9ca?w=900&q=85"
-                  alt="Toronto skyline"
-                  style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 55%", display:"block" }}
-                />
-              </div>
-
-              {/* text overlay — sits inside the C opening (left-center) */}
-              <div style={{ position:"absolute", inset:7, zIndex:10, display:"flex", alignItems:"center", justifyContent:"center", paddingRight:"14%" }}>
-                <motion.div
-                  initial={{ opacity:0, scale:0.92 }}
-                  animate={{ opacity:1, scale:1 }}
-                  transition={{ delay:0.55, duration:0.6 }}
-                  style={{ textAlign:"center" }}
-                >
-                  <div style={{ fontFamily:"'Georgia',serif", fontSize:"clamp(1.1rem,3vw,1.9rem)", fontWeight:700, color:"#ffffff", lineHeight:1.25, marginBottom:"0.5rem", textShadow:"0 2px 24px rgba(0,0,0,0.7)" }}>
-                    The Tech<br />Festival Canada
-                  </div>
-                  <div style={{ fontFamily:"'Orbitron',sans-serif", fontSize:"clamp(0.65rem,1.8vw,0.9rem)", fontWeight:700, color:"#f5a623", letterSpacing:"1px", textShadow:"0 2px 12px rgba(0,0,0,0.6)", marginBottom:3 }}>
-                    27–28 Oct 2026
-                  </div>
-                  <div style={{ fontFamily:"'Orbitron',sans-serif", fontSize:"clamp(0.55rem,1.4vw,0.68rem)", fontWeight:600, color:"rgba(255,255,255,0.75)", letterSpacing:"2.5px", textTransform:"uppercase" }}>
-                    Toronto
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-
-            {/* Meet | Build | Scale */}
-            <motion.div
-              initial={{ opacity:0, y:12 }}
-              animate={{ opacity:1, y:0 }}
-              transition={{ delay:0.75, duration:0.6 }}
-              style={{ marginTop:"1.4rem", fontFamily:"'Orbitron',sans-serif", fontSize:"clamp(0.85rem,2.2vw,1.2rem)", fontWeight:900, letterSpacing:"2px", textAlign:"center", zIndex:2 }}
-            >
-              <span style={{ color:textMain }}>Meet</span>
-              <span style={{ color:"rgba(155,135,245,0.45)", margin:"0 10px" }}>|</span>
-              <span style={{ color:"#9b59f5" }}>Build</span>
-              <span style={{ color:"rgba(155,135,245,0.45)", margin:"0 10px" }}>|</span>
-              <span style={{ color:"#f5a623" }}>Scale</span>
-            </motion.div>
-          </motion.div>
-
-          {/* ── PAGE HEADING ── */}
+          {/* ── HERO HEADING ── */}
           <motion.div
             initial={{ opacity:0, y:30 }}
             animate={{ opacity:1, y:0 }}
-            transition={{ duration:0.7, delay:0.35 }}
-            style={{ textAlign:"center", margin:"3.5rem 0 3.5rem" }}
+            transition={{ duration:0.7 }}
+            style={{ textAlign:"center", marginBottom:"3.5rem" }}
           >
             <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(122,63,209,0.10)", border:"1px solid rgba(122,63,209,0.25)", borderRadius:999, padding:"5px 18px", marginBottom:20, fontSize:"0.65rem", fontFamily:"'Orbitron',sans-serif", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:"#b99eff" }}>
               <span style={{ width:5, height:5, borderRadius:"50%", background:"#f5a623", boxShadow:"0 0 6px #f5a623", display:"inline-block" }} />
@@ -235,7 +152,7 @@ export default function Brochures() {
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="form-grid" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem 1.5rem", marginBottom:"1rem" }}>
-                {fields.slice(0,4).map(function (f) {
+                {fields.slice(0,4).map(function(f){
                   return (
                     <div key={f.key}>
                       <label style={{ display:"block", fontFamily:"'Orbitron',sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", color:errors[f.key]?"#ff6b6b":textMid, marginBottom:7 }}>

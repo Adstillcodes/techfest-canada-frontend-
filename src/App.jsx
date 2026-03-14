@@ -17,7 +17,7 @@ import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
-
+import Brochures from "./pages/Brochures";
 
 /* ================= SYSTEM THEME DETECTOR ===========
 ====== */
@@ -47,6 +47,7 @@ function App() {
         <Route path="/first-timers" element={<Resources />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/on-demand" element={<Resources />} />
+        <Route path="/brochures" element={<Brochures />} />
         <Route
           path="/dashboard"
           element={
@@ -69,7 +70,7 @@ function App() {
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
         <Route path="/exhibit" element={<Exhibit />} />
-        <Route path="/brochures" element={<Brochures />} />
+        
         <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
       <TicketBar />

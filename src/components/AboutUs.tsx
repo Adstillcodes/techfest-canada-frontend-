@@ -63,7 +63,6 @@ const FIXED_SERVICES = [
   { title: "Sustainability & CleanTech", description: "Pioneering a Greener, Smarter Future through technology-led climate action.", iconName: "leaf", position: "right" },
 ]
 
-
 const FALLBACK_STATS = [
   { value: 150, suffix: "+", label: "Builds Completed", iconName: "award" },
   { value: 12, suffix: "", label: "Event Years", iconName: "calendar" },
@@ -85,7 +84,6 @@ export default function AboutUs({ onWriteToUs }) {
   var statsRef   = useRef(null)
   var isInView   = useInView(sectionRef, { once: false, amount: 0.1 })
 
-  /* ── Dark mode detection ── */
   useEffect(function () {
     setDark(document.body.classList.contains("dark-mode"))
     var obs = new MutationObserver(function () {
@@ -95,7 +93,6 @@ export default function AboutUs({ onWriteToUs }) {
     return function () { obs.disconnect() }
   }, [])
 
-  /* ── Sanity fetch ── */
   useEffect(function () {
     client.fetch('*[_type == "aboutContent"][0]')
       .then(function (result) {
@@ -115,7 +112,6 @@ export default function AboutUs({ onWriteToUs }) {
   var rotate1 = useTransform(scrollData.scrollYProgress, [0, 1], [0, 12])
   var rotate2 = useTransform(scrollData.scrollYProgress, [0, 1], [0, -12])
 
-  /* ── Theme tokens ── */
   var bg        = dark ? "#06020f" : "#ffffff"
   var textMain  = dark ? "#ffffff" : "#0d0520"
   var textMuted = dark ? "rgba(200,185,255,0.65)" : "rgba(60,30,110,0.72)"
@@ -147,13 +143,23 @@ export default function AboutUs({ onWriteToUs }) {
     >
       <style>{`
         @keyframes aboutGlobeSpin { to { transform: rotate(360deg); } }
+
         @media (max-width: 1024px) {
           .about-grid { grid-template-columns: 1fr !important; }
           .about-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .service-card-right { align-items: flex-start !important; text-align: left !important; }
-          .service-card-right .service-icon-row { flex-direction: row !important; }
-          .about-sector-label { justify-content: flex-start !important; }
+
+          .service-card-right { align-items: center !important; text-align: center !important; }
+          .service-card-right .service-icon-row { flex-direction: row !important; justify-content: center !important; }
+          .service-card-right h3 { text-align: center !important; }
+
+          .service-card-left { align-items: center !important; text-align: center !important; }
+          .service-card-left .service-icon-row { flex-direction: row !important; justify-content: center !important; }
+          .service-card-left h3 { text-align: center !important; }
+
+          .about-sector-label { justify-content: center !important; }
+          .about-pillar-label { justify-content: center !important; }
         }
+
         @media (max-width: 540px) {
           .about-stats-grid { grid-template-columns: 1fr !important; }
           .about-cta-inner { flex-direction: column !important; text-align: center !important; }
@@ -192,7 +198,7 @@ export default function AboutUs({ onWriteToUs }) {
 
           {/* Left — Tech Pillars */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <div className="about-pillar-label" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: "rgba(245,166,35,0.9)", boxShadow: "0 0 6px rgba(245,166,35,0.6)", display: "inline-block", flexShrink: 0 }} />
               <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(245,166,35,0.85)" }}>5 TECH PILLARS</span>
             </div>
@@ -236,10 +242,8 @@ export default function AboutUs({ onWriteToUs }) {
           variants={itemVariants}
           style={{
             marginTop: "7rem", position: "relative", overflow: "hidden",
-            background: cardBg,
-            border: "1px solid " + cardBdr,
-            padding: "3rem",
-            borderRadius: "2.5rem",
+            background: cardBg, border: "1px solid " + cardBdr,
+            padding: "3rem", borderRadius: "2.5rem",
             display: "flex", flexDirection: "row", alignItems: "center",
             justifyContent: "space-between", gap: "2.5rem",
           }}
@@ -286,7 +290,7 @@ function ServiceCard({ iconName, title, align, dark, textMain, cardBg, cardBdr }
   return (
     <motion.div
       whileHover={{ x: isRight ? -8 : 8 }}
-      className={isRight ? "service-card-right" : ""}
+      className={isRight ? "service-card-right" : "service-card-left"}
       style={{ display: "flex", flexDirection: "column", alignItems: isRight ? "flex-end" : "flex-start", cursor: "default" }}
     >
       <div className="service-icon-row" style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 8, flexDirection: isRight ? "row-reverse" : "row" }}>

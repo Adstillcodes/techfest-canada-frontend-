@@ -200,7 +200,7 @@ export default function AboutUs({ onWriteToUs }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div className="about-pillar-label" style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: "rgba(245,166,35,0.9)", boxShadow: "0 0 6px rgba(245,166,35,0.6)", display: "inline-block", flexShrink: 0 }} />
-              <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(245,166,35,0.85)" }}>5 TECH PILLARS</span>
+              <span style={{ fontSize: "clamp(0.85rem, 1.5vw, 1.1rem)", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(245,166,35,0.85)" }}>5 TECH PILLARS</span>
             </div>
             {data.services?.filter(function (s) { return s.position === "right" }).map(function (service, i) {
               return <ServiceCard key={i} {...service} align="left" dark={dark} textMain={textMain} cardBg={cardBg} cardBdr={cardBdr} />
@@ -220,7 +220,7 @@ export default function AboutUs({ onWriteToUs }) {
           {/* Right — Applied Sectors */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div className="about-sector-label" style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8, marginBottom: 12 }}>
-              <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(160,100,255,0.85)" }}>5 APPLIED SECTORS</span>
+              <span style={{ fontSize: "clamp(0.85rem, 1.5vw, 1.1rem)", fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(160,100,255,0.85)" }}>5 APPLIED SECTORS</span>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: "rgba(160,100,255,0.9)", boxShadow: "0 0 6px rgba(160,100,255,0.6)", display: "inline-block", flexShrink: 0 }} />
             </div>
             {data.services?.filter(function (s) { return s.position === "left" }).map(function (service, i) {

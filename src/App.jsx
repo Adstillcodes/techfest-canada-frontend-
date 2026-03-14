@@ -20,6 +20,7 @@ import Exhibit from "./pages/Exhibit";
 import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
 import AdminLogin from "./pages/AdminLogin";
+import AdminRoute from "./components/AdminRoute";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
 function applySystemTheme() {

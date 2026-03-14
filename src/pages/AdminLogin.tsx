@@ -12,10 +12,11 @@ export default function AdminLogin() {
   const navigate = useNavigate();
 
   const handleLogin = async (e:any) => {
+
     e.preventDefault();
     setLoading(true);
 
-    try{
+    try {
 
       const res = await fetch(`${API}/login`,{
         method:"POST",
@@ -33,14 +34,16 @@ export default function AdminLogin() {
 
       navigate("/admin");
 
-    }catch(err:any){
+    } catch(err:any) {
+
       alert(err.message);
+
     }
 
     setLoading(false);
-  }
+  };
 
-  return(
+  return (
     <div style={{
       minHeight:"100vh",
       display:"flex",
@@ -48,21 +51,19 @@ export default function AdminLogin() {
       alignItems:"center",
       background:"#0a0518"
     }}>
-
       <form onSubmit={handleLogin}
         style={{
           width:340,
           padding:40,
           borderRadius:16,
-          background:"#160c2c",
-          border:"1px solid rgba(122,63,209,0.25)"
+          background:"#160c2c"
         }}
       >
 
         <h2 style={{
-          fontFamily:"Orbitron",
-          marginBottom:24,
-          textAlign:"center"
+          textAlign:"center",
+          marginBottom:20,
+          fontFamily:"Orbitron"
         }}>
           Admin Login
         </h2>
@@ -73,12 +74,7 @@ export default function AdminLogin() {
           required
           value={email}
           onChange={e=>setEmail(e.target.value)}
-          style={{
-            width:"100%",
-            padding:12,
-            marginBottom:12,
-            borderRadius:8
-          }}
+          style={{width:"100%",padding:12,marginBottom:12}}
         />
 
         <input
@@ -87,12 +83,7 @@ export default function AdminLogin() {
           required
           value={password}
           onChange={e=>setPassword(e.target.value)}
-          style={{
-            width:"100%",
-            padding:12,
-            marginBottom:20,
-            borderRadius:8
-          }}
+          style={{width:"100%",padding:12,marginBottom:20}}
         />
 
         <button
@@ -100,20 +91,17 @@ export default function AdminLogin() {
           style={{
             width:"100%",
             padding:14,
-            borderRadius:10,
-            border:"none",
             background:"linear-gradient(135deg,#7a3fd1,#f5a623)",
+            border:"none",
             color:"#fff",
             fontWeight:800,
-            fontFamily:"Orbitron",
-            cursor:"pointer"
+            fontFamily:"Orbitron"
           }}
         >
           {loading ? "Signing in..." : "SIGN IN"}
         </button>
 
       </form>
-
     </div>
   );
 }

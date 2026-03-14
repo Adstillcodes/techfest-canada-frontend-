@@ -4,10 +4,6 @@ import SponsorInquiryModal from "../components/SponsorInquiryModal";
 import { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
-/* ═══════════════════════════════════════════════════════
-   TIER DATA
-   ═══════════════════════════════════════════════════════ */
-
 var TIERS = [
   { name: "Platinum", price: "$24,999", color: "#b99eff" },
   { name: "Gold",     price: "$19,999", color: "#f5a623" },
@@ -39,10 +35,6 @@ var ROWS = [
   { label: "Website Showcase (50 Words)",      values: [true, true, true, true] },
   { label: "Post Event Social Media Video",    values: [true, true, true, true] },
 ];
-
-/* ═══════════════════════════════════════════════════════
-   ADDITIONAL PACKAGES
-   ═══════════════════════════════════════════════════════ */
 
 var ADDITIONAL_PACKAGES = [
   {
@@ -92,10 +84,6 @@ var ADDITIONAL_PACKAGES = [
   },
 ];
 
-/* ═══════════════════════════════════════════════════════
-   MAIN PAGE
-   ═══════════════════════════════════════════════════════ */
-
 export default function Sponsor() {
   var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
   var s2 = useState(false); var inquiryOpen = s2[0]; var setInquiryOpen = s2[1];
@@ -119,7 +107,7 @@ export default function Sponsor() {
 
   return (
     <>
-      <style>{`
+      <style>{\`
         @keyframes sponsor-glow-breathe {
           0%, 100% { opacity: 0.5; }
           50%       { opacity: 1;   }
@@ -169,17 +157,16 @@ export default function Sponsor() {
           .sp-desktop-table { display: none  !important; }
           .sp-mobile-cards  { display: block !important; }
           .sponsor-hero { min-height: auto; padding-top: 5rem; padding-bottom: 4rem; }
-          .sponsor-hero-stats { flex-direction: column !important; }
           .additional-grid { grid-template-columns: 1fr !important; }
         }
         @media (min-width: 769px) and (max-width: 1100px) {
           .additional-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
-      `}</style>
+      \`}</style>
 
       <Navbar />
 
-      {/* ══════ HERO ══════ */}
+      {/* HERO */}
       <section className="sponsor-hero" style={{ background: bg }}>
         <div className="sponsor-hero-grid" />
         <div className="sponsor-hero-glow" style={{ width: 650, height: 650, top: -200, left: -150, filter: "blur(90px)", background: dark ? "radial-gradient(circle, rgba(122,63,209,0.22) 0%, transparent 70%)" : "radial-gradient(circle, rgba(122,63,209,0.10) 0%, transparent 70%)" }} />
@@ -203,37 +190,25 @@ export default function Sponsor() {
             The Tech Festival Canada is the ultimate platform for companies to showcase their leadership in emerging technologies. Our sponsorship packages provide unparalleled branding, networking, and thought-leadership opportunities, helping your company stay ahead in a competitive market.
           </motion.p>
 
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", bounce: 0.2, duration: 1.2, delay: 0.6 }}
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 32 }}>
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", bounce: 0.2, duration: 1.2, delay: 0.6 }}>
             <button onClick={function () { setInquiryOpen(true); }}
               style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", padding: "17px 42px", borderRadius: 14, border: "none", cursor: "pointer", background: dark ? "#ffffff" : "#0d0520", color: dark ? "#0d0520" : "#ffffff", boxShadow: dark ? "0 6px 28px rgba(155,135,245,0.2)" : "0 6px 28px rgba(13,5,32,0.18)", transition: "all 0.25s ease" }}
               onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.transform = "translateY(-3px)"; }}
               onMouseLeave={function (e) { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; e.currentTarget.style.transform = "translateY(0)"; }}
             >Write to Us <span style={{ marginLeft: 10 }}>→</span></button>
-
-            <div className="sponsor-hero-stats" style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
-              {[{ num: "13", label: "Packages" }, { num: "500+", label: "Decision Makers" }, { num: "27-28 Oct", label: "2026" }].map(function (s) {
-                return (
-                  <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 22px", borderRadius: 14, background: cardBg, border: "1px solid " + cardBdr }}>
-                    <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.88rem", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{s.num}</span>
-                    <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase", color: textSoft }}>{s.label}</span>
-                  </div>
-                );
-              })}
-            </div>
           </motion.div>
         </div>
 
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 4, pointerEvents: "none", background: "linear-gradient(to bottom, transparent, " + bg + ")" }} />
       </section>
 
-      {/* ══════ COMPARISON TABLE ══════ */}
+      {/* COMPARISON TABLE */}
       <ComparisonTable dark={dark} bg={bg} textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent} cardBg={cardBg} cardBdr={cardBdr} onInquiry={function () { setInquiryOpen(true); }} />
 
-      {/* ══════ ADDITIONAL PACKAGES ══════ */}
+      {/* ADDITIONAL PACKAGES */}
       <AdditionalPackages dark={dark} bg={bg} textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent} cardBg={cardBg} cardBdr={cardBdr} onInquiry={function () { setInquiryOpen(true); }} />
 
-      {/* ══════ BOTTOM CTA ══════ */}
+      {/* BOTTOM CTA */}
       <section style={{ background: bg, padding: "0 6% 5rem" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", background: "linear-gradient(135deg, rgba(122,63,209,0.12), rgba(245,166,35,0.08))", border: "1px solid " + cardBdr, borderRadius: 28, padding: "clamp(2.5rem,5vw,4rem)", textAlign: "center" }}>
           <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.2rem,3vw,2rem)", fontWeight: 900, color: textMain, marginBottom: 12 }}>Ready to Partner?</p>
@@ -251,10 +226,6 @@ export default function Sponsor() {
     </>
   );
 }
-
-/* ═══════════════════════════════════════════════════════
-   COMPARISON TABLE
-   ═══════════════════════════════════════════════════════ */
 
 function ComparisonTable(props) {
   var dark = props.dark; var bg = props.bg; var textMain = props.textMain;
@@ -289,7 +260,6 @@ function ComparisonTable(props) {
 
   return (
     <>
-      {/* Sticky floating header — desktop only */}
       <div className="sp-desktop-table" style={{ position: "fixed", top: 80, left: 0, right: 0, zIndex: 900, transform: showBar ? "translateY(0)" : "translateY(-100%)", opacity: showBar ? 1 : 0, transition: "transform 0.3s ease, opacity 0.25s ease", pointerEvents: showBar ? "auto" : "none", padding: "0 6%" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "28% repeat(4,1fr)", background: dark ? "rgba(10,5,24,0.96)" : "rgba(248,246,255,0.97)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid " + cardBdr, boxShadow: dark ? "0 4px 24px rgba(0,0,0,0.6)" : "0 4px 24px rgba(122,63,209,0.08)" }}>
@@ -313,7 +283,6 @@ function ComparisonTable(props) {
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <SectionHeader eyebrow="Sponsorship Tiers" title="Compare Packages" subtitle="Every benefit at a glance — pick the partnership level that matches your ambitions." textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent} />
 
-          {/* Desktop table */}
           <div className="sp-desktop-table" style={{ marginTop: "2.5rem", overflowX: "auto" }}>
             <table style={{ width: "100%", minWidth: 860, borderCollapse: "separate", borderSpacing: 0, tableLayout: "fixed" }}>
               <thead ref={theadRef} style={{ visibility: showBar ? "hidden" : "visible", opacity: showBar ? 0 : 1, transition: "opacity 0.2s ease" }}>
@@ -366,7 +335,6 @@ function ComparisonTable(props) {
             </table>
           </div>
 
-          {/* Mobile cards */}
           <div className="sp-mobile-cards" style={{ marginTop: "2rem" }}>
             <div className="tier-tabs">
               {TIERS.map(function (tier, i) {
@@ -425,10 +393,6 @@ function ComparisonTable(props) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   ADDITIONAL PACKAGES
-   ═══════════════════════════════════════════════════════ */
-
 function AdditionalPackages(props) {
   var dark = props.dark; var textMain = props.textMain; var textMid = props.textMid;
   var textSoft = props.textSoft; var accent = props.accent; var cardBdr = props.cardBdr;
@@ -471,12 +435,9 @@ function AdditionalCard(props) {
         <span style={{ fontSize: "1.6rem" }}>{pkg.icon}</span>
         <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1rem", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{pkg.price}</span>
       </div>
-
       <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 900, color: textMain, marginBottom: 8, lineHeight: 1.3 }}>{pkg.name}</div>
       <p style={{ fontSize: "0.82rem", color: descColor, lineHeight: 1.7, margin: "0 0 16px" }}>{pkg.description}</p>
-
       <div style={{ height: 1, marginBottom: 16, background: dark ? "linear-gradient(90deg,rgba(155,135,245,0.35),transparent)" : "linear-gradient(90deg,rgba(122,63,209,0.20),transparent)" }} />
-
       <div style={{ flex: 1, marginBottom: 20 }}>
         {pkg.highlights.map(function (item) {
           return (
@@ -487,7 +448,6 @@ function AdditionalCard(props) {
           );
         })}
       </div>
-
       <button onClick={props.onInquiry}
         style={{ width: "100%", padding: "11px", borderRadius: 10, cursor: "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.5px", textTransform: "uppercase", border: "1.5px solid " + (dark ? "rgba(155,135,245,0.45)" : "rgba(122,63,209,0.35)"), background: "transparent", color: dark ? "rgba(185,158,255,1)" : "#7a3fd1", transition: "all 0.2s ease" }}
         onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "transparent"; }}
@@ -496,10 +456,6 @@ function AdditionalCard(props) {
     </motion.div>
   );
 }
-
-/* ═══════════════════════════════════════════════════════
-   SHARED: SECTION HEADER
-   ═══════════════════════════════════════════════════════ */
 
 function SectionHeader(props) {
   var ref = useRef(null);

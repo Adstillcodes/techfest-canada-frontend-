@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
-
 import Home from "./pages/Home";
 import Programme from "./pages/Programme";
 import Speakers from "./pages/Speakers";
@@ -17,53 +16,36 @@ import TicketBar from "./components/TicketBar";
 import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import Sponsor from "./pages/Sponsor";
-import Exhibit from "./pages/Exhibit"; 
-import brochures from "./pages/brochures";
-/* ================= SYSTEM THEME DETECTOR ================= */
+import Exhibit from "./pages/Exhibit";
+import Brochures from "./pages/Brochures";
 
+/* ================= SYSTEM THEME DETECTOR ================= */
 function applySystemTheme() {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const theme = prefersDark ? "dark" : "light";
-
   document.documentElement.setAttribute("data-theme", theme);
 }
 
 function App() {
-
   useEffect(() => {
-
-    // apply theme on first load
     applySystemTheme();
-
-    // listen for device theme changes
     const media = window.matchMedia("(prefers-color-scheme: dark)");
-
-    const handleChange = () => {
-      applySystemTheme();
-    };
-
+    const handleChange = () => applySystemTheme();
     media.addEventListener("change", handleChange);
-
     return () => media.removeEventListener("change", handleChange);
-
   }, []);
 
   return (
     <BrowserRouter>
-
       <Routes>
-
         <Route path="/" element={<Home />} />
         <Route path="/programme" element={<Programme />} />
         <Route path="/speakers" element={<Speakers />} />
         <Route path="/sponsors" element={<Sponsors />} />
         <Route path="/tickets" element={<Tickets />} />
-        
-        {/* Using Resources for both since your code is inside Resources.jsx */}
         <Route path="/first-timers" element={<Resources />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/on-demand" element={<Resources />} />
-
         <Route
           path="/dashboard"
           element={
@@ -72,11 +54,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/agenda" element={<Agenda />} />
-
         <Route
           path="/admin"
           element={
@@ -85,18 +65,13 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
         <Route path="/exhibit" element={<Exhibit />} />
-
-        {/* RESET PASSWORD ROUTE */}
+        <Route path="/brochures" element={<Brochures />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-
       </Routes>
-
       <TicketBar />
-
     </BrowserRouter>
   );
 }

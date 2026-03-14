@@ -17,10 +17,10 @@ import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
-import Brochures from "./pages/Brochures";
+import Brochures from "./pages/brochures";
+import Venue from "./pages/Venue";
 
-/* ================= SYSTEM THEME DETECTOR ===========
-====== */
+/* ================= SYSTEM THEME DETECTOR ================= */
 function applySystemTheme() {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const theme = prefersDark ? "dark" : "light";
@@ -47,7 +47,6 @@ function App() {
         <Route path="/first-timers" element={<Resources />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/on-demand" element={<Resources />} />
-        <Route path="/brochures" element={<Brochures />} />
         <Route
           path="/dashboard"
           element={
@@ -70,7 +69,8 @@ function App() {
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
         <Route path="/exhibit" element={<Exhibit />} />
-        
+        <Route path="/brochures" element={<Brochures />} />
+        <Route path="/venue" element={<Venue />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
       <TicketBar />

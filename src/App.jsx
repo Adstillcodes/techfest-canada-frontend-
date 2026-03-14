@@ -48,7 +48,14 @@ function App() {
         <Route path="/first-timers" element={<Resources />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/on-demand" element={<Resources />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
+   <Route
+  path="/admin"
+  element={
+    <AdminRoute>
+      <AdminPage/>
+    </AdminRoute>
+  }
+/>
         <Route
           path="/dashboard"
           element={

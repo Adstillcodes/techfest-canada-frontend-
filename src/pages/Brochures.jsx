@@ -28,6 +28,7 @@ export default function Brochures() {
   
   
   /* form state */
+
   var s2 = useState({ firstName: "", lastName: "", company: "", jobTitle: "", industry: "", email: "", phone: "" });
   var form = s2[0]; var setForm = s2[1];
   var s3 = useState({}); var errors = s3[0]; var setErrors = s3[1];

@@ -107,7 +107,7 @@ export default function Sponsor() {
 
   return (
     <>
-      <style>{\`
+      <style>{`
         @keyframes sponsor-glow-breathe {
           0%, 100% { opacity: 0.5; }
           50%       { opacity: 1;   }
@@ -162,7 +162,7 @@ export default function Sponsor() {
         @media (min-width: 769px) and (max-width: 1100px) {
           .additional-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
-      \`}</style>
+      `}</style>
 
       <Navbar />
 

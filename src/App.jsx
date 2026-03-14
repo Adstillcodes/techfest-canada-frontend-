@@ -21,7 +21,7 @@ import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
 import AdminLogin from "./pages/AdminLogin";
 import AdminRoute from "./components/AdminRoute";
-
+import AdminPage from "./pages/Admin";
 /* ================= SYSTEM THEME DETECTOR ================= */
 function applySystemTheme() {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;

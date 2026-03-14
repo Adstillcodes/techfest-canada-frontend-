@@ -19,7 +19,8 @@ import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
 
 
-/* ================= SYSTEM THEME DETECTOR ================= */
+/* ================= SYSTEM THEME DETECTOR ===========
+====== */
 function applySystemTheme() {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const theme = prefersDark ? "dark" : "light";

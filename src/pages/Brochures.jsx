@@ -25,6 +25,7 @@ const INDUSTRIES = [
 export default function Brochures() {
   var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
 
+  
   /* form state */
   var s2 = useState({ firstName: "", lastName: "", company: "", jobTitle: "", industry: "", email: "", phone: "" });
   var form = s2[0]; var setForm = s2[1];

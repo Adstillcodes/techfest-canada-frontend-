@@ -114,7 +114,7 @@ export default function AboutUs({ onWriteToUs }) {
 
   var bg        = dark ? "#06020f" : "#ffffff"
   var textMain  = dark ? "#ffffff" : "#0d0520"
-  var textMuted = dark ? "rgba(200,185,255,0.65)" : "rgba(60,30,110,0.72)"
+  var textMuted = dark ? "rgba(220,208,255,0.85)" : "rgba(60,30,110,0.72)"
   var cardBg    = dark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.04)"
   var cardBdr   = dark ? "rgba(155,135,245,0.14)" : "rgba(122,63,209,0.14)"
   var accent    = dark ? "#b99eff" : "#7a3fd1"
@@ -148,16 +148,28 @@ export default function AboutUs({ onWriteToUs }) {
           .about-grid { grid-template-columns: 1fr !important; }
           .about-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
 
-          .service-card-right { align-items: center !important; text-align: center !important; }
-          .service-card-right .service-icon-row { flex-direction: row !important; justify-content: center !important; }
-          .service-card-right h3 { text-align: center !important; }
-
-          .service-card-left { align-items: center !important; text-align: center !important; }
-          .service-card-left .service-icon-row { flex-direction: row !important; justify-content: center !important; }
-          .service-card-left h3 { text-align: center !important; }
-
-          .about-sector-label { justify-content: center !important; }
-          .about-pillar-label { justify-content: center !important; }
+          .service-card-right,
+          .service-card-left {
+            align-items: flex-start !important;
+            text-align: left !important;
+            width: 100% !important;
+          }
+          .service-card-right .service-icon-row,
+          .service-card-left .service-icon-row {
+            flex-direction: row !important;
+            justify-content: flex-start !important;
+            width: 100% !important;
+          }
+          .service-card-right h3,
+          .service-card-left h3 {
+            text-align: left !important;
+            font-size: 0.95rem !important;
+          }
+          .about-sector-label,
+          .about-pillar-label {
+            justify-content: flex-start !important;
+            text-align: left !important;
+          }
         }
 
         @media (max-width: 540px) {
@@ -291,9 +303,9 @@ function ServiceCard({ iconName, title, align, dark, textMain, cardBg, cardBdr }
     <motion.div
       whileHover={{ x: isRight ? -8 : 8 }}
       className={isRight ? "service-card-right" : "service-card-left"}
-      style={{ display: "flex", flexDirection: "column", alignItems: isRight ? "flex-end" : "flex-start", cursor: "default" }}
+      style={{ display: "flex", flexDirection: "column", alignItems: isRight ? "flex-end" : "flex-start", cursor: "default", width: "100%" }}
     >
-      <div className="service-icon-row" style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 8, flexDirection: isRight ? "row-reverse" : "row" }}>
+      <div className="service-icon-row" style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 8, flexDirection: isRight ? "row-reverse" : "row", width: "100%" }}>
         <div style={{ padding: 14, background: cardBg, border: "1px solid " + cardBdr, borderRadius: 14, color: "#f5a623", display: "flex", flexShrink: 0, transition: "background 0.3s ease" }}>
           {iconMap[iconName] || <HelpCircle className="w-5 h-5" />}
         </div>

@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SponsorInquiryModal from "../components/SponsorInquiryModal";
 import { useEffect, useState, useRef } from "react";
+import SponsorMarquee from "../components/SponsorMarquee";
 import { motion, useInView } from "framer-motion";
 
 var TIERS = [
@@ -136,10 +137,12 @@ export default function Sponsor() {
         .tier-tabs {
           display: flex; border-radius: 14px; overflow: hidden;
           border: 1px solid rgba(122,63,209,0.20); margin-bottom: 24px;
+          position: sticky; top: 82px; z-index: 50;
+          backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
         }
         .tier-tab {
-          flex: 1; padding: 13px 8px; border: none; background: transparent;
-          font-family: 'Orbitron', sans-serif; font-size: 0.62rem; font-weight: 800;
+          flex: 1; padding: 14px 6px; border: none; background: transparent;
+          font-family: 'Orbitron', sans-serif; font-size: 0.68rem; font-weight: 900;
           letter-spacing: 0.5px; text-transform: uppercase;
           text-align: center; cursor: pointer; transition: all 0.2s ease;
         }
@@ -201,6 +204,8 @@ export default function Sponsor() {
 
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 4, pointerEvents: "none", background: "linear-gradient(to bottom, transparent, " + bg + ")" }} />
       </section>
+
+      <SponsorMarquee dark={dark} />
 
       {/* COMPARISON TABLE */}
       <ComparisonTable dark={dark} bg={bg} textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent} cardBg={cardBg} cardBdr={cardBdr} onInquiry={function () { setInquiryOpen(true); }} />
@@ -380,9 +385,11 @@ function ComparisonTable(props) {
                     );
                   })}
 
-                  <button onClick={props.onInquiry} style={{ width: "100%", marginTop: 8, padding: "14px", borderRadius: 12, border: "none", cursor: "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.8px", textTransform: "uppercase", background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff" }}>
-                    Enquire About {tier.name} →
-                  </button>
+                  <div style={{ marginTop: 12, padding: 2, borderRadius: 14, background: "linear-gradient(135deg,#7a3fd1,#c4607a,#f5a623)" }}>
+                    <button onClick={props.onInquiry} style={{ width: "100%", padding: "16px", borderRadius: 12, border: "none", cursor: "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.82rem", fontWeight: 900, letterSpacing: "1.5px", textTransform: "uppercase", background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff" }}>
+                      Enquire About {tier.name} →
+                    </button>
+                  </div>
                 </motion.div>
               );
             })}

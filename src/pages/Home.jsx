@@ -3,14 +3,11 @@ import Footer from "../components/Footer";
 import AboutUs from "../components/AboutUs";
 import { useEffect, useState, useRef } from "react";
 import InquiryModal from "../components/InquiryModal";
-import CookieConsent from "../components/CookieConsent";
 import PostPurchaseModal from "../components/PostPurchaseModal";
 import OnboardingSurvey from "../components/OnboardingSurvey";
 import { motion, useInView } from "framer-motion";
-
-/* ═══════════════════════════════════════════════════════
-   STAGGER VARIANTS
-   ═══════════════════════════════════════════════════════ */
+import SponsorMarquee from "../components/SponsorMarquee";
+import NewsletterBar from "../components/NewsletterBar";
 
 var containerVariants = {
   hidden: {},
@@ -27,22 +24,14 @@ var itemBlur = {
   },
 };
 
-/* ═══════════════════════════════════════════════════════
-   SCROLL-TRIGGERED TEXT REVEAL
-   Word-by-word blur + slide + scale
-   ═══════════════════════════════════════════════════════ */
-
 function TextReveal(props) {
   var text = props.text;
   var colors = props.colors || [];
   var style = props.style || {};
   var delay = props.delay || 0;
-
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-60px" });
-
   var words = text.split(" ");
-
   return (
     <motion.h2
       ref={ref}
@@ -50,76 +39,34 @@ function TextReveal(props) {
       animate={isInView ? "visible" : "hidden"}
       variants={{
         hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: { staggerChildren: 0.14, delayChildren: delay },
-        },
+        visible: { opacity: 1, transition: { staggerChildren: 0.14, delayChildren: delay } },
       }}
-      style={{
-        display: "flex",
-        flexDirection: "column", // Forces stacking
-        alignItems: "center", // Centers the stacked words
-        gap: "0.1em",
-        ...style,
-      }}
+      style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: "0.18em", flexWrap: "wrap", ...style }}
     >
       {words.map(function (word, i) {
         return (
-          <motion.span
-            key={i}
+          <motion.span key={i}
             variants={{
-              hidden: {
-                opacity: 0,
-                y: 50,
-                filter: "blur(16px)",
-                scale: 0.8,
-              },
-              visible: {
-                opacity: 1,
-                y: 0,
-                filter: "blur(0px)",
-                scale: 1,
-                transition: {
-                  type: "spring",
-                  damping: 14,
-                  stiffness: 100,
-                  duration: 1,
-                },
-              },
+              hidden: { opacity: 0, y: 50, filter: "blur(16px)", scale: 0.8 },
+              visible: { opacity: 1, y: 0, filter: "blur(0px)", scale: 1, transition: { type: "spring", damping: 14, stiffness: 100, duration: 1 } },
             }}
-            style={{
-              display: "inline-block",
-              color: colors[i] || "inherit",
-              willChange: "transform, opacity, filter",
-            }}
-          >
-            {word}
-          </motion.span>
+            style={{ display: "inline-block", color: colors[i] || "inherit", willChange: "transform, opacity, filter" }}
+          >{word}</motion.span>
         );
       })}
     </motion.h2>
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   SCROLL-TRIGGERED SUB-COMPONENTS
-   ═══════════════════════════════════════════════════════ */
-
 function DividerReveal(props) {
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-40px" });
   return (
-    <motion.div
-      ref={ref}
+    <motion.div ref={ref}
       initial={{ scaleX: 0, opacity: 0 }}
       animate={isInView ? { scaleX: 1, opacity: 1 } : {}}
       transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.4 }}
-      style={{
-        width: 120, height: 3, borderRadius: 2,
-        background: "linear-gradient(90deg, " + props.accent + ", var(--brand-orange, #f5a623))",
-        margin: "2rem auto 2.5rem",
-        transformOrigin: "center",
-      }}
+      style={{ width: 120, height: 3, borderRadius: 2, background: "linear-gradient(90deg, " + props.accent + ", var(--brand-orange, #f5a623))", margin: "2rem auto 2.5rem", transformOrigin: "center" }}
     />
   );
 }
@@ -128,19 +75,12 @@ function SubtitleReveal(props) {
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-40px" });
   return (
-    <motion.p
-      ref={ref}
+    <motion.p ref={ref}
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ type: "spring", bounce: 0.2, duration: 1.4, delay: 0.5 }}
       className="hero-sub"
-      style={{
-        fontSize: "clamp(1.1rem, 1.8vw, 1.3rem)",
-        lineHeight: 1.85, fontWeight: 400, maxWidth: 680,
-        color: props.textMid,
-        textAlign: "justify", hyphens: "auto",
-        marginBottom: "3rem",
-      }}
+      style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.3rem)", lineHeight: 1.85, fontWeight: 400, maxWidth: 680, color: props.textMid, textAlign: "justify", hyphens: "auto", marginBottom: "3rem" }}
     >
       Canada's first-of-its-kind, deal-making platform where
       innovators, buyers, and policymakers turn emerging tech into real partnerships,
@@ -157,85 +97,46 @@ function CTAReveal(props) {
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-40px" });
   return (
-    <motion.div
-      ref={ref}
+    <motion.div ref={ref}
       initial={{ opacity: 0, y: 18 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ type: "spring", bounce: 0.2, duration: 1.2, delay: 0.6 }}
       className="hero-ctas-wrap"
       style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}
     >
-      <motion.a
-        href="/tickets"
-        className="hero-cta-solid"
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        style={{
-          background: dark ? textMain : "#0d0520",
-          color: dark ? "#0d0520" : "#ffffff",
-          boxShadow: dark
-            ? "0 6px 28px rgba(155,135,245,0.2), 0 2px 8px rgba(0,0,0,0.2)"
-            : "0 6px 28px rgba(13,5,32,0.18), 0 2px 8px rgba(0,0,0,0.08)",
-        }}
-        onMouseEnter={function (e) {
-          e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)";
-          e.currentTarget.style.color = "#fff";
-        }}
-        onMouseLeave={function (e) {
-          e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520";
-          e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff";
-        }}
+      <motion.a href="/tickets" className="hero-cta-solid"
+        whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+        style={{ background: dark ? textMain : "#0d0520", color: dark ? "#0d0520" : "#ffffff", boxShadow: dark ? "0 6px 28px rgba(155,135,245,0.2), 0 2px 8px rgba(0,0,0,0.2)" : "0 6px 28px rgba(13,5,32,0.18), 0 2px 8px rgba(0,0,0,0.08)" }}
+        onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)"; e.currentTarget.style.color = "#fff"; }}
+        onMouseLeave={function (e) { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; }}
       >
         Get Your Tickets
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7" />
-        </svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
       </motion.a>
-      <motion.a
-        href="/sponsor"
-        className="hero-cta-ghost"
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        style={{
-          border: "1.5px solid " + (dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)"),
-          color: dark ? "rgba(200,185,255,0.85)" : "rgba(90,40,180,0.8)",
-          background: "transparent", borderRadius: 14,
-        }}
-        onMouseEnter={function (e) {
-          e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.55)" : "rgba(122,63,209,0.55)";
-          e.currentTarget.style.background = dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)";
-        }}
-        onMouseLeave={function (e) {
-          e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)";
-          e.currentTarget.style.background = "transparent";
-        }}
+      <motion.a href="/sponsor" className="hero-cta-ghost"
+        whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+        style={{ border: "1.5px solid " + (dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)"), color: dark ? "rgba(200,185,255,0.85)" : "rgba(90,40,180,0.8)", background: "transparent", borderRadius: 14 }}
+        onMouseEnter={function (e) { e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.55)" : "rgba(122,63,209,0.55)"; e.currentTarget.style.background = dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)"; }}
+        onMouseLeave={function (e) { e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)"; e.currentTarget.style.background = "transparent"; }}
       >
         Partner With Us
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M7 17L17 7M17 7H7M17 7v10" />
-        </svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10" /></svg>
       </motion.a>
     </motion.div>
   );
 }
 
-/* ═══════════════════════════════════════════════════════
-   HOME PAGE
-   ═══════════════════════════════════════════════════════ */
-
 export default function Home() {
-  var s1  = useState(false);  var inquiryOpen = s1[0];         var setInquiryOpen = s1[1];
-  var s2  = useState(false);  var surveyOpen = s2[0];          var setSurveyOpen = s2[1];
-  var s3  = useState("");     var surveyName = s3[0];          var setSurveyName = s3[1];
-  var s4  = useState(false);  var purchaseOpen = s4[0];        var setPurchaseOpen = s4[1];
-  var s5  = useState("");     var purchaseTicketType = s5[0];  var setPurchaseTicketType = s5[1];
-  var s6  = useState(false);  var dark = s6[0];                var setDark = s6[1];
+  var s1 = useState(false); var inquiryOpen = s1[0];        var setInquiryOpen = s1[1];
+  var s2 = useState(false); var surveyOpen = s2[0];         var setSurveyOpen = s2[1];
+  var s3 = useState("");    var surveyName = s3[0];         var setSurveyName = s3[1];
+  var s4 = useState(false); var purchaseOpen = s4[0];       var setPurchaseOpen = s4[1];
+  var s5 = useState("");    var purchaseTicketType = s5[0]; var setPurchaseTicketType = s5[1];
+  var s6 = useState(false); var dark = s6[0];               var setDark = s6[1];
 
   useEffect(function () {
     setDark(document.body.classList.contains("dark-mode"));
-    var obs = new MutationObserver(function () {
-      setDark(document.body.classList.contains("dark-mode"));
-    });
+    var obs = new MutationObserver(function () { setDark(document.body.classList.contains("dark-mode")); });
     obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     return function () { obs.disconnect(); };
   }, []);
@@ -252,15 +153,14 @@ export default function Home() {
     return function () { window.removeEventListener("purchaseComplete", h); };
   }, []);
 
-  var bg       = dark ? "#06020f"                  : "#ffffff";
-  var textMain = dark ? "#ffffff"                  : "#0d0520";
-  var textMid  = dark ? "rgba(255,255,255,0.75)"   : "rgba(13,5,32,0.78)";
-  var accent   = dark ? "#b99eff"                  : "#7a3fd1";
+  var bg       = dark ? "#06020f"                : "#ffffff";
+  var textMain = dark ? "#ffffff"                : "#0d0520";
+  var textMid  = dark ? "rgba(255,255,255,0.75)" : "rgba(13,5,32,0.78)";
+  var accent   = dark ? "#b99eff"                : "#7a3fd1";
 
   return (
     <>
       <style>{`
-        /* ──── CTAs ──── */
         .hero-cta-solid {
           position: relative; overflow: hidden;
           display: inline-flex; align-items: center; gap: 10px;
@@ -280,140 +180,66 @@ export default function Home() {
           transition: all 0.3s ease;
         }
         .hero-cta-ghost:hover { transform: translateY(-2px); }
-
         .tfc-navbar-wrap { border-bottom: none !important; box-shadow: none !important; }
-
-        /* ──── RESPONSIVE ──── */
         @media (max-width: 640px) {
           .hero-ctas-wrap { flex-direction: column !important; width: 100% !important; }
           .hero-cta-solid, .hero-cta-ghost { width: 100% !important; justify-content: center !important; }
           .hero-sub { text-align: left !important; }
         }
       `}</style>
-       
+
       <Navbar />
 
-      {/* ═══════════ HERO UPPER — Logo + Date/City ═══════════ */}
-      <section style={{
-        position: "relative", overflow: "hidden", background: bg,
-        minHeight: "100vh", display: "flex", flexDirection: "column",
-        alignItems: "center", justifyContent: "center",
-      }}>
-        {/* Video background */}
+      {/* HERO UPPER */}
+      <section style={{ position: "relative", overflow: "hidden", background: bg, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
         <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden" }}>
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            style={{
-              position: "absolute",
-              top: "50%", left: "50%",
-              minWidth: "100%", minHeight: "100%",
-              width: "auto", height: "auto",
-              transform: "translate(-50%, -50%)",
-              objectFit: "cover",
-            }}
-          >
+          <video autoPlay muted loop playsInline style={{ position: "absolute", top: "50%", left: "50%", minWidth: "100%", minHeight: "100%", width: "auto", height: "auto", transform: "translate(-50%, -50%)", objectFit: "cover" }}>
             <source src="/hero-bg.mp4" type="video/mp4" />
           </video>
-          {/* Dark overlay for text readability */}
-          <div style={{
-            position: "absolute", inset: 0,
-            background: dark
-              ? "rgba(6,2,15,0.65)"
-              : "rgba(244,240,255,0.75)",
-          }} />
+          <div style={{ position: "absolute", inset: 0, background: dark ? "rgba(6,2,15,0.65)" : "rgba(244,240,255,0.75)" }} />
         </div>
 
-        {/* Centered content */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          style={{
-            position: "relative", zIndex: 5,
-            display: "flex", flexDirection: "column",
-            alignItems: "center", textAlign: "center",
-            padding: "0 6%", maxWidth: 920, width: "100%",
-          }}
+        <motion.div variants={containerVariants} initial="hidden" animate="visible"
+          style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 6%", maxWidth: 920, width: "100%" }}
         >
-          {/* Logo - Size increased from 720 to 980 */}
           <motion.div variants={itemBlur} style={{ marginBottom: "2.2rem" }}>
             <img
-              src={dark
-                ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png"
-                : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
+              src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
               alt="The Tech Festival Canada"
-              style={{
-                width: "100%", maxWidth: 980, height: "auto", objectFit: "contain",
-                filter: dark
-                  ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))"
-                  : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))",
-              }}
+              style={{ width: "100%", maxWidth: 980, height: "auto", objectFit: "contain", filter: dark ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))" : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))" }}
             />
           </motion.div>
         </motion.div>
 
-        {/* Bottom fade */}
-        <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 4,
-          background: "linear-gradient(to bottom, transparent, " + bg + ")",
-          pointerEvents: "none",
-        }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 4, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
       </section>
 
-      {/* ═══════════ HERO LOWER — MEET BUILD SCALE + CTAs ═══════════ */}
-      <section id="hero-lower" style={{
-        position: "relative", background: bg, overflow: "hidden",
-        padding: "6rem 6% 8rem",
-      }}>
-        <div style={{
-          maxWidth: 920, margin: "0 auto",
-          display: "flex", flexDirection: "column",
-          alignItems: "center", textAlign: "center",
-        }}>
-          {/* The flex column direction in TextReveal fixes the alignment */}
+      {/* HERO LOWER */}
+      <section id="hero-lower" style={{ position: "relative", background: bg, overflow: "hidden", padding: "6rem 5% 8rem" }}>
+        <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
           <TextReveal
             text="MEET BUILD SCALE"
-            colors={[
-              dark ? "#ffffff" : "#0d0520",
-              accent,
-              "var(--brand-orange, #f5a623)",
-            ]}
-            style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: "clamp(3.5rem, 8vw, 6rem)",
-              fontWeight: 900, lineHeight: 1.1,
-              letterSpacing: "-1px", marginBottom: "0.5rem",
-            }}
+            colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}
+            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2.2rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.5rem" }}
           />
-
-          <DividerReveal accent={accent} />
           <SubtitleReveal textMid={textMid} />
           <CTAReveal dark={dark} textMain={textMain} accent={accent} />
         </div>
       </section>
 
-      {/* ═══════════ ABOUT / FOOTER / MODALS ═══════════ */}
-<div id="about-section" style={{ background: bg }}>
-  <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
-</div>
+      {/* ABOUT */}
+      <div id="about-section" style={{ background: bg }}>
+        <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
+      </div>
 
+      <SponsorMarquee dark={dark} />
+      <div style={{ height: "4rem", background: dark ? "#06020f" : "#ffffff" }} />
+      <NewsletterBar dark={dark} />
       <Footer />
 
       <InquiryModal isOpen={inquiryOpen} onClose={function () { setInquiryOpen(false); }} />
-      <CookieConsent />
-      <PostPurchaseModal
-        isOpen={purchaseOpen}
-        onClose={function () { setPurchaseOpen(false); }}
-        ticketType={purchaseTicketType}
-      />
-      <OnboardingSurvey
-        isOpen={surveyOpen}
-        onClose={function () { setSurveyOpen(false); window.location.reload(); }}
-        userName={surveyName}
-      />
+      <PostPurchaseModal isOpen={purchaseOpen} onClose={function () { setPurchaseOpen(false); }} ticketType={purchaseTicketType} />
+      <OnboardingSurvey isOpen={surveyOpen} onClose={function () { setSurveyOpen(false); window.location.reload(); }} userName={surveyName} />
     </>
   );
 }

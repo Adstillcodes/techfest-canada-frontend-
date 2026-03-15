@@ -175,9 +175,9 @@ export default function Navbar() {
             >BROCHURE</Link>
 
             <Link to="/tickets"
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", background: dark ? "#ffffff" : "#0d0520", color: dark ? "#0d0520" : "#ffffff", transition: "all 0.2s ease" }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", background: "linear-gradient(135deg,#7a3fd1,#c4607a,#f5a623)", color: "#ffffff", transition: "all 0.2s ease", boxShadow: "0 4px 18px rgba(122,63,209,0.30)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.88"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}
             >TICKETS</Link>
 
             <button onClick={toggleTheme} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.15rem", padding: "6px", lineHeight: 1 }} aria-label="Toggle theme">
@@ -244,9 +244,11 @@ export default function Navbar() {
                   style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: 12, padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", border: `1px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`, color: isDark ? "#fff" : "#0f0520" }}
                 >BROCHURE</Link>
 
-                <Link to="/tickets" onClick={() => setMobileOpen(false)}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: 8, padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff" }}
-                >GET YOUR PASS</Link>
+                <div style={{ marginTop: 8, padding: 2, borderRadius: 16, background: "linear-gradient(135deg,#7a3fd1,#c4607a,#f5a623)" }}>
+                  <Link to="/tickets" onClick={() => setMobileOpen(false)}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.82rem", fontWeight: 900, letterSpacing: "1.2px", textTransform: "uppercase", textDecoration: "none", background: "linear-gradient(135deg,#7a3fd1,#c4607a,#f5a623)", color: "#fff" }}
+                  >GET YOUR PASS</Link>
+                </div>
               </div>
             </motion.div>
           )}

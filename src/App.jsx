@@ -17,7 +17,7 @@ import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
-import Brochures from "./pages/brochures";
+import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
 
 /* ================= SYSTEM THEME DETECTOR ================= */

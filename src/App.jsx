@@ -19,6 +19,7 @@ import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
 import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
+import ScrollToTop from "./components/ScrollToTop";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
 function applySystemTheme() {

@@ -114,7 +114,7 @@ export default function Navbar() {
   return (
     <>
       <style>{`
-        .tfc-navbar-wrap { position: sticky; top: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+        .tfc-navbar-wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
         .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
         .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
         .tfc-nav-link.active { background: rgba(122,63,209,0.14); }
@@ -258,4 +258,4 @@ export default function Navbar() {
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
-} 
+}

@@ -258,4 +258,4 @@ export default function Navbar() {
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
-}
+} 

@@ -162,10 +162,14 @@ export default function Speakers() {
               <p>Visionaries and executives driving the future of technology across Canada and beyond.</p>
               <div className="section-divider" />
             </div>
-            {speakers.length > 0
-              ? <SpeakerCarousel speakers={speakers} />
-              : <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)", fontSize: "0.9rem" }}>Loading speakers…</div>
-            }
+            <div style={{ textAlign: "center", padding: "5rem 2rem", maxWidth: 600, margin: "0 auto" }}>
+              <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2rem,5vw,3.5rem)", fontWeight: 900, background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1.5rem" }}>
+                Coming Soon.
+              </div>
+              <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", lineHeight: 1.8 }}>
+                We are currently curating our lineup of world-class speakers. Announcements will be made shortly.
+              </p>
+            </div>
           </section>
 
           <div className="speak-cta-band">

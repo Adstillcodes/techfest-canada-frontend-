@@ -17,8 +17,10 @@ import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
-import Brochures from "./pages/brochures";
+import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
+import AdminLogin from "./pages/AdminLogin";
+import AdminRoute from "./components/AdminRoute";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
 function applySystemTheme() {
@@ -47,6 +49,16 @@ function App() {
         <Route path="/first-timers" element={<Resources />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/on-demand" element={<Resources />} />
+  <Route path="/admin-login" element={<AdminLogin />} />
+
+<Route
+  path="/admin"
+  element={
+    <AdminRoute>
+      <Admin />
+    </AdminRoute>
+  }
+/>
         <Route
           path="/dashboard"
           element={

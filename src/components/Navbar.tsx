@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthModal from "./AuthModal";
 
+
 const PARTNERS_DROPDOWN = [
   { label: "Sponsor", path: "/sponsor" },
   { label: "Exhibit", path: "/exhibit" }

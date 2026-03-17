@@ -2,15 +2,15 @@ import React, { useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navbar";
 
 // ==========================================
-// 1. GLOBAL CONSTANTS & HELPERS
+// 1. GLOBAL CONSTANTS
 // ==========================================
 const COUNTRY_CODES = [
   "+1", "+7", "+20", "+27", "+30", "+31", "+32", "+33", "+34", "+36", "+39", "+40", "+41", "+43", "+44", "+45", "+46", "+47", "+48", "+49", "+51", "+52", "+53", "+54", "+55", "+56", "+57", "+58", "+60", "+61", "+62", "+63", "+64", "+65", "+66", "+81", "+82", "+84", "+86", "+90", "+91", "+92", "+93", "+94", "+95", "+98", "+212", "+213", "+216", "+218", "+220", "+221", "+222", "+223", "+224", "+225", "+226", "+227", "+228", "+229", "+230", "+231", "+232", "+233", "+234", "+235", "+236", "+237", "+238", "+239", "+240", "+241", "+242", "+243", "+244", "+245", "+246", "+248", "+249", "+250", "+251", "+252", "+253", "+254", "+255", "+256", "+257", "+258", "+260", "+261", "+262", "+263", "+264", "+265", "+266", "+267", "+268", "+269", "+290", "+291", "+297", "+298", "+299", "+350", "+351", "+352", "+353", "+354", "+355", "+356", "+357", "+358", "+359", "+370", "+371", "+372", "+373", "+374", "+375", "+376", "+377", "+378", "+380", "+381", "+382", "+385", "+386", "+387", "+389", "+420", "+421", "+423", "+500", "+501", "+502", "+503", "+504", "+505", "+506", "+507", "+508", "+509", "+590", "+591", "+592", "+593", "+594", "+595", "+596", "+597", "+598", "+599", "+852", "+853", "+855", "+856", "+880", "+886", "+960", "+961", "+962", "+963", "+964", "+965", "+966", "+967", "+968", "+971", "+972", "+973", "+974", "+975", "+976", "+977", "+992", "+993", "+994", "+995", "+996", "+998"
 ];
 
 // ==========================================
-// 2. STABLE SUB-COMPONENTS
-// (Defined completely outside the main loop to prevent scroll/typing bugs)
+// 2. STABLE SUB-COMPONENTS 
+// (Extracted to prevent rendering crashes/scroll bugs)
 // ==========================================
 
 function FormInput({ label, required, dark, ...props }) {
@@ -105,10 +105,21 @@ function RichTextEditor({ label, required, value, onChange, dark }) {
   const bgMain = dark ? "rgba(255,255,255,0.02)" : "rgba(122,63,209,0.02)";
   const bgToolbar = dark ? "rgba(255,255,255,0.05)" : "rgba(122,63,209,0.05)";
 
+  // FIXED: Only sets HTML on the very first mount. Prevents the "typing backwards" cursor reset bug.
+  useEffect(() => {
+    if (editorRef.current && value && !editorRef.current.innerHTML) {
+      editorRef.current.innerHTML = value;
+    }
+  }, []);
+
+  const handleInput = () => {
+    if (editorRef.current) onChange(editorRef.current.innerHTML);
+  };
+
   const exec = (command) => {
     document.execCommand(command, false, null);
     editorRef.current.focus();
-    onChange(editorRef.current.innerHTML);
+    handleInput();
   };
 
   return (
@@ -123,9 +134,8 @@ function RichTextEditor({ label, required, value, onChange, dark }) {
         <div
           ref={editorRef}
           contentEditable
-          onInput={(e) => onChange(e.currentTarget.innerHTML)}
-          style={{ minHeight: "120px", padding: "14px", color: textMain, outline: "none", fontSize: "0.95rem", lineHeight: "1.5" }}
-          dangerouslySetInnerHTML={{ __html: value || "" }}
+          onInput={handleInput}
+          style={{ minHeight: "100px", padding: "14px", color: textMain, outline: "none", fontSize: "0.95rem", lineHeight: "1.5" }}
         />
       </div>
     </div>
@@ -173,39 +183,40 @@ function FileUpload({ label, onFileSelect, dark }) {
 export default function KYCForm() {
   const [dark, setDark] = useState(false);
 
+  // FIXED: Wrapped in SSR safety check to completely prevent the fatal "White Screen" error
   useEffect(() => {
-    setDark(document.body.classList.contains("dark-mode"));
-    const obs = new MutationObserver(() => setDark(document.body.classList.contains("dark-mode")));
-    obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    return () => obs.disconnect();
+    if (typeof document !== "undefined" && document.body) {
+      setDark(document.body.classList.contains("dark-mode"));
+      const obs = new MutationObserver(() => setDark(document.body.classList.contains("dark-mode")));
+      obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+      return () => obs.disconnect();
+    }
   }, []);
 
-  const TOTAL_STEPS = 8;
+  const TOTAL_STEPS = 10; // Expanded to properly fit all DOCX requirements safely
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({});
 
-  // Generic handler for standard inputs, dropdowns, and checkboxes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Special handler to strictly limit phone to 10 characters
+  // Enforces strictly numbers and a max of 10 digits
   const handlePhoneChange = (e) => {
     const val = e.target.value.replace(/\D/g, "").slice(0, 10);
     setFormData(prev => ({ ...prev, primaryPhone: val }));
   };
 
-  // Progress logic (0% to 100%)
   const progressPercent = Math.round(((currentStep - 1) / (TOTAL_STEPS - 1)) * 100);
 
   // Theme Constants
-  const bg = dark ? "#06020f" : "#fdfbfa"; // Off-white for light mode background
+  const bg = dark ? "#06020f" : "#fdfbfa";
   const textMain = dark ? "#ffffff" : "#0d0520";
   const textMuted = dark ? "rgba(255,255,255,0.6)" : "rgba(13,5,32,0.68)";
   const inputBg = dark ? "rgba(255,255,255,0.02)" : "rgba(122,63,209,0.02)";
   const inputBorder = dark ? "rgba(255,255,255,0.1)" : "rgba(122,63,209,0.14)";
-  const progressBg = dark ? "rgba(6,2,15,0.9)" : "rgba(253,251,250,0.95)";
+  const progressBg = dark ? "rgba(6,2,15,0.95)" : "rgba(253,251,250,0.95)";
   const btnText = dark ? "#000" : "#fff";
   const btnBg = dark ? "#fff" : "#0d0520";
 
@@ -247,14 +258,14 @@ export default function KYCForm() {
                   <select style={{ width: "110px", background: inputBg, border: `1px solid ${inputBorder}`, color: textMain, padding: "14px", borderRadius: "10px", fontSize: "0.95rem", outline: "none", appearance: "none", cursor: "pointer" }} name="primaryPhoneCode" value={formData.primaryPhoneCode || "+1"} onChange={handleChange}>
                     {COUNTRY_CODES.map(code => <option key={code} value={code}>{code}</option>)}
                   </select>
-                  <input style={{ flex: 1, background: inputBg, border: `1px solid ${inputBorder}`, color: textMain, padding: "14px", borderRadius: "10px", fontSize: "0.95rem", outline: "none" }} type="tel" placeholder="4165550100" value={formData.primaryPhone || ""} onChange={handlePhoneChange} />
+                  <input style={{ flex: 1, background: inputBg, border: `1px solid ${inputBorder}`, color: textMain, padding: "14px", borderRadius: "10px", fontSize: "0.95rem", outline: "none" }} type="tel" maxLength="10" placeholder="4165550100" value={formData.primaryPhone || ""} onChange={handlePhoneChange} />
                 </div>
               </div>
             </div>
 
             <FormInput label="Job Title" required name="primaryTitle" value={formData.primaryTitle || ""} onChange={handleChange} dark={dark} />
 
-            <h3 style={{ marginTop: "30px", fontSize: "1.2rem", fontWeight: 700, marginBottom: "16px" }}>Secondary Contact (Optional)</h3>
+            <h3 style={{ marginTop: "30px", fontSize: "1.2rem", fontWeight: 700, marginBottom: "16px", color: textMain }}>Secondary Contact (Optional)</h3>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "0 24px" }}>
               <FormInput label="Name" name="secondaryName" value={formData.secondaryName || ""} onChange={handleChange} dark={dark} />
               <FormInput label="Job Title" name="secondaryTitle" value={formData.secondaryTitle || ""} onChange={handleChange} dark={dark} />
@@ -282,6 +293,10 @@ export default function KYCForm() {
             </div>
 
             <FormRadio label="Do you have operations in Canada?" required name="operationsCanada" options={["Yes", "No", "Planned market entry"]} value={formData.operationsCanada || ""} onChange={handleChange} dark={dark} />
+            
+            <FormCheckbox label="Type of Participation" required name="participationType" options={["Sponsor", "Exhibitor", "Sponsor and Exhibitor", "Speaker Partner", "Ecosystem Partner", "Startup Exhibitor"]} valueArray={formData.participationType} onChange={handleChange} dark={dark} />
+            
+            <FormCheckbox label="Package Booked / Under Discussion" name="packageBooked" options={["Single Booth", "Double Booth", "Triple Booth", "Quadruple Booth", "Branding Package", "Thought Leadership Package", "Hosted Buyer Meetings", "Custom Sponsorship", "Not finalized yet"]} valueArray={formData.packageBooked} onChange={handleChange} dark={dark} />
           </div>
         )}
 
@@ -290,11 +305,13 @@ export default function KYCForm() {
           <div>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Business Profile</h2>
             
-            <FormCheckbox label="Which best describes your company? (Select all that apply)" required name="companyDesc" options={["Technology Product Company", "Platform / SaaS Company", "Enterprise Solution Provider", "Consulting / Services Firm", "System Integrator", "Hardware / Infrastructure Provider", "Research / Lab / Deep Tech Company", "Startup", "Government / Trade Body", "Academic / Innovation Institution", "Investor / VC / PE", "Recruitment / Talent", "Media / Community", "Other"]} valueArray={formData.companyDesc} onChange={handleChange} dark={dark} />
+            <FormCheckbox label="Which best describes your company? (Select all that apply)" required name="companyDesc" options={["Technology Product Company", "Platform / SaaS Company", "Enterprise Solution Provider", "Consulting / Services Firm", "System Integrator", "Hardware / Infrastructure Provider", "Research / Lab / Deep Tech Company", "Startup", "Government / Trade Body / Association", "Academic / Innovation Institution", "Investor / VC / PE / Family Office", "Recruitment / Talent / Training Company", "Media / Community / Ecosystem Builder", "Other"]} valueArray={formData.companyDesc} onChange={handleChange} dark={dark} />
             
             <FormSelect label="Primary Industry" required name="primaryIndustry" options={["Artificial Intelligence", "Quantum Computing", "Robotics", "Cybersecurity and Digital Trust", "Climate Technology and Sustainability", "Cross sector / Multi tech"]} value={formData.primaryIndustry || ""} onChange={handleChange} dark={dark} />
             
-            <FormCheckbox label="Sub Industry / Category" required name="subIndustry" options={["GenAI / LLMs", "AI Infrastructure / Compute", "AI Agents / Automation", "Data / Analytics / MLOps", "Quantum Hardware", "Quantum Software", "Robotics Hardware", "Industrial Automation", "Cybersecurity Software", "Identity / Zero Trust", "Cloud Security", "Climate / Clean Energy", "Carbon / ESG", "Smart Infrastructure", "Other"]} valueArray={formData.subIndustry} onChange={handleChange} dark={dark} />
+            <FormCheckbox label="Sub Industry / Category" required name="subIndustry" options={["GenAI / LLMs", "AI Infrastructure / Compute", "AI Agents / Automation", "Data / Analytics / MLOps", "Quantum Hardware", "Quantum Software / Algorithms", "Robotics Hardware", "Industrial Automation", "Humanoid Robotics", "Cybersecurity Software", "Identity / Zero Trust", "Cloud Security", "Climate / Clean Energy", "Carbon / ESG / Sustainability Tech", "Smart Infrastructure", "Other"]} valueArray={formData.subIndustry} onChange={handleChange} dark={dark} />
+
+            <FormCheckbox label="Applied Sector Focus" name="sectorFocus" options={["Healthcare", "Financial Services / FinTech", "Energy and Utilities", "Manufacturing and Industrial", "Mobility and Transportation", "Government and Smart Cities", "Retail and Consumer", "Education", "Agriculture and Food", "Telecom", "Defence and Public Safety", "Cross sector"]} valueArray={formData.sectorFocus} onChange={handleChange} dark={dark} />
 
             <FormRadio label="Company Stage" name="companyStage" options={["Startup", "Growth Stage", "Scale Up", "Established Enterprise", "Global Corporation"]} value={formData.companyStage || ""} onChange={handleChange} dark={dark} />
 
@@ -302,39 +319,43 @@ export default function KYCForm() {
           </div>
         )}
 
-        {/* ================= STEP 4: PARTICIPATION & OBJECTIVES ================= */}
+        {/* ================= STEP 4: PARTICIPATION OBJECTIVES ================= */}
         {currentStep === 4 && (
           <div>
-            <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Participation Objectives</h2>
+            <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Objectives</h2>
             
-            <FormCheckbox label="Type of Participation" required name="participationType" options={["Sponsor", "Exhibitor", "Sponsor and Exhibitor", "Speaker Partner", "Ecosystem Partner", "Startup Exhibitor"]} valueArray={formData.participationType} onChange={handleChange} dark={dark} />
-            
-            <FormCheckbox label="Package Booked / Under Discussion" name="packageBooked" options={["Single Booth", "Double Booth", "Triple Booth", "Quadruple Booth", "Branding Package", "Thought Leadership Package", "Hosted Buyer Meetings", "Custom Sponsorship", "Not finalized yet"]} valueArray={formData.packageBooked} onChange={handleChange} dark={dark} />
-
-            <FormCheckbox label="Primary reasons for participating (Rank Top 5)" required name="primaryReasons" options={["Brand visibility", "Lead generation", "Sales pipeline creation", "Customer acquisition", "Partnership development", "Investor outreach", "Channel / distributor search", "Market entry into Canada", "Thought leadership / speaking", "Product launch", "PR / media exposure", "Competitive intelligence", "Recruit talent", "Meet government / academia leaders", "Existing customer engagement", "Networking"]} valueArray={formData.primaryReasons} onChange={handleChange} dark={dark} />
+            <FormCheckbox label="Primary reasons for participating (Rank Top 5)" required name="primaryReasons" options={["Brand visibility", "Lead generation", "Sales pipeline creation", "Customer acquisition", "Partnership development", "Investor outreach", "Channel / distributor search", "Market entry into Canada", "Thought leadership / speaking", "Product launch", "PR / media exposure", "Competitive intelligence", "Recruit talent", "Meet government / academia / ecosystem leaders", "Existing customer engagement", "Networking", "Other"]} valueArray={formData.primaryReasons} onChange={handleChange} dark={dark} />
 
             <RichTextEditor label="What would define success for your participation?" required value={formData.successDef} onChange={(val) => setFormData({...formData, successDef: val})} dark={dark} />
+
+            <FormCheckbox label="Top success outcomes" required name="topOutcomes" options={["Number of qualified meetings", "Number of enterprise buyer meetings", "Number of government / public sector meetings", "Number of investor meetings", "Number of channel / partner meetings", "Number of booth visits", "Number of leads captured", "Number of product demos conducted", "Number of speaking attendees reached", "Brand impressions", "Press / media exposure", "Social media reach", "Strategic partnerships initiated", "Sales opportunities generated", "Market insights gathered", "Hiring conversations initiated"]} valueArray={formData.topOutcomes} onChange={handleChange} dark={dark} />
 
             <FormRadio label="Expected ROI timeframe" name="roiTimeframe" options={["Immediate during event", "Within 30 days", "Within 90 days", "Within 6 months", "Long term brand building"]} value={formData.roiTimeframe || ""} onChange={handleChange} dark={dark} />
           </div>
         )}
 
-        {/* ================= STEP 5: SUCCESS METRICS & TARGETS ================= */}
+        {/* ================= STEP 5: SUCCESS METRICS ================= */}
         {currentStep === 5 && (
           <div>
-            <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Success Metrics & Targets</h2>
+            <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Success Targets</h2>
             <p style={{ color: textMuted, marginBottom: "20px" }}>Quantify your goals (Optional but highly recommended).</p>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0 16px" }}>
               <FormInput label="Qualified leads target" type="number" name="targetLeads" value={formData.targetLeads || ""} onChange={handleChange} dark={dark} />
               <FormInput label="High value meetings target" type="number" name="targetMeetings" value={formData.targetMeetings || ""} onChange={handleChange} dark={dark} />
               <FormInput label="Hosted buyer meetings target" type="number" name="targetHosted" value={formData.targetHosted || ""} onChange={handleChange} dark={dark} />
-              <FormInput label="Curated 1-to-1 meetings target" type="number" name="target1to1" value={formData.target1to1 || ""} onChange={handleChange} dark={dark} />
+              <FormInput label="Curated 1 to 1 meetings target" type="number" name="target1to1" value={formData.target1to1 || ""} onChange={handleChange} dark={dark} />
               <FormInput label="Partnership discussions target" type="number" name="targetPartners" value={formData.targetPartners || ""} onChange={handleChange} dark={dark} />
               <FormInput label="Investor meetings target" type="number" name="targetInvestors" value={formData.targetInvestors || ""} onChange={handleChange} dark={dark} />
+              <FormInput label="Product demos target" type="number" name="targetDemos" value={formData.targetDemos || ""} onChange={handleChange} dark={dark} />
+              <FormInput label="Booth footfall target" type="number" name="targetFootfall" value={formData.targetFootfall || ""} onChange={handleChange} dark={dark} />
+              <FormInput label="Media / PR interviews target" type="number" name="targetMedia" value={formData.targetMedia || ""} onChange={handleChange} dark={dark} />
+              <FormInput label="Content session attendees target" type="number" name="targetAttendees" value={formData.targetAttendees || ""} onChange={handleChange} dark={dark} />
             </div>
 
-            <FormCheckbox label="How will your internal team evaluate event success?" name="internalEval" options={["Number of leads", "Quality of leads", "Meetings with named accounts", "Meetings with decision makers", "Market exposure", "Partner conversations", "Sales conversion potential", "Canada market understanding", "Investor traction", "Media and content value"]} valueArray={formData.internalEval} onChange={handleChange} dark={dark} />
+            <FormCheckbox label="How will your internal team evaluate event success?" name="internalEval" options={["Number of leads", "Quality of leads", "Meetings with named accounts", "Meetings with decision makers", "Market exposure", "Partner conversations", "Sales conversion potential", "Canada market understanding", "Investor traction", "Media and content value", "Other"]} valueArray={formData.internalEval} onChange={handleChange} dark={dark} />
+            
+            <FormInput label="Who internally owns success measurement after the event?" name="successOwner" value={formData.successOwner || ""} onChange={handleChange} dark={dark} />
           </div>
         )}
 
@@ -343,51 +364,86 @@ export default function KYCForm() {
           <div>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Target Accounts</h2>
             
-            <FormCheckbox label="Which types of organizations do you most want to meet?" required name="targetOrgs" options={["Enterprises", "Mid market companies", "Startups", "Government departments", "Crown corporations", "Hospitals / health systems", "Banks / insurers", "Manufacturers", "Universities / research institutes", "Utilities / energy companies", "Retailers / consumer brands", "Telecom providers", "Investors / VCs", "Associations / chambers", "System integrators / channel partners"]} valueArray={formData.targetOrgs} onChange={handleChange} dark={dark} />
+            <FormCheckbox label="Which types of organizations do you most want to meet?" required name="targetOrgs" options={["Enterprises", "Mid market companies", "Startups", "Government departments", "Crown corporations", "Hospitals / health systems", "Banks / insurers", "Manufacturers", "Universities / research institutes", "Utilities / energy companies", "Retailers / consumer brands", "Telecom providers", "Investors / VCs", "Associations / chambers / accelerators", "System integrators / resellers / channel partners"]} valueArray={formData.targetOrgs} onChange={handleChange} dark={dark} />
 
             <RichTextEditor label="Top 10 companies you would like to meet (One per line)" required value={formData.top10Companies} onChange={(val) => setFormData({...formData, top10Companies: val})} dark={dark} />
-            
             <RichTextEditor label="Top 10 titles / designations you would like to meet (One per line)" required value={formData.top10Titles} onChange={(val) => setFormData({...formData, top10Titles: val})} dark={dark} />
 
             <FormCheckbox label="Preferred seniority level" name="preferredSeniority" options={["Founder", "C Suite", "EVP / SVP", "VP", "Director", "Head / Lead", "Senior Manager", "Manager", "Open to all relevant"]} valueArray={formData.preferredSeniority} onChange={handleChange} dark={dark} />
 
-            <FormCheckbox label="Primary functional buyers you want to meet" name="functionalBuyers" options={["CEO / Founder", "CTO / CIO", "Chief AI Officer", "Chief Data Officer", "Chief Digital Officer", "Chief Innovation Officer", "Chief Information Security Officer", "Chief Sustainability Officer", "COO", "CFO", "CMO / Growth Leader", "Procurement / Sourcing", "Innovation / R&D", "IT / Technology", "Product", "Operations", "Strategy", "Partnerships", "Venture / Investments", "HR / Talent", "Government Affairs"]} valueArray={formData.functionalBuyers} onChange={handleChange} dark={dark} />
-            
-            <RichTextEditor label="Describe your ideal customer profile (ICP)" required value={formData.icpDesc} onChange={(val) => setFormData({...formData, icpDesc: val})} dark={dark} />
+            <FormCheckbox label="Primary functional buyers you want to meet" name="functionalBuyers" options={["CEO / Founder", "CTO / CIO", "Chief AI Officer", "Chief Data Officer", "Chief Digital Officer", "Chief Innovation Officer", "Chief Information Security Officer", "Chief Sustainability Officer", "COO", "CFO", "CMO / Growth Leader", "Procurement / Sourcing", "Innovation / R and D", "IT / Technology", "Product", "Operations", "Strategy / Transformation", "Partnerships / Alliances", "Venture / Investments", "HR / Talent", "Government Affairs", "Academic / Research Leaders"]} valueArray={formData.functionalBuyers} onChange={handleChange} dark={dark} />
           </div>
         )}
 
-        {/* ================= STEP 7: EVENT DELIVERY PREFERENCES ================= */}
+        {/* ================= STEP 7: IDEAL CUSTOMER PROFILE ================= */}
         {currentStep === 7 && (
+          <div>
+            <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Ideal Customer Profile</h2>
+            
+            <RichTextEditor label="Describe your ideal customer profile" required value={formData.icpDesc} onChange={(val) => setFormData({...formData, icpDesc: val})} dark={dark} />
+
+            <FormRadio label="Preferred company size" name="prefCompanySize" options={["Startup", "SMB", "Mid market", "Enterprise", "Public sector", "Any"]} value={formData.prefCompanySize || ""} onChange={handleChange} dark={dark} />
+
+            <FormCheckbox label="Geographies of interest" name="geoInterest" options={["Canada", "USA", "UK", "Europe", "India", "Middle East", "APAC", "Global"]} valueArray={formData.geoInterest} onChange={handleChange} dark={dark} />
+
+            <FormCheckbox label="Budget authority you prefer" name="budgetAuthority" options={["Final decision maker", "Budget owner", "Recommender", "Influencer", "Technical evaluator", "Procurement", "Any relevant stakeholder"]} valueArray={formData.budgetAuthority} onChange={handleChange} dark={dark} />
+
+            <FormCheckbox label="Buying stage you prefer" name="buyingStage" options={["Exploring category", "Actively evaluating vendors", "Ready to buy", "Looking for pilot / PoC", "Looking for strategic partner", "Looking for distributor / reseller", "Open to all"]} valueArray={formData.buyingStage} onChange={handleChange} dark={dark} />
+          </div>
+        )}
+
+        {/* ================= STEP 8: DELIVERY PREFERENCES ================= */}
+        {currentStep === 8 && (
           <div>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Delivery Preferences</h2>
             
             <FormCheckbox label="Which event assets are most valuable to you? (Rank Top 5)" required name="eventAssets" options={["Exhibition booth", "Speaking slot", "Panel participation", "Masterclass / workshop", "Hosted buyer meetings", "Curated B2B meetings", "VIP networking access", "CxO breakfast", "Awards night visibility", "Gala dinner networking", "Branding across venue", "Digital promotion", "Website visibility", "Newsletter inclusion", "Social media promotion", "Press / media introduction", "Investor connect", "Government connect", "Academia connect"]} valueArray={formData.eventAssets} onChange={handleChange} dark={dark} />
 
-            <FormRadio label="Do you want pre-scheduled meetings?" required name="preScheduled" options={["Yes", "No", "Open to discussing"]} value={formData.preScheduled || ""} onChange={handleChange} dark={dark} />
+            <FormRadio label="Do you want pre scheduled meetings?" required name="preScheduled" options={["Yes", "No", "Open to discussing"]} value={formData.preScheduled || ""} onChange={handleChange} dark={dark} />
 
-            <FormCheckbox label="What kind of meetings do you prefer?" name="meetingPrefs" options={["1 to 1 hosted buyer meetings", "Curated B2B meetings", "Channel / distributor meetings", "Investor meetings", "Government stakeholder meetings", "Enterprise customer meetings", "Media meetings", "Academic / R&D meetings"]} valueArray={formData.meetingPrefs} onChange={handleChange} dark={dark} />
+            <FormCheckbox label="What kind of meetings do you prefer?" name="meetingPrefs" options={["1 to 1 hosted buyer meetings", "Curated B2B meetings", "Channel / distributor meetings", "Investor meetings", "Government stakeholder meetings", "Enterprise customer meetings", "Media meetings", "Academic / R and D meetings"]} valueArray={formData.meetingPrefs} onChange={handleChange} dark={dark} />
 
-            <RichTextEditor label="Which message do you most want the market to associate with your brand?" required value={formData.brandMessage} onChange={(val) => setFormData({...formData, brandMessage: val})} dark={dark} />
-            
-            <RichTextEditor label="Top 3 products or solutions to highlight" value={formData.top3Products} onChange={(val) => setFormData({...formData, top3Products: val})} dark={dark} />
+            <FormCheckbox label="Would you like support on the following?" name="supportPrefs" options={["Meeting curation", "Hosted buyer introductions", "Agenda advisory", "Booth positioning", "Messaging refinement", "Target list alignment", "Product demo planning", "Lead capture strategy", "Brand promotion strategy", "Post event follow up planning"]} valueArray={formData.supportPrefs} onChange={handleChange} dark={dark} />
           </div>
         )}
 
-        {/* ================= STEP 8: MARKET & OPERATIONS ================= */}
-        {currentStep === 8 && (
+        {/* ================= STEP 9: MESSAGING & CONTENT ================= */}
+        {currentStep === 9 && (
+          <div>
+            <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Messaging & Content</h2>
+            
+            <RichTextEditor label="Which message do you most want the market to associate with your brand at the event?" required value={formData.brandMessage} onChange={(val) => setFormData({...formData, brandMessage: val})} dark={dark} />
+            <RichTextEditor label="Top 3 products or solutions to highlight" value={formData.top3Products} onChange={(val) => setFormData({...formData, top3Products: val})} dark={dark} />
+            <RichTextEditor label="Top 3 pain points you solve" value={formData.top3PainPoints} onChange={(val) => setFormData({...formData, top3PainPoints: val})} dark={dark} />
+
+            <FormRadio label="Do you want thought leadership visibility?" name="wantTLVisibility" options={["Yes", "No"]} value={formData.wantTLVisibility || ""} onChange={handleChange} dark={dark} />
+
+            <FormCheckbox label="Preferred thought leadership format" name="tlFormat" options={["Keynote", "Panel", "Fireside chat", "Workshop", "Product demo", "Roundtable", "Podcast / media interview"]} valueArray={formData.tlFormat} onChange={handleChange} dark={dark} />
+
+            <RichTextEditor label="Preferred topics you can speak on" value={formData.tlTopics} onChange={(val) => setFormData({...formData, tlTopics: val})} dark={dark} />
+          </div>
+        )}
+
+        {/* ================= STEP 10: COMPETITOR & HANDOVER ================= */}
+        {currentStep === 10 && (
           <div>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.8rem, 4vw, 2.2rem)", fontWeight: 900, marginBottom: "8px" }}>Market & Operations</h2>
             
-            <RichTextEditor label="Which competitors do you want to position against or alongside?" value={formData.competitors} onChange={(val) => setFormData({...formData, competitors: val})} dark={dark} />
+            <RichTextEditor label="Which competitors or comparable companies do you want to position against or alongside?" value={formData.competitors} onChange={(val) => setFormData({...formData, competitors: val})} dark={dark} />
+            <RichTextEditor label="Are there any companies you do not want to be placed near or matched against?" value={formData.doNotPlaceNear} onChange={(val) => setFormData({...formData, doNotPlaceNear: val})} dark={dark} />
+
+            <FormRadio label="Are you attending primarily to defend market position, launch into a new market, or capture new opportunities?" name="eventStrategy" options={["Defend current market", "Enter new market", "Launch product / solution", "Generate pipeline", "Build brand authority", "Build partnerships", "Explore market"]} value={formData.eventStrategy || ""} onChange={handleChange} dark={dark} />
+
+            <FormInput label="Booth or activation type requested" name="boothType" value={formData.boothType || ""} onChange={handleChange} dark={dark} />
+
+            <FormCheckbox label="Branding deliverables committed" name="brandingDel" options={["Logo placement", "Website listing", "Social posts", "Newsletter inclusion", "Onsite signage", "Session branding", "Lanyard / badge branding", "Lounge branding", "Stage branding", "Other"]} valueArray={formData.brandingDel} onChange={handleChange} dark={dark} />
             
-            <RichTextEditor label="Are there any companies you do not want to be placed near?" value={formData.doNotPlaceNear} onChange={(val) => setFormData({...formData, doNotPlaceNear: val})} dark={dark} />
-
-            <FormRadio label="Primary Event Strategy" name="eventStrategy" options={["Defend current market", "Enter new market", "Launch product / solution", "Generate pipeline", "Build brand authority", "Build partnerships", "Explore market"]} value={formData.eventStrategy || ""} onChange={handleChange} dark={dark} />
-
-            <FormCheckbox label="Thought Leadership format" name="tlFormat" options={["Keynote", "Panel", "Fireside chat", "Workshop", "Product demo", "Roundtable", "Podcast / media interview"]} valueArray={formData.tlFormat} onChange={handleChange} dark={dark} />
+            <FormCheckbox label="Meeting deliverables committed" name="meetingDel" options={["Hosted buyer meetings", "Curated enterprise meetings", "Investor introductions", "Government introductions", "Media introductions", "Channel partner meetings"]} valueArray={formData.meetingDel} onChange={handleChange} dark={dark} />
+            
+            <FormCheckbox label="Thought leadership deliverables committed" name="tlDel" options={["Speaking slot", "Panelist seat", "Workshop", "Masterclass", "Roundtable", "Interview"]} valueArray={formData.tlDel} onChange={handleChange} dark={dark} />
 
             <RichTextEditor label="Special notes for fulfillment team" value={formData.specialNotes} onChange={(val) => setFormData({...formData, specialNotes: val})} dark={dark} />
+            <RichTextEditor label="Red lines / exclusions / sensitivities" value={formData.redLines} onChange={(val) => setFormData({...formData, redLines: val})} dark={dark} />
 
             <FileUpload label="Upload Pitch Deck or Additional Document" onFileSelect={(file) => setFormData({...formData, attachment: file})} dark={dark} />
           </div>
@@ -396,7 +452,7 @@ export default function KYCForm() {
         {/* ================= NAVIGATION BUTTONS ================= */}
         <div style={{ display: "flex", justifyContent: "space-between", borderTop: `1px solid ${inputBorder}`, paddingTop: "30px", marginTop: "20px" }}>
           <button 
-            onClick={prevStep} 
+            onClick={() => setCurrentStep(prev => Math.max(prev - 1, 1))} 
             disabled={currentStep === 1}
             style={{ background: "transparent", color: currentStep === 1 ? (dark ? "rgba(255,255,255,0.2)" : "rgba(13,5,32,0.2)") : textMain, border: "none", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, cursor: currentStep === 1 ? "default" : "pointer" }}
           >
@@ -404,7 +460,7 @@ export default function KYCForm() {
           </button>
           
           <button 
-            onClick={() => { if(currentStep < TOTAL_STEPS) nextStep(); else alert("Form submitted!"); }}
+            onClick={() => { if(currentStep < TOTAL_STEPS) setCurrentStep(prev => prev + 1); else alert("Form submitted successfully!"); }}
             style={{ background: btnBg, color: btnText, padding: "14px 32px", borderRadius: "12px", border: "none", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, cursor: "pointer", boxShadow: "0 4px 14px rgba(0,0,0,0.1)" }}
           >
             {currentStep === TOTAL_STEPS ? "SUBMIT" : "CONTINUE →"}

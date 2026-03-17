@@ -92,8 +92,6 @@ function SubtitleReveal(props) {
 }
 
 function CTAReveal(props) {
-  var dark = props.dark;
-  var textMain = props.textMain;
   var ref = useRef(null);
   var isInView = useInView(ref, { once: true, margin: "-40px" });
   return (
@@ -104,20 +102,16 @@ function CTAReveal(props) {
       className="hero-ctas-wrap"
       style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}
     >
-      <motion.a href="/tickets" className="hero-cta-solid"
+      <motion.a href="/tickets" className="btn-primary"
         whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-        style={{ background: dark ? textMain : "#0d0520", color: dark ? "#0d0520" : "#ffffff", boxShadow: dark ? "0 6px 28px rgba(155,135,245,0.2), 0 2px 8px rgba(0,0,0,0.2)" : "0 6px 28px rgba(13,5,32,0.18), 0 2px 8px rgba(0,0,0,0.08)" }}
-        onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)"; e.currentTarget.style.color = "#fff"; }}
-        onMouseLeave={function (e) { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; }}
+        style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 36px", borderRadius: 14, textDecoration: "none", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.85rem", letterSpacing: "1.2px", textTransform: "uppercase" }}
       >
-        Get Your Tickets
+        Get Your Pass
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
       </motion.a>
-      <motion.a href="/sponsor" className="hero-cta-ghost"
+      <motion.a href="/sponsor" className="btn-outline"
         whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-        style={{ border: "1.5px solid " + (dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)"), color: dark ? "rgba(200,185,255,0.85)" : "rgba(90,40,180,0.8)", background: "transparent", borderRadius: 14 }}
-        onMouseEnter={function (e) { e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.55)" : "rgba(122,63,209,0.55)"; e.currentTarget.style.background = dark ? "rgba(155,135,245,0.07)" : "rgba(122,63,209,0.06)"; }}
-        onMouseLeave={function (e) { e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.28)" : "rgba(122,63,209,0.25)"; e.currentTarget.style.background = "transparent"; }}
+        style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "15px 32px", borderRadius: 14, fontSize: "0.95rem", fontWeight: 700, textDecoration: "none" }}
       >
         Partner With Us
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10" /></svg>
@@ -161,25 +155,6 @@ export default function Home() {
   return (
     <>
       <style>{`
-        .hero-cta-solid {
-          position: relative; overflow: hidden;
-          display: inline-flex; align-items: center; gap: 10px;
-          padding: 16px 36px; border-radius: 14px;
-          border: none; cursor: pointer; text-decoration: none;
-          font-family: 'Orbitron', sans-serif;
-          font-weight: 800; font-size: 0.85rem;
-          letter-spacing: 1.2px; text-transform: uppercase;
-          transition: transform 0.25s ease, box-shadow 0.35s ease;
-        }
-        .hero-cta-solid:hover { transform: translateY(-3px); }
-        .hero-cta-ghost {
-          display: inline-flex; align-items: center; gap: 8px;
-          padding: 15px 32px; border-radius: 14px;
-          font-size: 0.95rem; font-weight: 700;
-          text-decoration: none; cursor: pointer;
-          transition: all 0.3s ease;
-        }
-        .hero-cta-ghost:hover { transform: translateY(-2px); }
         .tfc-navbar-wrap { border-bottom: none !important; box-shadow: none !important; }
         @media (max-width: 640px) {
           .hero-ctas-wrap { flex-direction: column !important; width: 100% !important; }

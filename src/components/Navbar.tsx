@@ -116,15 +116,14 @@ export default function Navbar() {
     <>
       <style>{`
         .tfc-navbar-wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+        .tfc-nav-container { display: flex; align-items: center; justify-content: space-between; height: 80px; max-width: 1400px; margin: 0 auto; padding: 0 2.5%; gap: 16px; }
         
-        /* 3-Column STRICT Grid Layout - Keeps Center Perfectly Centered */
-        .tfc-nav-container { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 95px; max-width: 1400px; margin: 0 auto; padding: 0 5%; gap: 10px; }
-        .tfc-nav-left { justify-self: start; display: flex; align-items: center; }
-        .tfc-nav-center { justify-self: center; display: flex; align-items: center; }
-        .tfc-nav-right { justify-self: end; display: flex; align-items: center; gap: 12px; }
+        /* 3-Column Layout */
+        .tfc-nav-left { flex: 1; display: flex; justify-content: flex-start; align-items: center; }
+        .tfc-nav-center { display: flex; justify-content: center; align-items: center; }
+        .tfc-nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
         
-        /* Logo Size Bump */
-        .tfc-nav-logo { height: 75px; width: auto; max-width: 280px; object-fit: contain; transition: height 0.3s ease; }
+        .tfc-nav-logo { height: 52px; width: auto; object-fit: contain; transition: height 0.3s ease; }
         
         .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
         .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
@@ -144,16 +143,23 @@ export default function Navbar() {
           .tfc-hamburger { display: flex !important; } 
           
           /* Mobile Specific Adjustments */
-          .tfc-nav-logo { height: 70px !important; max-width: 40vw; } 
+          .tfc-nav-logo { height: 68px !important; } 
           .tfc-mobile-ticket { display: inline-flex !important; }
           .tfc-desktop-ticket { display: none !important; }
+          .tfc-nav-container { grid-template-columns: 68px 1fr auto !important; }
+          .tfc-nav-left { position: static !important; }
+          .tfc-nav-right { position: static !important; width: auto !important; }
+          .tfc-nav-center { width: 100% !important; grid-column: 2 / 3 !important; }
         }
         
         @media (max-width: 640px)  { 
           .tfc-brochure-btn { display: none !important; } 
-          .tfc-nav-logo { height: 65px !important; max-width: 38vw; } 
-          .tfc-mobile-ticket { padding: 10px 20px !important; font-size: 0.75rem !important; }
-          .tfc-nav-container { height: 85px; padding: 0 3%; }
+          .tfc-mobile-ticket { padding: 10px 18px !important; font-size: 0.65rem !important; }
+          .tfc-nav-container { grid-template-columns: 1fr 1fr 1fr !important; grid-template-rows: auto auto !important; gap: 10px !important; height: auto !important; padding: 15px 2.5% !important; }
+          .tfc-nav-logo { height: 68px !important; max-width: none !important; }
+          .tfc-nav-left { grid-column: 1 / 2 !important; grid-row: 1 / 2 !important; justify-content: start !important; }
+          .tfc-nav-right { grid-column: 3 / 4 !important; grid-row: 1 / 2 !important; justify-content: end !important; }
+          .tfc-nav-center { grid-column: 1 / 4 !important; grid-row: 2 / 3 !important; justify-content: center !important; }
         }
       `}</style>
 
@@ -162,12 +168,12 @@ export default function Navbar() {
 
           {/* LEFT: LOGO */}
           <div className="tfc-nav-left">
-            <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+            <Link to="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
               <img className="tfc-nav-logo" src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada" />
             </Link>
           </div>
 
-          {/* CENTER: DESKTOP NAV OR MOBILE TICKET BUTTON */}
+          {/* CENTER: DESKTOP NAV OR MOBILE CTA */}
           <div className="tfc-nav-center">
             
             {/* Desktop Nav */}
@@ -203,14 +209,14 @@ export default function Navbar() {
               </ul>
             </div>
 
-            {/* Mobile Ticket Button (Visible only on Mobile) */}
+            {/* Mobile Ticket Button (Hidden on Desktop) */}
             <Link to="/tickets" className="tfc-mobile-ticket btn-primary"
               style={{ padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s ease" }}
             >TICKETS</Link>
 
           </div>
 
-          {/* RIGHT: ACTIONS & HAMBURGER */}
+          {/* RIGHT: ACTIONS */}
           <div className="tfc-nav-right">
             <Link to="/brochures" className="tfc-brochure-btn"
               style={{ padding: "0 22px", height: 40, borderRadius: 999, background: "transparent", border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`, color: isDark ? "#fff" : "#0f0520", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none", display: "flex", alignItems: "center", textTransform: "uppercase" }}

@@ -5,6 +5,7 @@ import AdminAttendees from "../components/AdminAttendees";
 import AdminInventory from "../components/AdminInventory";
 import CheckIn from "../components/CheckIn";
 import AdminAnalytics from "../components/AdminAnalytics";
+import AdminKyc from "../components/AdminKyc";
 
 const API = "https://techfest-canada-backend.onrender.com/api";
 
@@ -103,6 +104,7 @@ export default function Admin() {
     { label: "Inventory", component: AdminInventory },
     { label: "Scanner", component: CheckIn },
     { label: "Admins", component: AdminManagement }, // ⭐ NEW TAB
+    { label: "KYC", component: AdminKyc },
   ];
 
   return (

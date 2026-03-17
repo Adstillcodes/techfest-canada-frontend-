@@ -138,7 +138,6 @@ export default function Tickets() {
   const [dark, setDark] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // ── FIXED: use same dark-mode detection as rest of site ──
   useEffect(() => {
     setDark(document.body.classList.contains("dark-mode"));
     const obs = new MutationObserver(() => setDark(document.body.classList.contains("dark-mode")));
@@ -225,26 +224,30 @@ export default function Tickets() {
           {/* Comparison table */}
           <div style={{ maxWidth: 900, margin: "0 auto 80px", padding: "0 24px" }}>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "1rem", letterSpacing: "1px", textTransform: "uppercase", color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.40)", textAlign: "center", marginBottom: 28 }}>Pass Comparison</h2>
-            <div style={{ backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", background: dark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.03)", border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(122,63,209,0.10)", borderRadius: 20, overflow: "hidden" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr repeat(4, 100px)", borderBottom: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(122,63,209,0.10)", padding: "14px 24px" }}>
-                <div style={{ fontSize: "0.7rem", color: textMuted, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase" }}>Feature</div>
-                {passes.map((p) => (
-                  <div key={p} style={{ textAlign: "center", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.62rem", letterSpacing: "0.8px", textTransform: "uppercase", color: p === "influence" ? (dark ? "#f5a623" : "#d98a14") : textMuted }}>{passLabels[p]}</div>
-                ))}
-              </div>
-              {allFeatures.map((feature, fi) => (
-                <div key={feature} style={{ display: "grid", gridTemplateColumns: "1fr repeat(4, 100px)", padding: "13px 24px", borderBottom: fi < allFeatures.length - 1 ? (dark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(122,63,209,0.05)") : "none", background: fi % 2 === 0 ? (dark ? "rgba(255,255,255,0.01)" : "rgba(122,63,209,0.02)") : "transparent" }}>
-                  <div style={{ fontSize: "0.78rem", color: dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.80)" }}>{feature}</div>
+            <div style={{ backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", background: dark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.03)", border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(122,63,209,0.10)", borderRadius: 20, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+              <div style={{ minWidth: 600 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1.5fr repeat(4, 1fr)", borderBottom: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(122,63,209,0.10)", padding: "14px 24px" }}>
+                  <div style={{ fontSize: "0.7rem", color: textMuted, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", display: "flex", alignItems: "center" }}>Feature</div>
                   {passes.map((p) => (
-                    <div key={p} style={{ textAlign: "center" }}>
-                      {passFeatureMap[p][fi]
-                        ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={dark ? "#f5a623" : "#d98a14"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block" }}><path d="M20 6 9 17l-5-5" /></svg>
-                        : <span style={{ color: dark ? "rgba(255,255,255,0.15)" : "rgba(13,5,32,0.15)", fontSize: "1rem" }}>—</span>
-                      }
+                    <div key={p} style={{ display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.62rem", letterSpacing: "0.8px", textTransform: "uppercase", color: p === "influence" ? (dark ? "#f5a623" : "#d98a14") : textMuted }}>
+                      {passLabels[p]}
                     </div>
                   ))}
                 </div>
-              ))}
+                {allFeatures.map((feature, fi) => (
+                  <div key={feature} style={{ display: "grid", gridTemplateColumns: "1.5fr repeat(4, 1fr)", padding: "13px 24px", borderBottom: fi < allFeatures.length - 1 ? (dark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(122,63,209,0.05)") : "none", background: fi % 2 === 0 ? (dark ? "rgba(255,255,255,0.01)" : "rgba(122,63,209,0.02)") : "transparent" }}>
+                    <div style={{ fontSize: "0.78rem", color: dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.80)", display: "flex", alignItems: "center" }}>{feature}</div>
+                    {passes.map((p) => (
+                      <div key={p} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {passFeatureMap[p][fi]
+                          ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={dark ? "#f5a623" : "#d98a14"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                          : <span style={{ color: dark ? "rgba(255,255,255,0.15)" : "rgba(13,5,32,0.15)", fontSize: "1rem", lineHeight: 1 }}>—</span>
+                        }
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

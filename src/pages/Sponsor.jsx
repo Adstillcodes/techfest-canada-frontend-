@@ -14,7 +14,7 @@ var TIERS = [
 
 var ROWS = [
   { group: "Exhibit & Presence" },
-  { label: "Booth Space (10ft × 10ft)",       values: ["4", "3", "2", "1"] },
+  { label: "Booth Space (10ft × 10ft)",        values: ["4", "3", "2", "1"] },
   { label: "Curated Conference Sessions",      values: ["2", "1", false, false] },
   { label: "Delegate Passes",                  values: ["15", "8", "6", "4"] },
   { label: "VIP Lounge Access",                values: ["15", "8", "5", "3"] },
@@ -194,10 +194,8 @@ export default function Sponsor() {
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", bounce: 0.2, duration: 1.2, delay: 0.6 }}>
-            <button onClick={function () { setInquiryOpen(true); }}
-              style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", padding: "17px 42px", borderRadius: 14, border: "none", cursor: "pointer", background: dark ? "#ffffff" : "#0d0520", color: dark ? "#0d0520" : "#ffffff", boxShadow: dark ? "0 6px 28px rgba(155,135,245,0.2)" : "0 6px 28px rgba(13,5,32,0.18)", transition: "all 0.25s ease" }}
-              onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.transform = "translateY(-3px)"; }}
-              onMouseLeave={function (e) { e.currentTarget.style.background = dark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = dark ? "#0d0520" : "#ffffff"; e.currentTarget.style.transform = "translateY(0)"; }}
+            <button onClick={function () { setInquiryOpen(true); }} className="btn-primary"
+              style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", padding: "17px 42px", borderRadius: 14, cursor: "pointer", transition: "all 0.25s ease" }}
             >Write to Us <span style={{ marginLeft: 10 }}>→</span></button>
           </motion.div>
         </div>
@@ -218,10 +216,8 @@ export default function Sponsor() {
         <div style={{ maxWidth: 1200, margin: "0 auto", background: "linear-gradient(135deg, rgba(122,63,209,0.12), rgba(245,166,35,0.08))", border: "1px solid " + cardBdr, borderRadius: 28, padding: "clamp(2.5rem,5vw,4rem)", textAlign: "center" }}>
           <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.2rem,3vw,2rem)", fontWeight: 900, color: textMain, marginBottom: 12 }}>Ready to Partner?</p>
           <p style={{ fontSize: "0.95rem", lineHeight: 1.7, color: textMid, maxWidth: 500, margin: "0 auto 28px" }}>Get in touch to discuss a custom package tailored to your goals, or secure one of our standard partnerships today.</p>
-          <button onClick={function () { setInquiryOpen(true); }}
-            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", padding: "16px 38px", borderRadius: 14, border: "none", cursor: "pointer", background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#ffffff", boxShadow: "0 6px 28px rgba(122,63,209,0.3)", transition: "transform 0.2s ease" }}
-            onMouseEnter={function (e) { e.currentTarget.style.transform = "translateY(-2px)"; }}
-            onMouseLeave={function (e) { e.currentTarget.style.transform = "translateY(0)"; }}
+          <button onClick={function () { setInquiryOpen(true); }} className="btn-primary"
+            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", padding: "16px 38px", borderRadius: 14, cursor: "pointer", transition: "transform 0.2s ease" }}
           >Write to Us</button>
         </div>
       </section>
@@ -385,8 +381,8 @@ function ComparisonTable(props) {
                     );
                   })}
 
-                  <div style={{ marginTop: 12, padding: 2, borderRadius: 14, background: "linear-gradient(135deg,#7a3fd1,#c4607a,#f5a623)" }}>
-                    <button onClick={props.onInquiry} style={{ width: "100%", padding: "16px", borderRadius: 12, border: "none", cursor: "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.82rem", fontWeight: 900, letterSpacing: "1.5px", textTransform: "uppercase", background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff" }}>
+                  <div style={{ marginTop: 12, padding: 2, borderRadius: 14 }}>
+                    <button onClick={props.onInquiry} className="btn-primary" style={{ width: "100%", padding: "16px", borderRadius: 12, cursor: "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.82rem", fontWeight: 900, letterSpacing: "1.5px", textTransform: "uppercase" }}>
                       Enquire About {tier.name} →
                     </button>
                   </div>
@@ -455,10 +451,8 @@ function AdditionalCard(props) {
           );
         })}
       </div>
-      <button onClick={props.onInquiry}
-        style={{ width: "100%", padding: "11px", borderRadius: 10, cursor: "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.5px", textTransform: "uppercase", border: "1.5px solid " + (dark ? "rgba(155,135,245,0.45)" : "rgba(122,63,209,0.35)"), background: "transparent", color: dark ? "rgba(185,158,255,1)" : "#7a3fd1", transition: "all 0.2s ease" }}
-        onMouseEnter={function (e) { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "transparent"; }}
-        onMouseLeave={function (e) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = dark ? "rgba(185,158,255,1)" : "#7a3fd1"; e.currentTarget.style.borderColor = dark ? "rgba(155,135,245,0.45)" : "rgba(122,63,209,0.35)"; }}
+      <button onClick={props.onInquiry} className="btn-outline"
+        style={{ width: "100%", padding: "11px", borderRadius: 10, cursor: "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.5px", textTransform: "uppercase", transition: "all 0.2s ease" }}
       >Enquire →</button>
     </motion.div>
   );

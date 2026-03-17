@@ -96,14 +96,33 @@ export default function KycForm() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateSection()) return;
+      try {
+    const res = await fetch(
+      "https://techfest-canada-backend.onrender.com/api/kyc",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+ const data = await res.json();
+if (!res.ok) throw new Error(data.error);
     console.log("Submitted Data:", formData);
     localStorage.removeItem("tfc_kyc_data");
     setIsSubmitted(true);
+      } catch (err) {
+    console.error(err);
+    alert("Submission failed");
+  }
+};
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    
+ 
 
   const progressPercentage = Math.round(((currentSection + 1) / TOTAL_SECTIONS) * 100);
 

@@ -16,6 +16,7 @@ import TicketBar from "./components/TicketBar";
 import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
+import AdminRoute from "./components/AdminRoute";
 import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
 import Brochures from "./pages/Brochures";

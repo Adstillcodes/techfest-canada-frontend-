@@ -116,14 +116,15 @@ export default function Navbar() {
     <>
       <style>{`
         .tfc-navbar-wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
-        .tfc-nav-container { display: flex; align-items: center; justify-content: space-between; height: 80px; max-width: 1400px; margin: 0 auto; padding: 0 5%; gap: 16px; }
         
-        /* 3-Column Flex Layout */
-        .tfc-nav-left { flex: 1; display: flex; justify-content: flex-start; align-items: center; }
-        .tfc-nav-center { display: flex; justify-content: center; align-items: center; }
-        .tfc-nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+        /* 3-Column STRICT Grid Layout - Keeps Center Perfectly Centered */
+        .tfc-nav-container { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 95px; max-width: 1400px; margin: 0 auto; padding: 0 5%; gap: 10px; }
+        .tfc-nav-left { justify-self: start; display: flex; align-items: center; }
+        .tfc-nav-center { justify-self: center; display: flex; align-items: center; }
+        .tfc-nav-right { justify-self: end; display: flex; align-items: center; gap: 12px; }
         
-        .tfc-nav-logo { height: 52px; width: auto; object-fit: contain; transition: height 0.3s ease; }
+        /* Logo Size Bump */
+        .tfc-nav-logo { height: 75px; width: auto; max-width: 280px; object-fit: contain; transition: height 0.3s ease; }
         
         .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
         .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
@@ -142,16 +143,17 @@ export default function Navbar() {
           .tfc-desktop-nav { display: none !important; } 
           .tfc-hamburger { display: flex !important; } 
           
-          /* Mobile Overrides */
-          .tfc-nav-logo { height: 68px !important; } /* ~30% larger on mobile */
+          /* Mobile Specific Adjustments */
+          .tfc-nav-logo { height: 70px !important; max-width: 40vw; } 
           .tfc-mobile-ticket { display: inline-flex !important; }
           .tfc-desktop-ticket { display: none !important; }
         }
         
         @media (max-width: 640px)  { 
           .tfc-brochure-btn { display: none !important; } 
-          .tfc-nav-logo { height: 58px !important; } /* Keeps it from blowing out small screens */
-          .tfc-mobile-ticket { padding: 10px 18px !important; font-size: 0.65rem !important; }
+          .tfc-nav-logo { height: 65px !important; max-width: 38vw; } 
+          .tfc-mobile-ticket { padding: 10px 20px !important; font-size: 0.75rem !important; }
+          .tfc-nav-container { height: 85px; padding: 0 3%; }
         }
       `}</style>
 
@@ -160,7 +162,7 @@ export default function Navbar() {
 
           {/* LEFT: LOGO */}
           <div className="tfc-nav-left">
-            <Link to="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
+            <Link to="/" style={{ display: "flex", alignItems: "center" }}>
               <img className="tfc-nav-logo" src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada" />
             </Link>
           </div>
@@ -204,7 +206,7 @@ export default function Navbar() {
             {/* Mobile Ticket Button (Visible only on Mobile) */}
             <Link to="/tickets" className="tfc-mobile-ticket btn-primary"
               style={{ padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s ease" }}
-            >GET YOUR PASS</Link>
+            >TICKETS</Link>
 
           </div>
 
@@ -216,7 +218,7 @@ export default function Navbar() {
 
             <Link to="/tickets" className="tfc-desktop-ticket btn-primary"
               style={{ alignItems: "center", gap: 8, padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s ease" }}
-            >GET YOUR PASS</Link>
+            >TICKETS</Link>
 
             <button onClick={toggleTheme} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.15rem", padding: "6px", lineHeight: 1 }} aria-label="Toggle theme">
               {dark ? "☀️" : "🌙"}
@@ -286,7 +288,7 @@ export default function Navbar() {
                 <div style={{ marginTop: 8, padding: 2, borderRadius: 16 }}>
                   <Link to="/tickets" onClick={() => setMobileOpen(false)} className="btn-primary"
                     style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.82rem", fontWeight: 900, letterSpacing: "1.2px", textTransform: "uppercase", textDecoration: "none" }}
-                  >GET YOUR PASS</Link>
+                  >TICKETS</Link>
                 </div>
               </div>
             </motion.div>

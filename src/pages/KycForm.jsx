@@ -7,6 +7,7 @@ import Navbar from "../components/Navbar";
 const COUNTRY_CODES = [
   "+1", "+7", "+20", "+27", "+30", "+31", "+32", "+33", "+34", "+36", "+39", "+40", "+41", "+43", "+44", "+45", "+46", "+47", "+48", "+49", "+51", "+52", "+53", "+54", "+55", "+56", "+57", "+58", "+60", "+61", "+62", "+63", "+64", "+65", "+66", "+81", "+82", "+84", "+86", "+90", "+91", "+92", "+93", "+94", "+95", "+98", "+212", "+213", "+216", "+218", "+220", "+221", "+222", "+223", "+224", "+225", "+226", "+227", "+228", "+229", "+230", "+231", "+232", "+233", "+234", "+235", "+236", "+237", "+238", "+239", "+240", "+241", "+242", "+243", "+244", "+245", "+246", "+248", "+249", "+250", "+251", "+252", "+253", "+254", "+255", "+256", "+257", "+258", "+260", "+261", "+262", "+263", "+264", "+265", "+266", "+267", "+268", "+269", "+290", "+291", "+297", "+298", "+299", "+350", "+351", "+352", "+353", "+354", "+355", "+356", "+357", "+358", "+359", "+370", "+371", "+372", "+373", "+374", "+375", "+376", "+377", "+378", "+380", "+381", "+382", "+385", "+386", "+387", "+389", "+420", "+421", "+423", "+500", "+501", "+502", "+503", "+504", "+505", "+506", "+507", "+508", "+509", "+590", "+591", "+592", "+593", "+594", "+595", "+596", "+597", "+598", "+599", "+852", "+853", "+855", "+856", "+880", "+886", "+960", "+961", "+962", "+963", "+964", "+965", "+966", "+967", "+968", "+971", "+972", "+973", "+974", "+975", "+976", "+977", "+992", "+993", "+994", "+995", "+996", "+998"
 ];
+const API = "https://techfest-canada-backend.onrender.com/api";
 
 // ==========================================
 // 2. STABLE SUB-COMPONENTS 
@@ -222,8 +223,68 @@ export default function KYCForm() {
     setFormData(prev => ({ ...prev, primaryPhone: val }));
   };
 
-  const handleFinalSubmit = () => {
-    setIsSubmitted(true);
+  // 🔥🔥🔥 FULLY UPDATED SUBMIT FUNCTION
+  const handleFinalSubmit = async () => {
+    try {
+      const payload = {
+        ...formData,
+
+        // map fields for backend compatibility
+        primary_email: formData.primaryEmail,
+        company_name: formData.companyName,
+        country_hq: formData.countryHQ,
+        primary_industry: formData.primaryIndustry,
+      };
+
+      let res;
+
+      // 🔥 FILE SUPPORT
+      if (formData.attachment) {
+        const fd = new FormData();
+
+        Object.keys(payload).forEach(key => {
+          if (Array.isArray(payload[key])) {
+            payload[key].forEach(v => fd.append(key, v));
+          } else {
+            fd.append(key, payload[key] ?? "");
+          }
+        });
+
+        fd.append("file", formData.attachment);
+
+        res = await fetch(`${API}/kyc`, {
+          method: "POST",
+          body: fd
+        });
+
+      } else {
+        res = await fetch(`${API}/kyc`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+      }
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error("Submit error:", data);
+        alert(data.error || "Submission failed");
+        return;
+      }
+
+      console.log("KYC SUCCESS:", data);
+
+      localStorage.removeItem("tfc_kyc_data");
+
+      setIsSubmitted(true);
+
+    } catch (err) {
+      console.error("Network error:", err);
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   const progressPercent = Math.round(((currentStep - 1) / (TOTAL_STEPS - 1)) * 100);

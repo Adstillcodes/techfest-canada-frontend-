@@ -171,7 +171,8 @@ export default function Home() {
           <video autoPlay muted loop playsInline style={{ position: "absolute", top: "50%", left: "50%", minWidth: "100%", minHeight: "100%", width: "auto", height: "auto", transform: "translate(-50%, -50%)", objectFit: "cover" }}>
             <source src="/hero-bg.mp4" type="video/mp4" />
           </video>
-          <div style={{ position: "absolute", inset: 0, background: dark ? "rgba(6,2,15,0.65)" : "rgba(244,240,255,0.75)" }} />
+          {/* Opacity fixed here (0.45 instead of 0.75) */}
+          <div style={{ position: "absolute", inset: 0, background: dark ? "rgba(6,2,15,0.65)" : "rgba(244,240,255,0.45)" }} />
         </div>
 
         <motion.div variants={containerVariants} initial="hidden" animate="visible"

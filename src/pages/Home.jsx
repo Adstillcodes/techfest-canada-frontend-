@@ -153,7 +153,7 @@ export default function Home() {
   var accent   = dark ? "#b99eff"                : "#7a3fd1";
 
   return (
-    <>
+    <div style={{ background: bg, minHeight: "100vh", color: textMain, overflowX: "hidden", width: "100%", position: "relative" }}>
       <style>{`
         .tfc-navbar-wrap { border-bottom: none !important; box-shadow: none !important; }
         @media (max-width: 640px) {
@@ -215,6 +215,6 @@ export default function Home() {
       <InquiryModal isOpen={inquiryOpen} onClose={function () { setInquiryOpen(false); }} />
       <PostPurchaseModal isOpen={purchaseOpen} onClose={function () { setPurchaseOpen(false); }} ticketType={purchaseTicketType} />
       <OnboardingSurvey isOpen={surveyOpen} onClose={function () { setSurveyOpen(false); window.location.reload(); }} userName={surveyName} />
-    </>
+    </div>
   );
 }

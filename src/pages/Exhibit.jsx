@@ -244,14 +244,12 @@ export default function Exhibit() {
               Join the ecosystem of innovators and leaders. Partner with us or secure your delegate pass today.
             </p>
             <div className="cta-row" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-              <motion.a href="/sponsor" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: isDark ? "#ffffff" : "#0d0520", color: isDark ? "#0d0520" : "#ffffff", padding: "16px 36px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.9rem", textDecoration: "none", letterSpacing: "0.5px", transition: "all 0.25s ease" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)"; e.currentTarget.style.color = "#fff"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = isDark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = isDark ? "#0d0520" : "#ffffff"; }}
+              <motion.a href="/sponsor" className="btn-outline" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "16px 36px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.9rem", textDecoration: "none", letterSpacing: "0.5px", transition: "all 0.25s ease" }}
               >Partner With Us</motion.a>
-              <motion.a href="/tickets" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: `1.5px solid ${isDark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.5)"}`, color: isDark ? textMain : "#1a0a40", padding: "16px 36px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: "0.9rem", textDecoration: "none" }}
-              >Buy Tickets</motion.a>
+              <motion.a href="/tickets" className="btn-primary" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+                style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "16px 36px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: "0.9rem", textDecoration: "none" }}
+              >Get Your Pass</motion.a>
             </div>
           </div>
         </motion.div>
@@ -357,11 +355,11 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
           {/* ENQUIRE NOW BUTTON */}
           <motion.button 
             onClick={onOpenModal}
+            className="btn-primary"
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             style={{
               display: "inline-block", textAlign: "center", marginTop: 32, padding: "16px 32px", borderRadius: 12, border: "none", cursor: "pointer",
-              fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "1px", textTransform: "uppercase",
-              background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#ffffff",
+              fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "1px", textTransform: "uppercase"
             }}
           >
             Enquire Now

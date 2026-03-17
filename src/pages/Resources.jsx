@@ -10,7 +10,6 @@ export default function FirstTimers() {
   const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  
   useEffect(() => {
     setIsDark(document.body.classList.contains("dark-mode"));
     const obs = new MutationObserver(() => {
@@ -174,7 +173,7 @@ export default function FirstTimers() {
       </section>
 
       {/* ═══════════ ROW 1 — THE CONFERENCE ═══════════ */}
-      <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
+      <ContentRow isDark={isDark} textMain={textMain} border={border}
         reverse={false}
         image="/ft-conference.jpg" imageAlt="Keynote presentation showing five tech pillars and applied sectors"
         cta={{ label: "Get Your Pass", href: "/tickets" }}
@@ -214,7 +213,7 @@ export default function FirstTimers() {
       </ContentRow>
 
       {/* ═══════════ ROW 2 — THE EXPO ═══════════ */}
-      <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
+      <ContentRow isDark={isDark} textMain={textMain} border={border}
         reverse={true} hasBg={true}
         image="/ft-expo.jpg" imageAlt="The Tech Festival Canada expo and networking floor"
         cta={{ label: "Partner With Us", href: "/sponsor" }}
@@ -228,7 +227,7 @@ export default function FirstTimers() {
       </ContentRow>
 
       {/* ═══════════ ROW 3 — AWARDS NIGHT ═══════════ */}
-      <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
+      <ContentRow isDark={isDark} textMain={textMain} border={border}
         reverse={false}
         image="/ft-awards.jpg" imageAlt="Canada Tech Titans Awards Night ceremony"
         cta={{ label: "Get Your Pass", href: "/tickets" }}
@@ -242,7 +241,7 @@ export default function FirstTimers() {
       </ContentRow>
 
       {/* ═══════════ ROW 4 — CxO BREAKFAST ═══════════ */}
-      <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
+      <ContentRow isDark={isDark} textMain={textMain} border={border}
         reverse={true} hasBg={true}
         image="/ft-breakfast.jpg" imageAlt="CxO Breakfast with senior leaders"
         cta={{ label: "Get Your Pass", href: "/tickets" }}
@@ -256,7 +255,7 @@ export default function FirstTimers() {
       </ContentRow>
 
       {/* ═══════════ ROW 5 — GALA DINNER ═══════════ */}
-      <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
+      <ContentRow isDark={isDark} textMain={textMain} border={border}
         reverse={false}
         image="/ft-gala.jpg" imageAlt="Gala Dinner and Networking Reception"
         cta={{ label: "Get Your Pass", href: "/tickets" }}
@@ -270,7 +269,7 @@ export default function FirstTimers() {
       </ContentRow>
 
       {/* ═══════════ ROW 6 — CONSULTATION CLINIC ═══════════ */}
-      <ContentRow isDark={isDark} textMain={textMain} textMuted={textMuted} accent={accent} border={border}
+      <ContentRow isDark={isDark} textMain={textMain} border={border}
         reverse={true} hasBg={true}
         image="/ft-clinic.jpg" imageAlt="Consultation Clinic at The Tech Festival Canada"
         cta={{ label: "Partner With Us", href: "/sponsor" }}
@@ -303,14 +302,12 @@ export default function FirstTimers() {
               Secure your seat at The Carlu, Toronto on October 27–28, 2026. Spaces are limited — this is not a conference you attend passively.
             </p>
             <div className="ft-cta-row" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-              <motion.a href="/tickets" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: isDark ? "#ffffff" : "#0d0520", color: isDark ? "#0d0520" : "#ffffff", padding: "16px 36px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.9rem", textDecoration: "none", letterSpacing: "0.5px", transition: "all 0.25s ease" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)"; e.currentTarget.style.color = "#fff"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = isDark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = isDark ? "#0d0520" : "#ffffff"; }}
-              >Get Your Tickets</motion.a>
-              <motion.a href="/sponsor" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: `1.5px solid ${isDark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.5)"}`, color: isDark ? textMain : "#1a0a40", padding: "16px 36px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: "0.9rem", textDecoration: "none" }}
-              >Partner With Us</motion.a>
+              <motion.a href="/tickets" className="btn-primary" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{borderRadius: 14}}>
+                Get Your Tickets
+              </motion.a>
+              <motion.a href="/sponsor" className="btn-outline" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{borderRadius: 14}}>
+                Partner With Us
+              </motion.a>
             </div>
           </div>
         </motion.div>
@@ -377,9 +374,12 @@ function ListBlock({ textMain, items }) {
    CONTENT ROW — alternating text + image
    ═══════════════════════════════════════════════════════ */
 
-function ContentRow({ isDark, textMain, textMuted, border, reverse, hasBg, image, imageAlt, cta, children }) {
+function ContentRow({ isDark, textMain, border, reverse, hasBg, image, imageAlt, cta, children }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  
+  // Choose button style based on the label text (like the original logic)
+  const isPrimary = cta.label === "Get Your Pass";
 
   return (
     <section ref={ref} style={{
@@ -405,22 +405,13 @@ function ContentRow({ isDark, textMain, textMuted, border, reverse, hasBg, image
 
           <motion.a
             href={cta.href}
-            whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "16px 36px", borderRadius: 14, marginTop: 16,
-              fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.9rem",
-              letterSpacing: "0.5px", textDecoration: "none", transition: "all 0.25s ease",
-              background: cta.label === "Get Your Pass" ? (isDark ? "#ffffff" : "#0d0520") : "transparent",
-              color: cta.label === "Get Your Pass" ? (isDark ? "#0d0520" : "#ffffff") : (isDark ? "#ffffff" : "#0d0520"),
-              border: cta.label === "Get Your Pass" ? "none" : `1.5px solid ${isDark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.5)"}`,
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg, #7a3fd1, #f5a623)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "transparent"; }}
-            onMouseLeave={(e) => {
-              if (cta.label === "Get Your Pass") { e.currentTarget.style.background = isDark ? "#ffffff" : "#0d0520"; e.currentTarget.style.color = isDark ? "#0d0520" : "#ffffff"; }
-              else { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = isDark ? "#ffffff" : "#0d0520"; e.currentTarget.style.borderColor = isDark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.5)"; }
-            }}
-          >{cta.label} →</motion.a>
+            className={isPrimary ? "btn-primary" : "btn-outline"}
+            whileHover={{ scale: 1.04 }} 
+            whileTap={{ scale: 0.97 }}
+            style={{ marginTop: 16, borderRadius: 14 }}
+          >
+            {cta.label} →
+          </motion.a>
         </motion.div>
 
         {/* IMAGE */}

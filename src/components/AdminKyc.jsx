@@ -14,6 +14,9 @@ export default function AdminKyc() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // 🔥 NEW: modal state
+  const [selected, setSelected] = useState(null);
+
   useEffect(() => {
     loadData();
   }, []);
@@ -43,26 +46,21 @@ export default function AdminKyc() {
 
       const json = await res.json();
 
-      // 🔥 Handle API errors safely
       if (!res.ok) {
-        console.error("API ERROR:", json);
         setError(json.error || "Failed to load KYC data");
         setData([]);
         setFiltered([]);
         return;
       }
 
-      // ✅ Ensure array
       const safeData = Array.isArray(json) ? json : [];
 
       setData(safeData);
       setFiltered(safeData);
 
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error(err);
       setError("Network error");
-      setData([]);
-      setFiltered([]);
     } finally {
       setLoading(false);
     }
@@ -89,28 +87,28 @@ export default function AdminKyc() {
     setFiltered(temp);
   };
 
+  // 🔥 FULL EXPORT (ALL FIELDS)
   const exportCSV = () => {
 
-    if (filtered.length === 0) return;
+    if (!filtered.length) return;
 
-    const headers = [
-      "Company",
-      "Email",
-      "Country",
-      "Industry",
-      "Date"
-    ];
+    const keys = Array.from(
+      new Set(filtered.flatMap(obj => Object.keys(obj)))
+    );
 
-    const rows = filtered.map(item => [
-      item.company_name || "",
-      item.primary_email || "",
-      item.country_hq || "",
-      item.primary_industry || "",
-      item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""
-    ]);
+    const rows = filtered.map(item =>
+      keys.map(key => {
+        const val = item[key];
+
+        if (Array.isArray(val)) return `"${val.join(", ")}"`;
+        if (typeof val === "object" && val !== null) return `"${JSON.stringify(val)}"`;
+
+        return `"${val ?? ""}"`;
+      })
+    );
 
     const csv =
-      [headers, ...rows]
+      [keys, ...rows]
         .map(row => row.join(","))
         .join("\n");
 
@@ -119,7 +117,7 @@ export default function AdminKyc() {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "kyc_submissions.csv";
+    a.download = "kyc_full_export.csv";
     a.click();
   };
 
@@ -131,19 +129,17 @@ export default function AdminKyc() {
 
       <h2>KYC Submissions</h2>
 
-      {/* 🔥 Loading State */}
       {loading && <p>Loading KYC data...</p>}
 
-      {/* 🔥 Error State */}
       {error && (
         <p style={{ color: "red", marginBottom: 16 }}>
           {error}
         </p>
       )}
 
-      {/* Filters */}
       {!loading && !error && (
         <>
+          {/* FILTERS */}
           <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
 
             <input
@@ -169,7 +165,7 @@ export default function AdminKyc() {
 
           </div>
 
-          {/* Table */}
+          {/* TABLE */}
           <div className="table-wrapper">
             <table className="admin-table">
               <thead>
@@ -191,7 +187,11 @@ export default function AdminKyc() {
                   </tr>
                 ) : (
                   filtered.map(item => (
-                    <tr key={item._id}>
+                    <tr
+                      key={item._id}
+                      onClick={() => setSelected(item)}
+                      style={{ cursor: "pointer" }}
+                    >
                       <td>{item.company_name}</td>
                       <td>{item.primary_email}</td>
                       <td>{item.country_hq}</td>
@@ -206,10 +206,70 @@ export default function AdminKyc() {
                   ))
                 )}
               </tbody>
-
             </table>
           </div>
         </>
+      )}
+
+      {/* 🔥 MODAL */}
+      {selected && (
+        <div
+          onClick={() => setSelected(null)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.7)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+            padding: 20
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#0a0518",
+              borderRadius: 16,
+              padding: 24,
+              maxWidth: 800,
+              width: "100%",
+              maxHeight: "80vh",
+              overflowY: "auto",
+              color: "#fff"
+            }}
+          >
+            <h2 style={{ marginBottom: 20 }}>
+              {selected.company_name}
+            </h2>
+
+            {Object.entries(selected).map(([key, value]) => (
+              <div key={key} style={{ marginBottom: 10 }}>
+                <strong>{key}:</strong>{" "}
+                {Array.isArray(value)
+                  ? value.join(", ")
+                  : typeof value === "object" && value !== null
+                  ? JSON.stringify(value)
+                  : String(value)}
+              </div>
+            ))}
+
+            <button
+              onClick={() => setSelected(null)}
+              style={{
+                marginTop: 20,
+                padding: "10px 20px",
+                borderRadius: 8,
+                background: "#7a3fd1",
+                border: "none",
+                color: "#fff",
+                cursor: "pointer"
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
 
     </div>

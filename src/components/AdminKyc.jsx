@@ -11,6 +11,9 @@ export default function AdminKyc() {
   const [country, setCountry] = useState("");
   const [industry, setIndustry] = useState("");
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     loadData();
   }, []);
@@ -21,7 +24,16 @@ export default function AdminKyc() {
 
   const loadData = async () => {
     try {
+      setLoading(true);
+      setError("");
+
       const token = localStorage.getItem("token");
+
+      if (!token) {
+        setError("Not logged in as admin");
+        setData([]);
+        return;
+      }
 
       const res = await fetch(`${API}/kyc`, {
         headers: {
@@ -30,11 +42,29 @@ export default function AdminKyc() {
       });
 
       const json = await res.json();
-      setData(json);
-      setFiltered(json);
+
+      // 🔥 Handle API errors safely
+      if (!res.ok) {
+        console.error("API ERROR:", json);
+        setError(json.error || "Failed to load KYC data");
+        setData([]);
+        setFiltered([]);
+        return;
+      }
+
+      // ✅ Ensure array
+      const safeData = Array.isArray(json) ? json : [];
+
+      setData(safeData);
+      setFiltered(safeData);
 
     } catch (err) {
-      console.error("Failed to load KYC");
+      console.error("Fetch error:", err);
+      setError("Network error");
+      setData([]);
+      setFiltered([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,6 +91,8 @@ export default function AdminKyc() {
 
   const exportCSV = () => {
 
+    if (filtered.length === 0) return;
+
     const headers = [
       "Company",
       "Email",
@@ -70,11 +102,11 @@ export default function AdminKyc() {
     ];
 
     const rows = filtered.map(item => [
-      item.company_name,
-      item.primary_email,
-      item.country_hq,
-      item.primary_industry,
-      new Date(item.createdAt).toLocaleDateString()
+      item.company_name || "",
+      item.primary_email || "",
+      item.country_hq || "",
+      item.primary_industry || "",
+      item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""
     ]);
 
     const csv =
@@ -99,59 +131,86 @@ export default function AdminKyc() {
 
       <h2>KYC Submissions</h2>
 
+      {/* 🔥 Loading State */}
+      {loading && <p>Loading KYC data...</p>}
+
+      {/* 🔥 Error State */}
+      {error && (
+        <p style={{ color: "red", marginBottom: 16 }}>
+          {error}
+        </p>
+      )}
+
       {/* Filters */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+      {!loading && !error && (
+        <>
+          <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
 
-        <input
-          placeholder="Search company or email..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="admin-input"
-        />
+            <input
+              placeholder="Search company or email..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="admin-input"
+            />
 
-        <select value={country} onChange={e => setCountry(e.target.value)} className="admin-input">
-          <option value="">All Countries</option>
-          {uniqueCountries.map(c => <option key={c}>{c}</option>)}
-        </select>
+            <select value={country} onChange={e => setCountry(e.target.value)} className="admin-input">
+              <option value="">All Countries</option>
+              {uniqueCountries.map(c => <option key={c}>{c}</option>)}
+            </select>
 
-        <select value={industry} onChange={e => setIndustry(e.target.value)} className="admin-input">
-          <option value="">All Industries</option>
-          {uniqueIndustries.map(i => <option key={i}>{i}</option>)}
-        </select>
+            <select value={industry} onChange={e => setIndustry(e.target.value)} className="admin-input">
+              <option value="">All Industries</option>
+              {uniqueIndustries.map(i => <option key={i}>{i}</option>)}
+            </select>
 
-        <button className="btn-primary" onClick={exportCSV}>
-          Export CSV
-        </button>
+            <button className="btn-primary" onClick={exportCSV}>
+              Export CSV
+            </button>
 
-      </div>
+          </div>
 
-      {/* Table */}
-      <div className="table-wrapper">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Company</th>
-              <th>Email</th>
-              <th>Country</th>
-              <th>Industry</th>
-              <th>Date</th>
-            </tr>
-          </thead>
+          {/* Table */}
+          <div className="table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Email</th>
+                  <th>Country</th>
+                  <th>Industry</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
 
-          <tbody>
-            {filtered.map(item => (
-              <tr key={item._id}>
-                <td>{item.company_name}</td>
-                <td>{item.primary_email}</td>
-                <td>{item.country_hq}</td>
-                <td>{item.primary_industry}</td>
-                <td>{new Date(item.createdAt).toLocaleDateString()}</td>
-              </tr>
-            ))}
-          </tbody>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" style={{ textAlign: "center" }}>
+                      No submissions found
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map(item => (
+                    <tr key={item._id}>
+                      <td>{item.company_name}</td>
+                      <td>{item.primary_email}</td>
+                      <td>{item.country_hq}</td>
+                      <td>{item.primary_industry}</td>
+                      <td>
+                        {item.createdAt
+                          ? new Date(item.createdAt).toLocaleDateString()
+                          : "-"
+                        }
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
 
-        </table>
-      </div>
+            </table>
+          </div>
+        </>
+      )}
 
     </div>
   );

@@ -15,6 +15,7 @@ import ResetPassword from "./pages/ResetPassword";
 import TicketBar from "./components/TicketBar";
 import Agenda from "./pages/Agenda";
 import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
 import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
 import Brochures from "./pages/Brochures";
@@ -61,14 +62,16 @@ function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/agenda" element={<Agenda />} />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <Admin />
-            </ProtectedRoute>
-          }
-        />
+       <Route path="/admin-login" element={<AdminLogin />} />
+
+<Route
+  path="/admin"
+  element={
+    <AdminRoute>
+      <Admin />
+    </AdminRoute>
+  }
+/>
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
         <Route path="/exhibit" element={<Exhibit />} />

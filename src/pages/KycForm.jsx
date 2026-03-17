@@ -174,7 +174,6 @@ function FileUpload({ label, onFileSelect, dark, currentFile }) {
   );
 }
 
-// Helper to nicely display fields in the Review step
 function ReviewField({ label, value, isHtml, dark }) {
   if (!value || (Array.isArray(value) && value.length === 0)) return null;
   const displayValue = Array.isArray(value) ? value.join(", ") : value;
@@ -209,7 +208,7 @@ export default function KYCForm() {
     }
   }, []);
 
-  const TOTAL_STEPS = 11; // Increased to 11 to include the Review step
+  const TOTAL_STEPS = 11;
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({});
 
@@ -224,7 +223,6 @@ export default function KYCForm() {
   };
 
   const handleFinalSubmit = () => {
-    // In a real app, you would fire off your API POST request here
     setIsSubmitted(true);
   };
 
@@ -245,12 +243,47 @@ export default function KYCForm() {
     <div style={{ background: bg, minHeight: "100vh", color: textMain, transition: "background 0.3s ease, color 0.3s ease", position: "relative" }}>
       <Navbar />
 
-      {/* STICKY PROGRESS BAR */}
+      {/* STICKY PROGRESS BAR WITH JUMP-TO-PAGE DROPDOWN */}
       <div style={{ position: "sticky", top: "80px", zIndex: 100, background: progressBg, backdropFilter: "blur(12px)", padding: "20px 5%", borderBottom: `1px solid ${inputBorder}` }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px", marginBottom: "10px", color: textMuted }}>
-          <span>{currentStep === 11 ? "Final Review" : `Step ${currentStep} of ${TOTAL_STEPS - 1}`}</span>
-          <span>{progressPercent}% Completed</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px", color: textMuted }}>
+          
+          {/* Jump to Page Dropdown Wrapper */}
+          <div style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "pointer" }}>
+            <select 
+              value={currentStep}
+              onChange={(e) => setCurrentStep(Number(e.target.value))}
+              style={{
+                appearance: "none",
+                background: "transparent",
+                border: "none",
+                color: textMuted,
+                fontFamily: "'Orbitron', sans-serif",
+                fontWeight: 800,
+                fontSize: "0.75rem",
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+                cursor: "pointer",
+                paddingRight: "18px",
+                outline: "none"
+              }}
+            >
+              {[...Array(TOTAL_STEPS)].map((_, i) => (
+                <option key={i + 1} value={i + 1} style={{ background: bg, color: textMain }}>
+                  {i + 1 === TOTAL_STEPS ? "Final Review" : `Step ${i + 1} of ${TOTAL_STEPS - 1}`}
+                </option>
+              ))}
+            </select>
+            {/* Custom SVG Arrow to layer over the hidden default browser arrow */}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", right: 0, pointerEvents: "none" }}>
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+
+          <span style={{ fontSize: "0.75rem", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, textTransform: "uppercase", letterSpacing: "1px" }}>
+            {progressPercent}% Completed
+          </span>
         </div>
+
         <div style={{ width: "100%", height: "4px", background: dark ? "rgba(255,255,255,0.1)" : "rgba(122,63,209,0.1)", borderRadius: "4px", overflow: "hidden" }}>
           <div style={{ width: `${progressPercent}%`, height: "100%", background: "linear-gradient(90deg, #7a3fd1, #f5a623)", transition: "width 0.4s ease" }} />
         </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.tsx";
 import AdminTabs from "../components/AdminTabs";
 import AdminAttendees from "../components/AdminAttendees";
@@ -15,13 +16,13 @@ const API = "https://techfest-canada-backend.onrender.com/api";
 function Overview() {
   return (
     <div className="admin-card">
-<AdminAnalytics />
+      <AdminAnalytics />
     </div>
   );
 }
 
 /* =========================================================
-   👑 ADMIN MANAGEMENT TAB (NEW)
+   👑 ADMIN MANAGEMENT TAB
 ========================================================= */
 function AdminManagement() {
   const [email, setEmail] = useState("");
@@ -98,12 +99,21 @@ function AdminManagement() {
    🧠 MAIN ADMIN PAGE
 ========================================================= */
 export default function Admin() {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.dispatchEvent(new Event("authChanged")); // optional but good
+    navigate("/admin-login");
+  };
+
   const tabs = [
     { label: "Overview", component: Overview },
     { label: "Attendees", component: AdminAttendees },
     { label: "Inventory", component: AdminInventory },
     { label: "Scanner", component: CheckIn },
-    { label: "Admins", component: AdminManagement }, // ⭐ NEW TAB
+    { label: "Admins", component: AdminManagement },
     { label: "KYC", component: AdminKyc },
   ];
 
@@ -112,8 +122,38 @@ export default function Admin() {
       <Navbar />
 
       <div className="container admin-page">
-        <h1 className="admin-title">Admin Control Panel</h1>
+
+        {/* 🔥 HEADER WITH LOGOUT */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 20,
+            flexWrap: "wrap",
+            gap: 10
+          }}
+        >
+          <h1 className="admin-title">Admin Control Panel</h1>
+
+          <button
+            onClick={handleLogout}
+            style={{
+              background: "transparent",
+              border: "1.5px solid rgba(239,68,68,0.4)",
+              color: "#f87171",
+              padding: "10px 18px",
+              borderRadius: 10,
+              cursor: "pointer",
+              fontWeight: 700,
+            }}
+          >
+            Logout
+          </button>
+        </div>
+
         <AdminTabs tabs={tabs} />
+
       </div>
     </>
   );

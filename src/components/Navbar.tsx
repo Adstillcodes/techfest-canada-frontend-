@@ -6,7 +6,7 @@ import AuthModal from "./AuthModal";
 const PARTNERS_DROPDOWN = [
   { label: "Sponsor", path: "/sponsor" },
   { label: "Exhibit", path: "/exhibit" },
-  { label: "KYC Form", path: "/kyc" } // <-- Added KYC Form link
+  { label: "KYC Form", path: "/kyc" }
 ];
 
 const AGENDA_DROPDOWN = [
@@ -116,69 +116,108 @@ export default function Navbar() {
     <>
       <style>{`
         .tfc-navbar-wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+        
+        /* 3-Column STRICT Grid Layout - Keeps Center Perfectly Centered */
+        .tfc-nav-container { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 95px; max-width: 1400px; margin: 0 auto; padding: 0 5%; gap: 10px; }
+        .tfc-nav-left { justify-self: start; display: flex; align-items: center; }
+        .tfc-nav-center { justify-self: center; display: flex; align-items: center; }
+        .tfc-nav-right { justify-self: end; display: flex; align-items: center; gap: 12px; }
+        
+        /* Logo Size Bump */
+        .tfc-nav-logo { height: 75px; width: auto; max-width: 280px; object-fit: contain; transition: height 0.3s ease; }
+        
         .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
         .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
         .tfc-nav-link.active { background: rgba(122,63,209,0.14); }
+        
         .tfc-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 6px; }
         .tfc-hamburger span { display: block; width: 22px; height: 2px; border-radius: 2px; transition: all 0.25s ease; }
         .tfc-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .tfc-hamburger.open span:nth-child(2) { opacity: 0; }
         .tfc-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-        @media (max-width: 1024px) { .tfc-desktop-nav { display: none !important; } .tfc-hamburger { display: flex !important; } }
-        @media (max-width: 640px)  { .tfc-brochure-btn { display: none !important; } }
+        
+        .tfc-mobile-ticket { display: none !important; }
+        .tfc-desktop-ticket { display: inline-flex !important; }
+
+        @media (max-width: 1024px) { 
+          .tfc-desktop-nav { display: none !important; } 
+          .tfc-hamburger { display: flex !important; } 
+          
+          /* Mobile Specific Adjustments */
+          .tfc-nav-logo { height: 70px !important; max-width: 40vw; } 
+          .tfc-mobile-ticket { display: inline-flex !important; }
+          .tfc-desktop-ticket { display: none !important; }
+        }
+        
+        @media (max-width: 640px)  { 
+          .tfc-brochure-btn { display: none !important; } 
+          .tfc-nav-logo { height: 65px !important; max-width: 38vw; } 
+          .tfc-mobile-ticket { padding: 10px 20px !important; font-size: 0.75rem !important; }
+          .tfc-nav-container { height: 85px; padding: 0 3%; }
+        }
       `}</style>
 
       <nav className="tfc-navbar-wrap" style={{ background: bg, borderBottom: "1px solid " + border }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 2.5%", height: 80, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+        <div className="tfc-nav-container">
 
-          {/* LOGO */}
-          <Link to="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
-            <img src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada" style={{ height: 52, width: "auto", objectFit: "contain" }} />
-          </Link>
-
-          {/* DESKTOP NAV */}
-          <div className="tfc-desktop-nav" style={{ display: "flex", alignItems: "center" }}>
-            <ul style={{ display: "flex", alignItems: "center", gap: 4, listStyle: "none", margin: 0, padding: "6px", background: pillBg, border: "1px solid " + pillBorder, borderRadius: 999 }}>
-              {navItems.map((item) => {
-                if (item.hasDropdown) {
-                  const isPartners = item.dropKey === "partners";
-                  const open    = isPartners ? dropOpen      : agendaDropOpen;
-                  const setOpen = isPartners ? setDropOpen   : setAgendaDropOpen;
-                  const items   = isPartners ? PARTNERS_DROPDOWN : AGENDA_DROPDOWN;
-                  const ref     = isPartners ? dropRef       : agendaDropRef;
-                  return (
-                    <li key={item.path} style={{ position: "relative" }} ref={ref} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-                      <Link to={item.path} className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
-                        style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}
-                      >
-                        {item.label}
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      </Link>
-                      {renderDropdown(items, open, setOpen)}
-                    </li>
-                  );
-                }
-                return (
-                  <li key={item.path}>
-                    <Link to={item.path} className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")} style={{ color: isActive(item.path) ? textMain : textMuted }}>{item.label}</Link>
-                  </li>
-                );
-              })}
-            </ul>
+          {/* LEFT: LOGO */}
+          <div className="tfc-nav-left">
+            <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+              <img className="tfc-nav-logo" src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada" />
+            </Link>
           </div>
 
-          {/* RIGHT ACTIONS */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          {/* CENTER: DESKTOP NAV OR MOBILE TICKET BUTTON */}
+          <div className="tfc-nav-center">
+            
+            {/* Desktop Nav */}
+            <div className="tfc-desktop-nav">
+              <ul style={{ display: "flex", alignItems: "center", gap: 4, listStyle: "none", margin: 0, padding: "6px", background: pillBg, border: "1px solid " + pillBorder, borderRadius: 999 }}>
+                {navItems.map((item) => {
+                  if (item.hasDropdown) {
+                    const isPartners = item.dropKey === "partners";
+                    const open    = isPartners ? dropOpen      : agendaDropOpen;
+                    const setOpen = isPartners ? setDropOpen   : setAgendaDropOpen;
+                    const items   = isPartners ? PARTNERS_DROPDOWN : AGENDA_DROPDOWN;
+                    const ref     = isPartners ? dropRef       : agendaDropRef;
+                    return (
+                      <li key={item.path} style={{ position: "relative" }} ref={ref} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+                        <Link to={item.path} className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
+                          style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}
+                        >
+                          {item.label}
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
+                            <path d="M6 9l6 6 6-6" />
+                          </svg>
+                        </Link>
+                        {renderDropdown(items, open, setOpen)}
+                      </li>
+                    );
+                  }
+                  return (
+                    <li key={item.path}>
+                      <Link to={item.path} className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")} style={{ color: isActive(item.path) ? textMain : textMuted }}>{item.label}</Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Mobile Ticket Button (Visible only on Mobile) */}
+            <Link to="/tickets" className="tfc-mobile-ticket btn-primary"
+              style={{ padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s ease" }}
+            >TICKETS</Link>
+
+          </div>
+
+          {/* RIGHT: ACTIONS & HAMBURGER */}
+          <div className="tfc-nav-right">
             <Link to="/brochures" className="tfc-brochure-btn"
               style={{ padding: "0 22px", height: 40, borderRadius: 999, background: "transparent", border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`, color: isDark ? "#fff" : "#0f0520", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none", display: "flex", alignItems: "center", textTransform: "uppercase" }}
             >BROCHURE</Link>
 
-            <Link to="/tickets"
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", background: "linear-gradient(135deg,#7a3fd1,#c4607a,#f5a623)", color: "#ffffff", transition: "all 0.2s ease", boxShadow: "0 4px 18px rgba(122,63,209,0.30)" }}
-              onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.88"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}
+            <Link to="/tickets" className="tfc-desktop-ticket btn-primary"
+              style={{ alignItems: "center", gap: 8, padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s ease" }}
             >TICKETS</Link>
 
             <button onClick={toggleTheme} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.15rem", padding: "6px", lineHeight: 1 }} aria-label="Toggle theme">
@@ -191,6 +230,7 @@ export default function Navbar() {
               <span style={{ background: textMain }} />
             </button>
           </div>
+
         </div>
 
         {/* MOBILE MENU */}
@@ -245,10 +285,10 @@ export default function Navbar() {
                   style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: 12, padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", border: `1px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`, color: isDark ? "#fff" : "#0f0520" }}
                 >BROCHURE</Link>
 
-                <div style={{ marginTop: 8, padding: 2, borderRadius: 16, background: "linear-gradient(135deg,#7a3fd1,#c4607a,#f5a623)" }}>
-                  <Link to="/tickets" onClick={() => setMobileOpen(false)}
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.82rem", fontWeight: 900, letterSpacing: "1.2px", textTransform: "uppercase", textDecoration: "none", background: "linear-gradient(135deg,#7a3fd1,#c4607a,#f5a623)", color: "#fff" }}
-                  >GET YOUR PASS</Link>
+                <div style={{ marginTop: 8, padding: 2, borderRadius: 16 }}>
+                  <Link to="/tickets" onClick={() => setMobileOpen(false)} className="btn-primary"
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.82rem", fontWeight: 900, letterSpacing: "1.2px", textTransform: "uppercase", textDecoration: "none" }}
+                  >TICKETS</Link>
                 </div>
               </div>
             </motion.div>

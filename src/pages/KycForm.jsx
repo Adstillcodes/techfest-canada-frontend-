@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navbar";
+const API = "https://techfest-canada-backend.onrender.com/api";
 
 // ==========================================
 // 1. GLOBAL CONSTANTS & HELPERS
@@ -333,7 +334,7 @@ export default function KYCForm() {
       } else {
         try {
           // MONGO DB BACKEND SAVE
-          const response = await fetch("/api/kyc", { 
+          const response = await fetch(`${API}/kyc`, { 
             method: "POST",
             headers: {
               "Content-Type": "application/json",

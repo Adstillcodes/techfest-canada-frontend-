@@ -333,7 +333,7 @@ export default function KYCForm() {
       } else {
         try {
           // MONGO DB BACKEND SAVE
-          const response = await fetch("/api/kyc-submit", { 
+          const response = await fetch("/api/kyc", { 
             method: "POST",
             headers: {
               "Content-Type": "application/json",

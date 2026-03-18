@@ -58,7 +58,7 @@ export default function Brochures() {
   if (!validate()) return;
 
   try {
-    const res = await fetch("https://techfest-canada-backend.onrender.comapi/brochure/submit", {
+    const res = await fetch("https://techfest-canada-backend.onrender.com/api/brochure/submit", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

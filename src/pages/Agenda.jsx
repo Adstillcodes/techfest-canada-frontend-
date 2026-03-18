@@ -356,7 +356,7 @@ function AccessGate({ onUnlock, dark }) {
   if (!validate()) return;
 
   try {
-    const res = await fetch("http://localhost:5000/api/agenda/submit", {
+    const res = await fetch("https://techfest-canada-backend.onrender.com/api/agenda/submit", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

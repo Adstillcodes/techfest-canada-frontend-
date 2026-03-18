@@ -307,7 +307,6 @@ function TimeGroup({ time, sessions, dark, base }) {
         {sessions.map((s, i) => <SessionCard key={s.id} s={s} dark={dark} i={base + i} />)}
       </div>
     </div>
-    </>
   );
 }
 
@@ -466,7 +465,6 @@ function AccessGate({ onUnlock, dark }) {
         </p>
       </motion.div>
     </div>
-    </>
   );
 }
 

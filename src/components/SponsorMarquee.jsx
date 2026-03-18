@@ -39,8 +39,8 @@ export default function SponsorMarquee({ dark }) {
       </div>
 
       <div style={{ position: "relative" }}>
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 100, background: \`linear-gradient(to right, \${fade}, transparent)\`, zIndex: 2, pointerEvents: "none" }} />
-        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 100, background: \`linear-gradient(to left, \${fade}, transparent)\`, zIndex: 2, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 100, background: `linear-gradient(to right, ${fade}, transparent)`, zIndex: 2, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 100, background: `linear-gradient(to left, ${fade}, transparent)`, zIndex: 2, pointerEvents: "none" }} />
         <div className="marquee-track">
           {items.map(function (s, i) {
             return (

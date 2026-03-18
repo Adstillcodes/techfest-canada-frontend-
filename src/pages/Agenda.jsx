@@ -351,12 +351,35 @@ function AccessGate({ onUnlock, dark }) {
     return e;
   };
 
-  const handleSubmit = () => {
-    const e = validate();
-    if (Object.keys(e).length) { setErrors(e); return; }
-    setSubmitting(true);
-    setTimeout(() => onUnlock(form), 600);
-  };
+   async function handleSubmit(e) {
+  e.preventDefault();
+  if (!validate()) return;
+
+  try {
+    const res = await fetch("http://localhost:5000/api/agenda/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      setSubmitted(true);
+      setBtnPulsing(true);
+      setTimeout(function () { setBtnPulsing(false); }, 3000);
+    } else {
+      alert("Something went wrong");
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+}
+
 
   const field = (key, label, type = "text", opts = null) => (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>

@@ -53,13 +53,34 @@ export default function Brochures() {
     if (errors[field]) setErrors(function (prev) { var n={...prev}; delete n[field]; return n; });
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (!validate()) return;
-    setSubmitted(true);
-    setBtnPulsing(true);
-    setTimeout(function () { setBtnPulsing(false); }, 3000);
+  async function handleSubmit(e) {
+  e.preventDefault();
+  if (!validate()) return;
+
+  try {
+    const res = await fetch("http://localhost:5000/api/brochure/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      setSubmitted(true);
+      setBtnPulsing(true);
+      setTimeout(function () { setBtnPulsing(false); }, 3000);
+    } else {
+      alert("Something went wrong");
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
   }
+}
 
   function openBrochure() {
     setBrochureOpen(true);

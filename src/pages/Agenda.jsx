@@ -472,8 +472,15 @@ function AccessGate({ onUnlock, dark }) {
 export default function AgendaPage() {
   useProtection();
 
-  const [unlocked, setUnlocked] = useState(false);
-  const [visitor, setVisitor] = useState(null);
+  const [unlocked, setUnlocked] = useState(() => {
+    try { return !!localStorage.getItem("ttfc_visitor"); } catch(e) { return false; }
+  });
+  const [visitor, setVisitor] = useState(() => {
+    try {
+      const v = localStorage.getItem("ttfc_visitor");
+      return v ? JSON.parse(v) : null;
+    } catch(e) { return null; }
+  });
   const [dark, setDark] = useState(false);
   const [activeDay, setActiveDay] = useState(1);
   const [search, setSearch] = useState("");
@@ -542,7 +549,11 @@ export default function AgendaPage() {
       {!unlocked && (
         <AccessGate
           dark={dark}
-          onUnlock={(data) => { setVisitor(data); setUnlocked(true); }}
+          onUnlock={(data) => {
+            setVisitor(data);
+            setUnlocked(true);
+            try { localStorage.setItem("ttfc_visitor", JSON.stringify(data)); } catch(e) {}
+          }}
         />
       )}
       {/* Visitor watermark after unlock */}

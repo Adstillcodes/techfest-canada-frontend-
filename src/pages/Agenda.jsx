@@ -351,11 +351,18 @@ function AccessGate({ onUnlock, dark }) {
     return e;
   };
 
-   async function handleSubmit(e) {
+async function handleSubmit(e) {
   e.preventDefault();
-  if (!validate()) return;
+
+  const validationErrors = validate();
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    return;
+  }
 
   try {
+    setSubmitting(true);
+
     const res = await fetch("https://techfest-canada-backend.onrender.com/api/agenda/submit", {
       method: "POST",
       headers: {
@@ -367,9 +374,7 @@ function AccessGate({ onUnlock, dark }) {
     const data = await res.json();
 
     if (data.success) {
-      setSubmitted(true);
-      setBtnPulsing(true);
-      setTimeout(function () { setBtnPulsing(false); }, 3000);
+      onUnlock(form); // 🔥 THIS is the correct behavior
     } else {
       alert("Something went wrong");
     }
@@ -377,9 +382,10 @@ function AccessGate({ onUnlock, dark }) {
   } catch (err) {
     console.error(err);
     alert("Server error");
+  } finally {
+    setSubmitting(false);
   }
 }
-
 
   const field = (key, label, type = "text", opts = null) => (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>

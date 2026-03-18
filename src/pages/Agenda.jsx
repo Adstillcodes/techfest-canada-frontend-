@@ -127,7 +127,6 @@ function getDuration(start, end) {
 // ─── Session Card ─────────────────────────────────────────────────
 function SessionCard({ s, dark, i }) {
   const [expanded, setExpanded] = useState(false);
-  const [revealed, setRevealed] = useState(false);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
 
@@ -145,13 +144,11 @@ function SessionCard({ s, dark, i }) {
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ delay: i * 0.025, type: "spring", damping: 24 }}
-      onMouseEnter={() => setRevealed(true)}
-      onMouseLeave={() => { if (!expanded) setRevealed(false); }}
-      onClick={() => { setRevealed(true); if (!isBreak) setExpanded(v => !v); }}
+      onClick={() => { if (!isBreak) setExpanded(v => !v); }}
       style={{
         position: "relative", borderRadius: "10px", overflow: "hidden",
         cursor: isBreak ? "default" : "pointer",
-        filter: (revealed || expanded) ? "none" : "blur(3.5px)",
+        filter: "none",
         transition: "filter 0.22s ease",
         background: isBreak
           ? (dark ? "rgba(255,255,255,0.015)" : "rgba(0,0,0,0.02)")
@@ -162,15 +159,7 @@ function SessionCard({ s, dark, i }) {
         boxShadow: (!isBreak && !dark) ? "0 1px 6px rgba(0,0,0,0.05)" : "none",
       }}
     >
-      {/* Lock hint */}
-      {!revealed && !expanded && !isBreak && (
-        <div style={{
-          position: "absolute", inset: 0, display: "flex",
-          alignItems: "center", justifyContent: "center", zIndex: 2, pointerEvents: "none",
-        }}>
-          <Lock size={15} style={{ opacity: 0.28, color: dark ? "#fff" : "#000" }} />
-        </div>
-      )}
+
 
       {/* Accent bar */}
       {!isBreak && (
@@ -318,6 +307,7 @@ function TimeGroup({ time, sessions, dark, base }) {
         {sessions.map((s, i) => <SessionCard key={s.id} s={s} dark={dark} i={base + i} />)}
       </div>
     </div>
+    </>
   );
 }
 
@@ -351,41 +341,12 @@ function AccessGate({ onUnlock, dark }) {
     return e;
   };
 
-async function handleSubmit(e) {
-  e.preventDefault();
-
-  const validationErrors = validate();
-  if (Object.keys(validationErrors).length > 0) {
-    setErrors(validationErrors);
-    return;
-  }
-
-  try {
+  const handleSubmit = () => {
+    const e = validate();
+    if (Object.keys(e).length) { setErrors(e); return; }
     setSubmitting(true);
-
-    const res = await fetch("https://techfest-canada-backend.onrender.com/api/agenda/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      onUnlock(form); // 🔥 THIS is the correct behavior
-    } else {
-      alert("Something went wrong");
-    }
-
-  } catch (err) {
-    console.error(err);
-    alert("Server error");
-  } finally {
-    setSubmitting(false);
-  }
-}
+    setTimeout(() => onUnlock(form), 600);
+  };
 
   const field = (key, label, type = "text", opts = null) => (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
@@ -505,6 +466,7 @@ async function handleSubmit(e) {
         </p>
       </motion.div>
     </div>
+    </>
   );
 }
 
@@ -556,6 +518,28 @@ export default function AgendaPage() {
   let cardIdx = 0;
 
   return (
+    <>
+    <style>{`
+      .agenda-gradient-text {
+        background: linear-gradient(135deg, var(--grad-start, #b99eff), #f5a623);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+        display: inline-block;
+      }
+      .agenda-stat-text {
+        font-family: 'Orbitron', sans-serif;
+        font-size: clamp(1.3rem, 2.2vw, 1.9rem);
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--grad-start, #b99eff), #f5a623);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+        display: inline-block;
+      }
+    `}</style>
     <div style={{ background: bg, minHeight: "100vh", color: text, overflowX: "hidden", userSelect: "none" }}>
       {!unlocked && (
         <AccessGate
@@ -601,7 +585,7 @@ export default function AgendaPage() {
                 border: `1px solid ${border}`,
                 fontSize: "0.72rem", fontWeight: 600, opacity: 0.6,
               }}>
-                <Calendar size={10} /> June 14–15, 2026 · Toronto, Canada
+                <Calendar size={10} /> Oct 27–28, 2026 · Toronto, Canada
               </span>
             </div>
 
@@ -612,13 +596,8 @@ export default function AgendaPage() {
               display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: "0.3em",
             }}>
               <span>TTFC 2026</span>
-              <span style={{
-                background: `linear-gradient(135deg,${accent},#f5a623)`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                color: "transparent",
-                display: "inline-block",
+              <span className="agenda-gradient-text" style={{
+                "--grad-start": accent,
               }}>Agenda</span>
             </h1>
 
@@ -633,15 +612,8 @@ export default function AgendaPage() {
                   transition={{ delay: 0.15 + i * 0.06, type: "spring", damping: 20 }}
                   style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                 >
-                  <span style={{
-                    fontFamily: "'Orbitron', sans-serif",
-                    fontSize: "clamp(1.3rem,2.2vw,1.9rem)", fontWeight: 900,
-                    background: `linear-gradient(135deg,${accent},#f5a623)`,
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    color: "transparent",
-                    display: "inline-block",
+                  <span className="agenda-stat-text" style={{
+                    "--grad-start": accent,
                   }}>{v}</span>
                   <span style={{ fontSize: "0.7rem", opacity: 0.42, textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "0.1rem" }}>{l}</span>
                 </motion.div>
@@ -670,7 +642,7 @@ export default function AgendaPage() {
                   color: activeDay === d ? accent : dark ? "rgba(255,255,255,0.48)" : "rgba(0,0,0,0.43)",
                   transition: "all 0.15s",
                 }}>
-                Day {d} <span style={{ opacity: 0.45, fontSize: "0.68rem", marginLeft: "0.3rem" }}>{d === 1 ? "Jun 14" : "Jun 15"}</span>
+                Day {d} <span style={{ opacity: 0.45, fontSize: "0.68rem", marginLeft: "0.3rem" }}>{d === 1 ? "Oct 27" : "Oct 28"}</span>
               </motion.button>
             ))}
 
@@ -759,11 +731,9 @@ export default function AgendaPage() {
         <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.2rem" }}>
             <p style={{ fontSize: "0.73rem", opacity: 0.35 }}>
-              {filtered.length} sessions · Day {activeDay} — {activeDay === 1 ? "June 14" : "June 15"}, 2026
+              {filtered.length} sessions · Day {activeDay} — {activeDay === 1 ? "Oct 27" : "Oct 28"}, 2026
             </p>
-            <span style={{ fontSize: "0.7rem", opacity: 0.28, display: "flex", alignItems: "center", gap: "0.28rem" }}>
-              <Lock size={10} /> Hover to reveal
-            </span>
+
           </div>
 
           {grouped.length === 0 ? (
@@ -820,5 +790,6 @@ export default function AgendaPage() {
 
       <Footer />
     </div>
+    </>
   );
 }

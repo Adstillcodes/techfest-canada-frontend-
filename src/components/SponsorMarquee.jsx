@@ -107,8 +107,8 @@ export default function SponsorMarquee({ dark }) {
           width: auto;
           max-width: 180px;
           object-fit: contain;
-          opacity: ${dark ? "0.75" : "0.70"};
-          filter: ${dark ? "grayscale(1) brightness(2)" : "none"};
+          opacity: ${dark ? "0.90" : "0.70"};
+          filter: ${dark ? "brightness(0) invert(1)" : "none"};
           transition: opacity 0.2s ease;
         }
         .marquee-item:hover img {

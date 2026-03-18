@@ -107,12 +107,12 @@ export default function SponsorMarquee({ dark }) {
           width: auto;
           max-width: 180px;
           object-fit: contain;
-          opacity: 0.85;
-          filter: none;
+          opacity: ${dark ? "0.75" : "0.70"};
+          filter: ${dark ? "grayscale(1) brightness(2)" : "none"};
           transition: opacity 0.2s ease;
         }
         .marquee-item:hover img {
-          opacity: 1;
+          opacity: ${dark ? "1" : "1"};
         }
         .marquee-item img[data-name="Temasek"]   { height: 17px; }
         .marquee-item img[data-name="Amazon"]    { height: 26px; }
@@ -147,9 +147,7 @@ export default function SponsorMarquee({ dark }) {
           {items.map(function (s, i) {
             return (
               <div key={i} className="marquee-item">
-                <div className="marquee-item-inner">
-                  <img src={s.logo} alt={s.name} title={s.name} data-name={s.name} />
-                </div>
+                <img src={s.logo} alt={s.name} title={s.name} data-name={s.name} />
               </div>
             );
           })}

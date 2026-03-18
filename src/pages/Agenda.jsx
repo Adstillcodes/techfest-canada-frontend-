@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { motion, useInView, AnimatePresence } from "motion/react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   Calendar, Clock, Search, X, ChevronDown,
   Sparkles, Zap, Shield, Cpu, Leaf, Lock,

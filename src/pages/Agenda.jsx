@@ -380,52 +380,6 @@ export default function AgendaPage() {
       }
     `}</style>
     <div style={{ background: bg, minHeight: "100vh", color: text, overflowX: "hidden", userSelect: "none" }}>
-      {/* Visitor watermark after unlock */}
-        </div>
-      )}
-      <Navbar />
-
-      {/* HERO */}
-      <section style={{
-        paddingTop: "5.5rem", paddingBottom: "2.5rem",
-        background: dark ? "linear-gradient(180deg,#0d0820 0%,#06020f 100%)" : "linear-gradient(180deg,#f3eeff 0%,#f8f7fc 100%)",
-        borderBottom: `1px solid ${border}`,
-      }}>
-        <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 1.5rem" }}>
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", damping: 22 }}>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.1rem" }}>
-
-              <span style={{
-                display: "inline-flex", alignItems: "center", gap: "0.4rem",
-                padding: "0.3rem 0.8rem", borderRadius: "9999px",
-                background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
-                border: `1px solid ${border}`,
-                fontSize: "0.72rem", fontWeight: 600, opacity: 0.6,
-              }}>
-                <Calendar size={10} /> Oct 27–28, 2026 · Toronto, Canada
-              </span>
-            </div>
-
-            <h1 style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: "clamp(2rem,5.5vw,3.5rem)",
-              fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.85rem",
-              display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: "0.3em",
-            }}>
-              <span>TTFC 2026</span>
-              <span className="agenda-gradient-text" style={{
-                "--grad-start": accent,
-              }}>Agenda</span>
-            </h1>
-
-            <p style={{ fontSize: "0.92rem", opacity: 0.52, maxWidth: "500px", lineHeight: 1.7, marginBottom: "1.6rem" }}>
-              Two full days across five technology pillars and five applied sectors. All sessions subject to change. Speakers to be confirmed.
-            </p>
-
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem" }}>
-              {[["2","Days"],["53","Sessions"],["5","Tech Pillars"],["5","Sectors"],["500+","Attendees"]].map(([v, l], i) => (
-                <motion.div key={l}
-                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.06, type: "spring", damping: 20 }}
                   style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                 >

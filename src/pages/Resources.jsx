@@ -299,7 +299,7 @@ export default function FirstTimers() {
               Ready to <GradientSpan>show up prepared?</GradientSpan>
             </h2>
             <p style={{ color: textMuted, lineHeight: 1.7, fontSize: "1.1rem", marginBottom: 36, maxWidth: 480 }}>
-              Secure your seat at The Carlu, Toronto on October 27–28, 2026. Spaces are limited — this is not a conference you attend passively.
+              Secure your seat at The Carlu, Toronto on October 26–27, 2026. Spaces are limited — this is not a conference you attend passively.
             </p>
             <div className="ft-cta-row" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
               <motion.a href="/tickets" className="btn-primary" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} style={{borderRadius: 14}}>

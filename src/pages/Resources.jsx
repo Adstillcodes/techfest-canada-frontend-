@@ -414,6 +414,7 @@ function ContentRow({ isDark, textMain, border, reverse, hasBg, image, imageAlt,
           </motion.a>
         </motion.div>
 
+        
         {/* IMAGE */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}

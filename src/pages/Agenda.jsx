@@ -390,7 +390,7 @@ export default function AgendaPage() {
                 </motion.div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 

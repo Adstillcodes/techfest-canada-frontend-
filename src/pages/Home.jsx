@@ -80,7 +80,7 @@ function SubtitleReveal(props) {
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ type: "spring", bounce: 0.2, duration: 1.4, delay: 0.5 }}
       className="hero-sub"
-      style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.3rem)", lineHeight: 1.85, fontWeight: 400, maxWidth: 680, color: props.textMid, textAlign: "justify", hyphens: "auto", marginBottom: "3rem" }}
+      style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.3rem)", lineHeight: 1.85, fontWeight: 400, maxWidth: 920, color: props.textMid, textAlign: "justify", hyphens: "auto", marginBottom: "3rem" }}
     >
       Canada's first-of-its-kind, deal-making platform where
       innovators, buyers, and policymakers turn emerging tech into real partnerships,
@@ -159,7 +159,10 @@ export default function Home() {
         @media (max-width: 640px) {
           .hero-ctas-wrap { flex-direction: column !important; width: 100% !important; }
           .hero-cta-solid, .hero-cta-ghost { width: 100% !important; justify-content: center !important; }
-          .hero-sub { text-align: left !important; }
+          .hero-sub { text-align: left !important; max-width: 100% !important; }
+        }
+        @media (min-width: 641px) {
+          .hero-sub { max-width: 920px !important; width: 100% !important; }
         }
       `}</style>
 
@@ -190,13 +193,13 @@ export default function Home() {
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 4, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
       </section>
 
-      {/* HERO LOWER */}
+      {/* HERO LWER */}
       <section id="hero-lower" style={{ position: "relative", background: bg, overflow: "hidden", padding: "6rem 5% 8rem" }}>
         <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
           <TextReveal
             text="MEET BUILD SCALE"
             colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}
-            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2.2rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.5rem" }}
+            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2.2rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.5rem", whiteSpace: "nowrap", flexWrap: "nowrap" }}
           />
           <SubtitleReveal textMid={textMid} />
           <CTAReveal dark={dark} textMain={textMain} accent={accent} />

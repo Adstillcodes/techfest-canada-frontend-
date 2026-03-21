@@ -88,7 +88,7 @@ function SpeakerApplicationModal({ onClose, dark }) {
           <button onClick={onClose} style={{ position: "absolute", top: 20, right: 24, background: "transparent", border: "none", color: textMid, cursor: "pointer", padding: 4 }}>
             <X size={20} />
           </button>
-          <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase", color: dark ? "#b99eff" : "#7a3fd1", marginBottom: 6 }}>TFC 2026</p>
+          <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase", color: dark ? "#b99eff" : "#7a3fd1", marginBottom: 6 }}>TTFC 2026</p>
           <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.3rem", fontWeight: 900, color: textMain, marginBottom: 4 }}>Apply to Speak</h2>
           <p style={{ fontSize: "0.85rem", color: textMid, lineHeight: 1.6 }}>We review every application. Our team will be in touch if there's a fit.</p>
         </div>
@@ -98,7 +98,7 @@ function SpeakerApplicationModal({ onClose, dark }) {
             <div style={{ textAlign: "center", padding: "2rem 0" }}>
               <div style={{ fontSize: "3rem", marginBottom: 16 }}>✅</div>
               <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 900, color: textMain, marginBottom: 10 }}>Application Received</h3>
-              <p style={{ fontSize: "0.9rem", color: textMid, lineHeight: 1.7 }}>Thank you for applying. We'll review your submission and reach out if there's a match for TFC 2026.</p>
+              <p style={{ fontSize: "0.9rem", color: textMid, lineHeight: 1.7 }}>Thank you for applying. We'll review your submission and reach out if there's a match for TTFC 2026.</p>
               <button onClick={onClose} style={{ marginTop: 24, padding: "12px 32px", borderRadius: 10, border: "none", cursor: "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.7rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff" }}>Close</button>
             </div>
           ) : (
@@ -184,10 +184,10 @@ export default function Speakers() {
   }, []);
 
   var stats = [
-    { icon: Mic,      value: "50+",  label: "World-Class Speakers" },
-    { icon: Users,    value: "500+", label: "Expected Attendees"   },
-    { icon: Calendar, value: "2",    label: "Days of Content"      },
-    { icon: Award,    value: "10",   label: "Tech Pillars Covered" },
+    { icon: Mic,      value: "50+",   label: "World-Class Speakers" },
+    { icon: Users,    value: "1000+", label: "Expected Attendees"   },
+    { icon: Calendar, value: "2",     label: "Days of Content"      },
+    { icon: Award,    value: "10",    label: "Tech Pillars Covered" },
   ];
 
   var purpleRgb = "122, 63, 209";
@@ -201,9 +201,6 @@ export default function Speakers() {
         .spk-orb-1 { position:absolute; pointer-events:none; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle,rgba(${purpleRgb},0.25) 0%,transparent 70%); top:-160px; left:-100px; filter:blur(70px); }
         .spk-orb-2 { position:absolute; pointer-events:none; width:400px; height:400px; border-radius:50%; background:radial-gradient(circle,rgba(${orangeRgb},0.12) 0%,transparent 70%); top:-80px; right:-80px; filter:blur(70px); }
         .spk-grid { position:absolute; inset:0; pointer-events:none; background-image:linear-gradient(rgba(${purpleRgb},0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(${purpleRgb},0.06) 1px,transparent 1px); background-size:60px 60px; mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%); }
-        .spk-eyebrow { display:inline-flex; align-items:center; gap:8px; background:rgba(${purpleRgb},0.10); border:1px solid rgba(${purpleRgb},0.22); color:#7a3fd1; padding:6px 18px; border-radius:999px; font-size:0.72rem; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; margin-bottom:1.4rem; }
-        .spk-eyebrow-dot { width:6px; height:6px; border-radius:50%; background:#f5a623; box-shadow:0 0 6px #f5a623; animation:spkPulse 2s ease infinite; }
-        @keyframes spkPulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.6;transform:scale(1.4);} }
         .speakers-hero h1 { font-size:clamp(2.4rem,5vw,4rem); font-weight:900; font-family:'Orbitron',sans-serif; line-height:1.05; margin-bottom:1.2rem; color:var(--text-main); }
         .speakers-hero h1 span { color:#f5a623; }
         .spk-sub { font-size:1rem; color:var(--text-muted); max-width:520px; margin:0 auto 2.4rem; line-height:1.75; }
@@ -232,10 +229,6 @@ export default function Speakers() {
             <div className="spk-orb-2" />
             <div className="spk-grid" />
             <div style={{ position: "relative", zIndex: 2 }}>
-              <div className="spk-eyebrow">
-                <span className="spk-eyebrow-dot" />
-                TFC 2026 · Toronto
-              </div>
               <h1>World-Class<br /><span>Speakers</span></h1>
               <p className="spk-sub">
                 Hear from the brightest minds in AI, quantum computing, cybersecurity,
@@ -269,15 +262,15 @@ export default function Speakers() {
               Coming Soon.
             </h2>
             <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", lineHeight: 1.8 }}>
-              We are currently curating our lineup of world-class speakers for TFC 2026. Announcements will be made shortly.
+              We are currently curating our lineup of world-class speakers for TTFC 2026. Announcements will be made shortly.
             </p>
           </div>
 
           {/* Apply to Speak CTA */}
           <div className="spk-cta-band">
             <div>
-              <h3>Want to <span>Speak</span> at TFC?</h3>
-              <p>We're looking for visionary leaders, innovators, and experts to take the stage. Applications for TFC 2026 are now open.</p>
+              <h3>Want to <span>Speak</span> at TTFC?</h3>
+              <p>We're looking for visionary leaders, innovators, and experts to take the stage. Applications for TTFC 2026 are now open.</p>
             </div>
             <button onClick={function() { setModalOpen(true); }} className="spk-cta" style={{ whiteSpace: "nowrap", border: "none" }}>
               Apply to Speak <ChevronRight size={16} />

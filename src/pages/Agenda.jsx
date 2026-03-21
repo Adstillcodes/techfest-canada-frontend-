@@ -380,6 +380,56 @@ export default function AgendaPage() {
       }
     `}</style>
     <div style={{ background: bg, minHeight: "100vh", color: text, overflowX: "hidden", userSelect: "none" }}>
+
+      <Navbar />
+
+      {/* HERO */}
+      <section style={{
+        position: "relative", overflow: "hidden",
+        padding: "clamp(120px, 18vw, 180px) 5% clamp(60px, 8vw, 100px)",
+        background: dark
+          ? "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(122,63,209,0.12) 0%, transparent 70%)"
+          : "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(122,63,209,0.06) 0%, transparent 70%)",
+      }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <p style={{
+              fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800,
+              letterSpacing: "3px", textTransform: "uppercase", color: accent, marginBottom: 16,
+            }}>TTFC 2026 — October 26–27, Toronto</p>
+
+            <h1 style={{
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "clamp(2.2rem, 6vw, 4.2rem)",
+              fontWeight: 900, lineHeight: 1.1, letterSpacing: "-0.5px",
+              marginBottom: 20,
+            }}>
+              The{" "}
+              <span className="agenda-gradient-text" style={{ "--grad-start": accent }}>Agenda</span>
+            </h1>
+
+            <p style={{
+              fontSize: "clamp(1rem, 1.8vw, 1.2rem)", color: dark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
+              lineHeight: 1.7, maxWidth: 620, margin: "0 auto 40px",
+            }}>
+              Two days of keynotes, fireside chats, boardroom briefings, panels, and networking — organised around five technology pillars and five applied sectors.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.7 }}
+          >
+            <div style={{ display: "flex", justifyContent: "center", gap: "clamp(1.5rem, 4vw, 3rem)", flexWrap: "wrap" }}>
+              {[["2", "Days"], ["50+", "Sessions"], ["5", "Pillars"], ["5", "Sectors"]].map(([v, l], i) => (
+                <motion.div key={l}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.06, type: "spring", damping: 20 }}
                   style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                 >
@@ -390,7 +440,7 @@ export default function AgendaPage() {
                 </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -413,7 +463,7 @@ export default function AgendaPage() {
                   color: activeDay === d ? accent : dark ? "rgba(255,255,255,0.48)" : "rgba(0,0,0,0.43)",
                   transition: "all 0.15s",
                 }}>
-                Day {d} <span style={{ opacity: 0.45, fontSize: "0.68rem", marginLeft: "0.3rem" }}>{d === 1 ? "Oct 27" : "Oct 28"}</span>
+                Day {d} <span style={{ opacity: 0.45, fontSize: "0.68rem", marginLeft: "0.3rem" }}>{d === 1 ? "Oct 26" : "Oct 27"}</span>
               </motion.button>
             ))}
 
@@ -502,7 +552,7 @@ export default function AgendaPage() {
         <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 1.5rem" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.2rem" }}>
             <p style={{ fontSize: "0.73rem", opacity: 0.35 }}>
-              {filtered.length} sessions · Day {activeDay} — {activeDay === 1 ? "Oct 27" : "Oct 28"}, 2026
+              {filtered.length} sessions · Day {activeDay} — {activeDay === 1 ? "Oct 26" : "Oct 27"}, 2026
             </p>
 
           </div>

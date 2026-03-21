@@ -138,7 +138,7 @@ export default function Venue() {
             style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.12)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 999, padding: "8px 22px", marginBottom: 28, fontSize: "0.75rem", fontFamily: "'Orbitron',sans-serif", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#ffffff" }}
           >
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px #f5a623", display: "inline-block", animation: "pulseGlow 2s ease-in-out infinite" }} />
-            TFC 2026 — Official Venue
+            TTFC 2026 — Official Venue
           </motion.div>
 
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.9 }}
@@ -151,7 +151,7 @@ export default function Venue() {
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }}
             style={{ fontSize: "clamp(1rem,2vw,1.25rem)", color: "rgba(255,255,255,0.85)", lineHeight: 1.8, maxWidth: 560, margin: "0 auto 40px", textAlign: "center" }}
           >
-            Toronto's most iconic waterfront hotel. Where Canada's tech leaders will converge on 27–28 October 2026.
+            Toronto's most iconic waterfront hotel. Where Canada's tech leaders will converge on 26–27 October 2026.
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, duration: 0.7 }}
@@ -260,7 +260,7 @@ export default function Venue() {
               <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "3px", textTransform: "uppercase", color: accent, marginBottom: 12 }}>Event Infrastructure</p>
               <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.8rem,3.5vw,2.8rem)", fontWeight: 900, color: textMain, marginBottom: 16 }}>World-Class Event Spaces</h2>
               <div style={{ width: 50, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", margin: "0 auto 20px" }} />
-              <p style={{ fontSize: "1.05rem", color: textMid, maxWidth: 520, margin: "0 auto", lineHeight: 1.8 }}>Over 60,000 sq ft of flexible event space — purpose-built for the scale and ambition of TFC 2026.</p>
+              <p style={{ fontSize: "1.05rem", color: textMid, maxWidth: 520, margin: "0 auto", lineHeight: 1.8 }}>Over 60,000 sq ft of flexible event space — purpose-built for the scale and ambition of TTFC 2026.</p>
             </div>
           </FadeIn>
           <div className="spaces-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20 }}>
@@ -346,7 +346,7 @@ export default function Venue() {
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2886.9!2d-79.3732!3d43.6403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89d4cb2b9c01d5c1%3A0x8e9c4f3a5e6d7b8c!2sThe%20Westin%20Harbour%20Castle%2C%20Toronto!5e0!3m2!1sen!2sca!4v1700000000000"
                   style={{ width: "100%", height: "100%", border: "none", display: "block", filter: dark ? "invert(90%) hue-rotate(180deg)" : "none" }}
                   allowFullScreen loading="lazy" />
-                <div style={{ position: "absolute", top: 16, left: 16, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", borderRadius: 10, padding: "8px 14px", fontFamily: "'Orbitron',sans-serif", fontSize: "0.65rem", fontWeight: 800, color: "#fff", letterSpacing: "1px", textTransform: "uppercase" }}>TFC 2026</div>
+                <div style={{ position: "absolute", top: 16, left: 16, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", borderRadius: 10, padding: "8px 14px", fontFamily: "'Orbitron',sans-serif", fontSize: "0.65rem", fontWeight: 800, color: "#fff", letterSpacing: "1px", textTransform: "uppercase" }}>TTFC 2026</div>
               </div>
             </div>
           </FadeIn>
@@ -361,7 +361,7 @@ export default function Venue() {
             <div style={{ position: "absolute", bottom: -40, left: -40, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(122,63,209,0.15) 0%, transparent 70%)", pointerEvents: "none" }} />
             <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.5rem,3vw,2.2rem)", fontWeight: 900, color: textMain, marginBottom: 16 }}>Secure Your Stay</h2>
             <p style={{ fontSize: "1rem", color: textMid, lineHeight: 1.8, maxWidth: 480, margin: "0 auto 32px" }}>
-              Limited rooms available at the TFC 2026 event rate. Book early to stay at the venue and be at the heart of it all.
+              Limited rooms available at the TTFC 2026 event rate. Book early to stay at the venue and be at the heart of it all.
             </p>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
               <a href="https://www.marriott.com/en-us/hotels/yyzwh-the-westin-harbour-castle-toronto/overview/" target="_blank" rel="noreferrer"

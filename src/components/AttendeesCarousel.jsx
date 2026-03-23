@@ -1,6 +1,6 @@
 // components/AttendeesCarousel.jsx
 import { useEffect, useRef, useState } from "react";
-import { client } from "../sanityClient"; // adjust path if needed
+import { client } from "../utils/sanity";// adjust path if needed
 
 /* ─────────────────────────────────────────────
    GROQ query — fetches the singleton toggle

@@ -1,6 +1,6 @@
 // pages/Speakers.jsx
 import React, { useState, useEffect } from "react";
-import { client } from "../sanityClient";
+import { client } from "../utils/sanity";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import AttendeesCarousel from "../components/AttendeesCarousel";

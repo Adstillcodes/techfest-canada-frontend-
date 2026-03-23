@@ -124,7 +124,7 @@ export default function SponsorMarquee({ dark }) {
         .marquee-item img[data-name="Accenture"] { height: 26px; }
         .marquee-item img[data-name="Cvent"]     { height: 26px; }
         .marquee-item img[data-name="VMware"]    { height: 54px; }
-        .marquee-item img[data-name="GE"]       { height: 40px; filter: grayscale(1) brightness(3) !important; }
+        .marquee-item img[data-name="GE"]       { filter: brightness(0) invert(1) opacity(0.6) !important; height: 36px; }
       `}</style>
 
       <div

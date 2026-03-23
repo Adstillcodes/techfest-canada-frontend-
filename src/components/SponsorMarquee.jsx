@@ -3,19 +3,8 @@
 // under the "Sponsor" document type — no code changes needed.
 
 import React, { useEffect, useState } from "react";
-import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import { client } from "../utils/sanity";
-
-// ─── Sanity client ────────────────────────────────────────────────────────────
-// Replace these values with your own project settings, or pass them in via
-// environment variables (recommended for production).
-const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "021qtoci",
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
-  apiVersion: "2024-01-01", // use today's date or later
-  useCdn: true,             // `false` if you need real-time, unpublished data
-});
 
 const builder = imageUrlBuilder(client);
 const urlFor = (source) => builder.image(source);
@@ -35,7 +24,7 @@ const SPONSORS_QUERY = `
 export default function SponsorsMarquee() {
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     client

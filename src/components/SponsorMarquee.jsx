@@ -121,7 +121,7 @@ export default function SponsorMarquee({ dark }) {
         .marquee-item img[data-name="Ford"]      { height: 50px; }
         .marquee-item img[data-name="KPMG"]      { height: 46px; }
         .marquee-item img[data-name="Accenture"] { height: 26px; }
-        .marquee-item img[data-name="Cvent"]    { height: 26px; }
+        .marquee-item img[data-name="Cvent"]    { height: 26px; filter: none !important; opacity: 0.7 !important; }
         .marquee-item img[data-name="VMware"]    { height: 54px; }
       `}</style>
 

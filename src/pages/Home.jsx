@@ -8,6 +8,7 @@ import OnboardingSurvey from "../components/OnboardingSurvey";
 import { motion, useInView } from "framer-motion";
 import SponsorMarquee from "../components/SponsorMarquee";
 import NewsletterBar from "../components/NewsletterBar";
+import { MeshGradient } from "@paper-design/shaders-react";
 
 var containerVariants = {
   hidden: {},
@@ -164,38 +165,6 @@ export default function Home() {
         @media (min-width: 641px) {
           .hero-sub { max-width: 920px !important; width: 100% !important; }
         }
-
-        /* ── FLOATING AURORA ORBS (dark mode only) ── */
-        @keyframes home-orb-1 {
-          0%   { transform: translate(0, 0) scale(1); }
-          25%  { transform: translate(100px, -50px) scale(1.12); }
-          50%  { transform: translate(-60px, 40px) scale(0.94); }
-          75%  { transform: translate(50px, 70px) scale(1.06); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-        @keyframes home-orb-2 {
-          0%   { transform: translate(0, 0) scale(1); }
-          33%  { transform: translate(-80px, 60px) scale(1.1); }
-          66%  { transform: translate(70px, -40px) scale(0.9); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-        @keyframes home-orb-3 {
-          0%   { transform: translate(0, 0) scale(1); }
-          20%  { transform: translate(70px, 50px) scale(1.08); }
-          40%  { transform: translate(-50px, -70px) scale(0.95); }
-          60%  { transform: translate(-90px, 30px) scale(1.12); }
-          80%  { transform: translate(40px, -50px) scale(0.93); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-        .home-ambient-layer {
-          position: absolute; inset: 0; overflow: hidden;
-          pointer-events: none; z-index: 0;
-        }
-        .home-orb {
-          position: absolute; border-radius: 50%;
-          filter: blur(130px); will-change: transform;
-          opacity: 0.7;
-        }
       `}</style>
 
       <Navbar />
@@ -227,34 +196,19 @@ export default function Home() {
       {/* ═══════════ AMBIENT WRAPPER — MEET BUILD SCALE to end ═══════════ */}
       <div style={{ position: "relative" }}>
 
-        {/* Floating ambient orbs — dark mode only */}
+        {/* MeshGradient shader background — dark mode only */}
         {dark && (
-          <div className="home-ambient-layer">
-            <div className="home-orb" style={{
-              width: 800, height: 800, top: "-8%", left: "-18%",
-              background: "radial-gradient(circle, rgba(122,63,209,0.20) 0%, rgba(122,63,209,0.05) 40%, transparent 70%)",
-              animation: "home-orb-1 22s ease-in-out infinite",
-            }} />
-            <div className="home-orb" style={{
-              width: 550, height: 550, top: "12%", right: "-12%",
-              background: "radial-gradient(circle, rgba(245,166,35,0.12) 0%, rgba(245,166,35,0.03) 40%, transparent 70%)",
-              animation: "home-orb-2 28s ease-in-out infinite",
-            }} />
-            <div className="home-orb" style={{
-              width: 650, height: 650, top: "38%", left: "15%",
-              background: "radial-gradient(circle, rgba(155,87,232,0.14) 0%, rgba(155,87,232,0.04) 40%, transparent 70%)",
-              animation: "home-orb-3 32s ease-in-out infinite",
-            }} />
-            <div className="home-orb" style={{
-              width: 450, height: 450, bottom: "15%", left: "-8%",
-              background: "radial-gradient(circle, rgba(245,166,35,0.09) 0%, transparent 60%)",
-              animation: "home-orb-1 26s ease-in-out infinite reverse",
-            }} />
-            <div className="home-orb" style={{
-              width: 600, height: 600, bottom: "3%", right: "2%",
-              background: "radial-gradient(circle, rgba(122,63,209,0.12) 0%, rgba(90,40,180,0.04) 40%, transparent 70%)",
-              animation: "home-orb-2 30s ease-in-out infinite reverse",
-            }} />
+          <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
+            <MeshGradient
+              style={{ width: "100%", height: "100%", position: "absolute", inset: 0, opacity: 0.35 }}
+              colors={["#06020f", "#1a0a3e", "#2d1266", "#f5a623"]}
+              speed={0.4}
+              backgroundColor="#06020f"
+            />
+            {/* Fade-in at top so it blends from the hero */}
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 200, background: "linear-gradient(to bottom, #06020f, transparent)", zIndex: 1 }} />
+            {/* Fade-out at bottom */}
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 200, background: "linear-gradient(to top, #06020f, transparent)", zIndex: 1 }} />
           </div>
         )}
 

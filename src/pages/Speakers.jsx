@@ -11,9 +11,9 @@ import { Mic, Users, Calendar, Award, ChevronRight, X } from "lucide-react";
    the actual speaker documents from Sanity.
 ───────────────────────────────────────────── */
 const SPEAKERS_QUERY = `{
-  "settings": *[_type == "siteSettings"][0]{
-    speakersEnabled
-  },
+"settings": *[_type == "siteSettings" && !(_id in path("drafts.**"))][0]{
+  speakersEnabled
+},
   "speakers": *[_type == "speaker"] | order(order asc) {
     name,
     title,

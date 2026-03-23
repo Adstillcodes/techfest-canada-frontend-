@@ -71,6 +71,7 @@ export default function SponsorMarquee({ dark }) {
   var fade   = dark ? "#06020f" : "#ffffff";
   var items  = [...SPONSORS, ...SPONSORS];
 
+  
   return (
     <section
       style={{

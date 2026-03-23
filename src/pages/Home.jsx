@@ -164,6 +164,38 @@ export default function Home() {
         @media (min-width: 641px) {
           .hero-sub { max-width: 920px !important; width: 100% !important; }
         }
+
+        /* ── FLOATING AURORA ORBS (dark mode only) ── */
+        @keyframes home-orb-1 {
+          0%   { transform: translate(0, 0) scale(1); }
+          25%  { transform: translate(100px, -50px) scale(1.12); }
+          50%  { transform: translate(-60px, 40px) scale(0.94); }
+          75%  { transform: translate(50px, 70px) scale(1.06); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes home-orb-2 {
+          0%   { transform: translate(0, 0) scale(1); }
+          33%  { transform: translate(-80px, 60px) scale(1.1); }
+          66%  { transform: translate(70px, -40px) scale(0.9); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes home-orb-3 {
+          0%   { transform: translate(0, 0) scale(1); }
+          20%  { transform: translate(70px, 50px) scale(1.08); }
+          40%  { transform: translate(-50px, -70px) scale(0.95); }
+          60%  { transform: translate(-90px, 30px) scale(1.12); }
+          80%  { transform: translate(40px, -50px) scale(0.93); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        .home-ambient-layer {
+          position: absolute; inset: 0; overflow: hidden;
+          pointer-events: none; z-index: 0;
+        }
+        .home-orb {
+          position: absolute; border-radius: 50%;
+          filter: blur(130px); will-change: transform;
+          opacity: 0.7;
+        }
       `}</style>
 
       <Navbar />
@@ -174,7 +206,6 @@ export default function Home() {
           <video autoPlay muted loop playsInline style={{ position: "absolute", top: "50%", left: "50%", minWidth: "100%", minHeight: "100%", width: "auto", height: "auto", transform: "translate(-50%, -50%)", objectFit: "cover" }}>
             <source src="/hero-bg.mp4" type="video/mp4" />
           </video>
-          {/* Opacity fixed here (0.45 instead of 0.75) */}
           <div style={{ position: "absolute", inset: 0, background: dark ? "rgba(6,2,15,0.65)" : "rgba(244,240,255,0.45)" }} />
         </div>
 
@@ -193,27 +224,69 @@ export default function Home() {
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 4, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
       </section>
 
-      {/* HERO LWER */}
-      <section id="hero-lower" style={{ position: "relative", background: bg, overflow: "hidden", padding: "6rem 5% 8rem" }}>
-        <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-          <TextReveal
-            text="MEET BUILD SCALE"
-            colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}
-            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2.2rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.5rem", whiteSpace: "nowrap", flexWrap: "nowrap" }}
-          />
-          <SubtitleReveal textMid={textMid} />
-          <CTAReveal dark={dark} textMain={textMain} accent={accent} />
+      {/* ═══════════ AMBIENT WRAPPER — MEET BUILD SCALE to end ═══════════ */}
+      <div style={{ position: "relative" }}>
+
+        {/* Floating ambient orbs — dark mode only */}
+        {dark && (
+          <div className="home-ambient-layer">
+            <div className="home-orb" style={{
+              width: 800, height: 800, top: "-8%", left: "-18%",
+              background: "radial-gradient(circle, rgba(122,63,209,0.20) 0%, rgba(122,63,209,0.05) 40%, transparent 70%)",
+              animation: "home-orb-1 22s ease-in-out infinite",
+            }} />
+            <div className="home-orb" style={{
+              width: 550, height: 550, top: "12%", right: "-12%",
+              background: "radial-gradient(circle, rgba(245,166,35,0.12) 0%, rgba(245,166,35,0.03) 40%, transparent 70%)",
+              animation: "home-orb-2 28s ease-in-out infinite",
+            }} />
+            <div className="home-orb" style={{
+              width: 650, height: 650, top: "38%", left: "15%",
+              background: "radial-gradient(circle, rgba(155,87,232,0.14) 0%, rgba(155,87,232,0.04) 40%, transparent 70%)",
+              animation: "home-orb-3 32s ease-in-out infinite",
+            }} />
+            <div className="home-orb" style={{
+              width: 450, height: 450, bottom: "15%", left: "-8%",
+              background: "radial-gradient(circle, rgba(245,166,35,0.09) 0%, transparent 60%)",
+              animation: "home-orb-1 26s ease-in-out infinite reverse",
+            }} />
+            <div className="home-orb" style={{
+              width: 600, height: 600, bottom: "3%", right: "2%",
+              background: "radial-gradient(circle, rgba(122,63,209,0.12) 0%, rgba(90,40,180,0.04) 40%, transparent 70%)",
+              animation: "home-orb-2 30s ease-in-out infinite reverse",
+            }} />
+          </div>
+        )}
+
+        {/* HERO LOWER */}
+        <section id="hero-lower" style={{ position: "relative", zIndex: 1, overflow: "hidden", padding: "6rem 5% 8rem" }}>
+          <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+            <TextReveal
+              text="MEET BUILD SCALE"
+              colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}
+              style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2.2rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.5rem", whiteSpace: "nowrap", flexWrap: "nowrap" }}
+            />
+            <SubtitleReveal textMid={textMid} />
+            <CTAReveal dark={dark} textMain={textMain} accent={accent} />
+          </div>
+        </section>
+
+        {/* ABOUT */}
+        <div id="about-section" style={{ position: "relative", zIndex: 1 }}>
+          <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
         </div>
-      </section>
 
-      {/* ABOUT */}
-      <div id="about-section" style={{ background: bg }}>
-        <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <SponsorMarquee dark={dark} />
+        </div>
+        <div style={{ height: "4rem", position: "relative", zIndex: 1 }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <NewsletterBar dark={dark} />
+        </div>
+
       </div>
+      {/* ═══ END AMBIENT WRAPPER ═══ */}
 
-      <SponsorMarquee dark={dark} />
-      <div style={{ height: "4rem", background: dark ? "#06020f" : "#ffffff" }} />
-      <NewsletterBar dark={dark} />
       <Footer />
 
       <InquiryModal isOpen={inquiryOpen} onClose={function () { setInquiryOpen(false); }} />

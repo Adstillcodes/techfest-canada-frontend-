@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { client } from "../utils/sanity";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import AttendeesCarousel from "../components/AttendeesCarousel";
 import { Mic, Users, Calendar, Award, ChevronRight, X } from "lucide-react";
 
-/* ─────────────────────────────────────────────
-   GROQ — fetches toggle + speaker list.
-   Excludes drafts so only Published values
-   are read by the frontend.
-───────────────────────────────────────────── */
 const SPEAKERS_QUERY = `{
   "settings": *[_type == "siteSettings" && !(_id in path("drafts.**"))][0]{
     attendeesCarouselEnabled,
@@ -18,6 +13,7 @@ const SPEAKERS_QUERY = `{
   "speakers": *[_type == "speaker"] | order(order asc) {
     name,
     title,
+    company,
     "image": image.asset->url
   }
 }`;
@@ -54,8 +50,79 @@ const EXPERIENCE_OPTIONS = [
 ];
 
 /* ─────────────────────────────────────────────
-   Apply-to-Speak Modal (unchanged from your
-   working version — EmailJS intact)
+   Speakers Carousel — mirrors AttendeesCarousel
+   exactly: auto-scroll, pause on hover, arrows,
+   rank badge, image, name, role, company card.
+───────────────────────────────────────────── */
+function SpeakersCarousel({ speakers }) {
+  const trackRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    let raf;
+    const step = () => {
+      if (!isPaused) {
+        track.scrollLeft += 0.4;
+        if (track.scrollLeft >= track.scrollWidth / 2) {
+          track.scrollLeft = 0;
+        }
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [isPaused]);
+
+  const scrollByAmount = (dir) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollBy({ left: dir === "left" ? -260 : 260, behavior: "smooth" });
+  };
+
+  return (
+    <section className="attendees-section">
+      <div className="container">
+        <h2 className="attendees-title">
+          Featured <span>Speakers</span>
+        </h2>
+
+        <div
+          className="carousel-wrapper"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {/* LEFT ARROW */}
+          <button className="carousel-arrow left" onClick={() => scrollByAmount("left")}>
+            ‹
+          </button>
+
+          {/* TRACK — duplicated for seamless infinite loop */}
+          <div className="attendees-carousel" ref={trackRef}>
+            {[...speakers, ...speakers].map((speaker, index) => (
+              <div key={index} className="attendee-card">
+                <div className="rank-badge">#{(index % speakers.length) + 1}</div>
+                <img src={speaker.image} alt={speaker.name} />
+                <h4>{speaker.name}</h4>
+                <p className="attendee-role">{speaker.title}</p>
+                <p className="attendee-company">{speaker.company}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* RIGHT ARROW */}
+          <button className="carousel-arrow right" onClick={() => scrollByAmount("right")}>
+            ›
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Apply-to-Speak Modal
 ───────────────────────────────────────────── */
 function SpeakerApplicationModal({ onClose, dark }) {
   var s1 = useState({ firstName: "", lastName: "", email: "", linkedin: "", industry: "", jobTitle: "", experience: "" });
@@ -64,14 +131,14 @@ function SpeakerApplicationModal({ onClose, dark }) {
   var s3 = useState(false); var submitted = s3[0]; var setSubmitted = s3[1];
   var s4 = useState(false); var loading = s4[0]; var setLoading = s4[1];
 
-  var bg       = dark ? "#0d0620" : "#ffffff";
+  var bg = dark ? "#0d0620" : "#ffffff";
   var textMain = dark ? "#ffffff" : "#0d0520";
-  var textMid  = dark ? "rgba(220,210,255,0.75)" : "rgba(13,5,32,0.65)";
-  var inputBg  = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
+  var textMid = dark ? "rgba(220,210,255,0.75)" : "rgba(13,5,32,0.65)";
+  var inputBg = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
   var inputBdr = dark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)";
 
   function handleChange(e) {
-    setFormData(function(prev) { return Object.assign({}, prev, { [e.target.name]: e.target.value }); });
+    setFormData(function (prev) { return Object.assign({}, prev, { [e.target.name]: e.target.value }); });
     setError("");
   }
 
@@ -89,21 +156,21 @@ function SpeakerApplicationModal({ onClose, dark }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          service_id:  "service_gy3fvru",
+          service_id: "service_gy3fvru",
           template_id: "template_ufqzzep",
-          user_id:     "gZgYZtLCXPVgUsVj_",
+          user_id: "gZgYZtLCXPVgUsVj_",
           template_params: {
-            to_email:   "baldeep@thetechfestival.com",
-            from_name:  formData.firstName + " " + formData.lastName,
+            to_email: "baldeep@thetechfestival.com",
+            from_name: formData.firstName + " " + formData.lastName,
             from_email: formData.email,
-            message:    "[Speaker Application]\nName: " + formData.firstName + " " + formData.lastName + "\nTitle: " + formData.jobTitle + "\nIndustry: " + formData.industry + "\nExperience: " + formData.experience + "\nLinkedIn: " + (formData.linkedin || "N/A"),
+            message: "[Speaker Application]\nName: " + formData.firstName + " " + formData.lastName + "\nTitle: " + formData.jobTitle + "\nIndustry: " + formData.industry + "\nExperience: " + formData.experience + "\nLinkedIn: " + (formData.linkedin || "N/A"),
           },
         }),
       });
       setLoading(false);
       if (res.ok || res.status === 200) { setSubmitted(true); }
       else { setError("Something went wrong. Please try again."); }
-    } catch(err) {
+    } catch (err) {
       setLoading(false);
       setError("Something went wrong. Please try again.");
     }
@@ -125,10 +192,9 @@ function SpeakerApplicationModal({ onClose, dark }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(10px)", padding: "20px" }}
-      onClick={function(e) { if (e.target === e.currentTarget) onClose(); }}
+      onClick={function (e) { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{ background: bg, width: "100%", maxWidth: 560, borderRadius: 24, border: "1px solid " + inputBdr, boxShadow: "0 24px 64px rgba(0,0,0,0.5)", maxHeight: "90vh", overflowY: "auto", position: "relative" }}>
-        {/* Header */}
         <div style={{ padding: "28px 32px 0", position: "sticky", top: 0, background: bg, zIndex: 2, paddingBottom: 20, borderBottom: "1px solid " + inputBdr }}>
           <button onClick={onClose} style={{ position: "absolute", top: 20, right: 24, background: "transparent", border: "none", color: textMid, cursor: "pointer", padding: 4 }}>
             <X size={20} />
@@ -174,14 +240,14 @@ function SpeakerApplicationModal({ onClose, dark }) {
                 <label style={labelStyle}>Industry *</label>
                 <select name="industry" value={formData.industry} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}>
                   <option value="">Select your industry</option>
-                  {INDUSTRIES.map(function(ind) { return <option key={ind} value={ind}>{ind}</option>; })}
+                  {INDUSTRIES.map(function (ind) { return <option key={ind} value={ind}>{ind}</option>; })}
                 </select>
               </div>
               <div>
                 <label style={labelStyle}>Speaking Experience *</label>
                 <select name="experience" value={formData.experience} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}>
                   <option value="">Number of conferences spoken at</option>
-                  {EXPERIENCE_OPTIONS.map(function(exp) { return <option key={exp} value={exp}>{exp}</option>; })}
+                  {EXPERIENCE_OPTIONS.map(function (exp) { return <option key={exp} value={exp}>{exp}</option>; })}
                 </select>
               </div>
               {error && (
@@ -206,29 +272,25 @@ function SpeakerApplicationModal({ onClose, dark }) {
 export default function Speakers() {
   var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
   var s2 = useState(false); var modalOpen = s2[0]; var setModalOpen = s2[1];
-
-  // null = still loading from Sanity, true/false = resolved
   var s3 = useState(null); var speakersEnabled = s3[0]; var setSpeakersEnabled = s3[1];
-  var s4 = useState([]);   var speakers = s4[0];         var setSpeakers = s4[1];
+  var s4 = useState([]); var speakers = s4[0]; var setSpeakers = s4[1];
 
-  /* Dark-mode observer */
-  useEffect(function() {
+  useEffect(function () {
     setDark(document.body.classList.contains("dark-mode"));
-    var obs = new MutationObserver(function() { setDark(document.body.classList.contains("dark-mode")); });
+    var obs = new MutationObserver(function () { setDark(document.body.classList.contains("dark-mode")); });
     obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    return function() { obs.disconnect(); };
+    return function () { obs.disconnect(); };
   }, []);
 
-  /* Fetch Sanity toggle + speakers */
-  useEffect(function() {
+  useEffect(function () {
     client
       .fetch(SPEAKERS_QUERY)
-      .then(function(data) {
-        console.log("Sanity response:", data); // remove once confirmed working
+      .then(function (data) {
+        console.log("Sanity response:", data);
         setSpeakersEnabled(data?.settings?.speakersEnabled ?? false);
         setSpeakers(data?.speakers ?? []);
       })
-      .catch(function(err) {
+      .catch(function (err) {
         console.error("Sanity fetch error:", err);
         setSpeakersEnabled(false);
         setSpeakers([]);
@@ -236,10 +298,10 @@ export default function Speakers() {
   }, []);
 
   var stats = [
-    { icon: Mic,      value: "50+",   label: "World-Class Speakers" },
-    { icon: Users,    value: "1000+", label: "Expected Attendees"   },
-    { icon: Calendar, value: "2",     label: "Days of Content"      },
-    { icon: Award,    value: "10",    label: "Tech Pillars Covered" },
+    { icon: Mic, value: "50+", label: "World-Class Speakers" },
+    { icon: Users, value: "1000+", label: "Expected Attendees" },
+    { icon: Calendar, value: "2", label: "Days of Content" },
+    { icon: Award, value: "10", label: "Tech Pillars Covered" },
   ];
 
   var purpleRgb = "122, 63, 209";
@@ -247,7 +309,8 @@ export default function Speakers() {
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .speakers-page { min-height:100vh; display:flex; flex-direction:column; background:var(--bg-main); }
         .speakers-hero { position:relative; overflow:hidden; padding:6rem 5% 4rem; text-align:center; }
         .spk-orb-1 { position:absolute; pointer-events:none; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle,rgba(${purpleRgb},0.25) 0%,transparent 70%); top:-160px; left:-100px; filter:blur(70px); }
@@ -294,7 +357,7 @@ export default function Speakers() {
 
           {/* ── Stats ── */}
           <div className="speakers-stats">
-            {stats.map(function(s) {
+            {stats.map(function (s) {
               var Icon = s.icon;
               return (
                 <div className="stat-cell" key={s.label}>
@@ -310,32 +373,17 @@ export default function Speakers() {
 
           {/* ── Speakers section — controlled by Sanity toggle ── */}
           {speakersEnabled === null ? (
-            /* Loading state */
+            /* Loading */
             <div style={{ textAlign: "center", padding: "3rem 5% 6rem" }}>
               <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Loading…</p>
             </div>
 
           ) : speakersEnabled ? (
-            /* Speakers ON — show speaker cards from Sanity */
-            <div style={{ padding: "3rem 5%" }}>
-              <h2 style={{ textAlign: "center", fontFamily: "'Orbitron',sans-serif", fontSize: "2.5rem", fontWeight: 900, marginBottom: "2rem", color: "var(--text-main)" }}>
-                Featured Speakers
-              </h2>
-              <div style={{ display: "flex", gap: "20px", overflowX: "auto" }}>
-                {speakers.map(function(speaker, index) {
-                  return (
-                    <div key={index} style={{ minWidth: "250px", background: "var(--bg-card)", padding: "16px", borderRadius: "16px", border: "1px solid var(--border-main)" }}>
-                      <img src={speaker.image} alt={speaker.name} style={{ width: "100%", borderRadius: "12px", marginBottom: "10px" }} />
-                      <h3 style={{ color: "var(--text-main)", marginBottom: 4 }}>{speaker.name}</h3>
-                      <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>{speaker.title}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            /* Speakers ON — full carousel matching AttendeesCarousel style */
+            <SpeakersCarousel speakers={speakers} />
 
           ) : (
-            /* Speakers OFF — show Coming Soon */
+            /* Speakers OFF — Coming Soon */
             <div style={{ textAlign: "center", padding: "3rem 5% 6rem", maxWidth: 640, margin: "0 auto" }}>
               <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2rem,5vw,3.5rem)", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1.5rem" }}>
                 Coming Soon.
@@ -346,7 +394,7 @@ export default function Speakers() {
             </div>
           )}
 
-          {/* ── Attendees Carousel — has its own internal Sanity toggle ── */}
+          {/* ── Attendees Carousel — independent Sanity toggle ── */}
           <AttendeesCarousel />
 
           {/* ── Apply to Speak CTA ── */}
@@ -355,7 +403,7 @@ export default function Speakers() {
               <h3>Want to <span>Speak</span> at TTFC?</h3>
               <p>We're looking for visionary leaders, innovators, and experts to take the stage. Applications for TTFC 2026 are now open.</p>
             </div>
-            <button onClick={function() { setModalOpen(true); }} className="spk-cta" style={{ whiteSpace: "nowrap", border: "none" }}>
+            <button onClick={function () { setModalOpen(true); }} className="spk-cta" style={{ whiteSpace: "nowrap", border: "none" }}>
               Apply to Speak <ChevronRight size={16} />
             </button>
           </div>
@@ -364,7 +412,7 @@ export default function Speakers() {
         <Footer />
       </div>
 
-      {modalOpen && <SpeakerApplicationModal onClose={function() { setModalOpen(false); }} dark={dark} />}
+      {modalOpen && <SpeakerApplicationModal onClose={function () { setModalOpen(false); }} dark={dark} />}
     </>
   );
 }

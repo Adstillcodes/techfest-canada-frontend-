@@ -6,7 +6,7 @@ import { client } from "../sanityClient"; // adjust path if needed
    GROQ query — fetches the singleton toggle
    from the "siteSettings" Sanity document.
 ───────────────────────────────────────────── */
-const SETTINGS_QUERY = `*[_type == "siteSettings"][0]{
+const SETTINGS_QUERY = `*[_type == "siteSettings" && !(_id in path("drafts.**"))][0]{
   attendeesCarouselEnabled
 }`;
 

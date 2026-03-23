@@ -1,10 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+// src/pages/Speakers.jsx
+import React, { useState, useEffect } from 'react';
 import { client } from "../utils/sanity";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import AttendeesCarousel from "../components/AttendeesCarousel";
+import SpeakersCarousel from "../components/SpeakersCarousel";
 import { Mic, Users, Calendar, Award, ChevronRight, X } from "lucide-react";
 
+/* ─────────────────────────────────────────────
+   GROQ — fetches toggle + full speaker list
+   including optional social links and bio.
+───────────────────────────────────────────── */
 const SPEAKERS_QUERY = `{
   "settings": *[_type == "siteSettings" && !(_id in path("drafts.**"))][0]{
     attendeesCarouselEnabled,
@@ -14,6 +20,11 @@ const SPEAKERS_QUERY = `{
     name,
     title,
     company,
+    bio,
+    linkedin,
+    twitter,
+    github,
+    website,
     "image": image.asset->url
   }
 }`;
@@ -48,78 +59,6 @@ const EXPERIENCE_OPTIONS = [
   "15–25 conferences",
   "25+ conferences",
 ];
-
-/* ─────────────────────────────────────────────
-   Speakers Carousel — mirrors AttendeesCarousel
-   exactly: auto-scroll, pause on hover, arrows,
-   rank badge, image, name, role, company card.
-───────────────────────────────────────────── */
-function SpeakersCarousel({ speakers }) {
-  const trackRef = useRef(null);
-  const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    let raf;
-    const step = () => {
-      if (!isPaused) {
-        track.scrollLeft += 0.4;
-        if (track.scrollLeft >= track.scrollWidth / 2) {
-          track.scrollLeft = 0;
-        }
-      }
-      raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [isPaused]);
-
-  const scrollByAmount = (dir) => {
-    const track = trackRef.current;
-    if (!track) return;
-    track.scrollBy({ left: dir === "left" ? -260 : 260, behavior: "smooth" });
-  };
-
-  return (
-    <section className="attendees-section">
-      <div className="container">
-        <h2 className="attendees-title">
-          Featured <span>Speakers</span>
-        </h2>
-
-        <div
-          className="carousel-wrapper"
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          {/* LEFT ARROW */}
-          <button className="carousel-arrow left" onClick={() => scrollByAmount("left")}>
-            ‹
-          </button>
-
-          {/* TRACK — duplicated for seamless infinite loop */}
-          <div className="attendees-carousel" ref={trackRef}>
-            {[...speakers, ...speakers].map((speaker, index) => (
-              <div key={index} className="attendee-card">
-                <div className="rank-badge">#{(index % speakers.length) + 1}</div>
-                <img src={speaker.image} alt={speaker.name} />
-                <h4>{speaker.name}</h4>
-                <p className="attendee-role">{speaker.title}</p>
-                <p className="attendee-company">{speaker.company}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* RIGHT ARROW */}
-          <button className="carousel-arrow right" onClick={() => scrollByAmount("right")}>
-            ›
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ─────────────────────────────────────────────
    Apply-to-Speak Modal
@@ -275,6 +214,7 @@ export default function Speakers() {
   var s3 = useState(null); var speakersEnabled = s3[0]; var setSpeakersEnabled = s3[1];
   var s4 = useState([]); var speakers = s4[0]; var setSpeakers = s4[1];
 
+  /* Dark-mode observer */
   useEffect(function () {
     setDark(document.body.classList.contains("dark-mode"));
     var obs = new MutationObserver(function () { setDark(document.body.classList.contains("dark-mode")); });
@@ -282,6 +222,7 @@ export default function Speakers() {
     return function () { obs.disconnect(); };
   }, []);
 
+  /* Fetch from Sanity */
   useEffect(function () {
     client
       .fetch(SPEAKERS_QUERY)
@@ -371,7 +312,7 @@ export default function Speakers() {
             })}
           </div>
 
-          {/* ── Speakers section — controlled by Sanity toggle ── */}
+          {/* ── Speakers section — Sanity toggle controlled ── */}
           {speakersEnabled === null ? (
             /* Loading */
             <div style={{ textAlign: "center", padding: "3rem 5% 6rem" }}>
@@ -379,11 +320,11 @@ export default function Speakers() {
             </div>
 
           ) : speakersEnabled ? (
-            /* Speakers ON — full carousel matching AttendeesCarousel style */
+            /* ON — testimonial-style card carousel */
             <SpeakersCarousel speakers={speakers} />
 
           ) : (
-            /* Speakers OFF — Coming Soon */
+            /* OFF — Coming Soon */
             <div style={{ textAlign: "center", padding: "3rem 5% 6rem", maxWidth: 640, margin: "0 auto" }}>
               <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2rem,5vw,3.5rem)", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1.5rem" }}>
                 Coming Soon.

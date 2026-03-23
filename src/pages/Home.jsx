@@ -8,7 +8,6 @@ import OnboardingSurvey from "../components/OnboardingSurvey";
 import { motion, useInView } from "framer-motion";
 import SponsorMarquee from "../components/SponsorMarquee";
 import NewsletterBar from "../components/NewsletterBar";
-import { MeshGradient } from "@paper-design/shaders-react";
 
 var containerVariants = {
   hidden: {},
@@ -193,55 +192,27 @@ export default function Home() {
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 4, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
       </section>
 
-      {/* ═══════════ AMBIENT WRAPPER — MEET BUILD SCALE to end ═══════════ */}
-      <div style={{ position: "relative" }}>
-
-        {/* MeshGradient shader background — dark mode only */}
-        {dark && (
-          <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
-            <MeshGradient
-              colors={["#06020f", "#1a0a3e", "#2d1266", "#f5a623"]}
-              speed={0.18}
-              distortion={0.4}
-              swirl={0.3}
-              style={{ width: "100%", height: "100%", position: "absolute", inset: 0, opacity: 0.30 }}
-            />
-            {/* Fade-in at top so it blends from the hero */}
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 250, background: "linear-gradient(to bottom, #06020f, transparent)", zIndex: 1 }} />
-            {/* Fade-out at bottom */}
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 250, background: "linear-gradient(to top, #06020f, transparent)", zIndex: 1 }} />
-          </div>
-        )}
-
-        {/* HERO LOWER */}
-        <section id="hero-lower" style={{ position: "relative", zIndex: 1, overflow: "hidden", padding: "6rem 5% 8rem" }}>
-          <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-            <TextReveal
-              text="MEET BUILD SCALE"
-              colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}
-              style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2.2rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.5rem", whiteSpace: "nowrap", flexWrap: "nowrap" }}
-            />
-            <SubtitleReveal textMid={textMid} />
-            <CTAReveal dark={dark} textMain={textMain} accent={accent} />
-          </div>
-        </section>
-
-        {/* ABOUT */}
-        <div id="about-section" style={{ position: "relative", zIndex: 1 }}>
-          <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
+      {/* HERO LOWER */}
+      <section id="hero-lower" style={{ position: "relative", background: bg, overflow: "hidden", padding: "6rem 5% 8rem" }}>
+        <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+          <TextReveal
+            text="MEET BUILD SCALE"
+            colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}
+            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2.2rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.5rem", whiteSpace: "nowrap", flexWrap: "nowrap" }}
+          />
+          <SubtitleReveal textMid={textMid} />
+          <CTAReveal dark={dark} textMain={textMain} accent={accent} />
         </div>
+      </section>
 
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <SponsorMarquee dark={dark} />
-        </div>
-        <div style={{ height: "4rem", position: "relative", zIndex: 1 }} />
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <NewsletterBar dark={dark} />
-        </div>
-
+      {/* ABOUT */}
+      <div id="about-section" style={{ background: bg }}>
+        <AboutUs onWriteToUs={function () { setInquiryOpen(true); }} />
       </div>
-      {/* ═══ END AMBIENT WRAPPER ═══ */}
 
+      <SponsorMarquee dark={dark} />
+      <div style={{ height: "4rem", background: dark ? "#06020f" : "#ffffff" }} />
+      <NewsletterBar dark={dark} />
       <Footer />
 
       <InquiryModal isOpen={inquiryOpen} onClose={function () { setInquiryOpen(false); }} />

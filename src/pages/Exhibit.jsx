@@ -15,9 +15,9 @@ const BOOTH_TIERS = [
       "Strong brand presence at an accessible investment level",
       "Ideal for first time exhibitors and emerging companies",
       "Perfect for lead generation, networking, and market validation",
-      "A sharp entry point into Canada’s innovation ecosystem"
+      "A sharp entry point into Canada's innovation ecosystem"
     ],
-    image: "/booths/single.jpg"
+    images: ["/booths/single-1.jpg", "/booths/single-2.jpg", "/booths/single-3.jpg"]
   },
   {
     id: "double",
@@ -32,7 +32,7 @@ const BOOTH_TIERS = [
       "Ideal for companies with multiple products or services",
       "Positions your brand as established, credible, and growth ready"
     ],
-    image: "/booths/double.jpg"
+    images: ["/booths/double-1.jpg", "/booths/double-2.jpg", "/booths/double-3.jpg"]
   },
   {
     id: "triple",
@@ -47,7 +47,7 @@ const BOOTH_TIERS = [
       "Supports stronger traffic flow and richer visitor engagement",
       "Ideal for brands looking to signal scale, depth, and leadership"
     ],
-    image: "/booths/triple.jpg"
+    images: ["/booths/triple-1.jpg", "/booths/triple-2.jpg", "/booths/triple-3.jpg"]
   },
   {
     id: "quadruple",
@@ -62,9 +62,93 @@ const BOOTH_TIERS = [
       "Enables premium experiences, larger teams, and stronger engagement",
       "Best choice for companies looking to dominate attention and drive momentum"
     ],
-    image: "/booths/quad.jpg"
+    images: ["/booths/quad-1.jpg", "/booths/quad-2.jpg", "/booths/quad-3.jpg"]
   }
 ];
+
+/* ═══════════════════════════════════════════════════════
+   BOOTH IMAGE GALLERY — auto-rotating with dot controls
+   ═══════════════════════════════════════════════════════ */
+
+function BoothGallery({ images, isDark, border, cardBg }) {
+  const [active, setActive] = useState(0);
+  const intervalRef = useRef(null);
+
+  function startTimer() {
+    clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(function () {
+      setActive(function (prev) { return (prev + 1) % images.length; });
+    }, 3500);
+  }
+
+  useEffect(function () {
+    startTimer();
+    return function () { clearInterval(intervalRef.current); };
+  }, []);
+
+  function handleDot(i) {
+    setActive(i);
+    startTimer();
+  }
+
+  return (
+    <div style={{
+      borderRadius: 24, overflow: "hidden", aspectRatio: "4/3",
+      border: "1px solid " + border, background: cardBg,
+      position: "relative"
+    }}>
+      <AnimatePresence mode="sync">
+        {images.map(function (src, i) {
+          return i === active ? (
+            <motion.img
+              key={src}
+              src={src}
+              alt={"Booth view " + (i + 1)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7 }}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 2 }}
+              onError={function (e) { e.target.style.display = "none"; }}
+            />
+          ) : null;
+        })}
+      </AnimatePresence>
+
+      {/* Dot navigation */}
+      <div style={{
+        position: "absolute", bottom: 14, left: 0, right: 0, zIndex: 5,
+        display: "flex", justifyContent: "center", gap: 8,
+      }}>
+        {images.map(function (_, i) {
+          return (
+            <button
+              key={i}
+              onClick={function () { handleDot(i); }}
+              style={{
+                width: i === active ? 22 : 8,
+                height: 8,
+                borderRadius: 999,
+                border: "none",
+                cursor: "pointer",
+                background: i === active ? "#f5a623" : "rgba(255,255,255,0.45)",
+                transition: "all 0.3s ease",
+                padding: 0,
+              }}
+            />
+          );
+        })}
+      </div>
+
+      {/* Subtle gradient overlay at bottom for dot readability */}
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0, height: 60, zIndex: 3,
+        background: "linear-gradient(to top, rgba(0,0,0,0.35), transparent)",
+        pointerEvents: "none", borderRadius: "0 0 24px 24px",
+      }} />
+    </div>
+  );
+}
 
 export default function Exhibit() {
   const [isDark, setIsDark] = useState(true);
@@ -175,7 +259,7 @@ export default function Exhibit() {
             fontSize: "clamp(1.1rem, 2vw, 1.3rem)", color: textMuted, lineHeight: 1.7,
             maxWidth: 780, margin: "0 auto", fontWeight: 500
           }}>
-            Put your brand at the centre of Canada’s most important technology conversations.
+            Put your brand at the centre of Canada's most important technology conversations.
           </p>
         </motion.div>
       </section>
@@ -219,7 +303,7 @@ export default function Exhibit() {
             Secure Your <GradientSpan>Booth</GradientSpan>
           </h2>
           <p style={{ fontSize: "1.05rem", color: textMuted, lineHeight: 1.8, textAlign: "justify" }}>
-            Prime exhibition spaces are limited and high visibility locations will be allocated on a first come first served basis. If your company is ready to be seen by the right audience, build strategic relationships, and stand out at one of Canada’s most ambitious technology platforms, now is the time to reserve your space.
+            Prime exhibition spaces are limited and high visibility locations will be allocated on a first come first served basis. If your company is ready to be seen by the right audience, build strategic relationships, and stand out at one of Canada's most ambitious technology platforms, now is the time to reserve your space.
           </p>
         </motion.div>
       </section>
@@ -229,7 +313,7 @@ export default function Exhibit() {
         <motion.div
           initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}
           className="bottom-cta-grid"
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 28, overflow: "hidden", border: `1px solid ${border}`, background: cardBg, minHeight: 400 }}
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 28, overflow: "hidden", border: "1px solid " + border, background: cardBg, minHeight: 400 }}
         >
           <div style={{ position: "relative", background: isDark ? "#120a22" : "#ede8f7", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", minHeight: 300 }}>
             <img src={isDark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada"
@@ -285,8 +369,8 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
     <section style={{
       padding: "clamp(60px, 8vw, 100px) 5%",
       background: hasBg ? (isDark ? "rgba(122,63,209,0.03)" : "rgba(122,63,209,0.02)") : "transparent",
-      borderTop: hasBg ? `1px solid ${border}` : "none",
-      borderBottom: hasBg ? `1px solid ${border}` : "none",
+      borderTop: hasBg ? "1px solid " + border : "none",
+      borderBottom: hasBg ? "1px solid " + border : "none",
     }}>
       <div className="exhibit-row" style={{
         maxWidth: 1300, margin: "0 auto",
@@ -294,22 +378,14 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
         gap: "clamp(40px, 6vw, 80px)", alignItems: "center",
       }}>
         
-        {/* LEFT: SINGLE IMAGE */}
+        {/* LEFT: REVOLVING GALLERY */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ type: "spring", bounce: 0.2, duration: 1.2 }}
         >
-          <div style={{
-            borderRadius: 24, overflow: "hidden", aspectRatio: "4/3",
-            border: `1px solid ${border}`, background: cardBg,
-            position: "relative"
-          }}>
-            <img src={tier.image} alt={tier.title} style={{ width: "100%", height: "100%", objectFit: "cover", position: "relative", zIndex: 2 }} 
-              onError={(e) => e.target.style.display = 'none'}
-            />
-          </div>
+          <BoothGallery images={tier.images} isDark={isDark} border={border} cardBg={cardBg} />
         </motion.div>
 
         {/* RIGHT: TEXT CONTENT */}
@@ -338,7 +414,7 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
             {tier.description}
           </div>
 
-          <div style={{ background: cardBg, border: `1px solid ${border}`, borderRadius: 16, padding: "24px 32px" }}>
+          <div style={{ background: cardBg, border: "1px solid " + border, borderRadius: 16, padding: "24px 32px" }}>
             <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.1rem", fontWeight: 800, color: textMain, marginBottom: 20 }}>
               Why this works
             </h3>
@@ -373,7 +449,7 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
 }
 
 /* ═══════════════════════════════════════════════════════
-   ENQUIRE MODAL COMPONENT (WITHOUT EMAILJS)
+   ENQUIRE MODAL COMPONENT
    ═══════════════════════════════════════════════════════ */
 
 function EnquireModal({ booth, onClose, isDark, textMain, border }) {
@@ -404,7 +480,7 @@ function EnquireModal({ booth, onClose, isDark, textMain, border }) {
   const inputStyle = {
     width: "100%", padding: "12px 16px", borderRadius: "8px",
     background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
-    border: `1px solid ${border}`, color: textMain, fontSize: "0.95rem",
+    border: "1px solid " + border, color: textMain, fontSize: "0.95rem",
     outline: "none", marginBottom: "16px"
   };
 
@@ -417,7 +493,7 @@ function EnquireModal({ booth, onClose, isDark, textMain, border }) {
         initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
         style={{
           background: isDark ? "#120a22" : "#ffffff", width: "100%", maxWidth: "500px", borderRadius: "20px",
-          padding: "32px", position: "relative", border: `1px solid ${border}`, boxShadow: "0 20px 40px rgba(0,0,0,0.4)"
+          padding: "32px", position: "relative", border: "1px solid " + border, boxShadow: "0 20px 40px rgba(0,0,0,0.4)"
         }}
       >
         <button onClick={onClose} style={{

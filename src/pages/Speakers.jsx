@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { Mic, Users, Calendar, Award, ChevronRight, X } from "lucide-react";
 
+
 const INDUSTRIES = [
   "Artificial Intelligence & Machine Learning",
   "Quantum Computing",

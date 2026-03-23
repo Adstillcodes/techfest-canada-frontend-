@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import { client } from "../utils/sanity";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
+import AttendeesCarousel from "../components/AttendeesCarousel";
 import { Mic, Users, Calendar, Award, ChevronRight, X } from "lucide-react";
 
+/* ─────────────────────────────────────────────
+   GROQ — fetches toggle + speaker list.
+   Excludes drafts so only Published values
+   are read by the frontend.
+───────────────────────────────────────────── */
+const SPEAKERS_QUERY = `{
+  "settings": *[_type == "siteSettings" && !(_id in path("drafts.**"))][0]{
+    attendeesCarouselEnabled,
+    speakersEnabled
+  },
+  "speakers": *[_type == "speaker"] | order(order asc) {
+    name,
+    title,
+    "image": image.asset->url
+  }
+}`;
 
 const INDUSTRIES = [
   "Artificial Intelligence & Machine Learning",
@@ -35,6 +53,10 @@ const EXPERIENCE_OPTIONS = [
   "25+ conferences",
 ];
 
+/* ─────────────────────────────────────────────
+   Apply-to-Speak Modal (unchanged from your
+   working version — EmailJS intact)
+───────────────────────────────────────────── */
 function SpeakerApplicationModal({ onClose, dark }) {
   var s1 = useState({ firstName: "", lastName: "", email: "", linkedin: "", industry: "", jobTitle: "", experience: "" });
   var formData = s1[0]; var setFormData = s1[1];
@@ -42,11 +64,11 @@ function SpeakerApplicationModal({ onClose, dark }) {
   var s3 = useState(false); var submitted = s3[0]; var setSubmitted = s3[1];
   var s4 = useState(false); var loading = s4[0]; var setLoading = s4[1];
 
-  var bg      = dark ? "#0d0620" : "#ffffff";
-  var textMain= dark ? "#ffffff" : "#0d0520";
-  var textMid = dark ? "rgba(220,210,255,0.75)" : "rgba(13,5,32,0.65)";
-  var inputBg = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
-  var inputBdr= dark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)";
+  var bg       = dark ? "#0d0620" : "#ffffff";
+  var textMain = dark ? "#ffffff" : "#0d0520";
+  var textMid  = dark ? "rgba(220,210,255,0.75)" : "rgba(13,5,32,0.65)";
+  var inputBg  = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
+  var inputBdr = dark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)";
 
   function handleChange(e) {
     setFormData(function(prev) { return Object.assign({}, prev, { [e.target.name]: e.target.value }); });
@@ -126,7 +148,6 @@ function SpeakerApplicationModal({ onClose, dark }) {
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-              {/* Name row */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                 <div>
                   <label style={labelStyle}>First Name *</label>
@@ -137,51 +158,35 @@ function SpeakerApplicationModal({ onClose, dark }) {
                   <input name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Smith" style={inputStyle} />
                 </div>
               </div>
-
-              {/* Email */}
               <div>
                 <label style={labelStyle}>Email Address *</label>
                 <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="jane@company.com" style={inputStyle} />
               </div>
-
-              {/* LinkedIn */}
               <div>
                 <label style={labelStyle}>LinkedIn Profile</label>
                 <input name="linkedin" value={formData.linkedin} onChange={handleChange} placeholder="linkedin.com/in/janesmith" style={inputStyle} />
               </div>
-
-              {/* Job Title */}
               <div>
                 <label style={labelStyle}>Job Title *</label>
                 <input name="jobTitle" value={formData.jobTitle} onChange={handleChange} placeholder="e.g. Chief Technology Officer" style={inputStyle} />
               </div>
-
-              {/* Industry */}
               <div>
                 <label style={labelStyle}>Industry *</label>
-                <select name="industry" value={formData.industry} onChange={handleChange}
-                  style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}
-                >
+                <select name="industry" value={formData.industry} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}>
                   <option value="">Select your industry</option>
                   {INDUSTRIES.map(function(ind) { return <option key={ind} value={ind}>{ind}</option>; })}
                 </select>
               </div>
-
-              {/* Experience */}
               <div>
                 <label style={labelStyle}>Speaking Experience *</label>
-                <select name="experience" value={formData.experience} onChange={handleChange}
-                  style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}
-                >
+                <select name="experience" value={formData.experience} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}>
                   <option value="">Number of conferences spoken at</option>
                   {EXPERIENCE_OPTIONS.map(function(exp) { return <option key={exp} value={exp}>{exp}</option>; })}
                 </select>
               </div>
-
               {error && (
                 <div style={{ fontSize: "0.78rem", color: "#ff6b6b", fontFamily: "'Orbitron',sans-serif", letterSpacing: "0.5px", padding: "10px 14px", background: "rgba(255,107,107,0.10)", borderRadius: 8, border: "1px solid rgba(255,107,107,0.25)" }}>{error}</div>
               )}
-
               <button type="submit" disabled={loading}
                 style={{ padding: "14px", borderRadius: 12, border: "none", cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.75rem", fontWeight: 900, letterSpacing: "1.5px", textTransform: "uppercase", background: loading ? (dark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.3)") : "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#ffffff", marginTop: 4, transition: "opacity 0.2s ease", opacity: loading ? 0.7 : 1 }}
               >
@@ -195,15 +200,39 @@ function SpeakerApplicationModal({ onClose, dark }) {
   );
 }
 
+/* ─────────────────────────────────────────────
+   Speakers Page
+───────────────────────────────────────────── */
 export default function Speakers() {
   var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
   var s2 = useState(false); var modalOpen = s2[0]; var setModalOpen = s2[1];
 
+  // null = still loading from Sanity, true/false = resolved
+  var s3 = useState(null); var speakersEnabled = s3[0]; var setSpeakersEnabled = s3[1];
+  var s4 = useState([]);   var speakers = s4[0];         var setSpeakers = s4[1];
+
+  /* Dark-mode observer */
   useEffect(function() {
     setDark(document.body.classList.contains("dark-mode"));
     var obs = new MutationObserver(function() { setDark(document.body.classList.contains("dark-mode")); });
     obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     return function() { obs.disconnect(); };
+  }, []);
+
+  /* Fetch Sanity toggle + speakers */
+  useEffect(function() {
+    client
+      .fetch(SPEAKERS_QUERY)
+      .then(function(data) {
+        console.log("Sanity response:", data); // remove once confirmed working
+        setSpeakersEnabled(data?.settings?.speakersEnabled ?? false);
+        setSpeakers(data?.speakers ?? []);
+      })
+      .catch(function(err) {
+        console.error("Sanity fetch error:", err);
+        setSpeakersEnabled(false);
+        setSpeakers([]);
+      });
   }, []);
 
   var stats = [
@@ -246,7 +275,7 @@ export default function Speakers() {
         <Navbar />
         <main style={{ flex: 1 }}>
 
-          {/* Hero */}
+          {/* ── Hero ── */}
           <section className="speakers-hero">
             <div className="spk-orb-1" />
             <div className="spk-orb-2" />
@@ -263,7 +292,7 @@ export default function Speakers() {
             </div>
           </section>
 
-          {/* Stats */}
+          {/* ── Stats ── */}
           <div className="speakers-stats">
             {stats.map(function(s) {
               var Icon = s.icon;
@@ -279,17 +308,48 @@ export default function Speakers() {
             })}
           </div>
 
-          {/* Coming Soon */}
-          <div style={{ textAlign: "center", padding: "3rem 5% 6rem", maxWidth: 640, margin: "0 auto" }}>
-            <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2rem,5vw,3.5rem)", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1.5rem" }}>
-              Coming Soon.
-            </h2>
-            <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", lineHeight: 1.8 }}>
-              We are currently curating our lineup of world-class speakers for TTFC 2026. Announcements will be made shortly.
-            </p>
-          </div>
+          {/* ── Speakers section — controlled by Sanity toggle ── */}
+          {speakersEnabled === null ? (
+            /* Loading state */
+            <div style={{ textAlign: "center", padding: "3rem 5% 6rem" }}>
+              <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Loading…</p>
+            </div>
 
-          {/* Apply to Speak CTA */}
+          ) : speakersEnabled ? (
+            /* Speakers ON — show speaker cards from Sanity */
+            <div style={{ padding: "3rem 5%" }}>
+              <h2 style={{ textAlign: "center", fontFamily: "'Orbitron',sans-serif", fontSize: "2.5rem", fontWeight: 900, marginBottom: "2rem", color: "var(--text-main)" }}>
+                Featured Speakers
+              </h2>
+              <div style={{ display: "flex", gap: "20px", overflowX: "auto" }}>
+                {speakers.map(function(speaker, index) {
+                  return (
+                    <div key={index} style={{ minWidth: "250px", background: "var(--bg-card)", padding: "16px", borderRadius: "16px", border: "1px solid var(--border-main)" }}>
+                      <img src={speaker.image} alt={speaker.name} style={{ width: "100%", borderRadius: "12px", marginBottom: "10px" }} />
+                      <h3 style={{ color: "var(--text-main)", marginBottom: 4 }}>{speaker.name}</h3>
+                      <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>{speaker.title}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+          ) : (
+            /* Speakers OFF — show Coming Soon */
+            <div style={{ textAlign: "center", padding: "3rem 5% 6rem", maxWidth: 640, margin: "0 auto" }}>
+              <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2rem,5vw,3.5rem)", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1.5rem" }}>
+                Coming Soon.
+              </h2>
+              <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", lineHeight: 1.8 }}>
+                We are currently curating our lineup of world-class speakers for TTFC 2026. Announcements will be made shortly.
+              </p>
+            </div>
+          )}
+
+          {/* ── Attendees Carousel — has its own internal Sanity toggle ── */}
+          <AttendeesCarousel />
+
+          {/* ── Apply to Speak CTA ── */}
           <div className="spk-cta-band">
             <div>
               <h3>Want to <span>Speak</span> at TTFC?</h3>

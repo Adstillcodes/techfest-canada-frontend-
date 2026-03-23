@@ -469,12 +469,32 @@ function EnquireModal({ booth, onClose, isDark, textMain, border }) {
     e.preventDefault();
     setStatus("Sending...");
 
-    setTimeout(() => {
-      setStatus("Success! We will be in touch shortly.");
-      setTimeout(() => {
-        onClose();
-      }, 2500);
-    }, 1000);
+    try {
+      const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service_id:  "service_gy3fvru",
+          template_id: "template_ufqzzep",
+          user_id:     "gZgYZtLCXPVgUsVj_",
+          template_params: {
+            to_email:   "baldeep@thetechfestival.com",
+            from_name:  `${formData.firstName} ${formData.lastName}`,
+            from_email: formData.email,
+            message:    `[Booth Enquiry: ${booth.title} — ${booth.specs}]\n\n${formData.message || "No additional message."}`,
+          },
+        }),
+      });
+
+      if (res.ok || res.status === 200) {
+        setStatus("Success! We will be in touch shortly.");
+        setTimeout(() => { onClose(); }, 2500);
+      } else {
+        setStatus("Error — please try again.");
+      }
+    } catch {
+      setStatus("Error — please try again.");
+    }
   };
 
   const inputStyle = {

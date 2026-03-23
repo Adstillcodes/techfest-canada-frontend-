@@ -103,7 +103,7 @@ export default function SponsorInquiryModal(props) {
   var s6 = useState(""); var jobTitle = s6[0]; var setJobTitle = s6[1];
   var s7 = useState(""); var industry = s7[0]; var setIndustry = s7[1];
   var s8 = useState(false); var sending = s8[0]; var setSending = s8[1];
-  var s9 = useState(false); var sent = s9[0]; var setSent = s9[1];
+  var s9 = useState("idle"); var status = s9[0]; var setStatus = s9[1];
   var s10 = useState(false); var dark = s10[0]; var setDark = s10[1];
 
   useEffect(function () {
@@ -127,17 +127,50 @@ export default function SponsorInquiryModal(props) {
   function handleSubmit() {
     if (!firstName.trim() || !lastName.trim()) return;
     setSending(true);
-    // TODO: Connect to backend / EmailJS
-    setTimeout(function () {
-      setSending(false);
-      setSent(true);
-      setTimeout(function () {
-        setSent(false);
-        setFirstName(""); setLastName(""); setEmail("");
-        setPhone(""); setCompany(""); setJobTitle(""); setIndustry("");
-        onClose();
-      }, 2000);
-    }, 1200);
+
+    var messageLines = [
+      "[Sponsorship Enquiry]",
+      "Name: " + firstName + " " + lastName,
+      email ? "Email: " + email : "",
+      phone ? "Phone: " + phone : "",
+      company ? "Company: " + company : "",
+      jobTitle ? "Job Title: " + jobTitle : "",
+      industry ? "Industry: " + industry : "",
+    ].filter(Boolean).join("\n");
+
+    fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        service_id:  "service_gy3fvru",
+        template_id: "template_ufqzzep",
+        user_id:     "gZgYZtLCXPVgUsVj_",
+        template_params: {
+          to_email:   "baldeep@thetechfestival.com",
+          from_name:  firstName + " " + lastName,
+          from_email: email || "not provided",
+          message:    messageLines,
+        },
+      }),
+    })
+      .then(function (res) {
+        setSending(false);
+        if (res.ok || res.status === 200) {
+          setStatus("success");
+          setTimeout(function () {
+            setStatus("idle");
+            setFirstName(""); setLastName(""); setEmail("");
+            setPhone(""); setCompany(""); setJobTitle(""); setIndustry("");
+            onClose();
+          }, 2200);
+        } else {
+          setStatus("error");
+        }
+      })
+      .catch(function () {
+        setSending(false);
+        setStatus("error");
+      });
   }
 
   var bgCard = dark ? "#0d0620" : "#ffffff";
@@ -275,7 +308,7 @@ export default function SponsorInquiryModal(props) {
               Interested in sponsoring or exhibiting? Fill in your details and our partnerships team will be in touch.
             </p>
 
-            {sent ? (
+            {status === "success" ? (
               <div style={{
                 textAlign: "center", padding: "40px 0",
               }}>
@@ -388,6 +421,15 @@ export default function SponsorInquiryModal(props) {
                     </select>
                   </div>
                 </div>
+
+                {/* Error message */}
+                {status === "error" && (
+                  <div style={{
+                    textAlign: "center", padding: "10px 14px", marginBottom: 14,
+                    background: "rgba(255,107,107,0.10)", border: "1px solid rgba(255,107,107,0.25)",
+                    borderRadius: 8, fontSize: "0.78rem", color: "#ff6b6b",
+                  }}>Something went wrong. Please try again.</div>
+                )}
 
                 {/* Submit */}
                 <button

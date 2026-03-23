@@ -3,7 +3,6 @@ import { X, Send, CheckCircle, Loader } from "lucide-react";
 
 export default function InquiryModal({ isOpen, onClose }) {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", enquiry: "" });
-
   const [status, setStatus] = useState("idle"); // idle | sending | success | error
 
   if (!isOpen) return null;
@@ -16,18 +15,15 @@ export default function InquiryModal({ isOpen, onClose }) {
     setStatus("sending");
 
     try {
-      // Uses EmailJS REST API — no backend needed
-      // Setup: go to emailjs.com, create a free account, add an email service,
-      // create a template, and replace the 3 IDs below.
       const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          service_id:  "YOUR_SERVICE_ID",   // ← replace after EmailJS setup
-          template_id: "YOUR_TEMPLATE_ID",  // ← replace after EmailJS setup
-          user_id:     "YOUR_PUBLIC_KEY",   // ← replace after EmailJS setup
+          service_id:  "service_gy3fvru",
+          template_id: "template_ufqzzep",
+          user_id:     "gZgYZtLCXPVgUsVj_",
           template_params: {
-            to_email:   "gunantsingh@gmail.com",
+            to_email:   "baldeep@thetechfestival.com",
             from_name:  `${firstName} ${lastName}`,
             from_email: email,
             message:    enquiry,
@@ -35,22 +31,17 @@ export default function InquiryModal({ isOpen, onClose }) {
         }),
       });
 
-      if (res.ok) {
+      if (res.ok || res.status === 200) {
         setStatus("success");
-        setForm({ firstName: "", lastName: "", email: "", enquiry: "" });
       } else {
-        // Fallback: open mail client if EmailJS not configured yet
-        window.location.href = `mailto:gunantsingh@gmail.com?subject=Inquiry from ${firstName} ${lastName}&body=From: ${firstName} ${lastName}%0AEmail: ${email}%0A%0A${enquiry}`;
-        setStatus("success");
+        setStatus("error");
       }
     } catch {
-      // Fallback to mailto
-      window.location.href = `mailto:gunantsingh@gmail.com?subject=Inquiry from ${firstName} ${lastName}&body=From: ${firstName} ${lastName}%0AEmail: ${email}%0A%0A${enquiry}`;
-      setStatus("success");
+      setStatus("error");
     }
   };
 
-  const handleClose = () => { setStatus("idle"); onClose(); };
+  const handleClose = () => { setStatus("idle"); setForm({ firstName: "", lastName: "", email: "", enquiry: "" }); onClose(); };
 
   const isValid = form.firstName && form.lastName && form.email && form.enquiry;
 
@@ -85,7 +76,6 @@ export default function InquiryModal({ isOpen, onClose }) {
         }
         @keyframes inqSlideUp { from { opacity:0; transform:translateY(24px) } to { opacity:1; transform:translateY(0) } }
 
-        /* Glow orb behind modal */
         .inq-modal::before {
           content: '';
           position: absolute; top: -80px; right: -80px;
@@ -176,6 +166,12 @@ export default function InquiryModal({ isOpen, onClose }) {
         .inq-btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
         .inq-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
+        .inq-error {
+          text-align: center; padding: 10px 14px; margin-top: 8px;
+          background: rgba(255,107,107,0.10); border: 1px solid rgba(255,107,107,0.25);
+          border-radius: 8px; font-size: 0.78rem; color: #ff6b6b;
+        }
+
         .inq-success {
           display: flex; flex-direction: column;
           align-items: center; justify-content: center;
@@ -206,7 +202,7 @@ export default function InquiryModal({ isOpen, onClose }) {
             <div className="inq-success">
               <CheckCircle size={52} className="inq-success-icon" />
               <h3>Message <span style={{ color:"#f5a623" }}>Sent!</span></h3>
-              <p>Thanks for reaching out. We'll get back to you at <strong>{form.email || "your email"}</strong> shortly.</p>
+              <p>Thanks for reaching out. We'll get back to you shortly.</p>
               <button className="inq-btn" onClick={handleClose} style={{ marginTop: 8 }}>
                 Close
               </button>
@@ -242,6 +238,10 @@ export default function InquiryModal({ isOpen, onClose }) {
                 <label className="inq-label">What are you enquiring about?</label>
                 <textarea className="inq-textarea" name="enquiry" value={form.enquiry} onChange={handleChange} placeholder="Tell us how you'd like to get involved — volunteer, partner, collaborate..." />
               </div>
+
+              {status === "error" && (
+                <div className="inq-error">Something went wrong. Please try again.</div>
+              )}
 
               <button className="inq-btn" onClick={handleSubmit} disabled={!isValid || status === "sending"}>
                 {status === "sending"

@@ -45,6 +45,7 @@ export default function AttendeesCarousel() {
     client
       .fetch(SETTINGS_QUERY)
       .then((settings) => {
+        console.log("Sanity settings response:", settings);
         // Default to false (Coming Soon) if the document hasn't been
         // created in Sanity Studio yet.
         setCarouselEnabled(settings?.attendeesCarouselEnabled ?? false);

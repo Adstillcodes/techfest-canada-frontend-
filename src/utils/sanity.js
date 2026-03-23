@@ -7,7 +7,7 @@ export const client = createClient({
   projectId: "021qtoci",
   dataset: "production",
   apiVersion: "2024-01-01",
-  useCdn: true,
+  useCdn: false,
 });
 
 // Correct image builder (new API)

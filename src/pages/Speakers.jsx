@@ -1,27 +1,8 @@
-// pages/Speakers.jsx
-import React, { useState, useEffect } from "react";
-import { client } from "../utils/sanity";
+import React, { useState, useEffect } from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
-import AttendeesCarousel from "../components/AttendeesCarousel";
 import { Mic, Users, Calendar, Award, ChevronRight, X } from "lucide-react";
 
-/* ─────────────────────────────────────────────
-   GROQ query — fetches the speakers toggle and
-   the actual speaker documents from Sanity.
-───────────────────────────────────────────── */
-const SPEAKERS_QUERY = `{
-"settings": *[_type == "siteSettings" && !(_id in path("drafts.**"))][0]{
-  speakersEnabled
-},
-  "speakers": *[_type == "speaker"] | order(order asc) {
-    name,
-    title,
-    "image": image.asset->url
-  }
-}`;
-
-/* ───── Form constants ───── */
 const INDUSTRIES = [
   "Artificial Intelligence & Machine Learning",
   "Quantum Computing",
@@ -53,65 +34,79 @@ const EXPERIENCE_OPTIONS = [
   "25+ conferences",
 ];
 
-/* ─────────────────────────────────────────────
-   Apply-to-Speak Modal
-───────────────────────────────────────────── */
 function SpeakerApplicationModal({ onClose, dark }) {
-  const [formData, setFormData] = useState({
-    firstName: "", lastName: "", email: "",
-    linkedin: "", industry: "", jobTitle: "", experience: "",
-  });
-  const [error,     setError]     = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading,   setLoading]   = useState(false);
+  var s1 = useState({ firstName: "", lastName: "", email: "", linkedin: "", industry: "", jobTitle: "", experience: "" });
+  var formData = s1[0]; var setFormData = s1[1];
+  var s2 = useState(""); var error = s2[0]; var setError = s2[1];
+  var s3 = useState(false); var submitted = s3[0]; var setSubmitted = s3[1];
+  var s4 = useState(false); var loading = s4[0]; var setLoading = s4[1];
 
-  const bg       = dark ? "#0d0620"              : "#ffffff";
-  const textMain = dark ? "#ffffff"              : "#0d0520";
-  const textMid  = dark ? "rgba(220,210,255,0.75)" : "rgba(13,5,32,0.65)";
-  const inputBg  = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
-  const inputBdr = dark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)";
+  var bg      = dark ? "#0d0620" : "#ffffff";
+  var textMain= dark ? "#ffffff" : "#0d0520";
+  var textMid = dark ? "rgba(220,210,255,0.75)" : "rgba(13,5,32,0.65)";
+  var inputBg = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
+  var inputBdr= dark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)";
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  function handleChange(e) {
+    setFormData(function(prev) { return Object.assign({}, prev, { [e.target.name]: e.target.value }); });
     setError("");
-  };
+  }
 
-  const handleSubmit = (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const { firstName, lastName, email, industry, jobTitle, experience } = formData;
-    if (!firstName || !lastName || !email || !industry || !jobTitle || !experience) {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.industry || !formData.jobTitle || !formData.experience) {
       setError("Please fill in all required fields."); return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       setError("Please enter a valid email address."); return;
     }
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSubmitted(true); }, 1200);
-  };
+    try {
+      var res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          service_id:  "service_gy3fvru",
+          template_id: "template_ufqzzep",
+          user_id:     "gZgYZtLCXPVgUsVj_",
+          template_params: {
+            to_email:   "baldeep@thetechfestival.com",
+            from_name:  formData.firstName + " " + formData.lastName,
+            from_email: formData.email,
+            message:    "[Speaker Application]\nName: " + formData.firstName + " " + formData.lastName + "\nTitle: " + formData.jobTitle + "\nIndustry: " + formData.industry + "\nExperience: " + formData.experience + "\nLinkedIn: " + (formData.linkedin || "N/A"),
+          },
+        }),
+      });
+      setLoading(false);
+      if (res.ok || res.status === 200) { setSubmitted(true); }
+      else { setError("Something went wrong. Please try again."); }
+    } catch(err) {
+      setLoading(false);
+      setError("Something went wrong. Please try again.");
+    }
+  }
 
-  const inputStyle = {
+  var inputStyle = {
     width: "100%", padding: "12px 16px", borderRadius: 10,
-    background: inputBg, border: `1px solid ${inputBdr}`,
+    background: inputBg, border: "1px solid " + inputBdr,
     color: textMain, fontSize: "0.92rem", outline: "none",
     fontFamily: "inherit", transition: "border-color 0.2s ease",
     boxSizing: "border-box",
   };
 
-  const labelStyle = {
+  var labelStyle = {
     display: "block", fontSize: "0.72rem", fontFamily: "'Orbitron',sans-serif",
     fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
     color: textMid, marginBottom: 6,
   };
 
   return (
-    <div
-      style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(10px)", padding: "20px" }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(10px)", padding: "20px" }}
+      onClick={function(e) { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div style={{ background: bg, width: "100%", maxWidth: 560, borderRadius: 24, border: `1px solid ${inputBdr}`, boxShadow: "0 24px 64px rgba(0,0,0,0.5)", maxHeight: "90vh", overflowY: "auto", position: "relative" }}>
-
+      <div style={{ background: bg, width: "100%", maxWidth: 560, borderRadius: 24, border: "1px solid " + inputBdr, boxShadow: "0 24px 64px rgba(0,0,0,0.5)", maxHeight: "90vh", overflowY: "auto", position: "relative" }}>
         {/* Header */}
-        <div style={{ padding: "28px 32px 0", position: "sticky", top: 0, background: bg, zIndex: 2, paddingBottom: 20, borderBottom: `1px solid ${inputBdr}` }}>
+        <div style={{ padding: "28px 32px 0", position: "sticky", top: 0, background: bg, zIndex: 2, paddingBottom: 20, borderBottom: "1px solid " + inputBdr }}>
           <button onClick={onClose} style={{ position: "absolute", top: 20, right: 24, background: "transparent", border: "none", color: textMid, cursor: "pointer", padding: 4 }}>
             <X size={20} />
           </button>
@@ -130,6 +125,7 @@ function SpeakerApplicationModal({ onClose, dark }) {
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              {/* Name row */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                 <div>
                   <label style={labelStyle}>First Name *</label>
@@ -140,30 +136,44 @@ function SpeakerApplicationModal({ onClose, dark }) {
                   <input name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Smith" style={inputStyle} />
                 </div>
               </div>
+
+              {/* Email */}
               <div>
                 <label style={labelStyle}>Email Address *</label>
                 <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="jane@company.com" style={inputStyle} />
               </div>
+
+              {/* LinkedIn */}
               <div>
                 <label style={labelStyle}>LinkedIn Profile</label>
                 <input name="linkedin" value={formData.linkedin} onChange={handleChange} placeholder="linkedin.com/in/janesmith" style={inputStyle} />
               </div>
+
+              {/* Job Title */}
               <div>
                 <label style={labelStyle}>Job Title *</label>
                 <input name="jobTitle" value={formData.jobTitle} onChange={handleChange} placeholder="e.g. Chief Technology Officer" style={inputStyle} />
               </div>
+
+              {/* Industry */}
               <div>
                 <label style={labelStyle}>Industry *</label>
-                <select name="industry" value={formData.industry} onChange={handleChange} style={{ ...inputStyle, appearance: "none", cursor: "pointer" }}>
+                <select name="industry" value={formData.industry} onChange={handleChange}
+                  style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}
+                >
                   <option value="">Select your industry</option>
-                  {INDUSTRIES.map((ind) => <option key={ind} value={ind}>{ind}</option>)}
+                  {INDUSTRIES.map(function(ind) { return <option key={ind} value={ind}>{ind}</option>; })}
                 </select>
               </div>
+
+              {/* Experience */}
               <div>
                 <label style={labelStyle}>Speaking Experience *</label>
-                <select name="experience" value={formData.experience} onChange={handleChange} style={{ ...inputStyle, appearance: "none", cursor: "pointer" }}>
+                <select name="experience" value={formData.experience} onChange={handleChange}
+                  style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}
+                >
                   <option value="">Number of conferences spoken at</option>
-                  {EXPERIENCE_OPTIONS.map((exp) => <option key={exp} value={exp}>{exp}</option>)}
+                  {EXPERIENCE_OPTIONS.map(function(exp) { return <option key={exp} value={exp}>{exp}</option>; })}
                 </select>
               </div>
 
@@ -171,10 +181,8 @@ function SpeakerApplicationModal({ onClose, dark }) {
                 <div style={{ fontSize: "0.78rem", color: "#ff6b6b", fontFamily: "'Orbitron',sans-serif", letterSpacing: "0.5px", padding: "10px 14px", background: "rgba(255,107,107,0.10)", borderRadius: 8, border: "1px solid rgba(255,107,107,0.25)" }}>{error}</div>
               )}
 
-              <button
-                type="submit"
-                disabled={loading}
-                style={{ padding: "14px", borderRadius: 12, border: "none", cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.75rem", fontWeight: 900, letterSpacing: "1.5px", textTransform: "uppercase", background: loading ? "rgba(122,63,209,0.4)" : "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#ffffff", marginTop: 4, transition: "opacity 0.2s ease", opacity: loading ? 0.7 : 1 }}
+              <button type="submit" disabled={loading}
+                style={{ padding: "14px", borderRadius: 12, border: "none", cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.75rem", fontWeight: 900, letterSpacing: "1.5px", textTransform: "uppercase", background: loading ? (dark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.3)") : "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#ffffff", marginTop: 4, transition: "opacity 0.2s ease", opacity: loading ? 0.7 : 1 }}
               >
                 {loading ? "Submitting…" : "Submit Application →"}
               </button>
@@ -186,51 +194,26 @@ function SpeakerApplicationModal({ onClose, dark }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Speakers Page
-───────────────────────────────────────────── */
 export default function Speakers() {
-  const [dark,      setDark]      = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
+  var s2 = useState(false); var modalOpen = s2[0]; var setModalOpen = s2[1];
 
-  /* Sanity — speakers toggle + speaker list */
-  const [speakersEnabled, setSpeakersEnabled] = useState(null); // null = loading
-  const [speakers,        setSpeakers]        = useState([]);
-
-  /* Dark-mode observer */
-  useEffect(() => {
+  useEffect(function() {
     setDark(document.body.classList.contains("dark-mode"));
-    const obs = new MutationObserver(() =>
-      setDark(document.body.classList.contains("dark-mode"))
-    );
+    var obs = new MutationObserver(function() { setDark(document.body.classList.contains("dark-mode")); });
     obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    return () => obs.disconnect();
+    return function() { obs.disconnect(); };
   }, []);
 
-  /* Fetch Sanity data */
-  useEffect(() => {
-    client
-      .fetch(SPEAKERS_QUERY)
-      .then(({ settings, speakers: spkList }) => {
-        setSpeakersEnabled(settings?.speakersEnabled ?? false);
-        setSpeakers(spkList ?? []);
-      })
-      .catch((err) => {
-        console.error("Sanity fetch error (Speakers):", err);
-        setSpeakersEnabled(false);
-        setSpeakers([]);
-      });
-  }, []);
-
-  const stats = [
+  var stats = [
     { icon: Mic,      value: "50+",   label: "World-Class Speakers" },
     { icon: Users,    value: "1000+", label: "Expected Attendees"   },
     { icon: Calendar, value: "2",     label: "Days of Content"      },
     { icon: Award,    value: "10",    label: "Tech Pillars Covered" },
   ];
 
-  const purpleRgb = "122, 63, 209";
-  const orangeRgb = "245, 166, 35";
+  var purpleRgb = "122, 63, 209";
+  var orangeRgb = "245, 166, 35";
 
   return (
     <>
@@ -262,7 +245,7 @@ export default function Speakers() {
         <Navbar />
         <main style={{ flex: 1 }}>
 
-          {/* ── Hero ── */}
+          {/* Hero */}
           <section className="speakers-hero">
             <div className="spk-orb-1" />
             <div className="spk-orb-2" />
@@ -279,10 +262,10 @@ export default function Speakers() {
             </div>
           </section>
 
-          {/* ── Stats ── */}
+          {/* Stats */}
           <div className="speakers-stats">
-            {stats.map((s) => {
-              const Icon = s.icon;
+            {stats.map(function(s) {
+              var Icon = s.icon;
               return (
                 <div className="stat-cell" key={s.label}>
                   <div className="stat-icon"><Icon size={18} /></div>
@@ -295,63 +278,23 @@ export default function Speakers() {
             })}
           </div>
 
-          {/* ── Speakers section (toggle-controlled) ── */}
-          {speakersEnabled === null ? (
-            /* Loading */
-            <div style={{ textAlign: "center", padding: "3rem 5% 6rem" }}>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Loading…</p>
-            </div>
-          ) : !speakersEnabled ? (
-            /* Coming Soon */
-            <div style={{ textAlign: "center", padding: "3rem 5% 6rem", maxWidth: 640, margin: "0 auto" }}>
-              <h2 style={{
-                fontFamily: "'Orbitron',sans-serif",
-                fontSize: "clamp(2rem,5vw,3.5rem)",
-                fontWeight: 900,
-                background: "linear-gradient(135deg,#7a3fd1,#f5a623)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                marginBottom: "1.5rem",
-              }}>
-                Coming Soon.
-              </h2>
-              <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", lineHeight: 1.8 }}>
-                We are currently curating our lineup of world-class speakers for TFC 2026.
-              </p>
-            </div>
-          ) : (
-            /* Speakers carousel */
-            <div style={{ padding: "3rem 5%" }}>
-              <h2 style={{ textAlign: "center", fontFamily: "'Orbitron',sans-serif", fontSize: "2.5rem", fontWeight: 900, marginBottom: "2rem", color: "var(--text-main)" }}>
-                Featured Speakers
-              </h2>
-              <div style={{ display: "flex", gap: "20px", overflowX: "auto" }}>
-                {speakers.map((speaker, index) => (
-                  <div key={index} style={{ minWidth: "250px", background: "var(--bg-card)", padding: "16px", borderRadius: "16px", border: "1px solid var(--border-main)" }}>
-                    <img
-                      src={speaker.image}
-                      alt={speaker.name}
-                      style={{ width: "100%", borderRadius: "12px", marginBottom: "10px" }}
-                    />
-                    <h3 style={{ color: "var(--text-main)", marginBottom: 4 }}>{speaker.name}</h3>
-                    <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>{speaker.title}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Coming Soon */}
+          <div style={{ textAlign: "center", padding: "3rem 5% 6rem", maxWidth: 640, margin: "0 auto" }}>
+            <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2rem,5vw,3.5rem)", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1.5rem" }}>
+              Coming Soon.
+            </h2>
+            <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", lineHeight: 1.8 }}>
+              We are currently curating our lineup of world-class speakers for TTFC 2026. Announcements will be made shortly.
+            </p>
+          </div>
 
-          {/* ── Attendees Carousel (has its own internal toggle) ── */}
-          <AttendeesCarousel />
-
-          {/* ── Apply to Speak CTA ── */}
+          {/* Apply to Speak CTA */}
           <div className="spk-cta-band">
             <div>
               <h3>Want to <span>Speak</span> at TTFC?</h3>
               <p>We're looking for visionary leaders, innovators, and experts to take the stage. Applications for TTFC 2026 are now open.</p>
             </div>
-            <button onClick={() => setModalOpen(true)} className="spk-cta" style={{ whiteSpace: "nowrap", border: "none" }}>
+            <button onClick={function() { setModalOpen(true); }} className="spk-cta" style={{ whiteSpace: "nowrap", border: "none" }}>
               Apply to Speak <ChevronRight size={16} />
             </button>
           </div>
@@ -360,7 +303,7 @@ export default function Speakers() {
         <Footer />
       </div>
 
-      {modalOpen && <SpeakerApplicationModal onClose={() => setModalOpen(false)} dark={dark} />}
+      {modalOpen && <SpeakerApplicationModal onClose={function() { setModalOpen(false); }} dark={dark} />}
     </>
   );
 }

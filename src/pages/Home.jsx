@@ -200,15 +200,16 @@ export default function Home() {
         {dark && (
           <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
             <MeshGradient
-              style={{ width: "100%", height: "100%", position: "absolute", inset: 0, opacity: 0.35 }}
               colors={["#06020f", "#1a0a3e", "#2d1266", "#f5a623"]}
-              speed={0.4}
-              backgroundColor="#06020f"
+              speed={0.18}
+              distortion={0.4}
+              swirl={0.3}
+              style={{ width: "100%", height: "100%", position: "absolute", inset: 0, opacity: 0.30 }}
             />
             {/* Fade-in at top so it blends from the hero */}
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 200, background: "linear-gradient(to bottom, #06020f, transparent)", zIndex: 1 }} />
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 250, background: "linear-gradient(to bottom, #06020f, transparent)", zIndex: 1 }} />
             {/* Fade-out at bottom */}
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 200, background: "linear-gradient(to top, #06020f, transparent)", zIndex: 1 }} />
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 250, background: "linear-gradient(to top, #06020f, transparent)", zIndex: 1 }} />
           </div>
         )}
 

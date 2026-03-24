@@ -6,12 +6,13 @@ export default function AdminTabs({ tabs }) {
 
   return (
     <div className="admin-tabs-wrapper">
-      <div className="admin-tabs">
+      <div className="admin-tabs" style={{ overflowX: "auto", flexWrap: "nowrap" }}>
         {tabs.map((tab, i) => (
           <button
             key={i}
             className={active === i ? "active" : ""}
             onClick={() => setActive(i)}
+            style={{ whiteSpace: "nowrap" }}
           >
             {tab.label}
           </button>

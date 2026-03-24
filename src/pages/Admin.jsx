@@ -7,6 +7,9 @@ import AdminInventory from "../components/AdminInventory";
 import CheckIn from "../components/CheckIn";
 import AdminAnalytics from "../components/AdminAnalytics";
 import AdminKyc from "../components/AdminKyc";
+import AdminEmailCampaigns from "../components/AdminEmailCampaigns";
+import AdminAudience from "../components/AdminAudience";
+import AdminCampaignCalendar from "../components/AdminCampaignCalendar";
 
 const API = "https://techfest-canada-backend.onrender.com/api";
 
@@ -115,6 +118,9 @@ export default function Admin() {
     { label: "Scanner", component: CheckIn },
     { label: "Admins", component: AdminManagement },
     { label: "KYC", component: AdminKyc },
+    { label: "Campaigns", component: AdminEmailCampaigns },
+    { label: "Calendar", component: AdminCampaignCalendar },
+    { label: "Audience", component: AdminAudience },
   ];
 
   return (

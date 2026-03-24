@@ -1064,6 +1064,70 @@ html {
 }
 
 /* ========================================
+   ADMIN EMAIL CAMPAIGNS STYLES
+======================================== */
+
+.btn-secondary {
+  background: rgba(122,63,209,0.15);
+  color: #c4a8ff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(122,63,209,0.3);
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  display: inline-block;
+}
+
+.btn-secondary:hover {
+  background: rgba(122,63,209,0.25);
+  border-color: rgba(122,63,209,0.5);
+}
+
+.admin-tabs-wrapper {
+  margin-top: 0;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.admin-tabs button {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  border-bottom: 2px solid transparent;
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.admin-tabs button:hover {
+  color: var(--text-main);
+}
+
+.admin-tabs button.active {
+  color: #c4a8ff;
+  border-bottom-color: #7a3fd1;
+}
+
+.admin-tab-content {
+  min-height: 400px;
+}
+
+/* ========================================
    QR SCANNER
 ======================================== */
 

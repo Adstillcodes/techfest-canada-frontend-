@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
-import { Mic, Users, Calendar, Award, ChevronRight, X, Linkedin } from "lucide-react";
+import { Mic, Users, Calendar, Award, ChevronRight, X, Search } from "lucide-react";
 
 const SPEAKERS = [
   {
@@ -10,7 +10,7 @@ const SPEAKERS = [
     company: "Branksome Consulting & Ventures",
     description: "Seasoned marketing and digital executive with over thirty years of experience driving eCommerce and digital transformation at organizations like LCBO and Staples Canada. A Chartered Marketer and Fellow of the Chartered Institute of Marketing.",
     linkedin: "https://ca.linkedin.com/in/scott-d-cunha-0a9a52",
-    image: "/speakers/scott-dcunha.jpg",
+    image: "/scott-dcunha.jpg",
   },
   {
     name: "James Castle",
@@ -18,7 +18,7 @@ const SPEAKERS = [
     company: "Terranova Aerospace & Defense Group",
     description: "Globally recognized authority on sovereign AI, cybersecurity governance, and critical infrastructure protection. Founder and Chairperson of the Cyber Security Global Alliance, operating across 21 countries over 4 continents.",
     linkedin: "https://www.linkedin.com/in/jamescastleca/",
-    image: "/speakers/james-castle.jpg",
+    image: "/james-castle.jpg",
   },
   {
     name: "Brennan Lodge",
@@ -26,7 +26,7 @@ const SPEAKERS = [
     company: "BLodgic Inc. | NYU Adjunct Professor",
     description: "Cybersecurity expert with over 15 years of experience at the intersection of data science, AI, and threat defense. Former Head of Analytics Engines at HSBC, with past roles at Goldman Sachs and BlockFi. LinkedIn Learning instructor on AI security.",
     linkedin: "https://www.linkedin.com/in/brennanlodge/",
-    image: "/speakers/brennan-lodge.jpg",
+    image: "/brennan-lodge.jpg",
   },
   {
     name: "Bijit Ghosh",
@@ -34,7 +34,7 @@ const SPEAKERS = [
     company: "Wells Fargo",
     description: "Product innovator and engineering executive leading AI/ML and cloud transformation at scale. Former CTO and Global Head of Cloud Product and Engineering at Deutsche Bank. Prolific thought leader on GenAI, LLMOps, and cloud architecture.",
     linkedin: "https://www.linkedin.com/in/bijit-ghosh-48281a78/",
-    image: "/speakers/bijit-ghosh.jpg",
+    image: "/bijit-ghosh.jpg",
   },
 ];
 
@@ -220,13 +220,16 @@ function SpeakerCard({ speaker, dark }) {
 
   return (
     <div
+      className="speaker-card"
       style={{
         background: cardBg,
         border: "1px solid " + cardBdr,
-        borderRadius: 24,
+        borderRadius: 20,
         overflow: "hidden",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
         cursor: "default",
+        display: "flex",
+        flexDirection: "column",
       }}
       onMouseEnter={function(e) { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = dark ? "0 12px 40px rgba(122,63,209,0.15)" : "0 12px 40px rgba(122,63,209,0.10)"; }}
       onMouseLeave={function(e) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
@@ -237,42 +240,41 @@ function SpeakerCard({ speaker, dark }) {
           src={speaker.image}
           alt={speaker.name}
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          onError={function(e) {
-            e.target.style.display = "none";
-          }}
+          onError={function(e) { e.target.style.display = "none"; }}
         />
-        {/* Gradient overlay at bottom */}
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, " + (dark ? "rgba(6,2,15,0.8)" : "rgba(255,255,255,0.6)") + ", transparent)", pointerEvents: "none" }} />
-        {/* LinkedIn button */}
-        <a href={speaker.linkedin} target="_blank" rel="noreferrer"
-          style={{
-            position: "absolute", top: 14, right: 14,
-            width: 36, height: 36, borderRadius: 10,
-            background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)",
-            border: "1px solid rgba(255,255,255,0.15)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#ffffff", textDecoration: "none",
-            transition: "background 0.2s ease",
-          }}
-          onMouseEnter={function(e) { e.currentTarget.style.background = "#0A66C2"; }}
-          onMouseLeave={function(e) { e.currentTarget.style.background = "rgba(0,0,0,0.5)"; }}
-        >
-          <Linkedin size={16} />
-        </a>
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, " + (dark ? "rgba(6,2,15,0.85)" : "rgba(255,255,255,0.7)") + ", transparent)", pointerEvents: "none" }} />
       </div>
 
       {/* Info */}
-      <div style={{ padding: "20px 22px 24px" }}>
+      <div className="speaker-card-info" style={{ padding: "16px 18px 14px", flex: 1, display: "flex", flexDirection: "column" }}>
         <h3 style={{
           fontFamily: "'Orbitron', sans-serif",
-          fontSize: "0.88rem", fontWeight: 900,
+          fontSize: "0.82rem", fontWeight: 900,
           color: dark ? "#4ade80" : "#1a9e70",
           textTransform: "uppercase", letterSpacing: "0.5px",
-          marginBottom: 4, lineHeight: 1.3,
+          marginBottom: 3, lineHeight: 1.3,
         }}>{speaker.name}</h3>
-        <p style={{ fontSize: "0.82rem", fontWeight: 600, color: textMain, marginBottom: 2, lineHeight: 1.4 }}>{speaker.title}</p>
-        <p style={{ fontSize: "0.78rem", fontWeight: 700, color: accent, marginBottom: 14, lineHeight: 1.3 }}>{speaker.company}</p>
-        <p style={{ fontSize: "0.8rem", color: textMid, lineHeight: 1.65 }}>{speaker.description}</p>
+        <p className="speaker-card-title" style={{ fontSize: "0.78rem", fontWeight: 600, color: textMain, marginBottom: 2, lineHeight: 1.35 }}>{speaker.title}</p>
+        <p style={{ fontSize: "0.72rem", fontWeight: 700, color: accent, marginBottom: 10, lineHeight: 1.3 }}>{speaker.company}</p>
+        <p className="speaker-card-desc" style={{ fontSize: "0.76rem", color: textMid, lineHeight: 1.6, flex: 1 }}>{speaker.description}</p>
+
+        {/* LinkedIn Button */}
+        <a href={speaker.linkedin} target="_blank" rel="noreferrer"
+          className="speaker-linkedin-btn"
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+            marginTop: 14, padding: "10px 16px", borderRadius: 10,
+            background: "#0A66C2", color: "#ffffff",
+            textDecoration: "none", fontSize: "0.75rem", fontWeight: 700,
+            letterSpacing: "0.3px",
+            transition: "background 0.2s ease, transform 0.15s ease",
+          }}
+          onMouseEnter={function(e) { e.currentTarget.style.background = "#004182"; e.currentTarget.style.transform = "scale(1.02)"; }}
+          onMouseLeave={function(e) { e.currentTarget.style.background = "#0A66C2"; e.currentTarget.style.transform = "scale(1)"; }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          View Profile
+        </a>
       </div>
     </div>
   );
@@ -281,6 +283,7 @@ function SpeakerCard({ speaker, dark }) {
 export default function Speakers() {
   var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
   var s2 = useState(false); var modalOpen = s2[0]; var setModalOpen = s2[1];
+  var s3 = useState(""); var search = s3[0]; var setSearch = s3[1];
 
   useEffect(function() {
     setDark(document.body.classList.contains("dark-mode"));
@@ -289,11 +292,20 @@ export default function Speakers() {
     return function() { obs.disconnect(); };
   }, []);
 
+  var filtered = useMemo(function() {
+    if (!search.trim()) return SPEAKERS;
+    var q = search.toLowerCase();
+    return SPEAKERS.filter(function(s) {
+      return s.name.toLowerCase().includes(q) || s.company.toLowerCase().includes(q) || s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q);
+    });
+  }, [search]);
+
   var bg = dark ? "#06020f" : "#ffffff";
   var textMain = dark ? "#ffffff" : "#0d0520";
   var textMid = dark ? "rgba(220,210,255,0.75)" : "rgba(13,5,32,0.60)";
   var accent = dark ? "#b99eff" : "#7a3fd1";
   var cardBdr = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.12)";
+  var border = dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
 
   var stats = [
     { icon: Mic,      value: "50+",   label: "World-Class Speakers" },
@@ -312,21 +324,31 @@ export default function Speakers() {
         .speakers-hero { position:relative; overflow:hidden; padding:6rem 5% 4rem; text-align:center; }
         .spk-orb-1 { position:absolute; pointer-events:none; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle,rgba(${purpleRgb},0.25) 0%,transparent 70%); top:-160px; left:-100px; filter:blur(70px); }
         .spk-orb-2 { position:absolute; pointer-events:none; width:400px; height:400px; border-radius:50%; background:radial-gradient(circle,rgba(${orangeRgb},0.12) 0%,transparent 70%); top:-80px; right:-80px; filter:blur(70px); }
-        .spk-grid { position:absolute; inset:0; pointer-events:none; background-image:linear-gradient(rgba(${purpleRgb},0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(${purpleRgb},0.06) 1px,transparent 1px); background-size:60px 60px; mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%); }
+        .spk-grid-bg { position:absolute; inset:0; pointer-events:none; background-image:linear-gradient(rgba(${purpleRgb},0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(${purpleRgb},0.06) 1px,transparent 1px); background-size:60px 60px; mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%); }
         .speakers-hero h1 { font-size:clamp(2.4rem,5vw,4rem); font-weight:900; font-family:'Orbitron',sans-serif; line-height:1.05; margin-bottom:1.2rem; color:var(--text-main); }
         .speakers-hero h1 span { color:#f5a623; }
         .spk-sub { font-size:1rem; color:var(--text-muted); max-width:520px; margin:0 auto 2.4rem; line-height:1.75; }
         .spk-cta { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#7a3fd1,#f5a623); color:#fff; border:none; padding:13px 30px; border-radius:999px; font-weight:700; font-size:0.88rem; cursor:pointer; text-decoration:none; transition:opacity 0.2s,transform 0.2s; }
         .spk-cta:hover { opacity:0.88; transform:translateY(-2px); }
-        .speakers-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:rgba(${purpleRgb},0.10); border-top:1px solid rgba(${purpleRgb},0.10); border-bottom:1px solid rgba(${purpleRgb},0.10); margin-bottom:0; }
+        .speakers-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:rgba(${purpleRgb},0.10); border-top:1px solid rgba(${purpleRgb},0.10); border-bottom:1px solid rgba(${purpleRgb},0.10); }
         .stat-cell { display:flex; align-items:center; gap:14px; padding:24px 20px; background:var(--bg-card,rgba(${purpleRgb},0.03)); }
         .stat-icon { width:44px; height:44px; border-radius:12px; background:rgba(${purpleRgb},0.10); border:1px solid rgba(${purpleRgb},0.18); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#7a3fd1; }
         .stat-value { font-family:'Orbitron',sans-serif; font-size:1.4rem; font-weight:900; line-height:1; color:var(--text-main); }
         .stat-label { font-size:0.68rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px; line-height:1.3; }
         @media(min-width:768px) { .speakers-stats { grid-template-columns:repeat(4,1fr); } }
+
+        /* Speaker grid — 4 col desktop, 2 col tablet, 2 col mobile */
         .speakers-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
-        @media(max-width:1100px) { .speakers-grid { grid-template-columns:repeat(2,1fr); } }
-        @media(max-width:600px) { .speakers-grid { grid-template-columns:1fr; } }
+        @media(max-width:1100px) { .speakers-grid { grid-template-columns:repeat(2,1fr); gap:20px; } }
+        @media(max-width:600px) {
+          .speakers-grid { grid-template-columns:repeat(2,1fr); gap:12px; }
+          .speaker-card { border-radius: 14px; }
+          .speaker-card-info { padding: 12px 12px 10px !important; }
+          .speaker-card-desc { display: none !important; }
+          .speaker-card-title { font-size: 0.7rem !important; }
+          .speaker-linkedin-btn { padding: 8px 12px !important; font-size: 0.68rem !important; }
+        }
+
         .spk-cta-band { margin:0 5% 5rem; border-radius:24px; padding:3.5rem 4rem; background:var(--bg-card); border:1px solid var(--border-main); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:2rem; }
         .spk-cta-band h3 { font-size:1.6rem; font-weight:900; font-family:'Orbitron',sans-serif; color:var(--text-main); margin-bottom:0.5rem; }
         .spk-cta-band h3 span { color:#f5a623; }
@@ -342,7 +364,7 @@ export default function Speakers() {
           <section className="speakers-hero">
             <div className="spk-orb-1" />
             <div className="spk-orb-2" />
-            <div className="spk-grid" />
+            <div className="spk-grid-bg" />
             <div style={{ position: "relative", zIndex: 2 }}>
               <h1>World-Class<br /><span>Speakers</span></h1>
               <p className="spk-sub">
@@ -371,30 +393,80 @@ export default function Speakers() {
             })}
           </div>
 
+          {/* Sticky Search Bar */}
+          <div style={{
+            position: "sticky", top: "64px", zIndex: 40,
+            background: dark ? "rgba(6,2,15,0.97)" : "rgba(255,255,255,0.97)",
+            backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)",
+            borderBottom: "1px solid " + border,
+            padding: "14px 5%",
+          }}>
+            <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 10, flex: 1,
+                padding: "10px 16px", borderRadius: 12,
+                background: dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)",
+                border: "1.5px solid " + (dark ? "rgba(255,255,255,0.10)" : "rgba(122,63,209,0.12)"),
+              }}>
+                <Search size={16} style={{ opacity: 0.4, flexShrink: 0 }} />
+                <input
+                  value={search}
+                  onChange={function(e) { setSearch(e.target.value); }}
+                  placeholder="Search speakers by name, company, or topic..."
+                  style={{
+                    background: "transparent", border: "none", outline: "none",
+                    fontSize: "0.88rem", color: textMain, width: "100%",
+                    fontFamily: "inherit",
+                  }}
+                />
+                {search && (
+                  <button onClick={function() { setSearch(""); }}
+                    style={{ background: "none", border: "none", cursor: "pointer", color: textMid, lineHeight: 0, padding: 0 }}>
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+              <span style={{ fontSize: "0.75rem", color: textMid, flexShrink: 0, fontWeight: 600 }}>
+                {filtered.length} speaker{filtered.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+          </div>
+
           {/* Speaker Grid */}
-          <section style={{ padding: "5rem 5%", maxWidth: 1200, margin: "0 auto" }}>
-            <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+          <section style={{ padding: "3rem 5%", maxWidth: 1200, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
               <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "2.5px", textTransform: "uppercase", color: accent, marginBottom: 12 }}>TTFC 2026 Lineup</p>
               <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.6rem,4vw,2.6rem)", fontWeight: 900, color: textMain, marginBottom: 16 }}>Confirmed Speakers</h2>
               <div style={{ width: 60, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", margin: "0 auto" }} />
             </div>
 
-            <div className="speakers-grid">
-              {SPEAKERS.map(function(speaker) {
-                return <SpeakerCard key={speaker.name} speaker={speaker} dark={dark} />;
-              })}
-            </div>
+            {filtered.length === 0 ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "4rem 0", gap: 12, opacity: 0.4 }}>
+                <Search size={28} style={{ opacity: 0.3 }} />
+                <p style={{ fontSize: "0.9rem" }}>No speakers match your search.</p>
+                <button onClick={function() { setSearch(""); }}
+                  style={{ fontSize: "0.8rem", color: accent, textDecoration: "underline", cursor: "pointer", background: "none", border: "none" }}>
+                  Clear search
+                </button>
+              </div>
+            ) : (
+              <div className="speakers-grid">
+                {filtered.map(function(speaker) {
+                  return <SpeakerCard key={speaker.name} speaker={speaker} dark={dark} />;
+                })}
+              </div>
+            )}
 
             {/* More Speakers Coming Soon */}
-            <div style={{ textAlign: "center", padding: "4rem 0 2rem" }}>
+            <div style={{ textAlign: "center", padding: "3.5rem 0 1rem" }}>
               <div style={{
                 display: "inline-flex", alignItems: "center", gap: 12,
-                padding: "18px 40px", borderRadius: 16,
+                padding: "16px 36px", borderRadius: 14,
                 background: dark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.04)",
                 border: "1px solid " + cardBdr,
               }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px rgba(245,166,35,0.5)", animation: "pulse 2s ease-in-out infinite" }} />
-                <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.82rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", color: textMid }}>More Speakers Coming Soon</span>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px rgba(245,166,35,0.5)", animation: "spk-pulse 2s ease-in-out infinite" }} />
+                <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", color: textMid }}>More Speakers Coming Soon</span>
               </div>
             </div>
           </section>
@@ -434,7 +506,7 @@ export default function Speakers() {
         <Footer />
       </div>
 
-      <style>{`@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(1.3);} }`}</style>
+      <style>{`@keyframes spk-pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(1.3);} }`}</style>
       {modalOpen && <SpeakerApplicationModal onClose={function() { setModalOpen(false); }} dark={dark} />}
     </>
   );

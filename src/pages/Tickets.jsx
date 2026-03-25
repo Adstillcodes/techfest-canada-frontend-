@@ -19,7 +19,11 @@ const PASS_META = {
     label: "Discover Pass",
     tagline: "Your gateway to The Tech Festival Canada.",
     description: "Ideal for professionals, founders, innovators, students, and business leaders who want access to the core conference experience and the opportunity to engage with the ideas, people, and conversations shaping the future of technology.",
-    features: ["Conference access", "Lunch"],
+    features: [
+      "2x Day Conference Access",
+      "Expo Floor Access",
+      "Networking Breaks",
+    ],
     tier: "discover",
     defaultPrice: 399,
     featured: false,
@@ -28,7 +32,13 @@ const PASS_META = {
     label: "Connect Pass",
     tagline: "More than just access to the conference.",
     description: "Designed for attendees who want to start the day in a more curated business environment. With entry to the exclusive CxO Breakfast, you can connect with senior leaders and build meaningful relationships before the main conference begins.",
-    features: ["Conference access", "CxO Breakfast", "Lunch"],
+    features: [
+      "2x Day Conference Access",
+      "2x CxO Breakfasts",
+      "2x Luncheons",
+      "Expo Floor Access",
+      "Networking Breaks",
+    ],
     tier: "connect",
     defaultPrice: 599,
     featured: false,
@@ -37,7 +47,14 @@ const PASS_META = {
     label: "Influence Pass",
     tagline: "A fuller event experience beyond the conference floor.",
     description: "Built for decision makers, growth leaders, investors, and professionals who want premium daytime access plus entry to the Gala Dinner and Networking Reception — creating space for higher-value conversations and stronger business connections.",
-    features: ["Conference access", "CxO Breakfast", "Lunch", "Gala Dinner & Networking Reception"],
+    features: [
+      "2x Day Conference Access",
+      "2x CxO Breakfasts",
+      "2x Luncheons",
+      "1x Gala Dinner & Networking Reception",
+      "Expo Floor Access",
+      "Networking Breaks",
+    ],
     tier: "influence",
     defaultPrice: 799,
     featured: true,
@@ -46,7 +63,16 @@ const PASS_META = {
     label: "Power Pass",
     tagline: "The ultimate all-access experience.",
     description: "Built for senior executives, VIP guests, investors, speakers, and leaders who want to experience The Tech Festival Canada at the highest level. With access to every major element of the event, this pass offers the most complete and elevated way to engage with the festival.",
-    features: ["Conference access", "CxO Breakfast", "Lunch", "Gala Dinner & Networking Reception", "Awards Night", "VIP Lounge access"],
+    features: [
+      "2x Day Conference Access",
+      "2x CxO Breakfasts",
+      "2x Luncheons",
+      "1x Gala Dinner & Networking Reception",
+      "1x Awards Night",
+      "VIP Lounge Access (Both Days)",
+      "Expo Floor Access",
+      "Networking Breaks",
+    ],
     tier: "power",
     defaultPrice: 999,
     featured: false,
@@ -185,12 +211,21 @@ export default function Tickets() {
 
   const passes     = ["discover", "connect", "influence", "power"];
   const passLabels = { discover: "Discover", connect: "Connect", influence: "Influence", power: "Power" };
-  const allFeatures = ["Conference access", "Lunch", "CxO Breakfast", "Gala Dinner & Networking Reception", "Awards Night", "VIP Lounge access"];
+  const allFeatures = [
+    "2x Day Conference Access",
+    "Expo Floor Access",
+    "Networking Breaks",
+    "2x CxO Breakfasts",
+    "2x Luncheons",
+    "1x Gala Dinner & Networking Reception",
+    "1x Awards Night",
+    "VIP Lounge Access (Both Days)",
+  ];
   const passFeatureMap = {
-    discover:  [true, true, false, false, false, false],
-    connect:   [true, true, true,  false, false, false],
-    influence: [true, true, true,  true,  false, false],
-    power:     [true, true, true,  true,  true,  true],
+    discover:  [true, true, true, false, false, false, false, false],
+    connect:   [true, true, true, true,  true,  false, false, false],
+    influence: [true, true, true, true,  true,  true,  false, false],
+    power:     [true, true, true, true,  true,  true,  true,  true],
   };
 
   const bg       = dark ? "#06020f" : "#ffffff";

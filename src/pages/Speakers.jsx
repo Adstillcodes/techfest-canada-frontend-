@@ -177,7 +177,6 @@ function SpeakerCard(props) {
       onMouseEnter={function(e) { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = dark ? "0 12px 40px rgba(122,63,209,0.15)" : "0 12px 40px rgba(122,63,209,0.10)"; }}
       onMouseLeave={function(e) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
     >
-      {/* Photo */}
       <div style={{ position: "relative", width: "100%", aspectRatio: "1/1", overflow: "hidden", background: dark ? "#120a22" : "#ede8f7" }}>
         {speaker.image ? (
           <img src={urlFor(speaker.image).width(400).height(400).url()} alt={speaker.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
@@ -186,7 +185,6 @@ function SpeakerCard(props) {
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, " + (dark ? "rgba(6,2,15,0.85)" : "rgba(255,255,255,0.7)") + ", transparent)", pointerEvents: "none" }} />
       </div>
 
-      {/* Info */}
       <div className="speaker-info" style={{ padding: "16px 18px 14px", flex: 1, display: "flex", flexDirection: "column" }}>
         <h3 className="speaker-name" style={{
           fontFamily: "'Orbitron', sans-serif", fontSize: "0.82rem", fontWeight: 900,
@@ -196,7 +194,6 @@ function SpeakerCard(props) {
         <p className="speaker-title" style={{ fontSize: "0.78rem", fontWeight: 600, color: textMain, marginBottom: 2, lineHeight: 1.35 }}>{speaker.title}</p>
         <p style={{ fontSize: "0.72rem", fontWeight: 700, color: accent, marginBottom: 10, lineHeight: 1.3 }}>{speaker.company}</p>
 
-        {/* Description — desktop always visible, mobile toggle */}
         <p className="speaker-desc-desktop" style={{ fontSize: "0.76rem", color: textMid, lineHeight: 1.6, flex: 1 }}>{speaker.bio}</p>
 
         <div className="speaker-desc-mobile">
@@ -215,7 +212,6 @@ function SpeakerCard(props) {
           >{expanded ? "Show less" : "Read more"}</button>
         </div>
 
-        {/* LinkedIn */}
         {speaker.linkedin && (
           <a href={speaker.linkedin} target="_blank" rel="noreferrer" className="speaker-li-btn" style={{
             display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
@@ -278,7 +274,7 @@ export default function Speakers() {
     { icon: Mic,      value: "50+",   label: "World-Class Speakers" },
     { icon: Users,    value: "1000+", label: "Expected Attendees"   },
     { icon: Calendar, value: "2",     label: "Days of Content"      },
-    { icon: Award,    value: "10",    label: "Tech Pillars Covered" },
+    { icon: Award,    value: "5",     label: "Tech Pillars Covered" },
   ];
 
   var purpleRgb = "122, 63, 209";
@@ -303,17 +299,11 @@ export default function Speakers() {
         .stat-value { font-family:'Orbitron',sans-serif; font-size:1.4rem; font-weight:900; line-height:1; color:var(--text-main); }
         .stat-label { font-size:0.68rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px; line-height:1.3; }
         @media(min-width:768px) { .speakers-stats { grid-template-columns:repeat(4,1fr); } }
-
-        /* Grid: 4 desktop, 2 everywhere else */
         .speakers-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
         @media(max-width:1100px) { .speakers-grid { grid-template-columns:repeat(2,1fr); gap:20px; } }
         @media(max-width:600px) { .speakers-grid { grid-template-columns:repeat(2,1fr); gap:10px; } }
-
-        /* Desktop: show full desc, hide read more btn */
         .speaker-desc-desktop { display: block; }
         .speaker-desc-mobile { display: none; }
-
-        /* Mobile: hide full desc, show read more toggle */
         @media(max-width:600px) {
           .speaker-desc-desktop { display: none !important; }
           .speaker-desc-mobile { display: block !important; }
@@ -324,7 +314,6 @@ export default function Speakers() {
           .speaker-li-btn { padding: 7px 10px !important; font-size: 0.65rem !important; gap: 5px !important; }
           .speaker-li-btn svg { width: 12px !important; height: 12px !important; }
         }
-
         .spk-cta-band { margin:0 5% 5rem; border-radius:24px; padding:3.5rem 4rem; background:var(--bg-card); border:1px solid var(--border-main); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:2rem; }
         .spk-cta-band h3 { font-size:1.6rem; font-weight:900; font-family:'Orbitron',sans-serif; color:var(--text-main); margin-bottom:0.5rem; }
         .spk-cta-band h3 span { color:#f5a623; }
@@ -336,7 +325,6 @@ export default function Speakers() {
         <Navbar />
         <main style={{ flex: 1 }}>
 
-          {/* Hero */}
           <section className="speakers-hero">
             <div className="spk-orb-1" />
             <div className="spk-orb-2" />
@@ -348,7 +336,6 @@ export default function Speakers() {
             </div>
           </section>
 
-          {/* Stats */}
           <div className="speakers-stats">
             {stats.map(function(s) {
               var Icon = s.icon;
@@ -364,7 +351,6 @@ export default function Speakers() {
             })}
           </div>
 
-          {/* Sticky Search */}
           <div style={{
             position: "sticky", top: "64px", zIndex: 40,
             background: dark ? "rgba(6,2,15,0.97)" : "rgba(255,255,255,0.97)",
@@ -388,11 +374,10 @@ export default function Speakers() {
             </div>
           </div>
 
-          {/* Speaker Grid */}
           <section style={{ padding: "3rem 5%", maxWidth: 1200, margin: "0 auto" }}>
             <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-              <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "2.5px", textTransform: "uppercase", color: accent, marginBottom: 12 }}>TTFC 2026 Lineup</p>
-              <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.6rem,4vw,2.6rem)", fontWeight: 900, color: textMain, marginBottom: 16 }}>Confirmed Speakers</h2>
+              <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "2.5px", textTransform: "uppercase", color: accent, marginBottom: 12 }}>TTFC 2026 Speaker Lineup</p>
+              <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.6rem,4vw,2.6rem)", fontWeight: 900, color: textMain, marginBottom: 16 }}>Speakers</h2>
               <div style={{ width: 60, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", margin: "0 auto" }} />
             </div>
 
@@ -419,7 +404,6 @@ export default function Speakers() {
               </div>
             )}
 
-            {/* More Coming Soon */}
             <div style={{ textAlign: "center", padding: "3.5rem 0 1rem" }}>
               <div style={{
                 display: "inline-flex", alignItems: "center", gap: 12,
@@ -433,7 +417,6 @@ export default function Speakers() {
             </div>
           </section>
 
-          {/* Advisory Council */}
           <section style={{
             padding: "5rem 5%",
             background: dark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.02)",
@@ -448,7 +431,6 @@ export default function Speakers() {
             </div>
           </section>
 
-          {/* Apply CTA */}
           <div className="spk-cta-band">
             <div>
               <h3>Want to <span>Speak</span> at TTFC?</h3>

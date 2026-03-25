@@ -32,11 +32,11 @@ const PILLAR_MAP = {
 };
 
 const SECTOR_MAP = {
-  fintech:       { label: "Financial Services",     short: "FIN" },
-  healthcare:    { label: "Healthcare & Life Sci",  short: "HLT" },
+  fintech:       { label: "Financial Services",      short: "FIN" },
+  healthcare:    { label: "Healthcare & Life Sci",   short: "HLT" },
   energy:        { label: "Energy & Infrastructure", short: "ENR" },
   manufacturing: { label: "Manufacturing & Supply",  short: "MFG" },
-  public:        { label: "Public Sector & Defence", short: "PUB" },
+  public:        { label: "Public Sector & Defence", short: "DEF" },
 };
 
 const FORMAT_MAP = {
@@ -148,7 +148,6 @@ function SessionCard({ s, dark, i }) {
       style={{
         position: "relative", borderRadius: "10px", overflow: "hidden",
         cursor: isBreak ? "default" : "pointer",
-        filter: "none",
         transition: "filter 0.22s ease",
         background: isBreak
           ? (dark ? "rgba(255,255,255,0.015)" : "rgba(0,0,0,0.02)")
@@ -159,8 +158,6 @@ function SessionCard({ s, dark, i }) {
         boxShadow: (!isBreak && !dark) ? "0 1px 6px rgba(0,0,0,0.05)" : "none",
       }}
     >
-
-
       {/* Accent bar */}
       {!isBreak && (
         <div style={{
@@ -208,7 +205,11 @@ function SessionCard({ s, dark, i }) {
                     fontSize: "0.67rem", fontWeight: 700, letterSpacing: "0.05em",
                     background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
                     color: dark ? "rgba(255,255,255,0.55)" : "rgba(0,0,0,0.5)",
-                  }}>{sector.short}</span>
+                  }}>
+                    {/* Show full label on desktop, short code on mobile */}
+                    <span className="sector-label-full">{sector.label}</span>
+                    <span className="sector-label-short">{sector.short}</span>
+                  </span>
                 )}
               </div>
             )}
@@ -310,7 +311,6 @@ function TimeGroup({ time, sessions, dark, base }) {
   );
 }
 
-
 // ─── Page ─────────────────────────────────────────────────────────
 export default function AgendaPage() {
   useProtection();
@@ -334,6 +334,7 @@ export default function AgendaPage() {
   const accent = dark ? "#b99eff" : "#7a3fd1";
   const border = dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
 
+  // Sessions for current day
   const filtered = useMemo(() => {
     return SESSIONS.filter(s => {
       if (s.day !== activeDay) return false;
@@ -343,6 +344,20 @@ export default function AgendaPage() {
       if (activeSector && s.sector !== activeSector) return false;
       return true;
     });
+  }, [activeDay, search, activePillar, activeSector]);
+
+  // Check if other day has results (for helpful empty state message)
+  const otherDayResults = useMemo(() => {
+    const otherDay = activeDay === 1 ? 2 : 1;
+    const count = SESSIONS.filter(s => {
+      if (s.day !== otherDay) return false;
+      const q = search.toLowerCase();
+      if (q && !s.title.toLowerCase().includes(q)) return false;
+      if (activePillar && s.pillar !== activePillar) return false;
+      if (activeSector && s.sector !== activeSector) return false;
+      return true;
+    }).length;
+    return { day: otherDay, count };
   }, [activeDay, search, activePillar, activeSector]);
 
   const grouped = useMemo(() => {
@@ -377,6 +392,32 @@ export default function AgendaPage() {
         background-clip: text;
         color: transparent;
         display: inline-block;
+      }
+
+      /* Sector label responsiveness */
+      .sector-label-short { display: none; }
+      .sector-label-full  { display: inline; }
+      @media (max-width: 640px) {
+        .sector-label-short { display: inline; }
+        .sector-label-full  { display: none; }
+      }
+
+      /* Sector filter button labels */
+      .sector-btn-short { display: none; }
+      .sector-btn-full  { display: inline; }
+      @media (max-width: 640px) {
+        .sector-btn-short { display: inline; }
+        .sector-btn-full  { display: none; }
+      }
+
+      /* Sticky navbar override — ensures Navbar sits in normal flow on mobile */
+      @media (max-width: 640px) {
+        /* If Navbar expands a menu, keep the expanded part below the sticky bar */
+        nav, header {
+          position: sticky !important;
+          top: 0 !important;
+          z-index: 50 !important;
+        }
       }
     `}</style>
     <div style={{ background: bg, minHeight: "100vh", color: text, overflowX: "hidden", userSelect: "none" }}>
@@ -433,9 +474,7 @@ export default function AgendaPage() {
                   transition={{ delay: 0.15 + i * 0.06, type: "spring", damping: 20 }}
                   style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                 >
-                  <span className="agenda-stat-text" style={{
-                    "--grad-start": accent,
-                  }}>{v}</span>
+                  <span className="agenda-stat-text" style={{ "--grad-start": accent }}>{v}</span>
                   <span style={{ fontSize: "0.7rem", opacity: 0.42, textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "0.1rem" }}>{l}</span>
                 </motion.div>
               ))}
@@ -507,22 +546,25 @@ export default function AgendaPage() {
               })}
             </div>
 
-            {/* Sector filters */}
+            {/* Sector filters — full name on desktop, short code on mobile */}
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginLeft: "auto" }}>
               {Object.entries(SECTOR_MAP).map(([sid, sec]) => {
                 const active = activeSector === sid;
                 return (
                   <motion.button key={sid} whileTap={{ scale: 0.96 }}
                     onClick={() => setActiveSector(prev => prev === sid ? null : sid)}
+                    title={sec.label}
                     style={{
                       padding: "0.26rem 0.55rem", borderRadius: "4px",
-                      fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer",
+                      fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.06em",
+                      textTransform: "uppercase", cursor: "pointer",
                       border: `1.5px solid ${active ? accent : dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
                       background: active ? `${accent}18` : "transparent",
                       color: active ? accent : dark ? "rgba(255,255,255,0.38)" : "rgba(0,0,0,0.35)",
-                      transition: "all 0.15s",
+                      transition: "all 0.15s", whiteSpace: "nowrap",
                     }}>
-                    {sec.short}
+                    <span className="sector-btn-short">{sec.short}</span>
+                    <span className="sector-btn-full">{sec.label}</span>
                   </motion.button>
                 );
               })}
@@ -554,17 +596,46 @@ export default function AgendaPage() {
             <p style={{ fontSize: "0.73rem", opacity: 0.35 }}>
               {filtered.length} sessions · Day {activeDay} — {activeDay === 1 ? "Oct 26" : "Oct 27"}, 2026
             </p>
-
           </div>
 
           {grouped.length === 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "5rem 0", gap: "0.75rem", opacity: 0.38 }}>
-              <Search size={26} style={{ opacity: 0.3 }} />
-              <p style={{ fontSize: "0.88rem" }}>No sessions match your filters.</p>
-              <button onClick={() => { setSearch(""); setActivePillar(null); setActiveSector(null); }}
-                style={{ fontSize: "0.78rem", color: accent, textDecoration: "underline", cursor: "pointer", background: "none", border: "none" }}>
-                Clear filters
-              </button>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "5rem 0", gap: "0.75rem" }}>
+              <Search size={26} style={{ opacity: 0.18 }} />
+
+              {/* If other day has matching sessions, surface that instead of generic "no results" */}
+              {otherDayResults.count > 0 ? (
+                <>
+                  <p style={{ fontSize: "0.97rem", fontWeight: 600, opacity: 0.75, textAlign: "center" }}>
+                    No sessions on Day {activeDay} match your filters.
+                  </p>
+                  <p style={{ fontSize: "0.82rem", opacity: 0.45, textAlign: "center", maxWidth: "340px", lineHeight: 1.5 }}>
+                    But there {otherDayResults.count === 1 ? "is" : "are"}{" "}
+                    <strong style={{ opacity: 1, color: accent }}>{otherDayResults.count} matching session{otherDayResults.count > 1 ? "s" : ""}</strong>{" "}
+                    on Day {otherDayResults.day} ({otherDayResults.day === 1 ? "Oct 26" : "Oct 27"}).
+                  </p>
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setActiveDay(otherDayResults.day)}
+                    style={{
+                      marginTop: "0.25rem",
+                      padding: "0.5rem 1.2rem", borderRadius: "9999px",
+                      fontSize: "0.8rem", fontWeight: 700, cursor: "pointer",
+                      background: `${accent}18`,
+                      border: `1.5px solid ${accent}55`,
+                      color: accent,
+                    }}>
+                    Switch to Day {otherDayResults.day} →
+                  </motion.button>
+                </>
+              ) : (
+                <>
+                  <p style={{ fontSize: "0.88rem", opacity: 0.38 }}>No sessions match your filters.</p>
+                  <button onClick={() => { setSearch(""); setActivePillar(null); setActiveSector(null); }}
+                    style={{ fontSize: "0.78rem", color: accent, textDecoration: "underline", cursor: "pointer", background: "none", border: "none" }}>
+                    Clear filters
+                  </button>
+                </>
+              )}
             </div>
           ) : (
             grouped.map(([time, sessions]) => {
@@ -575,39 +646,6 @@ export default function AgendaPage() {
           )}
         </div>
       </main>
-
-      {/* PILLAR LEGEND */}
-      <section style={{ borderTop: `1px solid ${border}`, padding: "2rem 0", background: dark ? "rgba(255,255,255,0.01)" : "rgba(0,0,0,0.01)" }}>
-        <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 1.5rem" }}>
-          <p style={{ fontSize: "0.65rem", opacity: 0.32, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "0.9rem" }}>
-            Technology Pillars
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem" }}>
-            {Object.entries(PILLAR_MAP).map(([pid, p]) => {
-              const c = dark ? p.color : p.light;
-              const Icon = p.icon;
-              return (
-                <div key={pid} style={{
-                  display: "inline-flex", alignItems: "center", gap: "0.45rem",
-                  padding: "0.5rem 0.9rem", borderRadius: "10px",
-                  background: dark ? "rgba(255,255,255,0.03)" : "#fff",
-                  border: `1px solid ${c}25`,
-                  boxShadow: dark ? "none" : "0 1px 4px rgba(0,0,0,0.04)",
-                }}>
-                  <div style={{
-                    width: "26px", height: "26px", borderRadius: "6px",
-                    background: `${c}18`, display: "flex", alignItems: "center", justifyContent: "center",
-                    border: `1px solid ${c}28`,
-                  }}>
-                    <Icon size={13} style={{ color: c }} />
-                  </div>
-                  <span style={{ fontSize: "0.8rem", fontWeight: 600, color: c }}>{p.label}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

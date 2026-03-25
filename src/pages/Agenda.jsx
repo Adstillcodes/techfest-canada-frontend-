@@ -124,6 +124,106 @@ function getDuration(start, end) {
   return `${mins}m`;
 }
 
+// ─── Filter Dropdown ──────────────────────────────────────────────
+function FilterDropdown({ label, value, options, onSelect, dark, accent, border, inactiveText, text }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const fn = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", fn);
+    return () => document.removeEventListener("mousedown", fn);
+  }, []);
+
+  const selected = value ? options[value] : null;
+
+  return (
+    <div ref={ref} style={{ position: "relative", flexShrink: 0 }}>
+      <motion.button
+        whileTap={{ scale: 0.97 }}
+        onClick={() => setOpen(v => !v)}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: "0.5rem",
+          padding: "0.52rem 1rem", borderRadius: "10px",
+          fontSize: "0.86rem", fontWeight: 700, cursor: "pointer",
+          border: `2px solid ${selected ? accent : border}`,
+          background: selected ? `${accent}18` : (dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"),
+          color: selected ? accent : inactiveText,
+          transition: "all 0.15s", whiteSpace: "nowrap",
+        }}>
+        {selected
+          ? <><span style={{ opacity: 0.55, fontWeight: 600 }}>{label}:</span>&nbsp;{selected.label}</>
+          : label}
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 24 }}
+          style={{ display: "flex", alignItems: "center" }}>
+          <ChevronDown size={14} />
+        </motion.span>
+      </motion.button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.97 }}
+            transition={{ type: "spring", damping: 26, stiffness: 280 }}
+            style={{
+              position: "absolute", top: "calc(100% + 8px)", left: 0,
+              minWidth: "220px", borderRadius: "12px", zIndex: 200,
+              background: dark ? "#130a2a" : "#fff",
+              border: `1.5px solid ${border}`,
+              boxShadow: dark ? "0 12px 40px rgba(0,0,0,0.6)" : "0 8px 32px rgba(0,0,0,0.14)",
+              overflow: "hidden",
+            }}>
+            {selected && (
+              <button
+                onClick={() => { onSelect(null); setOpen(false); }}
+                style={{
+                  width: "100%", textAlign: "left", padding: "0.6rem 1rem",
+                  fontSize: "0.82rem", fontWeight: 600, cursor: "pointer",
+                  background: "none", border: "none",
+                  borderBottom: `1px solid ${border}`,
+                  color: dark ? "rgba(255,255,255,0.42)" : "rgba(0,0,0,0.38)",
+                  display: "flex", alignItems: "center", gap: "0.4rem",
+                }}>
+                <X size={12} /> Clear selection
+              </button>
+            )}
+            {Object.entries(options).map(([key, opt]) => {
+              const isActive = value === key;
+              const Icon = opt.icon;
+              const iconColor = dark ? (opt.color ?? accent) : (opt.light ?? accent);
+              return (
+                <button
+                  key={key}
+                  onClick={() => { onSelect(isActive ? null : key); setOpen(false); }}
+                  style={{
+                    width: "100%", textAlign: "left",
+                    padding: "0.65rem 1rem",
+                    fontSize: "0.86rem", fontWeight: 700, cursor: "pointer",
+                    background: isActive ? `${accent}18` : "none",
+                    border: "none",
+                    color: isActive ? accent : (dark ? "rgba(255,255,255,0.82)" : "rgba(13,5,32,0.78)"),
+                    display: "flex", alignItems: "center", gap: "0.55rem",
+                    transition: "background 0.1s",
+                  }}
+                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"; }}
+                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = isActive ? `${accent}18` : "none"; }}>
+                  {Icon && <Icon size={13} style={{ color: iconColor, flexShrink: 0 }} />}
+                  {opt.label}
+                  {isActive && <span style={{ marginLeft: "auto", fontSize: "0.75rem", opacity: 0.6 }}>✓</span>}
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ─── Session Card ─────────────────────────────────────────────────
 function SessionCard({ s, dark, i }) {
   const [expanded, setExpanded] = useState(false);
@@ -162,7 +262,6 @@ function SessionCard({ s, dark, i }) {
         boxShadow: (!isBreak && !dark) ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
       }}
     >
-      {/* Accent bar */}
       {!isBreak && (
         <div style={{
           position: "absolute", left: 0, top: 0, bottom: 0, width: "3px",
@@ -173,11 +272,8 @@ function SessionCard({ s, dark, i }) {
       <div style={{ padding: isBreak ? "0.9rem 1.2rem" : "1.1rem 1.4rem 1.1rem 1.65rem" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.8rem" }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-
-            {/* Tag row */}
             {!isBreak && (
               <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.4rem", marginBottom: "0.58rem" }}>
-                {/* Format */}
                 <span style={{
                   display: "inline-flex", alignItems: "center",
                   padding: "0.24rem 0.62rem", borderRadius: "5px",
@@ -188,7 +284,6 @@ function SessionCard({ s, dark, i }) {
                   {fmtInfo.label}
                 </span>
 
-                {/* Featured */}
                 {s.featured && (
                   <span style={{
                     padding: "0.24rem 0.62rem", borderRadius: "5px",
@@ -199,7 +294,6 @@ function SessionCard({ s, dark, i }) {
                   }}>✦ Featured</span>
                 )}
 
-                {/* Pillar */}
                 {PillarIcon && pillar && (
                   <span style={{
                     display: "inline-flex", alignItems: "center", gap: "0.3rem",
@@ -211,7 +305,6 @@ function SessionCard({ s, dark, i }) {
                   </span>
                 )}
 
-                {/* Sector */}
                 {sector && (
                   <span style={{
                     padding: "0.24rem 0.62rem", borderRadius: "5px",
@@ -219,14 +312,12 @@ function SessionCard({ s, dark, i }) {
                     background: dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
                     color: primaryText,
                   }}>
-                    <span className="sector-label-full">{sector.label}</span>
-                    <span className="sector-label-short">{sector.short}</span>
+                    {sector.label}
                   </span>
                 )}
               </div>
             )}
 
-            {/* Title */}
             <p style={{
               fontWeight: isBreak ? 500 : 700,
               fontSize: isBreak ? "0.95rem" : "1.06rem",
@@ -234,7 +325,6 @@ function SessionCard({ s, dark, i }) {
               color: isBreak ? mutedText : primaryText,
             }}>{s.title}</p>
 
-            {/* Speaker */}
             {!isBreak && (
               <p style={{ fontSize: "0.82rem", color: mutedText, marginTop: "0.4rem" }}>
                 Speaker: To Be Decided
@@ -242,7 +332,6 @@ function SessionCard({ s, dark, i }) {
             )}
           </div>
 
-          {/* Time + chevron */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.22rem", flexShrink: 0 }}>
             <span style={{
               fontFamily: "'Orbitron', sans-serif", fontSize: "0.94rem", fontWeight: 800,
@@ -261,7 +350,6 @@ function SessionCard({ s, dark, i }) {
           </div>
         </div>
 
-        {/* Expanded */}
         <AnimatePresence initial={false}>
           {expanded && !isBreak && (
             <motion.div
@@ -305,7 +393,6 @@ function SessionCard({ s, dark, i }) {
 function TimeGroup({ time, sessions, dark, base }) {
   return (
     <div style={{ display: "flex", gap: "1.1rem" }}>
-      {/* Time stamp */}
       <div style={{
         display: "flex", flexDirection: "column", alignItems: "flex-end",
         flexShrink: 0, paddingTop: "1rem", width: "52px",
@@ -317,7 +404,6 @@ function TimeGroup({ time, sessions, dark, base }) {
         }}>{time}</span>
       </div>
 
-      {/* Spine */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, paddingTop: "1.1rem" }}>
         <div style={{
           width: "8px", height: "8px", borderRadius: "50%", flexShrink: 0,
@@ -329,7 +415,6 @@ function TimeGroup({ time, sessions, dark, base }) {
         }} />
       </div>
 
-      {/* Cards */}
       <div style={{ flex: 1, paddingTop: "0.6rem", paddingBottom: "0.8rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
         {sessions.map((s, i) => <SessionCard key={s.id} s={s} dark={dark} i={base + i} />)}
       </div>
@@ -359,9 +444,7 @@ export default function AgendaPage() {
   const text         = dark ? "#ffffff"                    : "#0d0520";
   const accent       = dark ? "#b99eff"                    : "#7a3fd1";
   const border       = dark ? "rgba(255,255,255,0.10)"     : "rgba(0,0,0,0.10)";
-  // Inactive controls: clearly visible but not active
   const inactiveText = dark ? "rgba(255,255,255,0.78)"     : "rgba(13,5,32,0.60)";
-  const mutedLabel   = dark ? "rgba(255,255,255,0.36)"     : "rgba(13,5,32,0.32)";
 
   const filtered = useMemo(() => SESSIONS.filter(s => {
     if (s.day !== activeDay) return false;
@@ -412,18 +495,7 @@ export default function AgendaPage() {
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         background-clip: text; color: transparent; display: inline-block;
       }
-      /* Sector labels */
-      .sector-label-short, .sector-btn-short { display: none; }
-      .sector-label-full,  .sector-btn-full  { display: inline; }
-      @media (max-width: 640px) {
-        .sector-label-short, .sector-btn-short { display: inline; }
-        .sector-label-full,  .sector-btn-full  { display: none; }
-      }
-      /* Hide filter overflow on mobile */
-      .filter-scroll { overflow-x: auto; scrollbar-width: none; }
-      .filter-scroll::-webkit-scrollbar { display: none; }
-      /* Search placeholder */
-      input::placeholder { color: rgba(255,255,255,0.36); }
+      input::placeholder { color: rgba(128,128,128,0.5); }
     `}</style>
 
     <div style={{ background: bg, minHeight: "100vh", color: text, overflowX: "hidden", userSelect: "none" }}>
@@ -490,19 +562,16 @@ export default function AgendaPage() {
         backdropFilter: "blur(20px)",
         borderBottom: `1px solid ${border}`,
       }}>
-        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 1.5rem" }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0.8rem 1.5rem" }}>
 
-          {/* ROW 1 — Day tabs · Search · Clear */}
-          <div style={{
-            display: "flex", alignItems: "center", flexWrap: "wrap",
-            gap: "0.6rem", padding: "0.82rem 0 0.6rem",
-          }}>
+          {/* ROW 1 — Day tabs + Search bar */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
             {/* Day tabs */}
             <div style={{ display: "flex", gap: "0.4rem", flexShrink: 0 }}>
               {[1, 2].map(d => (
                 <motion.button key={d} whileTap={{ scale: 0.96 }} onClick={() => setActiveDay(d)}
                   style={{
-                    padding: "0.46rem 1.1rem", borderRadius: "9px",
+                    padding: "0.5rem 1.1rem", borderRadius: "9px",
                     fontSize: "0.88rem", fontWeight: 800, cursor: "pointer",
                     background: activeDay === d ? `${accent}28` : "transparent",
                     border: `2px solid ${activeDay === d ? accent : dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
@@ -510,27 +579,28 @@ export default function AgendaPage() {
                     transition: "all 0.15s",
                   }}>
                   Day {d}
-                  <span style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.58, marginLeft: "0.45rem" }}>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.55, marginLeft: "0.4rem" }}>
                     {d === 1 ? "Oct 26" : "Oct 27"}
                   </span>
                 </motion.button>
               ))}
             </div>
 
-            {/* Divider */}
+            {/* Vertical divider */}
             <div style={{ width: "1px", height: "28px", background: border, flexShrink: 0 }} />
 
-            {/* Search box */}
+            {/* Search bar — fills remaining space */}
             <div style={{
               display: "flex", alignItems: "center", gap: "0.48rem",
-              padding: "0.44rem 0.95rem", borderRadius: "9999px",
+              padding: "0.5rem 1rem", borderRadius: "10px",
               background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
               border: `1.5px solid ${border}`,
-              flex: "1 1 180px", maxWidth: "280px",
+              flex: "1 1 160px",
             }}>
               <Search size={14} style={{ color: inactiveText, flexShrink: 0 }} />
               <input
-                value={search} onChange={e => setSearch(e.target.value)}
+                value={search}
+                onChange={e => setSearch(e.target.value)}
                 placeholder="Search sessions…"
                 style={{
                   background: "transparent", border: "none", outline: "none",
@@ -538,13 +608,33 @@ export default function AgendaPage() {
                 }} />
               {search && (
                 <button onClick={() => setSearch("")}
-                  style={{ lineHeight: 0, background: "none", border: "none", cursor: "pointer", color: inactiveText }}>
+                  style={{ lineHeight: 0, background: "none", border: "none", cursor: "pointer", color: inactiveText, flexShrink: 0 }}>
                   <X size={14} />
                 </button>
               )}
             </div>
+          </div>
 
-            {/* Clear filters */}
+          {/* ROW 2 — Dropdowns + Clear */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: "0.5rem",
+            marginTop: "0.6rem", flexWrap: "wrap",
+          }}>
+            <FilterDropdown
+              label="Tech Pillar"
+              value={activePillar}
+              options={PILLAR_MAP}
+              onSelect={setActivePillar}
+              dark={dark} accent={accent} border={border} inactiveText={inactiveText} text={text}
+            />
+            <FilterDropdown
+              label="Sector"
+              value={activeSector}
+              options={SECTOR_MAP}
+              onSelect={setActiveSector}
+              dark={dark} accent={accent} border={border} inactiveText={inactiveText} text={text}
+            />
+
             <AnimatePresence>
               {hasFilters && (
                 <motion.button
@@ -553,84 +643,15 @@ export default function AgendaPage() {
                   onClick={() => { setActivePillar(null); setActiveSector(null); setSearch(""); }}
                   style={{
                     display: "inline-flex", alignItems: "center", gap: "0.34rem",
-                    padding: "0.44rem 0.95rem", borderRadius: "9999px",
+                    padding: "0.52rem 1rem", borderRadius: "10px",
                     fontSize: "0.84rem", fontWeight: 700, cursor: "pointer",
-                    border: `1.5px solid ${dark ? "rgba(255,255,255,0.20)" : "rgba(0,0,0,0.16)"}`,
-                    background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
-                    color: inactiveText,
+                    border: `1.5px solid ${dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
+                    background: "transparent", color: inactiveText,
                   }}>
-                  <X size={13} /> Clear filters
+                  <X size={13} /> Clear all
                 </motion.button>
               )}
             </AnimatePresence>
-          </div>
-
-          {/* ROW 2 — Pillars | Sectors */}
-          <div style={{
-            display: "flex", alignItems: "center", flexWrap: "wrap",
-            gap: "0.55rem", padding: "0 0 0.82rem",
-          }}>
-            {/* "Pillar" label */}
-            <span style={{
-              fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.1em",
-              textTransform: "uppercase", color: mutedLabel, flexShrink: 0,
-            }}>Pillar</span>
-
-            {/* Pillar pills */}
-            <div className="filter-scroll" style={{ display: "flex", gap: "0.38rem", flexWrap: "wrap" }}>
-              {Object.entries(PILLAR_MAP).map(([pid, p]) => {
-                const c = dark ? p.color : p.light;
-                const active = activePillar === pid;
-                const Icon = p.icon;
-                return (
-                  <motion.button key={pid} whileTap={{ scale: 0.95 }}
-                    onClick={() => setActivePillar(prev => prev === pid ? null : pid)}
-                    style={{
-                      display: "inline-flex", alignItems: "center", gap: "0.32rem",
-                      padding: "0.4rem 0.85rem", borderRadius: "9999px",
-                      fontSize: "0.82rem", fontWeight: 700, cursor: "pointer",
-                      border: `2px solid ${active ? c : dark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.12)"}`,
-                      background: active ? `${c}24` : "transparent",
-                      color: active ? c : inactiveText,
-                      transition: "all 0.15s", whiteSpace: "nowrap",
-                    }}>
-                    <Icon size={12} />{p.label}
-                  </motion.button>
-                );
-              })}
-            </div>
-
-            {/* Divider */}
-            <div style={{ width: "1px", height: "22px", background: border, flexShrink: 0 }} />
-
-            {/* "Sector" label */}
-            <span style={{
-              fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.1em",
-              textTransform: "uppercase", color: mutedLabel, flexShrink: 0,
-            }}>Sector</span>
-
-            {/* Sector pills */}
-            <div className="filter-scroll" style={{ display: "flex", gap: "0.38rem", flexWrap: "wrap" }}>
-              {Object.entries(SECTOR_MAP).map(([sid, sec]) => {
-                const active = activeSector === sid;
-                return (
-                  <motion.button key={sid} whileTap={{ scale: 0.95 }}
-                    onClick={() => setActiveSector(prev => prev === sid ? null : sid)}
-                    title={sec.label}
-                    style={{
-                      padding: "0.4rem 0.85rem", borderRadius: "9999px",
-                      fontSize: "0.82rem", fontWeight: 700, cursor: "pointer",
-                      border: `2px solid ${active ? accent : dark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.12)"}`,
-                      background: active ? `${accent}24` : "transparent",
-                      color: active ? accent : inactiveText,
-                      transition: "all 0.15s", whiteSpace: "nowrap",
-                    }}>
-                    <span className="sector-btn-short">{sec.short}</span>
-                    <span className="sector-btn-full">{sec.label}</span>
-                  </motion.button>
-                );
-              })}
-            </div>
           </div>
 
         </div>

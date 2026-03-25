@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
-  Calendar, Clock, Search, X, ChevronDown,
-  Sparkles, Zap, Shield, Cpu, Leaf, Lock, User, Mail, Briefcase,
+  Clock, Search, X, ChevronDown,
+  Sparkles, Zap, Shield, Cpu, Leaf,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -46,7 +46,7 @@ const FORMAT_MAP = {
   briefing:    { label: "Boardroom Briefing",  bg: "#56b3f522", bgL: "#1878c222", tc: "#56b3f5", tcL: "#1878c2" },
   panel:       { label: "Panel / Debate",      bg: "#f57eb322", bgL: "#c2287a22", tc: "#f57eb3", tcL: "#c2287a" },
   provocation: { label: "Provocation",         bg: "#f5a62322", bgL: "#c4780a22", tc: "#f5a623", tcL: "#c4780a" },
-  break:       { label: "Break",               bg: "#88888818", bgL: "#88888818", tc: "#999",    tcL: "#666"    },
+  break:       { label: "Break",               bg: "#88888818", bgL: "#88888818", tc: "#aaa",    tcL: "#777"    },
   awards:      { label: "Awards / Gala",       bg: "#f5c84222", bgL: "#d4970022", tc: "#f5c842", tcL: "#d49700" },
   opening:     { label: "Opening",             bg: "#b99eff22", bgL: "#7a3fd122", tc: "#b99eff", tcL: "#7a3fd1" },
   dialogue:    { label: "Leadership Dialogue", bg: "#56b3f522", bgL: "#1878c222", tc: "#56b3f5", tcL: "#1878c2" },
@@ -66,7 +66,7 @@ const SESSIONS = [
   { id:"d1-8",  day:1, time:"11:00", endTime:"11:15", title:"Robotics and the Physical AI Economy",                                                                           format:"keynote",     pillar:"robotics" },
   { id:"d1-9",  day:1, time:"11:15", endTime:"11:30", title:"Climate Tech as Competitiveness Strategy",                                                                       format:"keynote",     pillar:"climate" },
   { id:"d1-10", day:1, time:"11:30", endTime:"11:45", title:"Networking Break",                                                                                               format:"break",       isBreak:true },
-  { id:"d1-11", day:1, time:"11:45", endTime:"12:00", title:"Reinventing the Intelligent Financial Institution",                                                              format:"keynote",     sector:"fintech" },
+  { id:"d1-11", day:1, time:"11:45", endTime:"12:00", title:"Reinventing the Intelligent Financial Institution",                                                               format:"keynote",     sector:"fintech" },
   { id:"d1-12", day:1, time:"12:00", endTime:"12:22", title:"AI × Financial Services: From Copilots to Core Banking",                                                         format:"briefing",    pillar:"ai",            sector:"fintech" },
   { id:"d1-13", day:1, time:"12:22", endTime:"12:44", title:"Quantum × Financial Services: Risk, Pricing and the Hype Gap",                                                   format:"fireside",    pillar:"quantum",       sector:"fintech" },
   { id:"d1-14", day:1, time:"12:44", endTime:"13:06", title:"Cybersecurity × Financial Services: Fraud, Identity and Deepfake Resilience",                                    format:"briefing",    pillar:"cybersecurity", sector:"fintech" },
@@ -109,7 +109,7 @@ const SESSIONS = [
   { id:"d2-23", day:2, time:"16:43", endTime:"17:05", title:"Climate Tech × Public Sector & Defence: Arctic Readiness, Wildfire Response and Resilient Infrastructure",       format:"briefing",    pillar:"climate",       sector:"public" },
   { id:"d2-24", day:2, time:"17:05", endTime:"17:35", title:"Can Canada Win the Compute Race?",                                                                               format:"panel",       featured:true },
   { id:"d2-25", day:2, time:"17:35", endTime:"18:05", title:"The Toronto Declaration on Technology, Trust and Competitiveness",                                               format:"closing",     featured:true },
-  { id:"d2-26", day:2, time:"18:30", endTime:"21:00", title:"Gala Dinner and Networking Reception",                                                                          format:"awards",      isBreak:true, featured:true },
+  { id:"d2-26", day:2, time:"18:30", endTime:"21:00", title:"Gala Dinner and Networking Reception",                                                                           format:"awards",      isBreak:true, featured:true },
 ];
 
 function getDuration(start, end) {
@@ -130,13 +130,17 @@ function SessionCard({ s, dark, i }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
 
-  const fmtInfo = FORMAT_MAP[s.format];
-  const pillar = s.pillar ? PILLAR_MAP[s.pillar] : null;
-  const sector = s.sector ? SECTOR_MAP[s.sector] : null;
-  const accent = pillar ? (dark ? pillar.color : pillar.light) : (dark ? "#b99eff" : "#7a3fd1");
+  const fmtInfo    = FORMAT_MAP[s.format];
+  const pillar     = s.pillar ? PILLAR_MAP[s.pillar] : null;
+  const sector     = s.sector ? SECTOR_MAP[s.sector] : null;
+  const accent     = pillar ? (dark ? pillar.color : pillar.light) : (dark ? "#b99eff" : "#7a3fd1");
   const PillarIcon = pillar ? pillar.icon : null;
-  const isBreak = !!s.isBreak;
-  const dur = getDuration(s.time, s.endTime);
+  const isBreak    = !!s.isBreak;
+  const dur        = getDuration(s.time, s.endTime);
+
+  const primaryText   = dark ? "#ffffff"                   : "#0d0520";
+  const secondaryText = dark ? "rgba(255,255,255,0.75)"    : "rgba(13,5,32,0.65)";
+  const mutedText     = dark ? "rgba(255,255,255,0.48)"    : "rgba(13,5,32,0.42)";
 
   return (
     <motion.div
@@ -148,14 +152,14 @@ function SessionCard({ s, dark, i }) {
       style={{
         position: "relative", borderRadius: "10px", overflow: "hidden",
         cursor: isBreak ? "default" : "pointer",
-        transition: "filter 0.22s ease",
+        transition: "box-shadow 0.2s",
         background: isBreak
           ? (dark ? "rgba(255,255,255,0.015)" : "rgba(0,0,0,0.02)")
-          : (dark ? "rgba(255,255,255,0.035)" : "#fff"),
+          : (dark ? "rgba(255,255,255,0.04)"  : "#fff"),
         border: dark
-          ? `1px solid rgba(255,255,255,${isBreak ? "0.04" : "0.09"})`
-          : `1px solid rgba(0,0,0,${isBreak ? "0.04" : "0.07"})`,
-        boxShadow: (!isBreak && !dark) ? "0 1px 6px rgba(0,0,0,0.05)" : "none",
+          ? `1px solid rgba(255,255,255,${isBreak ? "0.05" : "0.11"})`
+          : `1px solid rgba(0,0,0,${isBreak ? "0.05" : "0.08"})`,
+        boxShadow: (!isBreak && !dark) ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
       }}
     >
       {/* Accent bar */}
@@ -166,47 +170,55 @@ function SessionCard({ s, dark, i }) {
         }} />
       )}
 
-      <div style={{ padding: isBreak ? "0.8rem 1.1rem" : "1rem 1.3rem 1rem 1.5rem" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.75rem" }}>
+      <div style={{ padding: isBreak ? "0.9rem 1.2rem" : "1.1rem 1.4rem 1.1rem 1.65rem" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.8rem" }}>
           <div style={{ flex: 1, minWidth: 0 }}>
+
+            {/* Tag row */}
             {!isBreak && (
-              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.35rem", marginBottom: "0.5rem" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.4rem", marginBottom: "0.58rem" }}>
+                {/* Format */}
                 <span style={{
-                  display: "inline-flex", alignItems: "center", gap: "0.25rem",
-                  padding: "0.18rem 0.55rem", borderRadius: "4px",
-                  fontSize: "0.67rem", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase",
+                  display: "inline-flex", alignItems: "center",
+                  padding: "0.24rem 0.62rem", borderRadius: "5px",
+                  fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
                   background: dark ? fmtInfo.bg : fmtInfo.bgL,
                   color: dark ? fmtInfo.tc : fmtInfo.tcL,
                 }}>
                   {fmtInfo.label}
                 </span>
+
+                {/* Featured */}
                 {s.featured && (
                   <span style={{
-                    padding: "0.18rem 0.55rem", borderRadius: "4px",
-                    fontSize: "0.67rem", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase",
-                    background: `linear-gradient(90deg,${dark ? "#b99eff" : "#7a3fd1"}20,#f5a62320)`,
+                    padding: "0.24rem 0.62rem", borderRadius: "5px",
+                    fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
+                    background: `linear-gradient(90deg,${dark ? "#b99eff" : "#7a3fd1"}22,#f5a62322)`,
                     color: dark ? "#b99eff" : "#7a3fd1",
-                    border: `1px solid ${dark ? "#b99eff" : "#7a3fd1"}33`,
+                    border: `1px solid ${dark ? "#b99eff" : "#7a3fd1"}40`,
                   }}>✦ Featured</span>
                 )}
+
+                {/* Pillar */}
                 {PillarIcon && pillar && (
                   <span style={{
-                    display: "inline-flex", alignItems: "center", gap: "0.25rem",
-                    padding: "0.18rem 0.55rem", borderRadius: "4px",
-                    fontSize: "0.67rem", fontWeight: 700, letterSpacing: "0.05em",
-                    background: `${accent}18`, color: accent, border: `1px solid ${accent}30`,
+                    display: "inline-flex", alignItems: "center", gap: "0.3rem",
+                    padding: "0.24rem 0.62rem", borderRadius: "5px",
+                    fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em",
+                    background: `${accent}1c`, color: accent, border: `1px solid ${accent}38`,
                   }}>
-                    <PillarIcon size={10} />{pillar.label}
+                    <PillarIcon size={11} />{pillar.label}
                   </span>
                 )}
+
+                {/* Sector */}
                 {sector && (
                   <span style={{
-                    padding: "0.18rem 0.55rem", borderRadius: "4px",
-                    fontSize: "0.67rem", fontWeight: 700, letterSpacing: "0.05em",
-                    background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
-                    color: dark ? "rgba(255,255,255,0.55)" : "rgba(0,0,0,0.5)",
+                    padding: "0.24rem 0.62rem", borderRadius: "5px",
+                    fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em",
+                    background: dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
+                    color: primaryText,
                   }}>
-                    {/* Show full label on desktop, short code on mobile */}
                     <span className="sector-label-full">{sector.label}</span>
                     <span className="sector-label-short">{sector.short}</span>
                   </span>
@@ -214,37 +226,42 @@ function SessionCard({ s, dark, i }) {
               </div>
             )}
 
+            {/* Title */}
             <p style={{
-              fontWeight: isBreak ? 400 : 650,
-              fontSize: isBreak ? "0.85rem" : "0.97rem",
-              lineHeight: 1.4, opacity: isBreak ? 0.42 : 1,
+              fontWeight: isBreak ? 500 : 700,
+              fontSize: isBreak ? "0.95rem" : "1.06rem",
+              lineHeight: 1.42,
+              color: isBreak ? mutedText : primaryText,
             }}>{s.title}</p>
 
+            {/* Speaker */}
             {!isBreak && (
-              <p style={{ fontSize: "0.74rem", opacity: 0.35, marginTop: "0.35rem" }}>
+              <p style={{ fontSize: "0.82rem", color: mutedText, marginTop: "0.4rem" }}>
                 Speaker: To Be Decided
               </p>
             )}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.2rem", flexShrink: 0 }}>
+          {/* Time + chevron */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.22rem", flexShrink: 0 }}>
             <span style={{
-              fontFamily: "'Orbitron', sans-serif", fontSize: "0.86rem", fontWeight: 700,
-              color: isBreak ? (dark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.22)") : accent,
+              fontFamily: "'Orbitron', sans-serif", fontSize: "0.94rem", fontWeight: 800,
+              color: isBreak ? mutedText : accent,
             }}>{s.time}</span>
-            <span style={{ fontSize: "0.67rem", opacity: 0.3 }}>{dur}</span>
+            <span style={{ fontSize: "0.74rem", color: mutedText }}>{dur}</span>
             {!isBreak && (
               <motion.div
                 animate={{ rotate: expanded ? 180 : 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                style={{ opacity: 0.32, marginTop: "0.15rem" }}
+                style={{ color: secondaryText, marginTop: "0.18rem" }}
               >
-                <ChevronDown size={14} />
+                <ChevronDown size={15} />
               </motion.div>
             )}
           </div>
         </div>
 
+        {/* Expanded */}
         <AnimatePresence initial={false}>
           {expanded && !isBreak && (
             <motion.div
@@ -256,24 +273,24 @@ function SessionCard({ s, dark, i }) {
               style={{ overflow: "hidden" }}
             >
               <div style={{
-                paddingTop: "0.9rem", marginTop: "0.9rem",
-                borderTop: `1px solid ${dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.06)"}`,
-                display: "flex", flexWrap: "wrap", gap: "1.5rem",
+                paddingTop: "1rem", marginTop: "1rem",
+                borderTop: `1px solid ${dark ? "rgba(255,255,255,0.09)" : "rgba(0,0,0,0.07)"}`,
+                display: "flex", flexWrap: "wrap", gap: "1.75rem",
               }}>
                 <div>
-                  <p style={{ fontSize: "0.63rem", opacity: 0.32, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>Time</p>
-                  <p style={{ fontSize: "0.82rem", display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                    <Clock size={12} style={{ opacity: 0.45 }} />
+                  <p style={{ fontSize: "0.7rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Time</p>
+                  <p style={{ fontSize: "0.9rem", display: "flex", alignItems: "center", gap: "0.38rem", color: primaryText }}>
+                    <Clock size={13} style={{ color: mutedText }} />
                     {s.time} – {s.endTime} · {dur}
                   </p>
                 </div>
                 <div>
-                  <p style={{ fontSize: "0.63rem", opacity: 0.32, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>Speaker</p>
-                  <p style={{ fontSize: "0.82rem", opacity: 0.55 }}>To Be Decided</p>
+                  <p style={{ fontSize: "0.7rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Speaker</p>
+                  <p style={{ fontSize: "0.9rem", color: secondaryText }}>To Be Decided</p>
                 </div>
                 <div>
-                  <p style={{ fontSize: "0.63rem", opacity: 0.32, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.3rem" }}>Format</p>
-                  <p style={{ fontSize: "0.82rem", fontWeight: 600, color: dark ? fmtInfo.tc : fmtInfo.tcL }}>{fmtInfo.label}</p>
+                  <p style={{ fontSize: "0.7rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Format</p>
+                  <p style={{ fontSize: "0.9rem", fontWeight: 700, color: dark ? fmtInfo.tc : fmtInfo.tcL }}>{fmtInfo.label}</p>
                 </div>
               </div>
             </motion.div>
@@ -288,23 +305,32 @@ function SessionCard({ s, dark, i }) {
 function TimeGroup({ time, sessions, dark, base }) {
   return (
     <div style={{ display: "flex", gap: "1.1rem" }}>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", flexShrink: 0, paddingTop: "1rem", width: "46px" }}>
+      {/* Time stamp */}
+      <div style={{
+        display: "flex", flexDirection: "column", alignItems: "flex-end",
+        flexShrink: 0, paddingTop: "1rem", width: "52px",
+      }}>
         <span style={{
-          fontFamily: "'Orbitron', sans-serif", fontSize: "0.68rem", fontWeight: 700,
-          color: dark ? "rgba(255,255,255,0.26)" : "rgba(0,0,0,0.26)", letterSpacing: "0.02em",
+          fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
+          color: dark ? "rgba(255,255,255,0.52)" : "rgba(13,5,32,0.44)",
+          letterSpacing: "0.02em",
         }}>{time}</span>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, paddingTop: "1.05rem" }}>
+
+      {/* Spine */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, paddingTop: "1.1rem" }}>
         <div style={{
-          width: "7px", height: "7px", borderRadius: "50%", flexShrink: 0,
-          background: dark ? "rgba(185,158,255,0.48)" : "rgba(122,63,209,0.38)",
+          width: "8px", height: "8px", borderRadius: "50%", flexShrink: 0,
+          background: dark ? "rgba(185,158,255,0.65)" : "rgba(122,63,209,0.48)",
         }} />
         <div style={{
           flex: 1, width: "1px", marginTop: "5px",
-          background: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
+          background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
         }} />
       </div>
-      <div style={{ flex: 1, paddingTop: "0.6rem", paddingBottom: "0.75rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+
+      {/* Cards */}
+      <div style={{ flex: 1, paddingTop: "0.6rem", paddingBottom: "0.8rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
         {sessions.map((s, i) => <SessionCard key={s.id} s={s} dark={dark} i={base + i} />)}
       </div>
     </div>
@@ -315,9 +341,9 @@ function TimeGroup({ time, sessions, dark, base }) {
 export default function AgendaPage() {
   useProtection();
 
-  const [dark, setDark] = useState(false);
-  const [activeDay, setActiveDay] = useState(1);
-  const [search, setSearch] = useState("");
+  const [dark, setDark]                 = useState(false);
+  const [activeDay, setActiveDay]       = useState(1);
+  const [search, setSearch]             = useState("");
   const [activePillar, setActivePillar] = useState(null);
   const [activeSector, setActiveSector] = useState(null);
 
@@ -329,24 +355,23 @@ export default function AgendaPage() {
     return () => obs.disconnect();
   }, []);
 
-  const bg     = dark ? "#06020f" : "#f8f7fc";
-  const text   = dark ? "#ffffff" : "#0d0520";
-  const accent = dark ? "#b99eff" : "#7a3fd1";
-  const border = dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const bg           = dark ? "#06020f"                    : "#f8f7fc";
+  const text         = dark ? "#ffffff"                    : "#0d0520";
+  const accent       = dark ? "#b99eff"                    : "#7a3fd1";
+  const border       = dark ? "rgba(255,255,255,0.10)"     : "rgba(0,0,0,0.10)";
+  // Inactive controls: clearly visible but not active
+  const inactiveText = dark ? "rgba(255,255,255,0.78)"     : "rgba(13,5,32,0.60)";
+  const mutedLabel   = dark ? "rgba(255,255,255,0.36)"     : "rgba(13,5,32,0.32)";
 
-  // Sessions for current day
-  const filtered = useMemo(() => {
-    return SESSIONS.filter(s => {
-      if (s.day !== activeDay) return false;
-      const q = search.toLowerCase();
-      if (q && !s.title.toLowerCase().includes(q)) return false;
-      if (activePillar && s.pillar !== activePillar) return false;
-      if (activeSector && s.sector !== activeSector) return false;
-      return true;
-    });
-  }, [activeDay, search, activePillar, activeSector]);
+  const filtered = useMemo(() => SESSIONS.filter(s => {
+    if (s.day !== activeDay) return false;
+    const q = search.toLowerCase();
+    if (q && !s.title.toLowerCase().includes(q)) return false;
+    if (activePillar && s.pillar !== activePillar) return false;
+    if (activeSector && s.sector !== activeSector) return false;
+    return true;
+  }), [activeDay, search, activePillar, activeSector]);
 
-  // Check if other day has results (for helpful empty state message)
   const otherDayResults = useMemo(() => {
     const otherDay = activeDay === 1 ? 2 : 1;
     const count = SESSIONS.filter(s => {
@@ -370,112 +395,87 @@ export default function AgendaPage() {
   }, [filtered]);
 
   let cardIdx = 0;
+  const hasFilters = !!(activePillar || activeSector || search);
 
   return (
     <>
     <style>{`
       .agenda-gradient-text {
         background: linear-gradient(135deg, var(--grad-start, #b99eff), #f5a623);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-        display: inline-block;
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text; color: transparent; display: inline-block;
       }
       .agenda-stat-text {
         font-family: 'Orbitron', sans-serif;
-        font-size: clamp(1.3rem, 2.2vw, 1.9rem);
-        font-weight: 900;
+        font-size: clamp(1.4rem, 2.4vw, 2rem); font-weight: 900;
         background: linear-gradient(135deg, var(--grad-start, #b99eff), #f5a623);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        color: transparent;
-        display: inline-block;
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text; color: transparent; display: inline-block;
       }
-
-      /* Sector label responsiveness */
-      .sector-label-short { display: none; }
-      .sector-label-full  { display: inline; }
+      /* Sector labels */
+      .sector-label-short, .sector-btn-short { display: none; }
+      .sector-label-full,  .sector-btn-full  { display: inline; }
       @media (max-width: 640px) {
-        .sector-label-short { display: inline; }
-        .sector-label-full  { display: none; }
+        .sector-label-short, .sector-btn-short { display: inline; }
+        .sector-label-full,  .sector-btn-full  { display: none; }
       }
-
-      /* Sector filter button labels */
-      .sector-btn-short { display: none; }
-      .sector-btn-full  { display: inline; }
-      @media (max-width: 640px) {
-        .sector-btn-short { display: inline; }
-        .sector-btn-full  { display: none; }
-      }
-
-      /* Sticky navbar override — ensures Navbar sits in normal flow on mobile */
-      @media (max-width: 640px) {
-        /* If Navbar expands a menu, keep the expanded part below the sticky bar */
-        nav, header {
-          position: sticky !important;
-          top: 0 !important;
-          z-index: 50 !important;
-        }
-      }
+      /* Hide filter overflow on mobile */
+      .filter-scroll { overflow-x: auto; scrollbar-width: none; }
+      .filter-scroll::-webkit-scrollbar { display: none; }
+      /* Search placeholder */
+      input::placeholder { color: rgba(255,255,255,0.36); }
     `}</style>
+
     <div style={{ background: bg, minHeight: "100vh", color: text, overflowX: "hidden", userSelect: "none" }}>
 
       <Navbar />
 
-      {/* HERO */}
+      {/* ── HERO ─────────────────────────────────────────────────── */}
       <section style={{
         position: "relative", overflow: "hidden",
         padding: "clamp(120px, 18vw, 180px) 5% clamp(60px, 8vw, 100px)",
         background: dark
-          ? "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(122,63,209,0.12) 0%, transparent 70%)"
-          : "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(122,63,209,0.06) 0%, transparent 70%)",
+          ? "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(122,63,209,0.14) 0%, transparent 70%)"
+          : "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(122,63,209,0.07) 0%, transparent 70%)",
       }}>
         <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }}>
             <p style={{
-              fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800,
-              letterSpacing: "3px", textTransform: "uppercase", color: accent, marginBottom: 16,
+              fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
+              letterSpacing: "3px", textTransform: "uppercase", color: accent, marginBottom: 18,
             }}>TTFC 2026 — October 26–27, Toronto</p>
 
             <h1 style={{
               fontFamily: "'Orbitron', sans-serif",
-              fontSize: "clamp(2.2rem, 6vw, 4.2rem)",
-              fontWeight: 900, lineHeight: 1.1, letterSpacing: "-0.5px",
-              marginBottom: 20,
+              fontSize: "clamp(2.4rem, 6vw, 4.4rem)",
+              fontWeight: 900, lineHeight: 1.1, letterSpacing: "-0.5px", marginBottom: 22,
             }}>
-              The{" "}
-              <span className="agenda-gradient-text" style={{ "--grad-start": accent }}>Agenda</span>
+              The <span className="agenda-gradient-text" style={{ "--grad-start": accent }}>Agenda</span>
             </h1>
 
             <p style={{
-              fontSize: "clamp(1rem, 1.8vw, 1.2rem)", color: dark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
-              lineHeight: 1.7, maxWidth: 620, margin: "0 auto 40px",
+              fontSize: "clamp(1.05rem, 1.9vw, 1.25rem)",
+              color: dark ? "rgba(255,255,255,0.68)" : "rgba(13,5,32,0.58)",
+              lineHeight: 1.75, maxWidth: 620, margin: "0 auto 48px",
             }}>
               Two days of keynotes, fireside chats, boardroom briefings, panels, and networking — organised around five technology pillars and five applied sectors.
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.7 }}
-          >
-            <div style={{ display: "flex", justifyContent: "center", gap: "clamp(1.5rem, 4vw, 3rem)", flexWrap: "wrap" }}>
-              {[["2", "Days"], ["50+", "Sessions"], ["5", "Pillars"], ["5", "Sectors"]].map(([v, l], i) => (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: "clamp(1.5rem, 4vw, 3.5rem)", flexWrap: "wrap" }}>
+              {[["2","Days"],["50+","Sessions"],["5","Pillars"],["5","Sectors"]].map(([v,l], i) => (
                 <motion.div key={l}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.06, type: "spring", damping: 20 }}
                   style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                 >
                   <span className="agenda-stat-text" style={{ "--grad-start": accent }}>{v}</span>
-                  <span style={{ fontSize: "0.7rem", opacity: 0.42, textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "0.1rem" }}>{l}</span>
+                  <span style={{
+                    fontSize: "0.76rem", fontWeight: 700,
+                    color: dark ? "rgba(255,255,255,0.52)" : "rgba(13,5,32,0.46)",
+                    textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "0.12rem",
+                  }}>{l}</span>
                 </motion.div>
               ))}
             </div>
@@ -483,84 +483,146 @@ export default function AgendaPage() {
         </div>
       </section>
 
-      {/* STICKY FILTER BAR */}
+      {/* ── STICKY FILTER BAR ────────────────────────────────────── */}
       <div style={{
         position: "sticky", top: "64px", zIndex: 40,
         background: dark ? "rgba(6,2,15,0.97)" : "rgba(248,247,252,0.97)",
-        backdropFilter: "blur(18px)", borderBottom: `1px solid ${border}`, padding: "0.7rem 0",
+        backdropFilter: "blur(20px)",
+        borderBottom: `1px solid ${border}`,
       }}>
-        <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 1.5rem" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.5rem" }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 1.5rem" }}>
+
+          {/* ROW 1 — Day tabs · Search · Clear */}
+          <div style={{
+            display: "flex", alignItems: "center", flexWrap: "wrap",
+            gap: "0.6rem", padding: "0.82rem 0 0.6rem",
+          }}>
             {/* Day tabs */}
-            {[1, 2].map(d => (
-              <motion.button key={d} whileTap={{ scale: 0.96 }} onClick={() => setActiveDay(d)}
-                style={{
-                  padding: "0.38rem 0.9rem", borderRadius: "8px",
-                  fontSize: "0.78rem", fontWeight: 700, cursor: "pointer",
-                  background: activeDay === d ? `${accent}22` : "transparent",
-                  border: `1.5px solid ${activeDay === d ? accent : dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
-                  color: activeDay === d ? accent : dark ? "rgba(255,255,255,0.48)" : "rgba(0,0,0,0.43)",
-                  transition: "all 0.15s",
-                }}>
-                Day {d} <span style={{ opacity: 0.45, fontSize: "0.68rem", marginLeft: "0.3rem" }}>{d === 1 ? "Oct 26" : "Oct 27"}</span>
-              </motion.button>
-            ))}
-
-            <div style={{ width: "1px", height: "22px", background: border, margin: "0 2px" }} />
-
-            {/* Search */}
-            <div style={{
-              display: "flex", alignItems: "center", gap: "0.4rem",
-              padding: "0.35rem 0.75rem", borderRadius: "9999px",
-              background: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
-              border: `1.5px solid ${dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
-              flex: "1 1 150px", maxWidth: "230px",
-            }}>
-              <Search size={12} style={{ opacity: 0.38, flexShrink: 0 }} />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…"
-                style={{ background: "transparent", border: "none", outline: "none", fontSize: "0.78rem", color: text, width: "100%" }} />
-              {search && <button onClick={() => setSearch("")} style={{ opacity: 0.38, lineHeight: 0, background: "none", border: "none", cursor: "pointer", color: text }}><X size={12} /></button>}
+            <div style={{ display: "flex", gap: "0.4rem", flexShrink: 0 }}>
+              {[1, 2].map(d => (
+                <motion.button key={d} whileTap={{ scale: 0.96 }} onClick={() => setActiveDay(d)}
+                  style={{
+                    padding: "0.46rem 1.1rem", borderRadius: "9px",
+                    fontSize: "0.88rem", fontWeight: 800, cursor: "pointer",
+                    background: activeDay === d ? `${accent}28` : "transparent",
+                    border: `2px solid ${activeDay === d ? accent : dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
+                    color: activeDay === d ? accent : inactiveText,
+                    transition: "all 0.15s",
+                  }}>
+                  Day {d}
+                  <span style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.58, marginLeft: "0.45rem" }}>
+                    {d === 1 ? "Oct 26" : "Oct 27"}
+                  </span>
+                </motion.button>
+              ))}
             </div>
 
-            {/* Pillar filters */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
+            {/* Divider */}
+            <div style={{ width: "1px", height: "28px", background: border, flexShrink: 0 }} />
+
+            {/* Search box */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: "0.48rem",
+              padding: "0.44rem 0.95rem", borderRadius: "9999px",
+              background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
+              border: `1.5px solid ${border}`,
+              flex: "1 1 180px", maxWidth: "280px",
+            }}>
+              <Search size={14} style={{ color: inactiveText, flexShrink: 0 }} />
+              <input
+                value={search} onChange={e => setSearch(e.target.value)}
+                placeholder="Search sessions…"
+                style={{
+                  background: "transparent", border: "none", outline: "none",
+                  fontSize: "0.86rem", fontWeight: 600, color: text, width: "100%",
+                }} />
+              {search && (
+                <button onClick={() => setSearch("")}
+                  style={{ lineHeight: 0, background: "none", border: "none", cursor: "pointer", color: inactiveText }}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Clear filters */}
+            <AnimatePresence>
+              {hasFilters && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.88 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => { setActivePillar(null); setActiveSector(null); setSearch(""); }}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "0.34rem",
+                    padding: "0.44rem 0.95rem", borderRadius: "9999px",
+                    fontSize: "0.84rem", fontWeight: 700, cursor: "pointer",
+                    border: `1.5px solid ${dark ? "rgba(255,255,255,0.20)" : "rgba(0,0,0,0.16)"}`,
+                    background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.04)",
+                    color: inactiveText,
+                  }}>
+                  <X size={13} /> Clear filters
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* ROW 2 — Pillars | Sectors */}
+          <div style={{
+            display: "flex", alignItems: "center", flexWrap: "wrap",
+            gap: "0.55rem", padding: "0 0 0.82rem",
+          }}>
+            {/* "Pillar" label */}
+            <span style={{
+              fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.1em",
+              textTransform: "uppercase", color: mutedLabel, flexShrink: 0,
+            }}>Pillar</span>
+
+            {/* Pillar pills */}
+            <div className="filter-scroll" style={{ display: "flex", gap: "0.38rem", flexWrap: "wrap" }}>
               {Object.entries(PILLAR_MAP).map(([pid, p]) => {
                 const c = dark ? p.color : p.light;
                 const active = activePillar === pid;
                 const Icon = p.icon;
                 return (
-                  <motion.button key={pid} whileTap={{ scale: 0.96 }}
+                  <motion.button key={pid} whileTap={{ scale: 0.95 }}
                     onClick={() => setActivePillar(prev => prev === pid ? null : pid)}
                     style={{
-                      display: "inline-flex", alignItems: "center", gap: "0.28rem",
-                      padding: "0.32rem 0.7rem", borderRadius: "9999px",
-                      fontSize: "0.72rem", fontWeight: 600, cursor: "pointer",
-                      border: `1.5px solid ${active ? c : dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
-                      background: active ? `${c}20` : "transparent",
-                      color: active ? c : dark ? "rgba(255,255,255,0.47)" : "rgba(0,0,0,0.42)",
-                      transition: "all 0.15s",
+                      display: "inline-flex", alignItems: "center", gap: "0.32rem",
+                      padding: "0.4rem 0.85rem", borderRadius: "9999px",
+                      fontSize: "0.82rem", fontWeight: 700, cursor: "pointer",
+                      border: `2px solid ${active ? c : dark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.12)"}`,
+                      background: active ? `${c}24` : "transparent",
+                      color: active ? c : inactiveText,
+                      transition: "all 0.15s", whiteSpace: "nowrap",
                     }}>
-                    <Icon size={10} />{p.label}
+                    <Icon size={12} />{p.label}
                   </motion.button>
                 );
               })}
             </div>
 
-            {/* Sector filters — full name on desktop, short code on mobile */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginLeft: "auto" }}>
+            {/* Divider */}
+            <div style={{ width: "1px", height: "22px", background: border, flexShrink: 0 }} />
+
+            {/* "Sector" label */}
+            <span style={{
+              fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.1em",
+              textTransform: "uppercase", color: mutedLabel, flexShrink: 0,
+            }}>Sector</span>
+
+            {/* Sector pills */}
+            <div className="filter-scroll" style={{ display: "flex", gap: "0.38rem", flexWrap: "wrap" }}>
               {Object.entries(SECTOR_MAP).map(([sid, sec]) => {
                 const active = activeSector === sid;
                 return (
-                  <motion.button key={sid} whileTap={{ scale: 0.96 }}
+                  <motion.button key={sid} whileTap={{ scale: 0.95 }}
                     onClick={() => setActiveSector(prev => prev === sid ? null : sid)}
                     title={sec.label}
                     style={{
-                      padding: "0.26rem 0.55rem", borderRadius: "4px",
-                      fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.06em",
-                      textTransform: "uppercase", cursor: "pointer",
-                      border: `1.5px solid ${active ? accent : dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
-                      background: active ? `${accent}18` : "transparent",
-                      color: active ? accent : dark ? "rgba(255,255,255,0.38)" : "rgba(0,0,0,0.35)",
+                      padding: "0.4rem 0.85rem", borderRadius: "9999px",
+                      fontSize: "0.82rem", fontWeight: 700, cursor: "pointer",
+                      border: `2px solid ${active ? accent : dark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.12)"}`,
+                      background: active ? `${accent}24` : "transparent",
+                      color: active ? accent : inactiveText,
                       transition: "all 0.15s", whiteSpace: "nowrap",
                     }}>
                     <span className="sector-btn-short">{sec.short}</span>
@@ -569,70 +631,58 @@ export default function AgendaPage() {
                 );
               })}
             </div>
-
-            <AnimatePresence>
-              {(activePillar || activeSector || search) && (
-                <motion.button initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-                  onClick={() => { setActivePillar(null); setActiveSector(null); setSearch(""); }}
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: "0.28rem",
-                    padding: "0.35rem 0.7rem", borderRadius: "9999px",
-                    fontSize: "0.73rem", fontWeight: 600, cursor: "pointer",
-                    border: `1.5px solid ${dark ? "rgba(255,255,255,0.13)" : "rgba(0,0,0,0.13)"}`,
-                    background: "transparent", color: dark ? "rgba(255,255,255,0.42)" : "rgba(0,0,0,0.38)",
-                  }}>
-                  <X size={10} /> Clear
-                </motion.button>
-              )}
-            </AnimatePresence>
           </div>
+
         </div>
       </div>
 
-      {/* SCHEDULE */}
-      <main style={{ padding: "2.5rem 0 6rem" }}>
-        <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 1.5rem" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.2rem" }}>
-            <p style={{ fontSize: "0.73rem", opacity: 0.35 }}>
-              {filtered.length} sessions · Day {activeDay} — {activeDay === 1 ? "Oct 26" : "Oct 27"}, 2026
-            </p>
-          </div>
+      {/* ── SCHEDULE ─────────────────────────────────────────────── */}
+      <main style={{ padding: "2.8rem 0 7rem" }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 1.5rem" }}>
+
+          <p style={{
+            fontSize: "0.82rem", fontWeight: 600,
+            color: dark ? "rgba(255,255,255,0.46)" : "rgba(13,5,32,0.40)",
+            marginBottom: "1.5rem",
+          }}>
+            {filtered.length} session{filtered.length !== 1 ? "s" : ""} · Day {activeDay} — {activeDay === 1 ? "Oct 26" : "Oct 27"}, 2026
+          </p>
 
           {grouped.length === 0 ? (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "5rem 0", gap: "0.75rem" }}>
-              <Search size={26} style={{ opacity: 0.18 }} />
+            <div style={{
+              display: "flex", flexDirection: "column", alignItems: "center",
+              justifyContent: "center", padding: "5rem 0", gap: "0.9rem",
+            }}>
+              <Search size={28} style={{ color: dark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.14)" }} />
 
-              {/* If other day has matching sessions, surface that instead of generic "no results" */}
               {otherDayResults.count > 0 ? (
                 <>
-                  <p style={{ fontSize: "0.97rem", fontWeight: 600, opacity: 0.75, textAlign: "center" }}>
+                  <p style={{ fontSize: "1.02rem", fontWeight: 700, color: dark ? "rgba(255,255,255,0.85)" : "rgba(13,5,32,0.72)", textAlign: "center" }}>
                     No sessions on Day {activeDay} match your filters.
                   </p>
-                  <p style={{ fontSize: "0.82rem", opacity: 0.45, textAlign: "center", maxWidth: "340px", lineHeight: 1.5 }}>
-                    But there {otherDayResults.count === 1 ? "is" : "are"}{" "}
-                    <strong style={{ opacity: 1, color: accent }}>{otherDayResults.count} matching session{otherDayResults.count > 1 ? "s" : ""}</strong>{" "}
+                  <p style={{ fontSize: "0.88rem", color: dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.50)", textAlign: "center", maxWidth: "340px", lineHeight: 1.6 }}>
+                    There {otherDayResults.count === 1 ? "is" : "are"}{" "}
+                    <strong style={{ color: accent }}>{otherDayResults.count} matching session{otherDayResults.count > 1 ? "s" : ""}</strong>{" "}
                     on Day {otherDayResults.day} ({otherDayResults.day === 1 ? "Oct 26" : "Oct 27"}).
                   </p>
-                  <motion.button
-                    whileTap={{ scale: 0.97 }}
+                  <motion.button whileTap={{ scale: 0.97 }}
                     onClick={() => setActiveDay(otherDayResults.day)}
                     style={{
-                      marginTop: "0.25rem",
-                      padding: "0.5rem 1.2rem", borderRadius: "9999px",
-                      fontSize: "0.8rem", fontWeight: 700, cursor: "pointer",
-                      background: `${accent}18`,
-                      border: `1.5px solid ${accent}55`,
-                      color: accent,
+                      marginTop: "0.35rem", padding: "0.58rem 1.45rem", borderRadius: "9999px",
+                      fontSize: "0.88rem", fontWeight: 800, cursor: "pointer",
+                      background: `${accent}20`, border: `2px solid ${accent}65`, color: accent,
                     }}>
                     Switch to Day {otherDayResults.day} →
                   </motion.button>
                 </>
               ) : (
                 <>
-                  <p style={{ fontSize: "0.88rem", opacity: 0.38 }}>No sessions match your filters.</p>
+                  <p style={{ fontSize: "0.95rem", fontWeight: 600, color: dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.46)" }}>
+                    No sessions match your filters.
+                  </p>
                   <button onClick={() => { setSearch(""); setActivePillar(null); setActiveSector(null); }}
-                    style={{ fontSize: "0.78rem", color: accent, textDecoration: "underline", cursor: "pointer", background: "none", border: "none" }}>
-                    Clear filters
+                    style={{ fontSize: "0.84rem", fontWeight: 700, color: accent, textDecoration: "underline", cursor: "pointer", background: "none", border: "none" }}>
+                    Clear all filters
                   </button>
                 </>
               )}

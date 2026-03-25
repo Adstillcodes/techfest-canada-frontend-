@@ -2,49 +2,17 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { Mic, Users, Calendar, Award, ChevronRight, X, Search } from "lucide-react";
+import { client, urlFor } from "../utils/sanity";
 
-var SPEAKERS = [
-  {
-    name: "Scott D'Cunha",
-    title: "CEO",
-    company: "Branksome Consulting & Ventures",
-    description: "Seasoned marketing and digital executive with over thirty years of experience driving eCommerce and digital transformation at organizations like LCBO and Staples Canada. A Chartered Marketer and Fellow of the Chartered Institute of Marketing.",
-    linkedin: "https://ca.linkedin.com/in/scott-d-cunha-0a9a52",
-    image: "/scott-dcunha.jpg",
-  },
-  {
-    name: "James Castle",
-    title: "CEO, CSO & Founder",
-    company: "Terranova Aerospace & Defense Group",
-    description: "Globally recognized authority on sovereign AI, cybersecurity governance, and critical infrastructure protection. Founder and Chairperson of the Cyber Security Global Alliance, operating across 21 countries over 4 continents.",
-    linkedin: "https://www.linkedin.com/in/jamescastleca/",
-    image: "/james-castle.jpg",
-  },
-  {
-    name: "Brennan Lodge",
-    title: "Founder & CISO",
-    company: "BLodgic Inc. | NYU Adjunct Professor",
-    description: "Cybersecurity expert with over 15 years of experience at the intersection of data science, AI, and threat defense. Former Head of Analytics Engines at HSBC, with past roles at Goldman Sachs and BlockFi. LinkedIn Learning instructor on AI security.",
-    linkedin: "https://www.linkedin.com/in/brennanlodge/",
-    image: "/brennan-lodge.jpg",
-  },
-  {
-    name: "Bijit Ghosh",
-    title: "Managing Director",
-    company: "Wells Fargo",
-    description: "Engineering executive and product innovator leading AI/ML and cloud transformation at scale. Former CTO and Global Head of Cloud Product and Engineering at Deutsche Bank. Prolific thought leader on GenAI, LLMOps, and cloud architecture.",
-    linkedin: "https://www.linkedin.com/in/bijit-ghosh-48281a78/",
-    image: "/bijit-ghosh.jpg",
-  },
-  {
-    name: "Dominick Miserandino",
-    title: "CEO",
-    company: "RTM Nexus | RetailWire",
-    description: "Internet pioneer and 5x CEO/CMO/CRO with over 30 years scaling businesses across adtech, eCommerce, and digital media. Hosts the Retail Tech Media Leadership podcast and serves on the Engage3 technology board advising on AI-powered retail innovation.",
-    linkedin: "https://www.linkedin.com/in/miserandino/",
-    image: "/dominick-miserandino.jpg",
-  },
-];
+const SPEAKERS_QUERY = `*[_type == "speaker"] | order(order asc) {
+  _id,
+  name,
+  title,
+  company,
+  bio,
+  linkedin,
+  image
+}`;
 
 var INDUSTRIES = [
   "Artificial Intelligence & Machine Learning",
@@ -211,8 +179,10 @@ function SpeakerCard(props) {
     >
       {/* Photo */}
       <div style={{ position: "relative", width: "100%", aspectRatio: "1/1", overflow: "hidden", background: dark ? "#120a22" : "#ede8f7" }}>
-        <img src={speaker.image} alt={speaker.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          onError={function(e) { e.target.style.display = "none"; }} />
+        {speaker.image ? (
+          <img src={urlFor(speaker.image).width(400).height(400).url()} alt={speaker.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            onError={function(e) { e.target.style.display = "none"; }} />
+        ) : null}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, " + (dark ? "rgba(6,2,15,0.85)" : "rgba(255,255,255,0.7)") + ", transparent)", pointerEvents: "none" }} />
       </div>
 
@@ -227,11 +197,11 @@ function SpeakerCard(props) {
         <p style={{ fontSize: "0.72rem", fontWeight: 700, color: accent, marginBottom: 10, lineHeight: 1.3 }}>{speaker.company}</p>
 
         {/* Description — desktop always visible, mobile toggle */}
-        <p className="speaker-desc-desktop" style={{ fontSize: "0.76rem", color: textMid, lineHeight: 1.6, flex: 1 }}>{speaker.description}</p>
+        <p className="speaker-desc-desktop" style={{ fontSize: "0.76rem", color: textMid, lineHeight: 1.6, flex: 1 }}>{speaker.bio}</p>
 
         <div className="speaker-desc-mobile">
           {expanded ? (
-            <p style={{ fontSize: "0.72rem", color: textMid, lineHeight: 1.55, marginBottom: 6 }}>{speaker.description}</p>
+            <p style={{ fontSize: "0.72rem", color: textMid, lineHeight: 1.55, marginBottom: 6 }}>{speaker.bio}</p>
           ) : null}
           <button
             className="speaker-readmore-btn"
@@ -246,18 +216,20 @@ function SpeakerCard(props) {
         </div>
 
         {/* LinkedIn */}
-        <a href={speaker.linkedin} target="_blank" rel="noreferrer" className="speaker-li-btn" style={{
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-          marginTop: 8, padding: "9px 14px", borderRadius: 8,
-          background: "#0A66C2", color: "#ffffff", textDecoration: "none",
-          fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.3px",
-          transition: "background 0.2s ease",
-        }}
-          onMouseEnter={function(e) { e.currentTarget.style.background = "#004182"; }}
-          onMouseLeave={function(e) { e.currentTarget.style.background = "#0A66C2"; }}
-        >
-          <LinkedInIcon /> View on LinkedIn
-        </a>
+        {speaker.linkedin && (
+          <a href={speaker.linkedin} target="_blank" rel="noreferrer" className="speaker-li-btn" style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
+            marginTop: 8, padding: "9px 14px", borderRadius: 8,
+            background: "#0A66C2", color: "#ffffff", textDecoration: "none",
+            fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.3px",
+            transition: "background 0.2s ease",
+          }}
+            onMouseEnter={function(e) { e.currentTarget.style.background = "#004182"; }}
+            onMouseLeave={function(e) { e.currentTarget.style.background = "#0A66C2"; }}
+          >
+            <LinkedInIcon /> View on LinkedIn
+          </a>
+        )}
       </div>
     </div>
   );
@@ -267,6 +239,9 @@ export default function Speakers() {
   var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
   var s2 = useState(false); var modalOpen = s2[0]; var setModalOpen = s2[1];
   var s3 = useState(""); var search = s3[0]; var setSearch = s3[1];
+  var s4 = useState([]); var speakers = s4[0]; var setSpeakers = s4[1];
+  var s5 = useState(true); var loading = s5[0]; var setLoading = s5[1];
+  var s6 = useState(null); var error = s6[0]; var setError = s6[1];
 
   useEffect(function() {
     setDark(document.body.classList.contains("dark-mode"));
@@ -275,13 +250,22 @@ export default function Speakers() {
     return function() { obs.disconnect(); };
   }, []);
 
+  useEffect(function() {
+    client.fetch(SPEAKERS_QUERY)
+      .then(function(data) { setSpeakers(data); setLoading(false); })
+      .catch(function(err) { console.error("Error fetching speakers:", err); setError("Failed to load speakers."); setLoading(false); });
+  }, []);
+
   var filtered = useMemo(function() {
-    if (!search.trim()) return SPEAKERS;
+    if (!search.trim()) return speakers;
     var q = search.toLowerCase();
-    return SPEAKERS.filter(function(s) {
-      return s.name.toLowerCase().includes(q) || s.company.toLowerCase().includes(q) || s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q);
+    return speakers.filter(function(s) {
+      return (s.name && s.name.toLowerCase().includes(q)) || 
+             (s.company && s.company.toLowerCase().includes(q)) || 
+             (s.title && s.title.toLowerCase().includes(q)) || 
+             (s.bio && s.bio.toLowerCase().includes(q));
     });
-  }, [search]);
+  }, [search, speakers]);
 
   var bg = dark ? "#06020f" : "#ffffff";
   var textMain = dark ? "#ffffff" : "#0d0520";
@@ -412,7 +396,16 @@ export default function Speakers() {
               <div style={{ width: 60, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", margin: "0 auto" }} />
             </div>
 
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "4rem 0", gap: 12, opacity: 0.4 }}>
+                <div style={{ fontSize: "2rem", animation: "spk-spin 1s linear infinite" }}>⟳</div>
+                <p style={{ fontSize: "0.9rem" }}>Loading speakers...</p>
+              </div>
+            ) : error ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "4rem 0", gap: 12, opacity: 0.4 }}>
+                <p style={{ fontSize: "0.9rem", color: "#ff6b6b" }}>{error}</p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "4rem 0", gap: 12, opacity: 0.4 }}>
                 <Search size={28} style={{ opacity: 0.3 }} />
                 <p style={{ fontSize: "0.9rem" }}>No speakers match your search.</p>
@@ -421,7 +414,7 @@ export default function Speakers() {
             ) : (
               <div className="speakers-grid">
                 {filtered.map(function(speaker) {
-                  return <SpeakerCard key={speaker.name} speaker={speaker} dark={dark} />;
+                  return <SpeakerCard key={speaker._id} speaker={speaker} dark={dark} />;
                 })}
               </div>
             )}
@@ -467,7 +460,7 @@ export default function Speakers() {
         <Footer />
       </div>
 
-      <style>{`@keyframes spk-pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(1.3);} }`}</style>
+      <style>{`@keyframes spk-pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(1.3);} } @keyframes spk-spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }`}</style>
       {modalOpen && <SpeakerApplicationModal onClose={function() { setModalOpen(false); }} dark={dark} />}
     </>
   );

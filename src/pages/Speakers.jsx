@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { Mic, Users, Calendar, Award, ChevronRight, X, Search } from "lucide-react";
 
-const SPEAKERS = [
+var SPEAKERS = [
   {
     name: "Scott D'Cunha",
     title: "CEO",
@@ -30,15 +30,23 @@ const SPEAKERS = [
   },
   {
     name: "Bijit Ghosh",
-    title: "Engineering Executive Leader",
+    title: "Managing Director",
     company: "Wells Fargo",
-    description: "Product innovator and engineering executive leading AI/ML and cloud transformation at scale. Former CTO and Global Head of Cloud Product and Engineering at Deutsche Bank. Prolific thought leader on GenAI, LLMOps, and cloud architecture.",
+    description: "Engineering executive and product innovator leading AI/ML and cloud transformation at scale. Former CTO and Global Head of Cloud Product and Engineering at Deutsche Bank. Prolific thought leader on GenAI, LLMOps, and cloud architecture.",
     linkedin: "https://www.linkedin.com/in/bijit-ghosh-48281a78/",
     image: "/bijit-ghosh.jpg",
   },
+  {
+    name: "Dominick Miserandino",
+    title: "CEO",
+    company: "RTM Nexus | RetailWire",
+    description: "Internet pioneer and 5x CEO/CMO/CRO with over 30 years scaling businesses across adtech, eCommerce, and digital media. Hosts the Retail Tech Media Leadership podcast and serves on the Engage3 technology board advising on AI-powered retail innovation.",
+    linkedin: "https://www.linkedin.com/in/miserandino/",
+    image: "/dominick-miserandino.jpg",
+  },
 ];
 
-const INDUSTRIES = [
+var INDUSTRIES = [
   "Artificial Intelligence & Machine Learning",
   "Quantum Computing",
   "Cybersecurity",
@@ -60,7 +68,7 @@ const INDUSTRIES = [
   "Other",
 ];
 
-const EXPERIENCE_OPTIONS = [
+var EXPERIENCE_OPTIONS = [
   "First time — never spoken at a conference",
   "1–5 conferences",
   "5–10 conferences",
@@ -69,7 +77,9 @@ const EXPERIENCE_OPTIONS = [
   "25+ conferences",
 ];
 
-function SpeakerApplicationModal({ onClose, dark }) {
+function SpeakerApplicationModal(props) {
+  var onClose = props.onClose;
+  var dark = props.dark;
   var s1 = useState({ firstName: "", lastName: "", email: "", linkedin: "", industry: "", jobTitle: "", experience: "" });
   var formData = s1[0]; var setFormData = s1[1];
   var s2 = useState(""); var error = s2[0]; var setError = s2[1];
@@ -87,7 +97,7 @@ function SpeakerApplicationModal({ onClose, dark }) {
     setError("");
   }
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.industry || !formData.jobTitle || !formData.experience) {
       setError("Please fill in all required fields."); return;
@@ -96,39 +106,36 @@ function SpeakerApplicationModal({ onClose, dark }) {
       setError("Please enter a valid email address."); return;
     }
     setLoading(true);
-    try {
-      var res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          service_id:  "service_gy3fvru",
-          template_id: "template_ufqzzep",
-          user_id:     "gZgYZtLCXPVgUsVj_",
-          template_params: {
-            to_email:   "baldeep@thetechfestival.com",
-            from_name:  formData.firstName + " " + formData.lastName,
-            from_email: formData.email,
-            message:    "[Speaker Application]\nName: " + formData.firstName + " " + formData.lastName + "\nTitle: " + formData.jobTitle + "\nIndustry: " + formData.industry + "\nExperience: " + formData.experience + "\nLinkedIn: " + (formData.linkedin || "N/A"),
-          },
-        }),
-      });
+    fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        service_id: "service_gy3fvru",
+        template_id: "template_ufqzzep",
+        user_id: "gZgYZtLCXPVgUsVj_",
+        template_params: {
+          to_email: "baldeep@thetechfestival.com",
+          from_name: formData.firstName + " " + formData.lastName,
+          from_email: formData.email,
+          message: "[Speaker Application]\nName: " + formData.firstName + " " + formData.lastName + "\nTitle: " + formData.jobTitle + "\nIndustry: " + formData.industry + "\nExperience: " + formData.experience + "\nLinkedIn: " + (formData.linkedin || "N/A"),
+        },
+      }),
+    }).then(function(res) {
       setLoading(false);
       if (res.ok || res.status === 200) { setSubmitted(true); }
       else { setError("Something went wrong. Please try again."); }
-    } catch(err) {
+    }).catch(function() {
       setLoading(false);
       setError("Something went wrong. Please try again.");
-    }
+    });
   }
 
   var inputStyle = {
     width: "100%", padding: "12px 16px", borderRadius: 10,
     background: inputBg, border: "1px solid " + inputBdr,
     color: textMain, fontSize: "0.92rem", outline: "none",
-    fontFamily: "inherit", transition: "border-color 0.2s ease",
-    boxSizing: "border-box",
+    fontFamily: "inherit", boxSizing: "border-box",
   };
-
   var labelStyle = {
     display: "block", fontSize: "0.72rem", fontFamily: "'Orbitron',sans-serif",
     fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase",
@@ -137,72 +144,35 @@ function SpeakerApplicationModal({ onClose, dark }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(10px)", padding: "20px" }}
-      onClick={function(e) { if (e.target === e.currentTarget) onClose(); }}
-    >
+      onClick={function(e) { if (e.target === e.currentTarget) onClose(); }}>
       <div style={{ background: bg, width: "100%", maxWidth: 560, borderRadius: 24, border: "1px solid " + inputBdr, boxShadow: "0 24px 64px rgba(0,0,0,0.5)", maxHeight: "90vh", overflowY: "auto", position: "relative" }}>
         <div style={{ padding: "28px 32px 0", position: "sticky", top: 0, background: bg, zIndex: 2, paddingBottom: 20, borderBottom: "1px solid " + inputBdr }}>
-          <button onClick={onClose} style={{ position: "absolute", top: 20, right: 24, background: "transparent", border: "none", color: textMid, cursor: "pointer", padding: 4 }}>
-            <X size={20} />
-          </button>
+          <button onClick={onClose} style={{ position: "absolute", top: 20, right: 24, background: "transparent", border: "none", color: textMid, cursor: "pointer", padding: 4 }}><X size={20} /></button>
           <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase", color: dark ? "#b99eff" : "#7a3fd1", marginBottom: 6 }}>TTFC 2026</p>
           <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.3rem", fontWeight: 900, color: textMain, marginBottom: 4 }}>Apply to Speak</h2>
           <p style={{ fontSize: "0.85rem", color: textMid, lineHeight: 1.6 }}>We review every application. Our team will be in touch if there's a fit.</p>
         </div>
-
         <div style={{ padding: "24px 32px 32px" }}>
           {submitted ? (
             <div style={{ textAlign: "center", padding: "2rem 0" }}>
               <div style={{ fontSize: "3rem", marginBottom: 16 }}>✅</div>
               <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 900, color: textMain, marginBottom: 10 }}>Application Received</h3>
-              <p style={{ fontSize: "0.9rem", color: textMid, lineHeight: 1.7 }}>Thank you for applying. We'll review your submission and reach out if there's a match for TTFC 2026.</p>
+              <p style={{ fontSize: "0.9rem", color: textMid, lineHeight: 1.7 }}>We'll review your submission and reach out if there's a match for TTFC 2026.</p>
               <button onClick={onClose} style={{ marginTop: 24, padding: "12px 32px", borderRadius: 10, border: "none", cursor: "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.7rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", background: "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#fff" }}>Close</button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                <div>
-                  <label style={labelStyle}>First Name *</label>
-                  <input name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Jane" style={inputStyle} />
-                </div>
-                <div>
-                  <label style={labelStyle}>Last Name *</label>
-                  <input name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Smith" style={inputStyle} />
-                </div>
+                <div><label style={labelStyle}>First Name *</label><input name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Jane" style={inputStyle} /></div>
+                <div><label style={labelStyle}>Last Name *</label><input name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Smith" style={inputStyle} /></div>
               </div>
-              <div>
-                <label style={labelStyle}>Email Address *</label>
-                <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="jane@company.com" style={inputStyle} />
-              </div>
-              <div>
-                <label style={labelStyle}>LinkedIn Profile</label>
-                <input name="linkedin" value={formData.linkedin} onChange={handleChange} placeholder="linkedin.com/in/janesmith" style={inputStyle} />
-              </div>
-              <div>
-                <label style={labelStyle}>Job Title *</label>
-                <input name="jobTitle" value={formData.jobTitle} onChange={handleChange} placeholder="e.g. Chief Technology Officer" style={inputStyle} />
-              </div>
-              <div>
-                <label style={labelStyle}>Industry *</label>
-                <select name="industry" value={formData.industry} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}>
-                  <option value="">Select your industry</option>
-                  {INDUSTRIES.map(function(ind) { return <option key={ind} value={ind}>{ind}</option>; })}
-                </select>
-              </div>
-              <div>
-                <label style={labelStyle}>Speaking Experience *</label>
-                <select name="experience" value={formData.experience} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}>
-                  <option value="">Number of conferences spoken at</option>
-                  {EXPERIENCE_OPTIONS.map(function(exp) { return <option key={exp} value={exp}>{exp}</option>; })}
-                </select>
-              </div>
-              {error && (
-                <div style={{ fontSize: "0.78rem", color: "#ff6b6b", fontFamily: "'Orbitron',sans-serif", letterSpacing: "0.5px", padding: "10px 14px", background: "rgba(255,107,107,0.10)", borderRadius: 8, border: "1px solid rgba(255,107,107,0.25)" }}>{error}</div>
-              )}
-              <button type="submit" disabled={loading}
-                style={{ padding: "14px", borderRadius: 12, border: "none", cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.75rem", fontWeight: 900, letterSpacing: "1.5px", textTransform: "uppercase", background: loading ? (dark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.3)") : "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#ffffff", marginTop: 4, transition: "opacity 0.2s ease", opacity: loading ? 0.7 : 1 }}
-              >
-                {loading ? "Submitting…" : "Submit Application →"}
-              </button>
+              <div><label style={labelStyle}>Email *</label><input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="jane@company.com" style={inputStyle} /></div>
+              <div><label style={labelStyle}>LinkedIn</label><input name="linkedin" value={formData.linkedin} onChange={handleChange} placeholder="linkedin.com/in/janesmith" style={inputStyle} /></div>
+              <div><label style={labelStyle}>Job Title *</label><input name="jobTitle" value={formData.jobTitle} onChange={handleChange} placeholder="e.g. Chief Technology Officer" style={inputStyle} /></div>
+              <div><label style={labelStyle}>Industry *</label><select name="industry" value={formData.industry} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}><option value="">Select your industry</option>{INDUSTRIES.map(function(ind) { return <option key={ind} value={ind}>{ind}</option>; })}</select></div>
+              <div><label style={labelStyle}>Speaking Experience *</label><select name="experience" value={formData.experience} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}><option value="">Number of conferences</option>{EXPERIENCE_OPTIONS.map(function(exp) { return <option key={exp} value={exp}>{exp}</option>; })}</select></div>
+              {error && <div style={{ fontSize: "0.78rem", color: "#ff6b6b", padding: "10px 14px", background: "rgba(255,107,107,0.10)", borderRadius: 8, border: "1px solid rgba(255,107,107,0.25)" }}>{error}</div>}
+              <button type="submit" disabled={loading} style={{ padding: "14px", borderRadius: 12, border: "none", cursor: loading ? "not-allowed" : "pointer", fontFamily: "'Orbitron',sans-serif", fontSize: "0.75rem", fontWeight: 900, letterSpacing: "1.5px", textTransform: "uppercase", background: loading ? (dark ? "rgba(122,63,209,0.4)" : "rgba(122,63,209,0.3)") : "linear-gradient(135deg,#7a3fd1,#f5a623)", color: "#ffffff", opacity: loading ? 0.7 : 1 }}>{loading ? "Submitting…" : "Submit Application →"}</button>
             </form>
           )}
         </div>
@@ -211,7 +181,19 @@ function SpeakerApplicationModal({ onClose, dark }) {
   );
 }
 
-function SpeakerCard({ speaker, dark }) {
+function LinkedInIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+    </svg>
+  );
+}
+
+function SpeakerCard(props) {
+  var speaker = props.speaker;
+  var dark = props.dark;
+  var s1 = useState(false); var expanded = s1[0]; var setExpanded = s1[1];
+
   var cardBg = dark ? "rgba(255,255,255,0.04)" : "#ffffff";
   var cardBdr = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.12)";
   var textMain = dark ? "#ffffff" : "#0d0520";
@@ -219,61 +201,62 @@ function SpeakerCard({ speaker, dark }) {
   var accent = dark ? "#b99eff" : "#7a3fd1";
 
   return (
-    <div
-      className="speaker-card"
-      style={{
-        background: cardBg,
-        border: "1px solid " + cardBdr,
-        borderRadius: 20,
-        overflow: "hidden",
-        transition: "transform 0.3s ease, box-shadow 0.3s ease",
-        cursor: "default",
-        display: "flex",
-        flexDirection: "column",
-      }}
+    <div className="speaker-card" style={{
+      background: cardBg, border: "1px solid " + cardBdr, borderRadius: 20,
+      overflow: "hidden", transition: "transform 0.3s ease, box-shadow 0.3s ease",
+      cursor: "default", display: "flex", flexDirection: "column",
+    }}
       onMouseEnter={function(e) { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = dark ? "0 12px 40px rgba(122,63,209,0.15)" : "0 12px 40px rgba(122,63,209,0.10)"; }}
       onMouseLeave={function(e) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
     >
       {/* Photo */}
       <div style={{ position: "relative", width: "100%", aspectRatio: "1/1", overflow: "hidden", background: dark ? "#120a22" : "#ede8f7" }}>
-        <img
-          src={speaker.image}
-          alt={speaker.name}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          onError={function(e) { e.target.style.display = "none"; }}
-        />
+        <img src={speaker.image} alt={speaker.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          onError={function(e) { e.target.style.display = "none"; }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, " + (dark ? "rgba(6,2,15,0.85)" : "rgba(255,255,255,0.7)") + ", transparent)", pointerEvents: "none" }} />
       </div>
 
       {/* Info */}
-      <div className="speaker-card-info" style={{ padding: "16px 18px 14px", flex: 1, display: "flex", flexDirection: "column" }}>
-        <h3 style={{
-          fontFamily: "'Orbitron', sans-serif",
-          fontSize: "0.82rem", fontWeight: 900,
-          color: dark ? "#4ade80" : "#1a9e70",
-          textTransform: "uppercase", letterSpacing: "0.5px",
-          marginBottom: 3, lineHeight: 1.3,
+      <div className="speaker-info" style={{ padding: "16px 18px 14px", flex: 1, display: "flex", flexDirection: "column" }}>
+        <h3 className="speaker-name" style={{
+          fontFamily: "'Orbitron', sans-serif", fontSize: "0.82rem", fontWeight: 900,
+          color: dark ? "#4ade80" : "#1a9e70", textTransform: "uppercase",
+          letterSpacing: "0.5px", marginBottom: 3, lineHeight: 1.3,
         }}>{speaker.name}</h3>
-        <p className="speaker-card-title" style={{ fontSize: "0.78rem", fontWeight: 600, color: textMain, marginBottom: 2, lineHeight: 1.35 }}>{speaker.title}</p>
+        <p className="speaker-title" style={{ fontSize: "0.78rem", fontWeight: 600, color: textMain, marginBottom: 2, lineHeight: 1.35 }}>{speaker.title}</p>
         <p style={{ fontSize: "0.72rem", fontWeight: 700, color: accent, marginBottom: 10, lineHeight: 1.3 }}>{speaker.company}</p>
-        <p className="speaker-card-desc" style={{ fontSize: "0.76rem", color: textMid, lineHeight: 1.6, flex: 1 }}>{speaker.description}</p>
 
-        {/* LinkedIn Button */}
-        <a href={speaker.linkedin} target="_blank" rel="noreferrer"
-          className="speaker-linkedin-btn"
-          style={{
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            marginTop: 14, padding: "10px 16px", borderRadius: 10,
-            background: "#0A66C2", color: "#ffffff",
-            textDecoration: "none", fontSize: "0.75rem", fontWeight: 700,
-            letterSpacing: "0.3px",
-            transition: "background 0.2s ease, transform 0.15s ease",
-          }}
-          onMouseEnter={function(e) { e.currentTarget.style.background = "#004182"; e.currentTarget.style.transform = "scale(1.02)"; }}
-          onMouseLeave={function(e) { e.currentTarget.style.background = "#0A66C2"; e.currentTarget.style.transform = "scale(1)"; }}
+        {/* Description — desktop always visible, mobile toggle */}
+        <p className="speaker-desc-desktop" style={{ fontSize: "0.76rem", color: textMid, lineHeight: 1.6, flex: 1 }}>{speaker.description}</p>
+
+        <div className="speaker-desc-mobile">
+          {expanded ? (
+            <p style={{ fontSize: "0.72rem", color: textMid, lineHeight: 1.55, marginBottom: 6 }}>{speaker.description}</p>
+          ) : null}
+          <button
+            className="speaker-readmore-btn"
+            onClick={function() { setExpanded(function(v) { return !v; }); }}
+            style={{
+              background: "none", border: "none", cursor: "pointer", padding: 0,
+              fontSize: "0.68rem", fontWeight: 700, color: accent,
+              fontFamily: "'Orbitron', sans-serif", letterSpacing: "0.5px",
+              marginBottom: 6,
+            }}
+          >{expanded ? "Show less" : "Read more"}</button>
+        </div>
+
+        {/* LinkedIn */}
+        <a href={speaker.linkedin} target="_blank" rel="noreferrer" className="speaker-li-btn" style={{
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
+          marginTop: 8, padding: "9px 14px", borderRadius: 8,
+          background: "#0A66C2", color: "#ffffff", textDecoration: "none",
+          fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.3px",
+          transition: "background 0.2s ease",
+        }}
+          onMouseEnter={function(e) { e.currentTarget.style.background = "#004182"; }}
+          onMouseLeave={function(e) { e.currentTarget.style.background = "#0A66C2"; }}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          View Profile
+          <LinkedInIcon /> View on LinkedIn
         </a>
       </div>
     </div>
@@ -337,16 +320,25 @@ export default function Speakers() {
         .stat-label { font-size:0.68rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px; line-height:1.3; }
         @media(min-width:768px) { .speakers-stats { grid-template-columns:repeat(4,1fr); } }
 
-        /* Speaker grid — 4 col desktop, 2 col tablet, 2 col mobile */
+        /* Grid: 4 desktop, 2 everywhere else */
         .speakers-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
         @media(max-width:1100px) { .speakers-grid { grid-template-columns:repeat(2,1fr); gap:20px; } }
+        @media(max-width:600px) { .speakers-grid { grid-template-columns:repeat(2,1fr); gap:10px; } }
+
+        /* Desktop: show full desc, hide read more btn */
+        .speaker-desc-desktop { display: block; }
+        .speaker-desc-mobile { display: none; }
+
+        /* Mobile: hide full desc, show read more toggle */
         @media(max-width:600px) {
-          .speakers-grid { grid-template-columns:repeat(2,1fr); gap:12px; }
+          .speaker-desc-desktop { display: none !important; }
+          .speaker-desc-mobile { display: block !important; }
           .speaker-card { border-radius: 14px; }
-          .speaker-card-info { padding: 12px 12px 10px !important; }
-          .speaker-card-desc { display: none !important; }
-          .speaker-card-title { font-size: 0.7rem !important; }
-          .speaker-linkedin-btn { padding: 8px 12px !important; font-size: 0.68rem !important; }
+          .speaker-info { padding: 10px 10px 10px !important; }
+          .speaker-name { font-size: 0.72rem !important; }
+          .speaker-title { font-size: 0.68rem !important; }
+          .speaker-li-btn { padding: 7px 10px !important; font-size: 0.65rem !important; gap: 5px !important; }
+          .speaker-li-btn svg { width: 12px !important; height: 12px !important; }
         }
 
         .spk-cta-band { margin:0 5% 5rem; border-radius:24px; padding:3.5rem 4rem; background:var(--bg-card); border:1px solid var(--border-main); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:2rem; }
@@ -367,13 +359,8 @@ export default function Speakers() {
             <div className="spk-grid-bg" />
             <div style={{ position: "relative", zIndex: 2 }}>
               <h1>World-Class<br /><span>Speakers</span></h1>
-              <p className="spk-sub">
-                Hear from the brightest minds in AI, quantum computing, cybersecurity,
-                sustainability, and robotics shaping tomorrow's world.
-              </p>
-              <a href="/tickets" className="spk-cta">
-                Secure Your Seat <ChevronRight size={16} />
-              </a>
+              <p className="spk-sub">Hear from the brightest minds in AI, quantum computing, cybersecurity, sustainability, and robotics shaping tomorrow's world.</p>
+              <a href="/tickets" className="spk-cta">Secure Your Seat <ChevronRight size={16} /></a>
             </div>
           </section>
 
@@ -393,13 +380,12 @@ export default function Speakers() {
             })}
           </div>
 
-          {/* Sticky Search Bar */}
+          {/* Sticky Search */}
           <div style={{
             position: "sticky", top: "64px", zIndex: 40,
             background: dark ? "rgba(6,2,15,0.97)" : "rgba(255,255,255,0.97)",
             backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)",
-            borderBottom: "1px solid " + border,
-            padding: "14px 5%",
+            borderBottom: "1px solid " + border, padding: "14px 5%",
           }}>
             <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", gap: 12 }}>
               <div style={{
@@ -409,26 +395,12 @@ export default function Speakers() {
                 border: "1.5px solid " + (dark ? "rgba(255,255,255,0.10)" : "rgba(122,63,209,0.12)"),
               }}>
                 <Search size={16} style={{ opacity: 0.4, flexShrink: 0 }} />
-                <input
-                  value={search}
-                  onChange={function(e) { setSearch(e.target.value); }}
-                  placeholder="Search speakers by name, company, or topic..."
-                  style={{
-                    background: "transparent", border: "none", outline: "none",
-                    fontSize: "0.88rem", color: textMain, width: "100%",
-                    fontFamily: "inherit",
-                  }}
-                />
-                {search && (
-                  <button onClick={function() { setSearch(""); }}
-                    style={{ background: "none", border: "none", cursor: "pointer", color: textMid, lineHeight: 0, padding: 0 }}>
-                    <X size={14} />
-                  </button>
-                )}
+                <input value={search} onChange={function(e) { setSearch(e.target.value); }}
+                  placeholder="Search speakers..."
+                  style={{ background: "transparent", border: "none", outline: "none", fontSize: "0.88rem", color: textMain, width: "100%", fontFamily: "inherit" }} />
+                {search && <button onClick={function() { setSearch(""); }} style={{ background: "none", border: "none", cursor: "pointer", color: textMid, lineHeight: 0, padding: 0 }}><X size={14} /></button>}
               </div>
-              <span style={{ fontSize: "0.75rem", color: textMid, flexShrink: 0, fontWeight: 600 }}>
-                {filtered.length} speaker{filtered.length !== 1 ? "s" : ""}
-              </span>
+              <span style={{ fontSize: "0.75rem", color: textMid, flexShrink: 0, fontWeight: 600 }}>{filtered.length} speaker{filtered.length !== 1 ? "s" : ""}</span>
             </div>
           </div>
 
@@ -444,10 +416,7 @@ export default function Speakers() {
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "4rem 0", gap: 12, opacity: 0.4 }}>
                 <Search size={28} style={{ opacity: 0.3 }} />
                 <p style={{ fontSize: "0.9rem" }}>No speakers match your search.</p>
-                <button onClick={function() { setSearch(""); }}
-                  style={{ fontSize: "0.8rem", color: accent, textDecoration: "underline", cursor: "pointer", background: "none", border: "none" }}>
-                  Clear search
-                </button>
+                <button onClick={function() { setSearch(""); }} style={{ fontSize: "0.8rem", color: accent, textDecoration: "underline", cursor: "pointer", background: "none", border: "none" }}>Clear search</button>
               </div>
             ) : (
               <div className="speakers-grid">
@@ -457,7 +426,7 @@ export default function Speakers() {
               </div>
             )}
 
-            {/* More Speakers Coming Soon */}
+            {/* More Coming Soon */}
             <div style={{ textAlign: "center", padding: "3.5rem 0 1rem" }}>
               <div style={{
                 display: "inline-flex", alignItems: "center", gap: 12,
@@ -475,33 +444,25 @@ export default function Speakers() {
           <section style={{
             padding: "5rem 5%",
             background: dark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.02)",
-            borderTop: "1px solid " + cardBdr,
-            borderBottom: "1px solid " + cardBdr,
+            borderTop: "1px solid " + cardBdr, borderBottom: "1px solid " + cardBdr,
           }}>
             <div style={{ maxWidth: 800, margin: "0 auto", textAlign: "center" }}>
               <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "2.5px", textTransform: "uppercase", color: accent, marginBottom: 12 }}>Leadership</p>
               <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.6rem,4vw,2.6rem)", fontWeight: 900, color: textMain, marginBottom: 16 }}>Advisory Council</h2>
               <div style={{ width: 60, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", margin: "0 auto 28px" }} />
-              <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.5rem,4vw,2.8rem)", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1rem" }}>
-                Coming Soon.
-              </h3>
-              <p style={{ color: textMid, fontSize: "1rem", lineHeight: 1.8, maxWidth: 520, margin: "0 auto" }}>
-                We are assembling a distinguished advisory council of industry leaders, policymakers, and technology pioneers. Announcements will be made shortly.
-              </p>
+              <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.5rem,4vw,2.8rem)", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1rem" }}>Coming Soon.</h3>
+              <p style={{ color: textMid, fontSize: "1rem", lineHeight: 1.8, maxWidth: 520, margin: "0 auto" }}>We are assembling a distinguished advisory council of industry leaders, policymakers, and technology pioneers. Announcements will be made shortly.</p>
             </div>
           </section>
 
-          {/* Apply to Speak CTA */}
+          {/* Apply CTA */}
           <div className="spk-cta-band">
             <div>
               <h3>Want to <span>Speak</span> at TTFC?</h3>
               <p>We're looking for visionary leaders, innovators, and experts to take the stage. Applications for TTFC 2026 are now open.</p>
             </div>
-            <button onClick={function() { setModalOpen(true); }} className="spk-cta" style={{ whiteSpace: "nowrap", border: "none" }}>
-              Apply to Speak <ChevronRight size={16} />
-            </button>
+            <button onClick={function() { setModalOpen(true); }} className="spk-cta" style={{ whiteSpace: "nowrap", border: "none" }}>Apply to Speak <ChevronRight size={16} /></button>
           </div>
-
         </main>
         <Footer />
       </div>

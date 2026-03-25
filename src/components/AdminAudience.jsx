@@ -7,6 +7,7 @@ export default function AdminAudience() {
   const [audiences, setAudiences] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editingAudience, setEditingAudience] = useState(null);
   const [importing, setImporting] = useState(false);
   const [selectedAudience, setSelectedAudience] = useState(null);
   const [audienceStats, setAudienceStats] = useState(null);
@@ -157,6 +158,12 @@ export default function AdminAudience() {
                         View
                       </button>
                       <button
+                        onClick={() => setEditingAudience(audience)}
+                        className="text-xs px-2 py-1 bg-purple-600/20 text-purple-300 rounded hover:bg-purple-600/30"
+                      >
+                        Edit
+                      </button>
+                      <button
                         onClick={() => deleteAudience(audience._id)}
                         className="text-xs px-2 py-1 bg-red-600/20 text-red-300 rounded hover:bg-red-600/30"
                       >
@@ -187,6 +194,17 @@ export default function AdminAudience() {
           onClose={() => setShowModal(false)}
           onSuccess={() => {
             setShowModal(false);
+            fetchAudiences();
+          }}
+        />
+      )}
+
+      {editingAudience && (
+        <EditAudienceModal
+          audience={editingAudience}
+          onClose={() => setEditingAudience(null)}
+          onSuccess={() => {
+            setEditingAudience(null);
             fetchAudiences();
           }}
         />
@@ -335,6 +353,203 @@ function AddAudienceModal({ onClose, onSuccess }) {
           </button>
           <button onClick={handleSubmit} disabled={saving || !name || !emails} className="btn-primary">
             {saving ? "Creating..." : "Create Audience"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EditAudienceModal({ audience, onClose, onSuccess }) {
+  const [name, setName] = useState(audience.name);
+  const [additionalEmails, setAdditionalEmails] = useState("");
+  const [csvFile, setCsvFile] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [importingCsv, setImportingCsv] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+
+  const handleUpdateName = async () => {
+    if (!name.trim() || name === audience.name) return;
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${API}/campaigns/audiences/${audience._id}`,
+        { name },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setFeedback({ type: "success", message: "Name updated successfully" });
+      onSuccess();
+    } catch (err) {
+      console.error("Failed to update audience:", err);
+      setFeedback({ type: "error", message: "Failed to update name" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAddEmails = async () => {
+    if (!additionalEmails.trim()) return;
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const token = localStorage.getItem("token");
+      const emailList = additionalEmails
+        .split("\n")
+        .map((e) => e.trim())
+        .filter((e) => e.includes("@"));
+
+      const res = await axios.post(
+        `${API}/campaigns/audiences/${audience._id}/contacts`,
+        { emails: emailList },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAdditionalEmails("");
+      setFeedback({ type: "success", message: `Added ${res.data.addedCount} contacts (${res.data.skippedCount} duplicates skipped)` });
+      onSuccess();
+    } catch (err) {
+      console.error("Failed to add contacts:", err);
+      setFeedback({ type: "error", message: "Failed to add contacts" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCsvImport = async () => {
+    if (!csvFile) return;
+    setImportingCsv(true);
+    setFeedback(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", csvFile);
+
+      const token = localStorage.getItem("token");
+      const res = await axios.post(`${API}/campaigns/audiences/${audience._id}/import`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setCsvFile(null);
+      setFeedback({ type: "success", message: `Imported ${res.data.addedCount} contacts` });
+      onSuccess();
+    } catch (err) {
+      console.error("Failed to import CSV:", err);
+      setFeedback({ type: "error", message: "Failed to import CSV" });
+    } finally {
+      setImportingCsv(false);
+    }
+  };
+
+  const emailCount = additionalEmails.split("\n").filter((e) => e.trim().includes("@")).length;
+
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#1a1035] rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-gray-700 flex justify-between items-center">
+          <div>
+            <h3 className="text-xl font-bold text-white">Edit Audience</h3>
+            <p className="text-gray-400 text-sm">{audience.contactCount || 0} current contacts</p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">
+            ×
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          <div>
+            <label className="block text-gray-300 text-sm mb-2">Audience Name</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="flex-1 bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
+              />
+              <button
+                onClick={handleUpdateName}
+                disabled={saving || !name.trim() || name === audience.name}
+                className="btn-primary whitespace-nowrap"
+              >
+                {saving ? "Saving..." : "Save Name"}
+              </button>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-700 pt-6">
+            <h4 className="text-white font-medium mb-4">Add Contacts</h4>
+
+            {feedback && (
+              <div className={`mb-4 p-3 rounded-lg text-sm ${feedback.type === "success" ? "bg-green-600/20 text-green-300" : "bg-red-600/20 text-red-300"}`}>
+                {feedback.message}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">
+                  Add Emails Manually (one per line)
+                </label>
+                <textarea
+                  value={additionalEmails}
+                  onChange={(e) => setAdditionalEmails(e.target.value)}
+                  placeholder="email@example.com&#10;another@example.com"
+                  rows={5}
+                  className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
+                />
+                <div className="flex justify-between items-center mt-2">
+                  <p className="text-xs text-gray-500">{emailCount} valid emails</p>
+                  <button
+                    onClick={handleAddEmails}
+                    disabled={saving || !additionalEmails.trim()}
+                    className="btn-secondary text-sm"
+                  >
+                    Add Emails
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <div className="flex-1 border-t border-gray-700" />
+                <span className="px-4 text-gray-500 text-sm">or</span>
+                <div className="flex-1 border-t border-gray-700" />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm mb-2">Import CSV File</label>
+                <div className="flex gap-2">
+                  <label className="flex-1 cursor-pointer">
+                    <div className="bg-[#0a0515] border border-gray-700 border-dashed rounded-lg px-4 py-6 text-center hover:border-purple-500 transition-colors">
+                      <div className="text-purple-400 mb-2">📄</div>
+                      <p className="text-gray-400 text-sm">
+                        {csvFile ? csvFile.name : "Click to select CSV file"}
+                      </p>
+                      <p className="text-gray-500 text-xs mt-1">CSV should have columns: email, name (optional)</p>
+                      <input
+                        type="file"
+                        accept=".csv"
+                        onChange={(e) => setCsvFile(e.target.files[0])}
+                        className="hidden"
+                      />
+                    </div>
+                  </label>
+                  <button
+                    onClick={handleCsvImport}
+                    disabled={importingCsv || !csvFile}
+                    className="btn-primary whitespace-nowrap self-end"
+                  >
+                    {importingCsv ? "Importing..." : "Import CSV"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-gray-700 flex justify-end">
+          <button onClick={onClose} className="btn-secondary">
+            Done
           </button>
         </div>
       </div>

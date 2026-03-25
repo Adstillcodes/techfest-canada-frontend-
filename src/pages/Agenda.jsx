@@ -432,49 +432,6 @@ function TimeGroup({ time, sessions, dark, base }) {
   );
 }
 
-// ─── Shared filter dropdowns + clear-all (used in both bars) ──────
-function FilterControls({ activePillar, setActivePillar, activeSector, setActiveSector, search, setSearch, hasFilters, dark, accent, border, inactiveText }) {
-  return (
-    <>
-      <FilterDropdown
-        label="TECH PILLAR"
-        value={activePillar}
-        options={PILLAR_MAP}
-        onSelect={setActivePillar}
-        dark={dark} accent={accent} border={border} inactiveText={inactiveText}
-      />
-      <FilterDropdown
-        label="SECTOR"
-        value={activeSector}
-        options={SECTOR_MAP}
-        onSelect={setActiveSector}
-        dark={dark} accent={accent} border={border} inactiveText={inactiveText}
-      />
-      <AnimatePresence>
-        {hasFilters && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.88 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.88 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => { setActivePillar(null); setActiveSector(null); setSearch(""); }}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: "0.34rem",
-              padding: "0.5rem 1rem", borderRadius: "10px",
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.05em",
-              cursor: "pointer",
-              border: `1.5px solid ${dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
-              background: "transparent", color: inactiveText,
-            }}>
-            <X size={12} /> CLEAR ALL
-          </motion.button>
-        )}
-      </AnimatePresence>
-    </>
-  );
-}
-
 // ─── Page ─────────────────────────────────────────────────────────
 export default function AgendaPage() {
   useProtection();
@@ -532,8 +489,88 @@ export default function AgendaPage() {
 
   let cardIdx = 0;
   const hasFilters = !!(activePillar || activeSector || search);
+  const fp = { dark, accent, border, inactiveText };
 
-  const filterControlProps = { activePillar, setActivePillar, activeSector, setActiveSector, search, setSearch, hasFilters, dark, accent, border, inactiveText };
+  // ── Shared search bar markup (used in both desktop and mobile sticky) ──
+  const SearchBar = (
+    <div style={{
+      display: "flex", alignItems: "center", gap: "0.5rem",
+      padding: "0.5rem 1rem", borderRadius: "10px",
+      background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
+      border: `1.5px solid ${border}`,
+      flex: "1 1 160px",
+    }}>
+      <Search size={14} style={{ color: inactiveText, flexShrink: 0 }} />
+      <input
+        className="agenda-search-input"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="SEARCH SESSIONS"
+        style={{
+          background: "transparent", border: "none", outline: "none",
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.05em",
+          color: text, width: "100%",
+        }} />
+      {search && (
+        <button onClick={() => setSearch("")}
+          style={{ lineHeight: 0, background: "none", border: "none", cursor: "pointer", color: inactiveText, flexShrink: 0 }}>
+          <X size={14} />
+        </button>
+      )}
+    </div>
+  );
+
+  // ── Shared day tabs markup ──
+  const DayTabs = (
+    <div style={{ display: "flex", gap: "0.4rem", flexShrink: 0 }}>
+      {[1, 2].map(d => (
+        <motion.button key={d} whileTap={{ scale: 0.96 }} onClick={() => setActiveDay(d)}
+          style={{
+            padding: "0.5rem 1.1rem", borderRadius: "9px",
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.05em",
+            cursor: "pointer",
+            background: activeDay === d ? `${accent}28` : "transparent",
+            border: `2px solid ${activeDay === d ? accent : dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
+            color: activeDay === d ? accent : inactiveText,
+            transition: "all 0.15s",
+          }}>
+          DAY {d}
+          <span style={{ fontSize: "0.6rem", fontWeight: 600, opacity: 0.55, marginLeft: "0.4rem" }}>
+            {d === 1 ? "OCT 26" : "OCT 27"}
+          </span>
+        </motion.button>
+      ))}
+    </div>
+  );
+
+  // ── Shared filter dropdowns + clear all ──
+  const FilterRow = (
+    <>
+      <FilterDropdown label="TECH PILLAR" value={activePillar} options={PILLAR_MAP} onSelect={setActivePillar} {...fp} />
+      <FilterDropdown label="SECTOR"      value={activeSector} options={SECTOR_MAP} onSelect={setActiveSector} {...fp} />
+      <AnimatePresence>
+        {hasFilters && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.88 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => { setActivePillar(null); setActiveSector(null); setSearch(""); }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: "0.34rem",
+              padding: "0.5rem 1rem", borderRadius: "10px",
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.05em",
+              cursor: "pointer",
+              border: `1.5px solid ${dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
+              background: "transparent", color: inactiveText,
+            }}>
+            <X size={12} /> CLEAR ALL
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </>
+  );
 
   return (
     <>
@@ -563,14 +600,20 @@ export default function AgendaPage() {
         letter-spacing: 0.05em;
         opacity: 0.45;
       }
-      /* Desktop: filters live inside the sticky bar */
-      .agenda-filters-desktop { display: flex; }
-      .agenda-filters-mobile  { display: none;  }
 
-      /* Mobile: filters drop out of the sticky bar and scroll with the page */
+      /*
+       * Desktop (≥641px): sticky bar = day tabs + search + filters
+       * Mobile  (≤640px): sticky bar = search ONLY
+       *                   day tabs + filters scroll with the page below
+       */
+      .desktop-bar-rows  { display: block; }   /* shown on desktop, hidden on mobile */
+      .mobile-search-row { display: none;  }   /* hidden on desktop, shown on mobile  */
+      .mobile-scroll-row { display: none;  }   /* hidden on desktop, shown on mobile  */
+
       @media (max-width: 640px) {
-        .agenda-filters-desktop { display: none !important; }
-        .agenda-filters-mobile  { display: flex !important; }
+        .desktop-bar-rows  { display: none  !important; }
+        .mobile-search-row { display: flex  !important; }
+        .mobile-scroll-row { display: flex  !important; }
       }
     `}</style>
 
@@ -638,7 +681,7 @@ export default function AgendaPage() {
         </div>
       </section>
 
-      {/* ── STICKY BAR: day tabs + search (+ filters on desktop) ─── */}
+      {/* ── STICKY BAR ────────────────────────────────────────────── */}
       <div style={{
         position: "sticky",
         top: "64px",
@@ -650,78 +693,35 @@ export default function AgendaPage() {
       }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0.8rem 1.5rem 0.85rem" }}>
 
-          {/* ROW 1 — Day tabs + Search bar (always sticky on all screen sizes) */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
-
-            <div style={{ display: "flex", gap: "0.4rem", flexShrink: 0 }}>
-              {[1, 2].map(d => (
-                <motion.button key={d} whileTap={{ scale: 0.96 }} onClick={() => setActiveDay(d)}
-                  style={{
-                    padding: "0.5rem 1.1rem", borderRadius: "9px",
-                    fontFamily: "'Orbitron', sans-serif",
-                    fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.05em",
-                    cursor: "pointer",
-                    background: activeDay === d ? `${accent}28` : "transparent",
-                    border: `2px solid ${activeDay === d ? accent : dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
-                    color: activeDay === d ? accent : inactiveText,
-                    transition: "all 0.15s",
-                  }}>
-                  DAY {d}
-                  <span style={{ fontSize: "0.6rem", fontWeight: 600, opacity: 0.55, marginLeft: "0.4rem" }}>
-                    {d === 1 ? "OCT 26" : "OCT 27"}
-                  </span>
-                </motion.button>
-              ))}
+          {/* DESKTOP: day tabs + search on row 1, filters on row 2 */}
+          <div className="desktop-bar-rows">
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+              {DayTabs}
+              <div style={{ width: "1px", height: "28px", background: border, flexShrink: 0 }} />
+              {SearchBar}
             </div>
-
-            <div style={{ width: "1px", height: "28px", background: border, flexShrink: 0 }} />
-
-            <div style={{
-              display: "flex", alignItems: "center", gap: "0.5rem",
-              padding: "0.5rem 1rem", borderRadius: "10px",
-              background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
-              border: `1.5px solid ${border}`,
-              flex: "1 1 160px",
-            }}>
-              <Search size={14} style={{ color: inactiveText, flexShrink: 0 }} />
-              <input
-                className="agenda-search-input"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="SEARCH SESSIONS"
-                style={{
-                  background: "transparent", border: "none", outline: "none",
-                  fontFamily: "'Orbitron', sans-serif",
-                  fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.05em",
-                  color: text, width: "100%",
-                }} />
-              {search && (
-                <button onClick={() => setSearch("")}
-                  style={{ lineHeight: 0, background: "none", border: "none", cursor: "pointer", color: inactiveText, flexShrink: 0 }}>
-                  <X size={14} />
-                </button>
-              )}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.55rem", flexWrap: "wrap" }}>
+              {FilterRow}
             </div>
           </div>
 
-          {/* ROW 2 — Filters: desktop only (stays sticky) */}
-          <div className="agenda-filters-desktop" style={{
-            alignItems: "center", gap: "0.5rem", marginTop: "0.55rem", flexWrap: "wrap",
-          }}>
-            <FilterControls {...filterControlProps} />
+          {/* MOBILE: search bar only */}
+          <div className="mobile-search-row" style={{ alignItems: "center", gap: "0.5rem" }}>
+            {SearchBar}
           </div>
 
         </div>
       </div>
 
-      {/* ── MOBILE-ONLY filter row: scrolls with the page ─────────── */}
-      <div className="agenda-filters-mobile" style={{
+      {/* ── MOBILE ONLY: day tabs + filters scroll with the page ──── */}
+      <div className="mobile-scroll-row" style={{
         alignItems: "center", gap: "0.5rem", flexWrap: "wrap",
         padding: "0.65rem 1.5rem 0.7rem",
         borderBottom: `1px solid ${border}`,
         background: dark ? "rgba(6,2,15,0.5)" : "rgba(248,247,252,0.5)",
       }}>
-        <FilterControls {...filterControlProps} />
+        {DayTabs}
+        {FilterRow}
       </div>
 
       {/* ── SCHEDULE ──────────────────────────────────────────────── */}

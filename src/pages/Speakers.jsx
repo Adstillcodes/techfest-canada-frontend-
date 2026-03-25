@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import { Mic, Users, Calendar, Award, ChevronRight, X, Search } from "lucide-react";
 import { client, urlFor } from "../utils/sanity";
 
-const SPEAKERS_QUERY = `*[_type == "speaker"] | order(order asc) {
+const SPEAKERS_QUERY = `*[_type == "speaker"] | order(name asc) {
   _id,
   name,
   title,

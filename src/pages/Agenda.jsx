@@ -432,6 +432,49 @@ function TimeGroup({ time, sessions, dark, base }) {
   );
 }
 
+// ─── Shared filter dropdowns + clear-all (used in both bars) ──────
+function FilterControls({ activePillar, setActivePillar, activeSector, setActiveSector, search, setSearch, hasFilters, dark, accent, border, inactiveText }) {
+  return (
+    <>
+      <FilterDropdown
+        label="TECH PILLAR"
+        value={activePillar}
+        options={PILLAR_MAP}
+        onSelect={setActivePillar}
+        dark={dark} accent={accent} border={border} inactiveText={inactiveText}
+      />
+      <FilterDropdown
+        label="SECTOR"
+        value={activeSector}
+        options={SECTOR_MAP}
+        onSelect={setActiveSector}
+        dark={dark} accent={accent} border={border} inactiveText={inactiveText}
+      />
+      <AnimatePresence>
+        {hasFilters && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.88 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.88 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => { setActivePillar(null); setActiveSector(null); setSearch(""); }}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: "0.34rem",
+              padding: "0.5rem 1rem", borderRadius: "10px",
+              fontFamily: "'Orbitron', sans-serif",
+              fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.05em",
+              cursor: "pointer",
+              border: `1.5px solid ${dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
+              background: "transparent", color: inactiveText,
+            }}>
+            <X size={12} /> CLEAR ALL
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────
 export default function AgendaPage() {
   useProtection();
@@ -490,6 +533,8 @@ export default function AgendaPage() {
   let cardIdx = 0;
   const hasFilters = !!(activePillar || activeSector || search);
 
+  const filterControlProps = { activePillar, setActivePillar, activeSector, setActiveSector, search, setSearch, hasFilters, dark, accent, border, inactiveText };
+
   return (
     <>
     <style>{`
@@ -518,18 +563,22 @@ export default function AgendaPage() {
         letter-spacing: 0.05em;
         opacity: 0.45;
       }
+      /* Desktop: filters live inside the sticky bar */
+      .agenda-filters-desktop { display: flex; }
+      .agenda-filters-mobile  { display: none;  }
+
+      /* Mobile: filters drop out of the sticky bar and scroll with the page */
+      @media (max-width: 640px) {
+        .agenda-filters-desktop { display: none !important; }
+        .agenda-filters-mobile  { display: flex !important; }
+      }
     `}</style>
 
-    {/*
-      ⚠️ STICKY FIX: Use overflow-x: clip NOT overflow-x: hidden.
-      overflow: hidden creates a new scroll container which breaks position: sticky.
-      overflow-x: clip clips content visually without creating a scroll container.
-    */}
     <div style={{
       background: bg,
       minHeight: "100vh",
       color: text,
-      overflowX: "clip",   /* ← THIS is the sticky fix */
+      overflowX: "clip",
       userSelect: "none",
     }}>
 
@@ -589,12 +638,7 @@ export default function AgendaPage() {
         </div>
       </section>
 
-      {/* ── STICKY FILTER BAR ─────────────────────────────────────── */}
-      {/*
-        position: sticky works here because the parent uses overflow-x: clip.
-        Make sure top value matches your Navbar height exactly.
-        If your Navbar is 80px tall, change top to "80px".
-      */}
+      {/* ── STICKY BAR: day tabs + search (+ filters on desktop) ─── */}
       <div style={{
         position: "sticky",
         top: "64px",
@@ -606,10 +650,9 @@ export default function AgendaPage() {
       }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0.8rem 1.5rem 0.85rem" }}>
 
-          {/* ROW 1 — Day tabs + Search bar */}
+          {/* ROW 1 — Day tabs + Search bar (always sticky on all screen sizes) */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
 
-            {/* Day tabs */}
             <div style={{ display: "flex", gap: "0.4rem", flexShrink: 0 }}>
               {[1, 2].map(d => (
                 <motion.button key={d} whileTap={{ scale: 0.96 }} onClick={() => setActiveDay(d)}
@@ -631,10 +674,8 @@ export default function AgendaPage() {
               ))}
             </div>
 
-            {/* Divider */}
             <div style={{ width: "1px", height: "28px", background: border, flexShrink: 0 }} />
 
-            {/* Search bar — fills remaining space */}
             <div style={{
               display: "flex", alignItems: "center", gap: "0.5rem",
               padding: "0.5rem 1rem", borderRadius: "10px",
@@ -663,50 +704,24 @@ export default function AgendaPage() {
             </div>
           </div>
 
-          {/* ROW 2 — Filter dropdowns + Clear all */}
-          <div style={{
-            display: "flex", alignItems: "center",
-            gap: "0.5rem", marginTop: "0.55rem", flexWrap: "wrap",
+          {/* ROW 2 — Filters: desktop only (stays sticky) */}
+          <div className="agenda-filters-desktop" style={{
+            alignItems: "center", gap: "0.5rem", marginTop: "0.55rem", flexWrap: "wrap",
           }}>
-            <FilterDropdown
-              label="TECH PILLAR"
-              value={activePillar}
-              options={PILLAR_MAP}
-              onSelect={setActivePillar}
-              dark={dark} accent={accent} border={border} inactiveText={inactiveText}
-            />
-            <FilterDropdown
-              label="SECTOR"
-              value={activeSector}
-              options={SECTOR_MAP}
-              onSelect={setActiveSector}
-              dark={dark} accent={accent} border={border} inactiveText={inactiveText}
-            />
-
-            <AnimatePresence>
-              {hasFilters && (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.88 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.88 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => { setActivePillar(null); setActiveSector(null); setSearch(""); }}
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: "0.34rem",
-                    padding: "0.5rem 1rem", borderRadius: "10px",
-                    fontFamily: "'Orbitron', sans-serif",
-                    fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.05em",
-                    cursor: "pointer",
-                    border: `1.5px solid ${dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
-                    background: "transparent", color: inactiveText,
-                  }}>
-                  <X size={12} /> CLEAR ALL
-                </motion.button>
-              )}
-            </AnimatePresence>
+            <FilterControls {...filterControlProps} />
           </div>
 
         </div>
+      </div>
+
+      {/* ── MOBILE-ONLY filter row: scrolls with the page ─────────── */}
+      <div className="agenda-filters-mobile" style={{
+        alignItems: "center", gap: "0.5rem", flexWrap: "wrap",
+        padding: "0.65rem 1.5rem 0.7rem",
+        borderBottom: `1px solid ${border}`,
+        background: dark ? "rgba(6,2,15,0.5)" : "rgba(248,247,252,0.5)",
+      }}>
+        <FilterControls {...filterControlProps} />
       </div>
 
       {/* ── SCHEDULE ──────────────────────────────────────────────── */}

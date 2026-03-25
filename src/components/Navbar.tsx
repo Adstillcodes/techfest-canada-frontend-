@@ -138,28 +138,32 @@ export default function Navbar() {
         .tfc-mobile-ticket { display: none !important; }
         .tfc-desktop-ticket { display: inline-flex !important; }
 
-        @media (max-width: 1024px) { 
-          .tfc-desktop-nav { display: none !important; } 
-          .tfc-hamburger { display: flex !important; } 
-          
-          /* Mobile Specific Adjustments */
-          .tfc-nav-logo { height: 68px !important; } 
-          .tfc-mobile-ticket { display: inline-flex !important; }
-          .tfc-desktop-ticket { display: none !important; }
-          .tfc-nav-container { grid-template-columns: 68px 1fr auto !important; }
-          .tfc-nav-left { position: static !important; }
-          .tfc-nav-right { position: static !important; width: auto !important; }
-          .tfc-nav-center { width: 100% !important; grid-column: 2 / 3 !important; }
+        /* ===== TABLET (641px – 1024px) ===== */
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .tfc-desktop-nav { display: none !important; }
+          .tfc-hamburger { display: flex !important; }
+          .tfc-nav-logo { height: 68px !important; }
+
+          /* Hide the center column entirely on tablet */
+          .tfc-nav-center { display: none !important; }
+
+          /* Keep TICKETS in the right-side actions */
+          .tfc-mobile-ticket { display: none !important; }
+          .tfc-desktop-ticket { display: inline-flex !important; }
         }
-        
-        @media (max-width: 640px)  { 
-          .tfc-brochure-btn { display: none !important; } 
-          .tfc-mobile-ticket { padding: 10px 18px !important; font-size: 0.65rem !important; }
-          .tfc-nav-container { grid-template-columns: 1fr 1fr 1fr !important; grid-template-rows: auto auto !important; gap: 10px !important; height: auto !important; padding: 15px 2.5% !important; }
-          .tfc-nav-logo { height: 68px !important; max-width: none !important; }
-          .tfc-nav-left { grid-column: 1 / 2 !important; grid-row: 1 / 2 !important; justify-content: start !important; }
-          .tfc-nav-right { grid-column: 3 / 4 !important; grid-row: 1 / 2 !important; justify-content: end !important; }
-          .tfc-nav-center { grid-column: 1 / 4 !important; grid-row: 2 / 3 !important; justify-content: center !important; }
+
+        /* ===== MOBILE (≤640px) ===== */
+        @media (max-width: 640px) {
+          .tfc-desktop-nav { display: none !important; }
+          .tfc-hamburger { display: flex !important; }
+          .tfc-nav-logo { height: 68px !important; }
+
+          /* On mobile: show ticket in center, hide from right */
+          .tfc-mobile-ticket { display: inline-flex !important; padding: 10px 18px !important; font-size: 0.65rem !important; }
+          .tfc-desktop-ticket { display: none !important; }
+          .tfc-brochure-btn { display: none !important; }
+
+          .tfc-nav-container { height: auto !important; padding: 15px 2.5% !important; }
         }
       `}</style>
 

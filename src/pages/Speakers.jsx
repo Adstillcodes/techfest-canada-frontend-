@@ -1,33 +1,42 @@
-// src/pages/Speakers.jsx
 import React, { useState, useEffect } from 'react';
-import { client } from "../utils/sanity";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
-import AttendeesCarousel from "../components/AttendeesCarousel";
-import SpeakersCarousel from "../components/SpeakersCarousel";
-import { Mic, Users, Calendar, Award, ChevronRight, X } from "lucide-react";
+import { Mic, Users, Calendar, Award, ChevronRight, X, Linkedin } from "lucide-react";
 
-/* ─────────────────────────────────────────────
-   GROQ — fetches toggle + full speaker list
-   including optional social links and bio.
-───────────────────────────────────────────── */
-const SPEAKERS_QUERY = `{
-  "settings": *[_type == "siteSettings" && !(_id in path("drafts.**"))][0]{
-    attendeesCarouselEnabled,
-    speakersEnabled
+const SPEAKERS = [
+  {
+    name: "Scott D'Cunha",
+    title: "CEO",
+    company: "Branksome Consulting & Ventures",
+    description: "Seasoned marketing and digital executive with over thirty years of experience driving eCommerce and digital transformation at organizations like LCBO and Staples Canada. A Chartered Marketer and Fellow of the Chartered Institute of Marketing.",
+    linkedin: "https://ca.linkedin.com/in/scott-d-cunha-0a9a52",
+    image: "/speakers/scott-dcunha.jpg",
   },
-  "speakers": *[_type == "speaker"] | order(order asc) {
-    name,
-    title,
-    company,
-    bio,
-    linkedin,
-    twitter,
-    github,
-    website,
-    "image": image.asset->url
-  }
-}`;
+  {
+    name: "James Castle",
+    title: "CEO, CSO & Founder",
+    company: "Terranova Aerospace & Defense Group",
+    description: "Globally recognized authority on sovereign AI, cybersecurity governance, and critical infrastructure protection. Founder and Chairperson of the Cyber Security Global Alliance, operating across 21 countries over 4 continents.",
+    linkedin: "https://www.linkedin.com/in/jamescastleca/",
+    image: "/speakers/james-castle.jpg",
+  },
+  {
+    name: "Brennan Lodge",
+    title: "Founder & CISO",
+    company: "BLodgic Inc. | NYU Adjunct Professor",
+    description: "Cybersecurity expert with over 15 years of experience at the intersection of data science, AI, and threat defense. Former Head of Analytics Engines at HSBC, with past roles at Goldman Sachs and BlockFi. LinkedIn Learning instructor on AI security.",
+    linkedin: "https://www.linkedin.com/in/brennanlodge/",
+    image: "/speakers/brennan-lodge.jpg",
+  },
+  {
+    name: "Bijit Ghosh",
+    title: "Engineering Executive Leader",
+    company: "Wells Fargo",
+    description: "Product innovator and engineering executive leading AI/ML and cloud transformation at scale. Former CTO and Global Head of Cloud Product and Engineering at Deutsche Bank. Prolific thought leader on GenAI, LLMOps, and cloud architecture.",
+    linkedin: "https://www.linkedin.com/in/bijit-ghosh-48281a78/",
+    image: "/speakers/bijit-ghosh.jpg",
+  },
+];
 
 const INDUSTRIES = [
   "Artificial Intelligence & Machine Learning",
@@ -60,9 +69,6 @@ const EXPERIENCE_OPTIONS = [
   "25+ conferences",
 ];
 
-/* ─────────────────────────────────────────────
-   Apply-to-Speak Modal
-───────────────────────────────────────────── */
 function SpeakerApplicationModal({ onClose, dark }) {
   var s1 = useState({ firstName: "", lastName: "", email: "", linkedin: "", industry: "", jobTitle: "", experience: "" });
   var formData = s1[0]; var setFormData = s1[1];
@@ -70,14 +76,14 @@ function SpeakerApplicationModal({ onClose, dark }) {
   var s3 = useState(false); var submitted = s3[0]; var setSubmitted = s3[1];
   var s4 = useState(false); var loading = s4[0]; var setLoading = s4[1];
 
-  var bg = dark ? "#0d0620" : "#ffffff";
-  var textMain = dark ? "#ffffff" : "#0d0520";
+  var bg      = dark ? "#0d0620" : "#ffffff";
+  var textMain= dark ? "#ffffff" : "#0d0520";
   var textMid = dark ? "rgba(220,210,255,0.75)" : "rgba(13,5,32,0.65)";
   var inputBg = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
-  var inputBdr = dark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)";
+  var inputBdr= dark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)";
 
   function handleChange(e) {
-    setFormData(function (prev) { return Object.assign({}, prev, { [e.target.name]: e.target.value }); });
+    setFormData(function(prev) { return Object.assign({}, prev, { [e.target.name]: e.target.value }); });
     setError("");
   }
 
@@ -95,21 +101,21 @@ function SpeakerApplicationModal({ onClose, dark }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          service_id: "service_gy3fvru",
+          service_id:  "service_gy3fvru",
           template_id: "template_ufqzzep",
-          user_id: "gZgYZtLCXPVgUsVj_",
+          user_id:     "gZgYZtLCXPVgUsVj_",
           template_params: {
-            to_email: "baldeep@thetechfestival.com",
-            from_name: formData.firstName + " " + formData.lastName,
+            to_email:   "baldeep@thetechfestival.com",
+            from_name:  formData.firstName + " " + formData.lastName,
             from_email: formData.email,
-            message: "[Speaker Application]\nName: " + formData.firstName + " " + formData.lastName + "\nTitle: " + formData.jobTitle + "\nIndustry: " + formData.industry + "\nExperience: " + formData.experience + "\nLinkedIn: " + (formData.linkedin || "N/A"),
+            message:    "[Speaker Application]\nName: " + formData.firstName + " " + formData.lastName + "\nTitle: " + formData.jobTitle + "\nIndustry: " + formData.industry + "\nExperience: " + formData.experience + "\nLinkedIn: " + (formData.linkedin || "N/A"),
           },
         }),
       });
       setLoading(false);
       if (res.ok || res.status === 200) { setSubmitted(true); }
       else { setError("Something went wrong. Please try again."); }
-    } catch (err) {
+    } catch(err) {
       setLoading(false);
       setError("Something went wrong. Please try again.");
     }
@@ -131,7 +137,7 @@ function SpeakerApplicationModal({ onClose, dark }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(10px)", padding: "20px" }}
-      onClick={function (e) { if (e.target === e.currentTarget) onClose(); }}
+      onClick={function(e) { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{ background: bg, width: "100%", maxWidth: 560, borderRadius: 24, border: "1px solid " + inputBdr, boxShadow: "0 24px 64px rgba(0,0,0,0.5)", maxHeight: "90vh", overflowY: "auto", position: "relative" }}>
         <div style={{ padding: "28px 32px 0", position: "sticky", top: 0, background: bg, zIndex: 2, paddingBottom: 20, borderBottom: "1px solid " + inputBdr }}>
@@ -179,14 +185,14 @@ function SpeakerApplicationModal({ onClose, dark }) {
                 <label style={labelStyle}>Industry *</label>
                 <select name="industry" value={formData.industry} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}>
                   <option value="">Select your industry</option>
-                  {INDUSTRIES.map(function (ind) { return <option key={ind} value={ind}>{ind}</option>; })}
+                  {INDUSTRIES.map(function(ind) { return <option key={ind} value={ind}>{ind}</option>; })}
                 </select>
               </div>
               <div>
                 <label style={labelStyle}>Speaking Experience *</label>
                 <select name="experience" value={formData.experience} onChange={handleChange} style={Object.assign({}, inputStyle, { appearance: "none", cursor: "pointer" })}>
                   <option value="">Number of conferences spoken at</option>
-                  {EXPERIENCE_OPTIONS.map(function (exp) { return <option key={exp} value={exp}>{exp}</option>; })}
+                  {EXPERIENCE_OPTIONS.map(function(exp) { return <option key={exp} value={exp}>{exp}</option>; })}
                 </select>
               </div>
               {error && (
@@ -205,44 +211,95 @@ function SpeakerApplicationModal({ onClose, dark }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Speakers Page
-───────────────────────────────────────────── */
+function SpeakerCard({ speaker, dark }) {
+  var cardBg = dark ? "rgba(255,255,255,0.04)" : "#ffffff";
+  var cardBdr = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.12)";
+  var textMain = dark ? "#ffffff" : "#0d0520";
+  var textMid = dark ? "rgba(220,210,255,0.70)" : "rgba(13,5,32,0.60)";
+  var accent = dark ? "#b99eff" : "#7a3fd1";
+
+  return (
+    <div
+      style={{
+        background: cardBg,
+        border: "1px solid " + cardBdr,
+        borderRadius: 24,
+        overflow: "hidden",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        cursor: "default",
+      }}
+      onMouseEnter={function(e) { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = dark ? "0 12px 40px rgba(122,63,209,0.15)" : "0 12px 40px rgba(122,63,209,0.10)"; }}
+      onMouseLeave={function(e) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+    >
+      {/* Photo */}
+      <div style={{ position: "relative", width: "100%", aspectRatio: "1/1", overflow: "hidden", background: dark ? "#120a22" : "#ede8f7" }}>
+        <img
+          src={speaker.image}
+          alt={speaker.name}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          onError={function(e) {
+            e.target.style.display = "none";
+          }}
+        />
+        {/* Gradient overlay at bottom */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "40%", background: "linear-gradient(to top, " + (dark ? "rgba(6,2,15,0.8)" : "rgba(255,255,255,0.6)") + ", transparent)", pointerEvents: "none" }} />
+        {/* LinkedIn button */}
+        <a href={speaker.linkedin} target="_blank" rel="noreferrer"
+          style={{
+            position: "absolute", top: 14, right: 14,
+            width: 36, height: 36, borderRadius: 10,
+            background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            color: "#ffffff", textDecoration: "none",
+            transition: "background 0.2s ease",
+          }}
+          onMouseEnter={function(e) { e.currentTarget.style.background = "#0A66C2"; }}
+          onMouseLeave={function(e) { e.currentTarget.style.background = "rgba(0,0,0,0.5)"; }}
+        >
+          <Linkedin size={16} />
+        </a>
+      </div>
+
+      {/* Info */}
+      <div style={{ padding: "20px 22px 24px" }}>
+        <h3 style={{
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: "0.88rem", fontWeight: 900,
+          color: dark ? "#4ade80" : "#1a9e70",
+          textTransform: "uppercase", letterSpacing: "0.5px",
+          marginBottom: 4, lineHeight: 1.3,
+        }}>{speaker.name}</h3>
+        <p style={{ fontSize: "0.82rem", fontWeight: 600, color: textMain, marginBottom: 2, lineHeight: 1.4 }}>{speaker.title}</p>
+        <p style={{ fontSize: "0.78rem", fontWeight: 700, color: accent, marginBottom: 14, lineHeight: 1.3 }}>{speaker.company}</p>
+        <p style={{ fontSize: "0.8rem", color: textMid, lineHeight: 1.65 }}>{speaker.description}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function Speakers() {
   var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
   var s2 = useState(false); var modalOpen = s2[0]; var setModalOpen = s2[1];
-  var s3 = useState(null); var speakersEnabled = s3[0]; var setSpeakersEnabled = s3[1];
-  var s4 = useState([]); var speakers = s4[0]; var setSpeakers = s4[1];
 
-  /* Dark-mode observer */
-  useEffect(function () {
+  useEffect(function() {
     setDark(document.body.classList.contains("dark-mode"));
-    var obs = new MutationObserver(function () { setDark(document.body.classList.contains("dark-mode")); });
+    var obs = new MutationObserver(function() { setDark(document.body.classList.contains("dark-mode")); });
     obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-    return function () { obs.disconnect(); };
+    return function() { obs.disconnect(); };
   }, []);
 
-  /* Fetch from Sanity */
-  useEffect(function () {
-    client
-      .fetch(SPEAKERS_QUERY)
-      .then(function (data) {
-        console.log("Sanity response:", data);
-        setSpeakersEnabled(data?.settings?.speakersEnabled ?? false);
-        setSpeakers(data?.speakers ?? []);
-      })
-      .catch(function (err) {
-        console.error("Sanity fetch error:", err);
-        setSpeakersEnabled(false);
-        setSpeakers([]);
-      });
-  }, []);
+  var bg = dark ? "#06020f" : "#ffffff";
+  var textMain = dark ? "#ffffff" : "#0d0520";
+  var textMid = dark ? "rgba(220,210,255,0.75)" : "rgba(13,5,32,0.60)";
+  var accent = dark ? "#b99eff" : "#7a3fd1";
+  var cardBdr = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.12)";
 
   var stats = [
-    { icon: Mic, value: "50+", label: "World-Class Speakers" },
-    { icon: Users, value: "1000+", label: "Expected Attendees" },
-    { icon: Calendar, value: "2", label: "Days of Content" },
-    { icon: Award, value: "10", label: "Tech Pillars Covered" },
+    { icon: Mic,      value: "50+",   label: "World-Class Speakers" },
+    { icon: Users,    value: "1000+", label: "Expected Attendees"   },
+    { icon: Calendar, value: "2",     label: "Days of Content"      },
+    { icon: Award,    value: "10",    label: "Tech Pillars Covered" },
   ];
 
   var purpleRgb = "122, 63, 209";
@@ -250,8 +307,7 @@ export default function Speakers() {
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style dangerouslySetInnerHTML={{ __html: `
         .speakers-page { min-height:100vh; display:flex; flex-direction:column; background:var(--bg-main); }
         .speakers-hero { position:relative; overflow:hidden; padding:6rem 5% 4rem; text-align:center; }
         .spk-orb-1 { position:absolute; pointer-events:none; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle,rgba(${purpleRgb},0.25) 0%,transparent 70%); top:-160px; left:-100px; filter:blur(70px); }
@@ -262,12 +318,15 @@ export default function Speakers() {
         .spk-sub { font-size:1rem; color:var(--text-muted); max-width:520px; margin:0 auto 2.4rem; line-height:1.75; }
         .spk-cta { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#7a3fd1,#f5a623); color:#fff; border:none; padding:13px 30px; border-radius:999px; font-weight:700; font-size:0.88rem; cursor:pointer; text-decoration:none; transition:opacity 0.2s,transform 0.2s; }
         .spk-cta:hover { opacity:0.88; transform:translateY(-2px); }
-        .speakers-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:rgba(${purpleRgb},0.10); border-top:1px solid rgba(${purpleRgb},0.10); border-bottom:1px solid rgba(${purpleRgb},0.10); margin-bottom:5rem; }
+        .speakers-stats { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:rgba(${purpleRgb},0.10); border-top:1px solid rgba(${purpleRgb},0.10); border-bottom:1px solid rgba(${purpleRgb},0.10); margin-bottom:0; }
         .stat-cell { display:flex; align-items:center; gap:14px; padding:24px 20px; background:var(--bg-card,rgba(${purpleRgb},0.03)); }
         .stat-icon { width:44px; height:44px; border-radius:12px; background:rgba(${purpleRgb},0.10); border:1px solid rgba(${purpleRgb},0.18); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#7a3fd1; }
         .stat-value { font-family:'Orbitron',sans-serif; font-size:1.4rem; font-weight:900; line-height:1; color:var(--text-main); }
         .stat-label { font-size:0.68rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-top:4px; line-height:1.3; }
         @media(min-width:768px) { .speakers-stats { grid-template-columns:repeat(4,1fr); } }
+        .speakers-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+        @media(max-width:1100px) { .speakers-grid { grid-template-columns:repeat(2,1fr); } }
+        @media(max-width:600px) { .speakers-grid { grid-template-columns:1fr; } }
         .spk-cta-band { margin:0 5% 5rem; border-radius:24px; padding:3.5rem 4rem; background:var(--bg-card); border:1px solid var(--border-main); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:2rem; }
         .spk-cta-band h3 { font-size:1.6rem; font-weight:900; font-family:'Orbitron',sans-serif; color:var(--text-main); margin-bottom:0.5rem; }
         .spk-cta-band h3 span { color:#f5a623; }
@@ -279,7 +338,7 @@ export default function Speakers() {
         <Navbar />
         <main style={{ flex: 1 }}>
 
-          {/* ── Hero ── */}
+          {/* Hero */}
           <section className="speakers-hero">
             <div className="spk-orb-1" />
             <div className="spk-orb-2" />
@@ -296,9 +355,9 @@ export default function Speakers() {
             </div>
           </section>
 
-          {/* ── Stats ── */}
+          {/* Stats */}
           <div className="speakers-stats">
-            {stats.map(function (s) {
+            {stats.map(function(s) {
               var Icon = s.icon;
               return (
                 <div className="stat-cell" key={s.label}>
@@ -312,39 +371,61 @@ export default function Speakers() {
             })}
           </div>
 
-          {/* ── Speakers section — Sanity toggle controlled ── */}
-          {speakersEnabled === null ? (
-            /* Loading */
-            <div style={{ textAlign: "center", padding: "3rem 5% 6rem" }}>
-              <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Loading…</p>
+          {/* Speaker Grid */}
+          <section style={{ padding: "5rem 5%", maxWidth: 1200, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+              <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "2.5px", textTransform: "uppercase", color: accent, marginBottom: 12 }}>TTFC 2026 Lineup</p>
+              <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.6rem,4vw,2.6rem)", fontWeight: 900, color: textMain, marginBottom: 16 }}>Confirmed Speakers</h2>
+              <div style={{ width: 60, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", margin: "0 auto" }} />
             </div>
 
-          ) : speakersEnabled ? (
-            /* ON — testimonial-style card carousel */
-            <SpeakersCarousel speakers={speakers} />
+            <div className="speakers-grid">
+              {SPEAKERS.map(function(speaker) {
+                return <SpeakerCard key={speaker.name} speaker={speaker} dark={dark} />;
+              })}
+            </div>
 
-          ) : (
-            /* OFF — Coming Soon */
-            <div style={{ textAlign: "center", padding: "3rem 5% 6rem", maxWidth: 640, margin: "0 auto" }}>
-              <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2rem,5vw,3.5rem)", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1.5rem" }}>
+            {/* More Speakers Coming Soon */}
+            <div style={{ textAlign: "center", padding: "4rem 0 2rem" }}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 12,
+                padding: "18px 40px", borderRadius: 16,
+                background: dark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.04)",
+                border: "1px solid " + cardBdr,
+              }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 8px rgba(245,166,35,0.5)", animation: "pulse 2s ease-in-out infinite" }} />
+                <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.82rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", color: textMid }}>More Speakers Coming Soon</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Advisory Council */}
+          <section style={{
+            padding: "5rem 5%",
+            background: dark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.02)",
+            borderTop: "1px solid " + cardBdr,
+            borderBottom: "1px solid " + cardBdr,
+          }}>
+            <div style={{ maxWidth: 800, margin: "0 auto", textAlign: "center" }}>
+              <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "2.5px", textTransform: "uppercase", color: accent, marginBottom: 12 }}>Leadership</p>
+              <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.6rem,4vw,2.6rem)", fontWeight: 900, color: textMain, marginBottom: 16 }}>Advisory Council</h2>
+              <div style={{ width: 60, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", margin: "0 auto 28px" }} />
+              <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.5rem,4vw,2.8rem)", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", marginBottom: "1rem" }}>
                 Coming Soon.
-              </h2>
-              <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", lineHeight: 1.8 }}>
-                We are currently curating our lineup of world-class speakers for TTFC 2026. Announcements will be made shortly.
+              </h3>
+              <p style={{ color: textMid, fontSize: "1rem", lineHeight: 1.8, maxWidth: 520, margin: "0 auto" }}>
+                We are assembling a distinguished advisory council of industry leaders, policymakers, and technology pioneers. Announcements will be made shortly.
               </p>
             </div>
-          )}
+          </section>
 
-          {/* ── Attendees Carousel — independent Sanity toggle ── */}
-          <AttendeesCarousel />
-
-          {/* ── Apply to Speak CTA ── */}
+          {/* Apply to Speak CTA */}
           <div className="spk-cta-band">
             <div>
               <h3>Want to <span>Speak</span> at TTFC?</h3>
               <p>We're looking for visionary leaders, innovators, and experts to take the stage. Applications for TTFC 2026 are now open.</p>
             </div>
-            <button onClick={function () { setModalOpen(true); }} className="spk-cta" style={{ whiteSpace: "nowrap", border: "none" }}>
+            <button onClick={function() { setModalOpen(true); }} className="spk-cta" style={{ whiteSpace: "nowrap", border: "none" }}>
               Apply to Speak <ChevronRight size={16} />
             </button>
           </div>
@@ -353,7 +434,8 @@ export default function Speakers() {
         <Footer />
       </div>
 
-      {modalOpen && <SpeakerApplicationModal onClose={function () { setModalOpen(false); }} dark={dark} />}
+      <style>{`@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(1.3);} }`}</style>
+      {modalOpen && <SpeakerApplicationModal onClose={function() { setModalOpen(false); }} dark={dark} />}
     </>
   );
 }

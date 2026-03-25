@@ -21,6 +21,11 @@ const STATUS_BADGE = {
   skipped: { bg: "bg-red-600/20", color: "text-red-300", label: "Skipped" },
 };
 
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+};
+
 export default function AdminCampaignCalendar() {
   const [calendar, setCalendar] = useState({});
   const [loading, setLoading] = useState(true);
@@ -89,11 +94,6 @@ export default function AdminCampaignCalendar() {
     } catch (err) {
       alert(err.response?.data?.error || "Failed to send");
     }
-  };
-
-  const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   };
 
   const daysUntil = (dateStr) => {

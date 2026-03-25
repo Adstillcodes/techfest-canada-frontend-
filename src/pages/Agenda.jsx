@@ -53,7 +53,7 @@ const FORMAT_MAP = {
   closing:     { label: "Closing",             bg: "#b99eff22", bgL: "#7a3fd122", tc: "#b99eff", tcL: "#7a3fd1" },
 };
 
-// ─── Sessions ────────────────────────────────────────────────────
+// ─── Sessions ─────────────────────────────────────────────────────
 const SESSIONS = [
   // DAY 1
   { id:"d1-1",  day:1, time:"08:00", endTime:"09:00", title:"Registration, Networking Breakfast & Expo Preview",                                                              format:"networking",  isBreak:true },
@@ -125,7 +125,7 @@ function getDuration(start, end) {
 }
 
 // ─── Filter Dropdown ──────────────────────────────────────────────
-function FilterDropdown({ label, value, options, onSelect, dark, accent, border, inactiveText, text }) {
+function FilterDropdown({ label, value, options, onSelect, dark, accent, border, inactiveText }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -145,20 +145,22 @@ function FilterDropdown({ label, value, options, onSelect, dark, accent, border,
         style={{
           display: "inline-flex", alignItems: "center", gap: "0.5rem",
           padding: "0.52rem 1rem", borderRadius: "10px",
-          fontSize: "0.86rem", fontWeight: 700, cursor: "pointer",
+          fontFamily: "'Orbitron', sans-serif",
+          fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em",
+          cursor: "pointer",
           border: `2px solid ${selected ? accent : border}`,
           background: selected ? `${accent}18` : (dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"),
           color: selected ? accent : inactiveText,
           transition: "all 0.15s", whiteSpace: "nowrap",
         }}>
         {selected
-          ? <><span style={{ opacity: 0.55, fontWeight: 600 }}>{label}:</span>&nbsp;{selected.label}</>
+          ? <><span style={{ opacity: 0.5 }}>{label}:</span>&nbsp;{selected.label}</>
           : label}
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 24 }}
           style={{ display: "flex", alignItems: "center" }}>
-          <ChevronDown size={14} />
+          <ChevronDown size={13} />
         </motion.span>
       </motion.button>
 
@@ -171,24 +173,27 @@ function FilterDropdown({ label, value, options, onSelect, dark, accent, border,
             transition={{ type: "spring", damping: 26, stiffness: 280 }}
             style={{
               position: "absolute", top: "calc(100% + 8px)", left: 0,
-              minWidth: "220px", borderRadius: "12px", zIndex: 200,
+              minWidth: "230px", borderRadius: "12px", zIndex: 9999,
               background: dark ? "#130a2a" : "#fff",
               border: `1.5px solid ${border}`,
-              boxShadow: dark ? "0 12px 40px rgba(0,0,0,0.6)" : "0 8px 32px rgba(0,0,0,0.14)",
+              boxShadow: dark
+                ? "0 16px 48px rgba(0,0,0,0.7)"
+                : "0 8px 32px rgba(0,0,0,0.16)",
               overflow: "hidden",
             }}>
             {selected && (
               <button
                 onClick={() => { onSelect(null); setOpen(false); }}
                 style={{
-                  width: "100%", textAlign: "left", padding: "0.6rem 1rem",
-                  fontSize: "0.82rem", fontWeight: 600, cursor: "pointer",
-                  background: "none", border: "none",
+                  width: "100%", textAlign: "left", padding: "0.62rem 1rem",
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.06em",
+                  cursor: "pointer", background: "none", border: "none",
                   borderBottom: `1px solid ${border}`,
-                  color: dark ? "rgba(255,255,255,0.42)" : "rgba(0,0,0,0.38)",
+                  color: dark ? "rgba(255,255,255,0.38)" : "rgba(0,0,0,0.35)",
                   display: "flex", alignItems: "center", gap: "0.4rem",
                 }}>
-                <X size={12} /> Clear selection
+                <X size={11} /> CLEAR SELECTION
               </button>
             )}
             {Object.entries(options).map(([key, opt]) => {
@@ -200,9 +205,10 @@ function FilterDropdown({ label, value, options, onSelect, dark, accent, border,
                   key={key}
                   onClick={() => { onSelect(isActive ? null : key); setOpen(false); }}
                   style={{
-                    width: "100%", textAlign: "left",
-                    padding: "0.65rem 1rem",
-                    fontSize: "0.86rem", fontWeight: 700, cursor: "pointer",
+                    width: "100%", textAlign: "left", padding: "0.7rem 1rem",
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.04em",
+                    cursor: "pointer",
                     background: isActive ? `${accent}18` : "none",
                     border: "none",
                     color: isActive ? accent : (dark ? "rgba(255,255,255,0.82)" : "rgba(13,5,32,0.78)"),
@@ -210,10 +216,10 @@ function FilterDropdown({ label, value, options, onSelect, dark, accent, border,
                     transition: "background 0.1s",
                   }}
                   onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"; }}
-                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = isActive ? `${accent}18` : "none"; }}>
+                  onMouseLeave={e => { e.currentTarget.style.background = isActive ? `${accent}18` : "none"; }}>
                   {Icon && <Icon size={13} style={{ color: iconColor, flexShrink: 0 }} />}
                   {opt.label}
-                  {isActive && <span style={{ marginLeft: "auto", fontSize: "0.75rem", opacity: 0.6 }}>✓</span>}
+                  {isActive && <span style={{ marginLeft: "auto", opacity: 0.55 }}>✓</span>}
                 </button>
               );
             })}
@@ -238,9 +244,9 @@ function SessionCard({ s, dark, i }) {
   const isBreak    = !!s.isBreak;
   const dur        = getDuration(s.time, s.endTime);
 
-  const primaryText   = dark ? "#ffffff"                   : "#0d0520";
-  const secondaryText = dark ? "rgba(255,255,255,0.75)"    : "rgba(13,5,32,0.65)";
-  const mutedText     = dark ? "rgba(255,255,255,0.48)"    : "rgba(13,5,32,0.42)";
+  const primaryText   = dark ? "#ffffff"                 : "#0d0520";
+  const secondaryText = dark ? "rgba(255,255,255,0.75)"  : "rgba(13,5,32,0.65)";
+  const mutedText     = dark ? "rgba(255,255,255,0.48)"  : "rgba(13,5,32,0.42)";
 
   return (
     <motion.div
@@ -277,7 +283,8 @@ function SessionCard({ s, dark, i }) {
                 <span style={{
                   display: "inline-flex", alignItems: "center",
                   padding: "0.24rem 0.62rem", borderRadius: "5px",
-                  fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
                   background: dark ? fmtInfo.bg : fmtInfo.bgL,
                   color: dark ? fmtInfo.tc : fmtInfo.tcL,
                 }}>
@@ -287,7 +294,8 @@ function SessionCard({ s, dark, i }) {
                 {s.featured && (
                   <span style={{
                     padding: "0.24rem 0.62rem", borderRadius: "5px",
-                    fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase",
                     background: `linear-gradient(90deg,${dark ? "#b99eff" : "#7a3fd1"}22,#f5a62322)`,
                     color: dark ? "#b99eff" : "#7a3fd1",
                     border: `1px solid ${dark ? "#b99eff" : "#7a3fd1"}40`,
@@ -298,7 +306,8 @@ function SessionCard({ s, dark, i }) {
                   <span style={{
                     display: "inline-flex", alignItems: "center", gap: "0.3rem",
                     padding: "0.24rem 0.62rem", borderRadius: "5px",
-                    fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em",
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.05em",
                     background: `${accent}1c`, color: accent, border: `1px solid ${accent}38`,
                   }}>
                     <PillarIcon size={11} />{pillar.label}
@@ -308,7 +317,8 @@ function SessionCard({ s, dark, i }) {
                 {sector && (
                   <span style={{
                     padding: "0.24rem 0.62rem", borderRadius: "5px",
-                    fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.05em",
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.05em",
                     background: dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
                     color: primaryText,
                   }}>
@@ -366,19 +376,19 @@ function SessionCard({ s, dark, i }) {
                 display: "flex", flexWrap: "wrap", gap: "1.75rem",
               }}>
                 <div>
-                  <p style={{ fontSize: "0.7rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Time</p>
+                  <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Time</p>
                   <p style={{ fontSize: "0.9rem", display: "flex", alignItems: "center", gap: "0.38rem", color: primaryText }}>
                     <Clock size={13} style={{ color: mutedText }} />
                     {s.time} – {s.endTime} · {dur}
                   </p>
                 </div>
                 <div>
-                  <p style={{ fontSize: "0.7rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Speaker</p>
+                  <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Speaker</p>
                   <p style={{ fontSize: "0.9rem", color: secondaryText }}>To Be Decided</p>
                 </div>
                 <div>
-                  <p style={{ fontSize: "0.7rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Format</p>
-                  <p style={{ fontSize: "0.9rem", fontWeight: 700, color: dark ? fmtInfo.tc : fmtInfo.tcL }}>{fmtInfo.label}</p>
+                  <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Format</p>
+                  <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.68rem", fontWeight: 700, color: dark ? fmtInfo.tc : fmtInfo.tcL }}>{fmtInfo.label}</p>
                 </div>
               </div>
             </motion.div>
@@ -440,11 +450,11 @@ export default function AgendaPage() {
     return () => obs.disconnect();
   }, []);
 
-  const bg           = dark ? "#06020f"                    : "#f8f7fc";
-  const text         = dark ? "#ffffff"                    : "#0d0520";
-  const accent       = dark ? "#b99eff"                    : "#7a3fd1";
-  const border       = dark ? "rgba(255,255,255,0.10)"     : "rgba(0,0,0,0.10)";
-  const inactiveText = dark ? "rgba(255,255,255,0.78)"     : "rgba(13,5,32,0.60)";
+  const bg           = dark ? "#06020f"                 : "#f8f7fc";
+  const text         = dark ? "#ffffff"                 : "#0d0520";
+  const accent       = dark ? "#b99eff"                 : "#7a3fd1";
+  const border       = dark ? "rgba(255,255,255,0.10)"  : "rgba(0,0,0,0.10)";
+  const inactiveText = dark ? "rgba(255,255,255,0.70)"  : "rgba(13,5,32,0.55)";
 
   const filtered = useMemo(() => SESSIONS.filter(s => {
     if (s.day !== activeDay) return false;
@@ -485,26 +495,49 @@ export default function AgendaPage() {
     <style>{`
       .agenda-gradient-text {
         background: linear-gradient(135deg, var(--grad-start, #b99eff), #f5a623);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        background-clip: text; color: transparent; display: inline-block;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+        display: inline-block;
       }
       .agenda-stat-text {
         font-family: 'Orbitron', sans-serif;
-        font-size: clamp(1.4rem, 2.4vw, 2rem); font-weight: 900;
+        font-size: clamp(1.4rem, 2.4vw, 2rem);
+        font-weight: 900;
         background: linear-gradient(135deg, var(--grad-start, #b99eff), #f5a623);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        background-clip: text; color: transparent; display: inline-block;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+        display: inline-block;
       }
-      input::placeholder { color: rgba(128,128,128,0.5); }
+      .agenda-search-input::placeholder {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.65rem;
+        letter-spacing: 0.05em;
+        opacity: 0.45;
+      }
     `}</style>
 
-    <div style={{ background: bg, minHeight: "100vh", color: text, overflowX: "hidden", userSelect: "none" }}>
+    {/*
+      ⚠️ STICKY FIX: Use overflow-x: clip NOT overflow-x: hidden.
+      overflow: hidden creates a new scroll container which breaks position: sticky.
+      overflow-x: clip clips content visually without creating a scroll container.
+    */}
+    <div style={{
+      background: bg,
+      minHeight: "100vh",
+      color: text,
+      overflowX: "clip",   /* ← THIS is the sticky fix */
+      userSelect: "none",
+    }}>
 
       <Navbar />
 
-      {/* ── HERO ─────────────────────────────────────────────────── */}
+      {/* ── HERO ──────────────────────────────────────────────────── */}
       <section style={{
-        position: "relative", overflow: "hidden",
+        position: "relative",
         padding: "clamp(120px, 18vw, 180px) 5% clamp(60px, 8vw, 100px)",
         background: dark
           ? "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(122,63,209,0.14) 0%, transparent 70%)"
@@ -544,9 +577,10 @@ export default function AgendaPage() {
                 >
                   <span className="agenda-stat-text" style={{ "--grad-start": accent }}>{v}</span>
                   <span style={{
-                    fontSize: "0.76rem", fontWeight: 700,
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.62rem", fontWeight: 700,
                     color: dark ? "rgba(255,255,255,0.52)" : "rgba(13,5,32,0.46)",
-                    textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "0.12rem",
+                    textTransform: "uppercase", letterSpacing: "0.12em", marginTop: "0.12rem",
                   }}>{l}</span>
                 </motion.div>
               ))}
@@ -555,43 +589,54 @@ export default function AgendaPage() {
         </div>
       </section>
 
-      {/* ── STICKY FILTER BAR ────────────────────────────────────── */}
+      {/* ── STICKY FILTER BAR ─────────────────────────────────────── */}
+      {/*
+        position: sticky works here because the parent uses overflow-x: clip.
+        Make sure top value matches your Navbar height exactly.
+        If your Navbar is 80px tall, change top to "80px".
+      */}
       <div style={{
-        position: "sticky", top: "64px", zIndex: 40,
+        position: "sticky",
+        top: "64px",
+        zIndex: 40,
         background: dark ? "rgba(6,2,15,0.97)" : "rgba(248,247,252,0.97)",
         backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
         borderBottom: `1px solid ${border}`,
       }}>
-        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0.8rem 1.5rem" }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0.8rem 1.5rem 0.85rem" }}>
 
           {/* ROW 1 — Day tabs + Search bar */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+
             {/* Day tabs */}
             <div style={{ display: "flex", gap: "0.4rem", flexShrink: 0 }}>
               {[1, 2].map(d => (
                 <motion.button key={d} whileTap={{ scale: 0.96 }} onClick={() => setActiveDay(d)}
                   style={{
                     padding: "0.5rem 1.1rem", borderRadius: "9px",
-                    fontSize: "0.88rem", fontWeight: 800, cursor: "pointer",
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.05em",
+                    cursor: "pointer",
                     background: activeDay === d ? `${accent}28` : "transparent",
                     border: `2px solid ${activeDay === d ? accent : dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
                     color: activeDay === d ? accent : inactiveText,
                     transition: "all 0.15s",
                   }}>
-                  Day {d}
-                  <span style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.55, marginLeft: "0.4rem" }}>
-                    {d === 1 ? "Oct 26" : "Oct 27"}
+                  DAY {d}
+                  <span style={{ fontSize: "0.6rem", fontWeight: 600, opacity: 0.55, marginLeft: "0.4rem" }}>
+                    {d === 1 ? "OCT 26" : "OCT 27"}
                   </span>
                 </motion.button>
               ))}
             </div>
 
-            {/* Vertical divider */}
+            {/* Divider */}
             <div style={{ width: "1px", height: "28px", background: border, flexShrink: 0 }} />
 
             {/* Search bar — fills remaining space */}
             <div style={{
-              display: "flex", alignItems: "center", gap: "0.48rem",
+              display: "flex", alignItems: "center", gap: "0.5rem",
               padding: "0.5rem 1rem", borderRadius: "10px",
               background: dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.05)",
               border: `1.5px solid ${border}`,
@@ -599,12 +644,15 @@ export default function AgendaPage() {
             }}>
               <Search size={14} style={{ color: inactiveText, flexShrink: 0 }} />
               <input
+                className="agenda-search-input"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search sessions…"
+                placeholder="SEARCH SESSIONS"
                 style={{
                   background: "transparent", border: "none", outline: "none",
-                  fontSize: "0.86rem", fontWeight: 600, color: text, width: "100%",
+                  fontFamily: "'Orbitron', sans-serif",
+                  fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.05em",
+                  color: text, width: "100%",
                 }} />
               {search && (
                 <button onClick={() => setSearch("")}
@@ -615,40 +663,44 @@ export default function AgendaPage() {
             </div>
           </div>
 
-          {/* ROW 2 — Dropdowns + Clear */}
+          {/* ROW 2 — Filter dropdowns + Clear all */}
           <div style={{
-            display: "flex", alignItems: "center", gap: "0.5rem",
-            marginTop: "0.6rem", flexWrap: "wrap",
+            display: "flex", alignItems: "center",
+            gap: "0.5rem", marginTop: "0.55rem", flexWrap: "wrap",
           }}>
             <FilterDropdown
-              label="Tech Pillar"
+              label="TECH PILLAR"
               value={activePillar}
               options={PILLAR_MAP}
               onSelect={setActivePillar}
-              dark={dark} accent={accent} border={border} inactiveText={inactiveText} text={text}
+              dark={dark} accent={accent} border={border} inactiveText={inactiveText}
             />
             <FilterDropdown
-              label="Sector"
+              label="SECTOR"
               value={activeSector}
               options={SECTOR_MAP}
               onSelect={setActiveSector}
-              dark={dark} accent={accent} border={border} inactiveText={inactiveText} text={text}
+              dark={dark} accent={accent} border={border} inactiveText={inactiveText}
             />
 
             <AnimatePresence>
               {hasFilters && (
                 <motion.button
-                  initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.88 }}
+                  initial={{ opacity: 0, scale: 0.88 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.88 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => { setActivePillar(null); setActiveSector(null); setSearch(""); }}
                   style={{
                     display: "inline-flex", alignItems: "center", gap: "0.34rem",
-                    padding: "0.52rem 1rem", borderRadius: "10px",
-                    fontSize: "0.84rem", fontWeight: 700, cursor: "pointer",
+                    padding: "0.5rem 1rem", borderRadius: "10px",
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.05em",
+                    cursor: "pointer",
                     border: `1.5px solid ${dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.14)"}`,
                     background: "transparent", color: inactiveText,
                   }}>
-                  <X size={13} /> Clear all
+                  <X size={12} /> CLEAR ALL
                 </motion.button>
               )}
             </AnimatePresence>
@@ -657,13 +709,14 @@ export default function AgendaPage() {
         </div>
       </div>
 
-      {/* ── SCHEDULE ─────────────────────────────────────────────── */}
+      {/* ── SCHEDULE ──────────────────────────────────────────────── */}
       <main style={{ padding: "2.8rem 0 7rem" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 1.5rem" }}>
 
           <p style={{
-            fontSize: "0.82rem", fontWeight: 600,
-            color: dark ? "rgba(255,255,255,0.46)" : "rgba(13,5,32,0.40)",
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: "0.66rem", fontWeight: 600, letterSpacing: "0.06em",
+            color: dark ? "rgba(255,255,255,0.38)" : "rgba(13,5,32,0.34)",
             marginBottom: "1.5rem",
           }}>
             {filtered.length} session{filtered.length !== 1 ? "s" : ""} · Day {activeDay} — {activeDay === 1 ? "Oct 26" : "Oct 27"}, 2026
@@ -678,31 +731,50 @@ export default function AgendaPage() {
 
               {otherDayResults.count > 0 ? (
                 <>
-                  <p style={{ fontSize: "1.02rem", fontWeight: 700, color: dark ? "rgba(255,255,255,0.85)" : "rgba(13,5,32,0.72)", textAlign: "center" }}>
-                    No sessions on Day {activeDay} match your filters.
+                  <p style={{
+                    fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 700,
+                    color: dark ? "rgba(255,255,255,0.85)" : "rgba(13,5,32,0.72)", textAlign: "center",
+                    letterSpacing: "0.04em",
+                  }}>
+                    No sessions on Day {activeDay} match.
                   </p>
-                  <p style={{ fontSize: "0.88rem", color: dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.50)", textAlign: "center", maxWidth: "340px", lineHeight: 1.6 }}>
-                    There {otherDayResults.count === 1 ? "is" : "are"}{" "}
+                  <p style={{
+                    fontSize: "0.88rem",
+                    color: dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.50)",
+                    textAlign: "center", maxWidth: "340px", lineHeight: 1.6,
+                  }}>
                     <strong style={{ color: accent }}>{otherDayResults.count} matching session{otherDayResults.count > 1 ? "s" : ""}</strong>{" "}
-                    on Day {otherDayResults.day} ({otherDayResults.day === 1 ? "Oct 26" : "Oct 27"}).
+                    found on Day {otherDayResults.day} ({otherDayResults.day === 1 ? "Oct 26" : "Oct 27"}).
                   </p>
                   <motion.button whileTap={{ scale: 0.97 }}
                     onClick={() => setActiveDay(otherDayResults.day)}
                     style={{
                       marginTop: "0.35rem", padding: "0.58rem 1.45rem", borderRadius: "9999px",
-                      fontSize: "0.88rem", fontWeight: 800, cursor: "pointer",
+                      fontFamily: "'Orbitron', sans-serif",
+                      fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.06em",
+                      cursor: "pointer",
                       background: `${accent}20`, border: `2px solid ${accent}65`, color: accent,
                     }}>
-                    Switch to Day {otherDayResults.day} →
+                    SWITCH TO DAY {otherDayResults.day} →
                   </motion.button>
                 </>
               ) : (
                 <>
-                  <p style={{ fontSize: "0.95rem", fontWeight: 600, color: dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.46)" }}>
-                    No sessions match your filters.
+                  <p style={{
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.04em",
+                    color: dark ? "rgba(255,255,255,0.50)" : "rgba(13,5,32,0.42)",
+                  }}>
+                    No sessions match.
                   </p>
-                  <button onClick={() => { setSearch(""); setActivePillar(null); setActiveSector(null); }}
-                    style={{ fontSize: "0.84rem", fontWeight: 700, color: accent, textDecoration: "underline", cursor: "pointer", background: "none", border: "none" }}>
+                  <button
+                    onClick={() => { setSearch(""); setActivePillar(null); setActiveSector(null); }}
+                    style={{
+                      fontFamily: "'Orbitron', sans-serif",
+                      fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.04em",
+                      color: accent, textDecoration: "underline",
+                      cursor: "pointer", background: "none", border: "none",
+                    }}>
                     Clear all filters
                   </button>
                 </>

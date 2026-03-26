@@ -5,6 +5,25 @@ import { useEffect, useState, useRef } from "react";
 import SponsorMarquee from "../components/SponsorMarquee";
 import { motion, useInView } from "framer-motion";
 
+/* ─── PRICE TOOLTIP COMPONENT ─── */
+function PriceWithAsterisk({ price, color, fontSize, fontWeight }) {
+  var s = useState(false); var hovered = s[0]; var setHovered = s[1];
+  return (
+    <span style={{ position: "relative", display: "inline-flex", alignItems: "baseline", gap: 2 }}
+      onMouseEnter={function () { setHovered(true); }}
+      onMouseLeave={function () { setHovered(false); }}
+    >
+      <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: fontSize || "1.15rem", fontWeight: fontWeight || 900, color: color || "inherit" }}>{price}</span>
+      <span style={{ color: "#f5a623", fontSize: "0.85em", fontWeight: 900, cursor: "help", lineHeight: 1 }}>*</span>
+      {hovered && (
+        <span style={{ position: "absolute", bottom: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)", background: "rgba(0,0,0,0.88)", color: "#fff", fontSize: "0.68rem", fontFamily: "'Orbitron',sans-serif", fontWeight: 700, letterSpacing: "0.5px", padding: "8px 14px", borderRadius: 10, whiteSpace: "nowrap", zIndex: 999, pointerEvents: "none", boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }}>
+          Price subject to change
+        </span>
+      )}
+    </span>
+  );
+}
+
 var TIERS = [
   { name: "Platinum", price: "$24,999", color: "#b99eff" },
   { name: "Gold",     price: "$19,999", color: "#f5a623" },
@@ -205,13 +224,10 @@ export default function Sponsor() {
 
       <SponsorMarquee dark={dark} />
 
-      {/* COMPARISON TABLE */}
       <ComparisonTable dark={dark} bg={bg} textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent} cardBg={cardBg} cardBdr={cardBdr} onInquiry={function () { setInquiryOpen(true); }} />
 
-      {/* ADDITIONAL PACKAGES */}
       <AdditionalPackages dark={dark} bg={bg} textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent} cardBg={cardBg} cardBdr={cardBdr} onInquiry={function () { setInquiryOpen(true); }} />
 
-      {/* BOTTOM CTA */}
       <section style={{ background: bg, padding: "0 6% 5rem" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", background: "linear-gradient(135deg, rgba(122,63,209,0.12), rgba(245,166,35,0.08))", border: "1px solid " + cardBdr, borderRadius: 28, padding: "clamp(2.5rem,5vw,4rem)", textAlign: "center" }}>
           <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.2rem,3vw,2rem)", fontWeight: 900, color: textMain, marginBottom: 12 }}>Ready to Partner?</p>
@@ -261,6 +277,7 @@ function ComparisonTable(props) {
 
   return (
     <>
+      {/* Sticky floating bar */}
       <div className="sp-desktop-table" style={{ position: "fixed", top: 80, left: 0, right: 0, zIndex: 900, transform: showBar ? "translateY(0)" : "translateY(-100%)", opacity: showBar ? 1 : 0, transition: "transform 0.3s ease, opacity 0.25s ease", pointerEvents: showBar ? "auto" : "none", padding: "0 6%" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "28% repeat(4,1fr)", background: dark ? "rgba(10,5,24,0.96)" : "rgba(248,246,255,0.97)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid " + cardBdr, boxShadow: dark ? "0 4px 24px rgba(0,0,0,0.6)" : "0 4px 24px rgba(122,63,209,0.08)" }}>
@@ -272,7 +289,7 @@ function ComparisonTable(props) {
                 <div key={tier.name} style={{ padding: "14px 12px", textAlign: "center", borderLeft: "1px solid " + cardBdr, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3 }}>
                   <div style={{ width: 24, height: 3, borderRadius: 3, background: tier.color, boxShadow: "0 0 10px " + tier.color + "50", marginBottom: 4 }} />
                   <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 900, color: textMain }}>{tier.name}</span>
-                  <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.95rem", fontWeight: 900, color: tier.color }}>{tier.price}</span>
+                  <PriceWithAsterisk price={tier.price} color={tier.color} fontSize="0.95rem" />
                 </div>
               );
             })}
@@ -296,7 +313,9 @@ function ComparisonTable(props) {
                       <th key={tier.name} style={{ background: dark ? "#0d0620" : "#f4f0ff", padding: "20px 16px", textAlign: "center", borderBottom: "2px solid " + cardBdr, borderLeft: "1px solid " + cardBdr, width: "18%" }}>
                         <div style={{ width: 32, height: 4, borderRadius: 4, background: tier.color, margin: "0 auto 12px", boxShadow: "0 0 14px " + tier.color + "60" }} />
                         <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.88rem", fontWeight: 900, color: textMain, display: "block" }}>{tier.name}</span>
-                        <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.15rem", fontWeight: 900, color: tier.color, display: "block", marginTop: 5 }}>{tier.price}</span>
+                        <div style={{ marginTop: 5, display: "flex", justifyContent: "center" }}>
+                          <PriceWithAsterisk price={tier.price} color={tier.color} fontSize="1.15rem" />
+                        </div>
                       </th>
                     );
                   })}
@@ -336,6 +355,7 @@ function ComparisonTable(props) {
             </table>
           </div>
 
+          {/* MOBILE CARDS */}
           <div className="sp-mobile-cards" style={{ marginTop: "2rem" }}>
             <div className="tier-tabs">
               {TIERS.map(function (tier, i) {
@@ -359,7 +379,7 @@ function ComparisonTable(props) {
                       <div style={{ width: 32, height: 4, borderRadius: 4, background: tier.color, boxShadow: "0 0 12px " + tier.color + "70", marginBottom: 8 }} />
                       <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.1rem", fontWeight: 900, color: textMain }}>{tier.name} Partner</div>
                     </div>
-                    <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1.5rem", fontWeight: 900, color: tier.color }}>{tier.price}</div>
+                    <PriceWithAsterisk price={tier.price} color={tier.color} fontSize="1.5rem" />
                   </div>
 
                   {groupSections.map(function (section) {
@@ -436,7 +456,7 @@ function AdditionalCard(props) {
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
         <span style={{ fontSize: "1.6rem" }}>{pkg.icon}</span>
-        <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "1rem", fontWeight: 900, background: "linear-gradient(135deg,#7a3fd1,#f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{pkg.price}</span>
+        <PriceWithAsterisk price={pkg.price} color={null} fontSize="1rem" fontWeight={900} />
       </div>
       <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 900, color: textMain, marginBottom: 8, lineHeight: 1.3 }}>{pkg.name}</div>
       <p style={{ fontSize: "0.82rem", color: descColor, lineHeight: 1.7, margin: "0 0 16px" }}>{pkg.description}</p>

@@ -562,7 +562,7 @@ var INDUSTRIES = {
   ],
 };
 
-export default function SponsorInquiryModal(props) {
+function SponsorInquiryForm(props) {
   var isOpen = props.isOpen;
   var onClose = props.onClose;
 

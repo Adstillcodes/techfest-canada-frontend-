@@ -199,24 +199,20 @@ export default function Home() {
           {/* Venue */}
           <a href="/venue" style={{
             textDecoration: "none", display: "flex", flexDirection: "column",
-            alignItems: "center", gap: 8, marginBottom: "2.5rem",
-            opacity: 0.65, transition: "opacity 0.2s ease",
+            alignItems: "center", gap: 10, marginBottom: "2.5rem",
+            opacity: 0.6, transition: "opacity 0.2s ease",
           }}
             onMouseEnter={function(e) { e.currentTarget.style.opacity = "1"; }}
-            onMouseLeave={function(e) { e.currentTarget.style.opacity = "0.65"; }}
+            onMouseLeave={function(e) { e.currentTarget.style.opacity = "0.6"; }}
           >
             <span style={{
               fontFamily: "'Orbitron', sans-serif", fontSize: "0.55rem",
               fontWeight: 800, letterSpacing: "3px", textTransform: "uppercase",
               color: dark ? "rgba(255,255,255,0.50)" : "rgba(13,5,32,0.40)",
             }}>Venue</span>
-            <img src="/westin-logo.png" alt="The Westin Hotels & Resorts"
-              style={{
-                height: "clamp(22px, 3.5vw, 38px)", width: "auto",
-                objectFit: "contain",
-                filter: dark ? "none" : "invert(1)",
-              }}
-            />
+            <svg viewBox="0 0 520 72" style={{ height: "clamp(28px, 4.5vw, 48px)", width: "auto" }} xmlns="http://www.w3.org/2000/svg">
+              <text x="260" y="54" textAnchor="middle" fontFamily="Georgia, 'Times New Roman', Times, serif" fontSize="64" fontWeight="400" letterSpacing="12" fill={dark ? "rgba(255,255,255,0.80)" : "rgba(13,5,32,0.60)"}>WESTIN</text>
+            </svg>
           </a>
 
           <TextReveal

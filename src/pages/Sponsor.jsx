@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SponsorInquiryModal from "../components/SponsorInquiryModal";
@@ -945,4 +945,4 @@ export default function SponsorInquiryModal(props) {
     </AnimatePresence>
   );
 }
->>>>>>> ff0a453c8c5e1004acfe2b2ad824195ad979ceb5
+

@@ -33,6 +33,7 @@ export default function AdminCampaignCalendar() {
   const [seedStatus, setSeedStatus] = useState(null);
   const [upcoming, setUpcoming] = useState([]);
   const [activeTab, setActiveTab] = useState("calendar");
+  const [editingCampaign, setEditingCampaign] = useState(null);
 
   useEffect(() => {
     fetchCalendar();
@@ -232,12 +233,14 @@ export default function AdminCampaignCalendar() {
                       <div className="text-xs text-gray-400 mt-1">{c.purpose}</div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => sendCampaign(c._id)}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium"
-                  >
-                    Send Now
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setEditingCampaign(c)}
+                      className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium"
+                    >
+                      Review & Edit
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -292,6 +295,22 @@ export default function AdminCampaignCalendar() {
             sendCampaign(selectedCampaign._id || selectedCampaign.id);
             setSelectedCampaign(null);
           }}
+          onEdit={() => {
+            setEditingCampaign(selectedCampaign);
+            setSelectedCampaign(null);
+          }}
+        />
+      )}
+
+      {editingCampaign && (
+        <EmailEditorModal
+          campaign={editingCampaign}
+          onClose={() => setEditingCampaign(null)}
+          onSend={() => {
+            fetchCalendar();
+            fetchUpcoming();
+            setEditingCampaign(null);
+          }}
         />
       )}
     </div>
@@ -319,7 +338,7 @@ function CampaignCard({ campaign, onClick }) {
   );
 }
 
-function CampaignDetailModal({ campaign, onClose, onSend }) {
+function CampaignDetailModal({ campaign, onClose, onSend, onEdit }) {
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
       <div className="bg-[#1a1035] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
@@ -376,10 +395,131 @@ function CampaignDetailModal({ campaign, onClose, onSend }) {
             Close
           </button>
           {campaign.status === "pending" && (
-            <button onClick={onSend} className="btn-primary bg-green-600 hover:bg-green-700">
-              Send Campaign
-            </button>
+            <>
+              <button onClick={onEdit} className="btn-secondary">
+                Edit & Preview
+              </button>
+              <button onClick={onSend} className="btn-primary bg-green-600 hover:bg-green-700">
+                Send Campaign
+              </button>
+            </>
           )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EmailEditorModal({ campaign, onClose, onSend }) {
+  const [subject, setSubject] = useState(campaign.subject || "");
+  const [body, setBody] = useState(campaign.body || campaign.bodySummary || "");
+  const [isHtml, setIsHtml] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const handleSend = async () => {
+    setSaving(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `${API}/campaigns/automation/templates/${campaign._id || campaign.id}/send`,
+        { subject, body, isHtml },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("Campaign sent!");
+      onSend();
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to send");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#1a1035] rounded-2xl max-w-3xl w-full max-h-[95vh] overflow-hidden flex flex-col">
+        <div className="p-6 border-b border-gray-700 flex justify-between items-start">
+          <div>
+            <h3 className="text-xl font-bold text-white">Review & Edit Email</h3>
+            <p className="text-gray-400 text-sm mt-1">
+              {campaign.audience} • {campaign.purpose}
+            </p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">
+            ×
+          </button>
+        </div>
+
+        <div className="p-6 space-y-4 overflow-y-auto flex-1">
+          <div>
+            <label className="block text-gray-400 text-sm mb-2">Subject Line</label>
+            <input
+              type="text"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
+              placeholder="Enter email subject..."
+            />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isHtml}
+                onChange={(e) => setIsHtml(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-600 bg-[#0a0515] text-purple-500"
+              />
+              <span className="text-gray-400 text-sm">HTML Content</span>
+            </label>
+            <span className="text-gray-500 text-xs">
+              {isHtml ? "Use HTML tags for formatting" : "Plain text email"}
+            </span>
+          </div>
+
+          <div>
+            <label className="block text-gray-400 text-sm mb-2">
+              {isHtml ? "HTML Body" : "Email Body"}
+            </label>
+            {isHtml ? (
+              <textarea
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:border-purple-500 focus:outline-none h-64"
+                placeholder="<h1>Your HTML content here...</h1>"
+              />
+            ) : (
+              <textarea
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none h-64"
+                placeholder="Enter your email content..."
+              />
+            )}
+          </div>
+
+          <div className="bg-[#0a0515] border border-gray-800 rounded-lg p-4">
+            <div className="text-gray-400 text-sm mb-2">Preview</div>
+            <div className="bg-white text-black rounded p-4 max-h-48 overflow-y-auto">
+              {isHtml ? (
+                <div dangerouslySetInnerHTML={{ __html: body }} />
+              ) : (
+                <pre className="whitespace-pre-wrap font-sans">{body}</pre>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-gray-700 flex gap-3 justify-end">
+          <button onClick={onClose} className="btn-secondary">
+            Cancel
+          </button>
+          <button
+            onClick={handleSend}
+            disabled={saving}
+            className="btn-primary bg-green-600 hover:bg-green-700 disabled:opacity-50"
+          >
+            {saving ? "Sending..." : "Send Email"}
+          </button>
         </div>
       </div>
     </div>

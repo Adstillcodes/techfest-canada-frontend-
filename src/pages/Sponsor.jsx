@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import SponsorInquiryModal from "../components/SponsorInquiryModal";
 import { useEffect, useState, useRef } from "react";
 import SponsorMarquee from "../components/SponsorMarquee";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 
 var TIERS = [
   { name: "Platinum", price: "$24,999", color: "#b99eff" },
@@ -471,8 +471,6 @@ function SectionHeader(props) {
     </motion.div>
   );
 }
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
 var JOB_TITLES = [
   "Head of AI / ML",

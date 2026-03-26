@@ -14,6 +14,25 @@ function CheckIcon() {
   );
 }
 
+/* ─── PRICE TOOLTIP COMPONENT ─── */
+function PriceWithAsterisk({ price, color, fontSize, fontWeight, style }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <span style={{ position: "relative", display: "inline-flex", alignItems: "baseline", gap: 2, ...(style || {}) }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: fontSize || "2.6rem", fontWeight: fontWeight || 900, color: color || "inherit", lineHeight: 1, letterSpacing: "-1px" }}>${typeof price === "number" ? price.toLocaleString() : price}</span>
+      <span style={{ color: "#f5a623", fontSize: "0.6em", fontWeight: 900, cursor: "help", lineHeight: 1 }}>*</span>
+      {hovered && (
+        <span style={{ position: "absolute", bottom: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)", background: "rgba(0,0,0,0.88)", color: "#fff", fontSize: "0.68rem", fontFamily: "'Orbitron',sans-serif", fontWeight: 700, letterSpacing: "0.5px", padding: "8px 14px", borderRadius: 10, whiteSpace: "nowrap", zIndex: 999, pointerEvents: "none", boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }}>
+          Price subject to change
+        </span>
+      )}
+    </span>
+  );
+}
+
 const PASS_META = {
   discover: {
     label: "Discover Pass",
@@ -125,8 +144,8 @@ function PassCard({ meta, inventoryItem, onPurchase, dark }) {
         {meta.label}
       </div>
 
-      <div style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "2.6rem", color: textMain, lineHeight: 1, marginBottom: 4, letterSpacing: "-1px", display: "flex", alignItems: "baseline", gap: 6 }}>
-        <span>${price.toLocaleString()}</span>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+        <PriceWithAsterisk price={price} color={textMain} fontSize="2.6rem" fontWeight={900} />
         <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.95rem", fontWeight: 800, color: textLight, letterSpacing: "1px", textTransform: "uppercase" }}>CAD</span>
       </div>
 
@@ -239,7 +258,6 @@ export default function Tickets() {
         <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, background: dark ? "radial-gradient(ellipse 60% 50% at 20% 30%, rgba(122,63,209,0.10) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 80% 70%, rgba(245,166,35,0.06) 0%, transparent 70%)" : "radial-gradient(ellipse 60% 50% at 20% 30%, rgba(122,63,209,0.05) 0%, transparent 70%)" }} />
 
         <div style={{ position: "relative", zIndex: 1, paddingBottom: "1px" }}>
-          {/* Header */}
           <div style={{ textAlign: "center", padding: "100px 24px 60px", maxWidth: 780, margin: "0 auto" }}>
             <h1 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "clamp(2rem, 5vw, 3.2rem)", letterSpacing: "-1px", lineHeight: 1.15, marginBottom: 20, color: textMain }}>
               Choose Your Pass
@@ -249,14 +267,12 @@ export default function Tickets() {
             </p>
           </div>
 
-          {/* Cards */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 20, justifyContent: "center", alignItems: "stretch", padding: "0 24px 80px", maxWidth: 1260, margin: "0 auto" }}>
             {passes.map((key) => (
               <PassCard key={key} meta={PASS_META[key]} inventoryItem={getTier(key)} onPurchase={handlePurchase} dark={dark} />
             ))}
           </div>
 
-          {/* Comparison table */}
           <div style={{ maxWidth: 900, margin: "0 auto 80px", padding: "0 24px" }}>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "1rem", letterSpacing: "1px", textTransform: "uppercase", color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.40)", textAlign: "center", marginBottom: 28 }}>Pass Comparison</h2>
             <div style={{ backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", background: dark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.03)", border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(122,63,209,0.10)", borderRadius: 20, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
@@ -286,7 +302,6 @@ export default function Tickets() {
             </div>
           </div>
 
-          {/* Why Upgrade */}
           <div style={{ maxWidth: 760, margin: "0 auto 120px", padding: "0 24px", textAlign: "center" }}>
             <div style={{ backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)", background: dark ? "linear-gradient(135deg, rgba(122,63,209,0.12) 0%, rgba(245,166,35,0.06) 100%)" : "linear-gradient(135deg, rgba(122,63,209,0.07) 0%, rgba(245,166,35,0.04) 100%)", border: dark ? "1px solid rgba(122,63,209,0.25)" : "1px solid rgba(122,63,209,0.14)", borderRadius: 24, padding: "48px 40px" }}>
               <div style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.65rem", letterSpacing: "1.5px", textTransform: "uppercase", color: dark ? "#f5a623" : "#d98a14", marginBottom: 14 }}>Why Upgrade Your Pass</div>
@@ -302,7 +317,6 @@ export default function Tickets() {
           <Footer />
         </div>
 
-        {/* Success Modal */}
         {showSuccessModal && (
           <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", background: "rgba(0,0,0,0.8)", backdropFilter: "blur(10px)" }}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "24px", width: "100%", maxWidth: "420px", background: dark ? "#120a22" : "#ffffff", padding: "40px 32px", borderRadius: "24px", border: dark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(122,63,209,0.1)" }}>

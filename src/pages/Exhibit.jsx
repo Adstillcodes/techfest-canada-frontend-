@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../components/Navbar";
@@ -565,7 +565,7 @@ function GradientSpan({ children }) {
     }}>{children}</span>
   );
 }
-=======
+
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../components/Navbar";
@@ -945,4 +945,4 @@ function GradientSpan({ children }) {
     <span style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{children}</span>
   );
 }
->>>>>>> ff0a453c8c5e1004acfe2b2ad824195ad979ceb5
+

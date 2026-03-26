@@ -566,11 +566,6 @@ function GradientSpan({ children }) {
   );
 }
 
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-
 /* ─── PRICE TOOLTIP COMPONENT ─── */
 function PriceWithAsterisk({ price, color, fontSize, fontWeight }) {
   const [hovered, setHovered] = useState(false);

@@ -195,6 +195,31 @@ export default function Home() {
       {/* HERO LOWER */}
       <section id="hero-lower" style={{ position: "relative", background: bg, overflow: "hidden", padding: "6rem 5% 8rem" }}>
         <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+
+          {/* Venue */}
+          <a href="/venue" style={{
+            textDecoration: "none", display: "flex", flexDirection: "column",
+            alignItems: "center", gap: 8, marginBottom: "2.5rem",
+            opacity: 0.7, transition: "opacity 0.2s ease",
+          }}
+            onMouseEnter={function(e) { e.currentTarget.style.opacity = "1"; }}
+            onMouseLeave={function(e) { e.currentTarget.style.opacity = "0.7"; }}
+          >
+            <span style={{
+              fontFamily: "'Orbitron', sans-serif", fontSize: "0.58rem",
+              fontWeight: 800, letterSpacing: "3px", textTransform: "uppercase",
+              color: dark ? "rgba(255,255,255,0.40)" : "rgba(13,5,32,0.35)",
+            }}>Venue</span>
+            <img src="/westin-logo.png" alt="The Westin Hotels & Resorts"
+              style={{
+                height: "clamp(20px, 3vw, 32px)", width: "auto",
+                objectFit: "contain",
+                filter: dark ? "brightness(0) invert(1)" : "none",
+                opacity: dark ? 0.75 : 0.55,
+              }}
+            />
+          </a>
+
           <TextReveal
             text="MEET BUILD SCALE"
             colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}
@@ -211,54 +236,6 @@ export default function Home() {
       </div>
 
       <SponsorMarquee dark={dark} />
-
-      {/* VENUE BANNER */}
-      <a href="/venue" style={{ textDecoration: "none", display: "block" }}>
-        <div style={{
-          position: "relative", overflow: "hidden",
-          padding: "clamp(3rem, 6vw, 5rem) 5%",
-          background: "#06020f",
-          cursor: "pointer",
-          transition: "opacity 0.3s ease",
-        }}
-          onMouseEnter={function(e) { e.currentTarget.style.opacity = "0.88"; }}
-          onMouseLeave={function(e) { e.currentTarget.style.opacity = "1"; }}
-        >
-          <img src="/venue-banner-bg.png" alt="" style={{
-            position: "absolute", inset: 0, width: "100%", height: "100%",
-            objectFit: "cover", objectPosition: "center top",
-            opacity: 0.25, pointerEvents: "none",
-          }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(6,2,15,0.4), rgba(6,2,15,0.85))", pointerEvents: "none" }} />
-          <div style={{
-            position: "relative", zIndex: 2,
-            display: "flex", flexDirection: "column", alignItems: "center",
-            justifyContent: "center", gap: 16, textAlign: "center",
-          }}>
-            <p style={{
-              fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem",
-              fontWeight: 800, letterSpacing: "3px", textTransform: "uppercase",
-              color: "rgba(255,255,255,0.45)",
-            }}>Venue</p>
-            <img src="/westin-logo.png" alt="The Westin Hotels & Resorts"
-              style={{
-                height: "clamp(28px, 4vw, 44px)", width: "auto",
-                objectFit: "contain",
-                filter: "brightness(0) invert(1)",
-                opacity: 0.85,
-              }}
-            />
-            <p style={{
-              fontSize: "0.78rem", color: "rgba(255,255,255,0.40)",
-              fontWeight: 500, letterSpacing: "0.5px",
-              display: "flex", alignItems: "center", gap: 6,
-            }}>
-              View Venue Details
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </p>
-          </div>
-        </div>
-      </a>
 
       <div style={{ height: "4rem", background: dark ? "#06020f" : "#ffffff" }} />
       <NewsletterBar dark={dark} />

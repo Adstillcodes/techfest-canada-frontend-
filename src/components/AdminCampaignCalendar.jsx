@@ -299,6 +299,10 @@ export default function AdminCampaignCalendar() {
             setEditingCampaign(selectedCampaign);
             setSelectedCampaign(null);
           }}
+          onUpdateDate={(updated) => {
+            setSelectedCampaign((prev) => ({ ...prev, sendDate: updated.sendDate }));
+            fetchCalendar();
+          }}
         />
       )}
 
@@ -338,7 +342,35 @@ function CampaignCard({ campaign, onClick }) {
   );
 }
 
-function CampaignDetailModal({ campaign, onClose, onSend, onEdit }) {
+function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate }) {
+  const [isEditingDate, setIsEditingDate] = useState(false);
+  const [newDate, setNewDate] = useState("");
+  const [savingDate, setSavingDate] = useState(false);
+
+  const handleSaveDate = async () => {
+    if (!newDate) return;
+    setSavingDate(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        `${API}/campaigns/automation/templates/${campaign.id}`,
+        { sendDate: newDate },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setIsEditingDate(false);
+      if (onUpdateDate) onUpdateDate(res.data);
+    } catch (err) {
+      alert("Failed to update date");
+    } finally {
+      setSavingDate(false);
+    }
+  };
+
+  const formatDateForInput = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toISOString().split("T")[0];
+  };
+
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
       <div className="bg-[#1a1035] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
@@ -363,7 +395,42 @@ function CampaignDetailModal({ campaign, onClose, onSend, onEdit }) {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-500">Send Date</span>
-              <p className="text-white">{formatDate(campaign.sendDate)}</p>
+              {isEditingDate ? (
+                <div className="flex gap-2 mt-1">
+                  <input
+                    type="date"
+                    value={newDate || formatDateForInput(campaign.sendDate)}
+                    onChange={(e) => setNewDate(e.target.value)}
+                    className="bg-[#0a0515] border border-gray-700 rounded px-3 py-1.5 text-white text-sm focus:border-purple-500 focus:outline-none"
+                  />
+                  <button
+                    onClick={handleSaveDate}
+                    disabled={savingDate}
+                    className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm rounded disabled:opacity-50"
+                  >
+                    {savingDate ? "Saving..." : "Save"}
+                  </button>
+                  <button
+                    onClick={() => setIsEditingDate(false)}
+                    className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <p className="text-white">{formatDate(campaign.sendDate)}</p>
+                  <button
+                    onClick={() => {
+                      setIsEditingDate(true);
+                      setNewDate(formatDateForInput(campaign.sendDate));
+                    }}
+                    className="text-xs text-purple-400 hover:text-purple-300"
+                  >
+                    Edit
+                  </button>
+                </div>
+              )}
             </div>
             <div>
               <span className="text-gray-500">Purpose</span>
@@ -412,17 +479,36 @@ function CampaignDetailModal({ campaign, onClose, onSend, onEdit }) {
 
 function EmailEditorModal({ campaign, onClose, onSend }) {
   const [subject, setSubject] = useState(campaign.subject || "");
-  const [body, setBody] = useState(campaign.body || campaign.bodySummary || "");
-  const [isHtml, setIsHtml] = useState(false);
+  const [htmlBody, setHtmlBody] = useState(campaign.htmlBody || generateDefaultHtml(campaign));
+  const [textBody, setTextBody] = useState(campaign.textBody || campaign.bodySummary || "");
+  const [activeTab, setActiveTab] = useState("html");
+  const [sending, setSending] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const handleSend = async () => {
+  const handleSave = async () => {
     setSaving(true);
     try {
       const token = localStorage.getItem("token");
+      await axios.put(
+        `${API}/campaigns/automation/templates/${campaign.id || campaign._id}`,
+        { subject, htmlBody, textBody },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("Template saved!");
+    } catch (err) {
+      console.error("Save error:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSend = async () => {
+    setSending(true);
+    try {
+      const token = localStorage.getItem("token");
       await axios.post(
-        `${API}/campaigns/automation/templates/${campaign._id || campaign.id}/send`,
-        { subject, body, isHtml },
+        `${API}/campaigns/automation/templates/${campaign.id || campaign._id}/send`,
+        { subject, htmlBody, textBody },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("Campaign sent!");
@@ -430,16 +516,16 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
     } catch (err) {
       alert(err.response?.data?.error || "Failed to send");
     } finally {
-      setSaving(false);
+      setSending(false);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#1a1035] rounded-2xl max-w-3xl w-full max-h-[95vh] overflow-hidden flex flex-col">
+      <div className="bg-[#1a1035] rounded-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden flex flex-col">
         <div className="p-6 border-b border-gray-700 flex justify-between items-start">
           <div>
-            <h3 className="text-xl font-bold text-white">Review & Edit Email</h3>
+            <h3 className="text-xl font-bold text-white">Edit Email Content</h3>
             <p className="text-gray-400 text-sm mt-1">
               {campaign.audience} • {campaign.purpose}
             </p>
@@ -461,67 +547,158 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
             />
           </div>
 
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isHtml}
-                onChange={(e) => setIsHtml(e.target.checked)}
-                className="w-4 h-4 rounded border-gray-600 bg-[#0a0515] text-purple-500"
-              />
-              <span className="text-gray-400 text-sm">HTML Content</span>
-            </label>
-            <span className="text-gray-500 text-xs">
-              {isHtml ? "Use HTML tags for formatting" : "Plain text email"}
-            </span>
+          <div className="flex gap-4 mb-4">
+            <button
+              onClick={() => setActiveTab("html")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "html"
+                  ? "bg-purple-600 text-white"
+                  : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+              }`}
+            >
+              HTML Version
+            </button>
+            <button
+              onClick={() => setActiveTab("text")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "text"
+                  ? "bg-purple-600 text-white"
+                  : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+              }`}
+            >
+              Plain Text Version
+            </button>
+            <button
+              onClick={() => setActiveTab("preview")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "preview"
+                  ? "bg-purple-600 text-white"
+                  : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+              }`}
+            >
+              Preview
+            </button>
           </div>
 
-          <div>
-            <label className="block text-gray-400 text-sm mb-2">
-              {isHtml ? "HTML Body" : "Email Body"}
-            </label>
-            {isHtml ? (
+          {activeTab === "html" && (
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="text-gray-400 text-sm">HTML Body</label>
+                <span className="text-xs text-gray-500">Use HTML tags for formatting</span>
+              </div>
               <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:border-purple-500 focus:outline-none h-64"
+                value={htmlBody}
+                onChange={(e) => setHtmlBody(e.target.value)}
+                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white font-mono text-sm focus:border-purple-500 focus:outline-none h-80"
                 placeholder="<h1>Your HTML content here...</h1>"
               />
-            ) : (
-              <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none h-64"
-                placeholder="Enter your email content..."
-              />
-            )}
-          </div>
-
-          <div className="bg-[#0a0515] border border-gray-800 rounded-lg p-4">
-            <div className="text-gray-400 text-sm mb-2">Preview</div>
-            <div className="bg-white text-black rounded p-4 max-h-48 overflow-y-auto">
-              {isHtml ? (
-                <div dangerouslySetInnerHTML={{ __html: body }} />
-              ) : (
-                <pre className="whitespace-pre-wrap font-sans">{body}</pre>
-              )}
             </div>
-          </div>
+          )}
+
+          {activeTab === "text" && (
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="text-gray-400 text-sm">Plain Text Body</label>
+                <span className="text-xs text-gray-500">Text-only version for email clients that don't support HTML</span>
+              </div>
+              <textarea
+                value={textBody}
+                onChange={(e) => setTextBody(e.target.value)}
+                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none h-80"
+                placeholder="Enter your plain text email content..."
+              />
+            </div>
+          )}
+
+          {activeTab === "preview" && (
+            <div className="space-y-4">
+              <div>
+                <label className="text-gray-400 text-sm mb-2 block">HTML Preview</label>
+                <div className="bg-white text-black rounded-lg p-4 max-h-64 overflow-y-auto border border-gray-700">
+                  <div dangerouslySetInnerHTML={{ __html: htmlBody || "<p>No HTML content</p>" }} />
+                </div>
+              </div>
+              <div>
+                <label className="text-gray-400 text-sm mb-2 block">Text Preview</label>
+                <div className="bg-[#0a0515] border border-gray-700 rounded-lg p-4 max-h-48 overflow-y-auto">
+                  <pre className="whitespace-pre-wrap text-gray-300 font-sans text-sm">{textBody || "No text content"}</pre>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="p-6 border-t border-gray-700 flex gap-3 justify-end">
+          <button onClick={handleSave} disabled={saving} className="btn-secondary">
+            {saving ? "Saving..." : "Save Template"}
+          </button>
           <button onClick={onClose} className="btn-secondary">
             Cancel
           </button>
           <button
             onClick={handleSend}
-            disabled={saving}
+            disabled={sending}
             className="btn-primary bg-green-600 hover:bg-green-700 disabled:opacity-50"
           >
-            {saving ? "Sending..." : "Send Email"}
+            {sending ? "Sending..." : "Send Email"}
           </button>
         </div>
       </div>
     </div>
   );
+}
+
+function generateDefaultHtml(campaign) {
+  const ctaFullLink = campaign.ctaLink?.startsWith("http") 
+    ? campaign.ctaLink 
+    : `https://${campaign.ctaLink}`;
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background-color:#f4f0ff;font-family:Arial,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:20px;">
+    <div style="background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+      <div style="background:linear-gradient(135deg,#7a3fd1,#f5a623);padding:40px 30px;text-align:center;">
+        <h1 style="color:white;margin:0;font-size:24px;">The Tech Festival Canada 2026</h1>
+        <p style="color:rgba(255,255,255,0.9);margin:10px 0 0;font-size:14px;">October 26-27, 2026 • Toronto, ON</p>
+      </div>
+      
+      <div style="padding:40px 30px;">
+        <p style="color:#333;font-size:16px;line-height:1.6;">
+          ${campaign.bodySummary || "Your email content here..."}
+        </p>
+        
+        <div style="text-align:center;margin:30px 0;">
+          <a href="${ctaFullLink}" style="display:inline-block;background:linear-gradient(135deg,#7a3fd1,#f5a623);color:white;padding:16px 32px;border-radius:50px;text-decoration:none;font-weight:bold;font-size:16px;">
+            ${campaign.ctaText} →
+          </a>
+        </div>
+        
+        <div style="background:#f9f5ff;border-radius:8px;padding:20px;margin-top:30px;">
+          <p style="margin:0;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:1px;">Campaign Info</p>
+          <p style="margin:5px 0 0;color:#333;font-size:14px;">
+            <strong>Phase:</strong> ${campaign.phase} | 
+            <strong>Audience:</strong> ${campaign.audience} | 
+            <strong>Purpose:</strong> ${campaign.purpose}
+          </p>
+        </div>
+      </div>
+      
+      <div style="background:#1a1035;padding:30px;text-align:center;">
+        <p style="color:rgba(255,255,255,0.6);font-size:12px;margin:0;">
+          The Tech Festival Canada • Toronto, Ontario
+        </p>
+        <p style="color:rgba(255,255,255,0.4);font-size:11px;margin:10px 0 0;">
+          <a href="#" style="color:rgba(255,255,255,0.5);">Unsubscribe</a> | 
+          <a href="#" style="color:rgba(255,255,255,0.5);">View in browser</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
 }

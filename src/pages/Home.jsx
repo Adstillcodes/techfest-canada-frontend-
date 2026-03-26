@@ -211,6 +211,55 @@ export default function Home() {
       </div>
 
       <SponsorMarquee dark={dark} />
+
+      {/* VENUE BANNER */}
+      <a href="/venue" style={{ textDecoration: "none", display: "block" }}>
+        <div style={{
+          position: "relative", overflow: "hidden",
+          padding: "clamp(3rem, 6vw, 5rem) 5%",
+          background: "#06020f",
+          cursor: "pointer",
+          transition: "opacity 0.3s ease",
+        }}
+          onMouseEnter={function(e) { e.currentTarget.style.opacity = "0.88"; }}
+          onMouseLeave={function(e) { e.currentTarget.style.opacity = "1"; }}
+        >
+          <img src="/venue-banner-bg.png" alt="" style={{
+            position: "absolute", inset: 0, width: "100%", height: "100%",
+            objectFit: "cover", objectPosition: "center top",
+            opacity: 0.25, pointerEvents: "none",
+          }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(6,2,15,0.4), rgba(6,2,15,0.85))", pointerEvents: "none" }} />
+          <div style={{
+            position: "relative", zIndex: 2,
+            display: "flex", flexDirection: "column", alignItems: "center",
+            justifyContent: "center", gap: 16, textAlign: "center",
+          }}>
+            <p style={{
+              fontFamily: "'Orbitron', sans-serif", fontSize: "0.65rem",
+              fontWeight: 800, letterSpacing: "3px", textTransform: "uppercase",
+              color: "rgba(255,255,255,0.45)",
+            }}>Venue</p>
+            <img src="/westin-logo.png" alt="The Westin Hotels & Resorts"
+              style={{
+                height: "clamp(28px, 4vw, 44px)", width: "auto",
+                objectFit: "contain",
+                filter: "brightness(0) invert(1)",
+                opacity: 0.85,
+              }}
+            />
+            <p style={{
+              fontSize: "0.78rem", color: "rgba(255,255,255,0.40)",
+              fontWeight: 500, letterSpacing: "0.5px",
+              display: "flex", alignItems: "center", gap: 6,
+            }}>
+              View Venue Details
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </p>
+          </div>
+        </div>
+      </a>
+
       <div style={{ height: "4rem", background: dark ? "#06020f" : "#ffffff" }} />
       <NewsletterBar dark={dark} />
       <Footer />

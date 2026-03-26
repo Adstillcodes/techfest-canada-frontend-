@@ -471,7 +471,6 @@ function SectionHeader(props) {
     </motion.div>
   );
 }
-=======
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 

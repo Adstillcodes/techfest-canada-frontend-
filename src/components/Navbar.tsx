@@ -115,73 +115,51 @@ export default function Navbar() {
   return (
     <>
       <style>{`
-        .tfc-navbar-wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
-        .tfc-nav-container { display: flex; align-items: center; justify-content: space-between; height: 80px; max-width: 1400px; margin: 0 auto; padding: 0 2.5%; gap: 16px; }
-        
-        /* 3-Column Layout */
-        .tfc-nav-left { flex: 1; display: flex; justify-content: flex-start; align-items: center; }
-        .tfc-nav-center { display: flex; justify-content: center; align-items: center; }
-        .tfc-nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
-        
-        .tfc-nav-logo { height: 52px; width: auto; object-fit: contain; transition: height 0.3s ease; }
-        
-        .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
-        .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
-        .tfc-nav-link.active { background: rgba(122,63,209,0.14); }
-        
-        .tfc-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 6px; }
-        .tfc-hamburger span { display: block; width: 22px; height: 2px; border-radius: 2px; transition: all 0.25s ease; }
-        .tfc-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-        .tfc-hamburger.open span:nth-child(2) { opacity: 0; }
-        .tfc-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-        
-        .tfc-mobile-ticket { display: none !important; }
-        .tfc-desktop-ticket { display: inline-flex !important; }
-
-        /* ===== TABLET (641px – 1024px) ===== */
+        .ttfc-navbar-wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+        .ttfc-nav-container { display: flex; align-items: center; justify-content: space-between; height: 80px; max-width: 1400px; margin: 0 auto; padding: 0 2.5%; gap: 16px; }
+        .ttfc-nav-left { flex: 1; display: flex; justify-content: flex-start; align-items: center; }
+        .ttfc-nav-center { display: flex; justify-content: center; align-items: center; }
+        .ttfc-nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+        .ttfc-nav-logo { height: 52px; width: auto; object-fit: contain; transition: height 0.3s ease; }
+        .ttfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
+        .ttfc-nav-link:hover { background: rgba(122,63,209,0.10); }
+        .ttfc-nav-link.active { background: rgba(122,63,209,0.14); }
+        .ttfc-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 6px; }
+        .ttfc-hamburger span { display: block; width: 22px; height: 2px; border-radius: 2px; transition: all 0.25s ease; }
+        .ttfc-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .ttfc-hamburger.open span:nth-child(2) { opacity: 0; }
+        .ttfc-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+        .ttfc-mobile-ticket { display: none !important; }
+        .ttfc-desktop-ticket { display: inline-flex !important; }
         @media (min-width: 641px) and (max-width: 1024px) {
-          .tfc-desktop-nav { display: none !important; }
-          .tfc-hamburger { display: flex !important; }
-          .tfc-nav-logo { height: 68px !important; }
-
-          /* Hide the center column entirely on tablet */
-          .tfc-nav-center { display: none !important; }
-
-          /* Keep TICKETS in the right-side actions */
-          .tfc-mobile-ticket { display: none !important; }
-          .tfc-desktop-ticket { display: inline-flex !important; }
+          .ttfc-desktop-nav { display: none !important; }
+          .ttfc-hamburger { display: flex !important; }
+          .ttfc-nav-logo { height: 68px !important; }
+          .ttfc-nav-center { display: none !important; }
+          .ttfc-mobile-ticket { display: none !important; }
+          .ttfc-desktop-ticket { display: inline-flex !important; }
         }
-
-        /* ===== MOBILE (≤640px) ===== */
         @media (max-width: 640px) {
-          .tfc-desktop-nav { display: none !important; }
-          .tfc-hamburger { display: flex !important; }
-          .tfc-nav-logo { height: 68px !important; }
-
-          /* On mobile: show ticket in center, hide from right */
-          .tfc-mobile-ticket { display: inline-flex !important; padding: 10px 18px !important; font-size: 0.65rem !important; }
-          .tfc-desktop-ticket { display: none !important; }
-          .tfc-brochure-btn { display: none !important; }
-
-          .tfc-nav-container { height: auto !important; padding: 15px 2.5% !important; }
+          .ttfc-desktop-nav { display: none !important; }
+          .ttfc-hamburger { display: flex !important; }
+          .ttfc-nav-logo { height: 68px !important; }
+          .ttfc-mobile-ticket { display: inline-flex !important; padding: 10px 18px !important; font-size: 0.65rem !important; }
+          .ttfc-desktop-ticket { display: none !important; }
+          .ttfc-brochure-btn { display: none !important; }
+          .ttfc-nav-container { height: auto !important; padding: 15px 2.5% !important; }
         }
       `}</style>
 
-      <nav className="tfc-navbar-wrap" style={{ background: bg, borderBottom: "1px solid " + border }}>
-        <div className="tfc-nav-container">
-
-          {/* LEFT: LOGO */}
-          <div className="tfc-nav-left">
+      <nav className="ttfc-navbar-wrap" style={{ background: bg, borderBottom: "1px solid " + border }}>
+        <div className="ttfc-nav-container">
+          <div className="ttfc-nav-left">
             <Link to="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
-              <img className="tfc-nav-logo" src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada" />
+              <img className="ttfc-nav-logo" src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada" />
             </Link>
           </div>
 
-          {/* CENTER: DESKTOP NAV OR MOBILE CTA */}
-          <div className="tfc-nav-center">
-            
-            {/* Desktop Nav */}
-            <div className="tfc-desktop-nav">
+          <div className="ttfc-nav-center">
+            <div className="ttfc-desktop-nav">
               <ul style={{ display: "flex", alignItems: "center", gap: 4, listStyle: "none", margin: 0, padding: "6px", background: pillBg, border: "1px solid " + pillBorder, borderRadius: 999 }}>
                 {navItems.map((item) => {
                   if (item.hasDropdown) {
@@ -192,13 +170,11 @@ export default function Navbar() {
                     const ref     = isPartners ? dropRef       : agendaDropRef;
                     return (
                       <li key={item.path} style={{ position: "relative" }} ref={ref} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-                        <Link to={item.path} className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
+                        <Link to={item.path} className={"ttfc-nav-link" + (isActive(item.path) ? " active" : "")}
                           style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}
                         >
                           {item.label}
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
-                            <path d="M6 9l6 6 6-6" />
-                          </svg>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}><path d="M6 9l6 6 6-6" /></svg>
                         </Link>
                         {renderDropdown(items, open, setOpen)}
                       </li>
@@ -206,44 +182,35 @@ export default function Navbar() {
                   }
                   return (
                     <li key={item.path}>
-                      <Link to={item.path} className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")} style={{ color: isActive(item.path) ? textMain : textMuted }}>{item.label}</Link>
+                      <Link to={item.path} className={"ttfc-nav-link" + (isActive(item.path) ? " active" : "")} style={{ color: isActive(item.path) ? textMain : textMuted }}>{item.label}</Link>
                     </li>
                   );
                 })}
               </ul>
             </div>
-
-            {/* Mobile Ticket Button (Hidden on Desktop) */}
-            <Link to="/tickets" className="tfc-mobile-ticket btn-primary"
+            <Link to="/tickets" className="ttfc-mobile-ticket btn-primary"
               style={{ padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s ease" }}
             >TICKETS</Link>
-
           </div>
 
-          {/* RIGHT: ACTIONS */}
-          <div className="tfc-nav-right">
-            <Link to="/brochures" className="tfc-brochure-btn"
+          <div className="ttfc-nav-right">
+            <Link to="/brochures" className="ttfc-brochure-btn"
               style={{ padding: "0 22px", height: 40, borderRadius: 999, background: "transparent", border: `2px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`, color: isDark ? "#fff" : "#0f0520", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.8px", textDecoration: "none", display: "flex", alignItems: "center", textTransform: "uppercase" }}
             >BROCHURE</Link>
-
-            <Link to="/tickets" className="tfc-desktop-ticket btn-primary"
+            <Link to="/tickets" className="ttfc-desktop-ticket btn-primary"
               style={{ alignItems: "center", gap: 8, padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s ease" }}
             >TICKETS</Link>
-
             <button onClick={toggleTheme} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.15rem", padding: "6px", lineHeight: 1 }} aria-label="Toggle theme">
               {dark ? "☀️" : "🌙"}
             </button>
-
-            <button className={"tfc-hamburger" + (mobileOpen ? " open" : "")} onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menu">
+            <button className={"ttfc-hamburger" + (mobileOpen ? " open" : "")} onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menu">
               <span style={{ background: textMain }} />
               <span style={{ background: textMain }} />
               <span style={{ background: textMain }} />
             </button>
           </div>
-
         </div>
 
-        {/* MOBILE MENU */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -15 }} transition={{ duration: 0.2 }}
@@ -263,9 +230,7 @@ export default function Navbar() {
                             style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", padding: "12px 16px", borderRadius: 12, flex: 1, color: location.pathname === item.path ? "#7a3fd1" : textMain, background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent" }}
                           >{item.label}</Link>
                           <button onClick={() => setMOpen(!mOpen)} style={{ background: "transparent", border: "none", color: textMain, cursor: "pointer", padding: "10px 16px", display: "flex", alignItems: "center" }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: mOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
-                              <path d="M6 9l6 6 6-6" />
-                            </svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: mOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}><path d="M6 9l6 6 6-6" /></svg>
                           </button>
                         </div>
                         <AnimatePresence>
@@ -290,11 +255,9 @@ export default function Navbar() {
                     >{item.label}</Link>
                   );
                 })}
-
                 <Link to="/brochures" onClick={() => setMobileOpen(false)}
                   style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: 12, padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.76rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", border: `1px solid ${isDark ? "rgba(255,255,255,0.22)" : "rgba(0,0,0,0.18)"}`, color: isDark ? "#fff" : "#0f0520" }}
                 >BROCHURE</Link>
-
                 <div style={{ marginTop: 8, padding: 2, borderRadius: 16 }}>
                   <Link to="/tickets" onClick={() => setMobileOpen(false)} className="btn-primary"
                     style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "14px", borderRadius: 14, fontFamily: "'Orbitron', sans-serif", fontSize: "0.82rem", fontWeight: 900, letterSpacing: "1.2px", textTransform: "uppercase", textDecoration: "none" }}

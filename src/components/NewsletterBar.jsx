@@ -25,7 +25,7 @@ export default function NewsletterBar({ dark }) {
         {/* Left text */}
         <div style={{ flexShrink: 0, maxWidth: 380 }}>
           <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(0.9rem,2vw,1.1rem)", fontWeight: 900, color: "#ffffff", marginBottom: 6, letterSpacing: "0.5px" }}>
-            SIGN UP FOR TFC 2026 UPDATES
+            SIGN UP FOR TTFC 2026 UPDATES
           </div>
           <div style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
             Speaker & agenda drops, ticket discounts, and exclusive opportunities.
@@ -70,7 +70,7 @@ export default function NewsletterBar({ dark }) {
               <span style={{ fontSize: "1.4rem" }}>✅</span>
               <div>
                 <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, color: "#ffffff", marginBottom: 2 }}>You're on the list!</div>
-                <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.70)" }}>We'll be in touch with the latest TFC 2026 news.</div>
+                <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.70)" }}>We'll be in touch with the latest TTFC 2026 news.</div>
               </div>
             </motion.div>
           )}

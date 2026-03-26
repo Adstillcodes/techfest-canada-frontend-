@@ -590,69 +590,6 @@ function PriceWithAsterisk({ price, color, fontSize, fontWeight }) {
   );
 }
 
-const BOOTH_TIERS = [
-  {
-    id: "single",
-    title: "Single Booth",
-    specs: "10 ft x 10 ft",
-    price: "$2,499",
-    tagline: "A smart, strategic entry into the market.",
-    description: "The Single Booth is ideal for companies that want focused visibility and high value face time without overextending budget. It is perfect for startups, emerging tech companies, niche solution providers, consultancies, and first time exhibitors looking to establish a presence in a serious business environment.",
-    whyItWorks: [
-      "Strong brand presence at an accessible investment level",
-      "Ideal for first time exhibitors and emerging companies",
-      "Perfect for lead generation, networking, and market validation",
-      "A sharp entry point into Canada's innovation ecosystem"
-    ],
-    images: ["/booths/single-1.jpg", "/booths/single-2.jpg", "/booths/single-3.jpg"]
-  },
-  {
-    id: "double",
-    title: "Double Booth",
-    specs: "20 ft x 10 ft",
-    price: "$4,499",
-    tagline: "More space. More visibility. More commercial opportunity.",
-    description: "The Double Booth is built for companies that want to move beyond presence and start making a statement. With added space comes greater flexibility to showcase multiple products, create a stronger visual brand experience, host more conversations, and engage visitors with greater confidence.",
-    whyItWorks: [
-      "Delivers stronger visibility on the exhibition floor",
-      "Creates room for demos, displays, and deeper engagement",
-      "Ideal for companies with multiple products or services",
-      "Positions your brand as established, credible, and growth ready"
-    ],
-    images: ["/booths/double-1.jpg", "/booths/double-2.jpg", "/booths/double-3.jpg"]
-  },
-  {
-    id: "triple",
-    title: "Triple Booth",
-    specs: "30 ft x 10 ft",
-    price: "$5,999",
-    tagline: "For brands that want to be noticed, remembered, and taken seriously.",
-    description: "The Triple Booth is for exhibitors with bigger ambitions and a stronger market story to tell. It gives you the space to create a real destination on the floor rather than just a booth. This is where your brand begins to command attention.\n\nIf your objective is to stand apart from the crowd and present your company as a serious market leader, this is where that begins.",
-    whyItWorks: [
-      "Builds a commanding and credible show floor presence",
-      "Excellent for live demonstrations and multi zone interaction",
-      "Supports stronger traffic flow and richer visitor engagement",
-      "Ideal for brands looking to signal scale, depth, and leadership"
-    ],
-    images: ["/booths/triple-1.jpg", "/booths/triple-2.jpg", "/booths/triple-3.jpg"]
-  },
-  {
-    id: "quadruple",
-    title: "Quadruple Booth",
-    specs: "40 ft x 10 ft",
-    price: "$7,499",
-    tagline: "Maximum presence for brands that intend to lead the room.",
-    description: "The Quadruple Booth is our flagship exhibition option for companies that want scale, authority, and visibility that cannot be ignored. This is for major brands, strategic partners, global companies, ecosystem leaders, and organizations ready to own a significant share of attention at The Tech Festival Canada.\n\nIf you are launching in a major way, building strategic partnerships, attracting enterprise buyers, or reinforcing leadership in your category, the Quadruple Booth gives you the stage to do it with impact.",
-    whyItWorks: [
-      "Delivers the strongest visual and commercial presence",
-      "Ideal for enterprises, anchor exhibitors, and strategic brands",
-      "Enables premium experiences, larger teams, and stronger engagement",
-      "Best choice for companies looking to dominate attention and drive momentum"
-    ],
-    images: ["/booths/quad-1.jpg", "/booths/quad-2.jpg", "/booths/quad-3.jpg"]
-  }
-];
-
 function BoothGallery({ images, isDark, border, cardBg }) {
   const [active, setActive] = useState(0);
   const intervalRef = useRef(null);
@@ -937,12 +874,6 @@ function EnquireModal({ booth, onClose, isDark, textMain, border }) {
         </form>
       </motion.div>
     </div>
-  );
-}
-
-function GradientSpan({ children }) {
-  return (
-    <span style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{children}</span>
   );
 }
 

@@ -29,7 +29,7 @@ const SPONSORS_PAGE_QUERY = `
 `;
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export default function SponsorsMarquee({ dark, type = "home" }) {
+export default function SponsorsMarquee({ dark, type = "home", title }) {
   const query = type === "sponsorsPage" ? SPONSORS_PAGE_QUERY : HOME_QUERY;
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -142,7 +142,7 @@ export default function SponsorsMarquee({ dark, type = "home" }) {
           color: dark ? "rgba(200,185,255,0.40)" : "rgba(13,5,32,0.35)",
         }}
       >
-        Our team includes alumni from
+        {title || "Our team includes alumni from"}
       </div>
 
       <div style={{ position: "relative" }}>

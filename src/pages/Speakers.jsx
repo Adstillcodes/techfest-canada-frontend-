@@ -199,7 +199,7 @@ function SpeakerCard(props) {
 
         <div className="speaker-desc-mobile">
           {expanded ? (
-            <p style={{ fontSize: "0.72rem", color: textMid, lineHeight: 1.55, marginBottom: 6 }}>{speaker.bio}</p>
+            <p style={{ fontSize: "0.76rem", color: textMid, lineHeight: 1.6, marginBottom: 6 }}>{speaker.bio}</p>
           ) : null}
           <button
             className="speaker-readmore-btn"
@@ -303,11 +303,9 @@ export default function Speakers() {
         .speakers-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
         @media(max-width:1100px) { .speakers-grid { grid-template-columns:repeat(2,1fr); gap:20px; } }
         @media(max-width:600px) { .speakers-grid { grid-template-columns:repeat(2,1fr); gap:10px; } }
-        .speaker-desc-desktop { display: block; }
-        .speaker-desc-mobile { display: none; }
+        .speaker-desc-desktop { display: none; }
+        .speaker-desc-mobile { display: block; }
         @media(max-width:600px) {
-          .speaker-desc-desktop { display: none !important; }
-          .speaker-desc-mobile { display: block !important; }
           .speaker-card { border-radius: 14px; }
           .speaker-info { padding: 10px 10px 10px !important; }
           .speaker-name { font-size: 0.72rem !important; }

@@ -9,11 +9,6 @@ const PARTNERS_DROPDOWN = [
   { label: "KYC Form", path: "/kyc" }
 ];
 
-const AGENDA_DROPDOWN = [
-  { label: "Agenda", path: "/agenda" },
-  { label: "Venue", path: "/venue" },
-];
-
 export default function Navbar() {
   const [authOpen,            setAuthOpen]            = useState(false);
   const [theme,               setTheme]               = useState("light");
@@ -21,11 +16,8 @@ export default function Navbar() {
   const [user,                setUser]                = useState(null);
   const [mobileOpen,          setMobileOpen]          = useState(false);
   const [dropOpen,            setDropOpen]            = useState(false);
-  const [agendaDropOpen,      setAgendaDropOpen]      = useState(false);
   const [mobileDropOpen,      setMobileDropOpen]      = useState(false);
-  const [mobileAgendaDropOpen,setMobileAgendaDropOpen]= useState(false);
   const dropRef      = useRef(null);
-  const agendaDropRef= useRef(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -60,9 +52,7 @@ export default function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
     setDropOpen(false);
-    setAgendaDropOpen(false);
     setMobileDropOpen(false);
-    setMobileAgendaDropOpen(false);
   }, [location.pathname]);
 
   const dark      = theme === "dark";
@@ -81,12 +71,12 @@ export default function Navbar() {
     { label: "FIRST TIMERS", path: "/first-timers" },
     { label: "PARTNERS",     path: "/sponsors",  hasDropdown: true,  dropKey: "partners" },
     { label: "SPEAKERS",     path: "/speakers" },
-    { label: "AGENDA",       path: "/agenda",    hasDropdown: true,  dropKey: "agenda" },
+    { label: "AGENDA",       path: "/agenda" },
+    { label: "VENUE",        path: "/venue" },
   ];
 
   const isActive = (path) => {
     if (path === "/sponsors") return location.pathname === "/sponsors" || PARTNERS_DROPDOWN.some(d => d.path === location.pathname);
-    if (path === "/agenda")   return location.pathname === "/agenda"   || AGENDA_DROPDOWN.some(d => d.path === location.pathname);
     return location.pathname === path;
   };
 
@@ -117,52 +107,35 @@ export default function Navbar() {
       <style>{`
         .tfc-navbar-wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
         .tfc-nav-container { display: flex; align-items: center; justify-content: space-between; height: 80px; max-width: 1400px; margin: 0 auto; padding: 0 2.5%; gap: 16px; }
-        
-        /* 3-Column Layout */
         .tfc-nav-left { flex: 1; display: flex; justify-content: flex-start; align-items: center; }
         .tfc-nav-center { display: flex; justify-content: center; align-items: center; }
         .tfc-nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
-        
         .tfc-nav-logo { height: 52px; width: auto; object-fit: contain; transition: height 0.3s ease; }
-        
         .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
         .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
         .tfc-nav-link.active { background: rgba(122,63,209,0.14); }
-        
         .tfc-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 6px; }
         .tfc-hamburger span { display: block; width: 22px; height: 2px; border-radius: 2px; transition: all 0.25s ease; }
         .tfc-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .tfc-hamburger.open span:nth-child(2) { opacity: 0; }
         .tfc-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-        
         .tfc-mobile-ticket { display: none !important; }
         .tfc-desktop-ticket { display: inline-flex !important; }
-
-        /* ===== TABLET (641px – 1024px) ===== */
         @media (min-width: 641px) and (max-width: 1024px) {
           .tfc-desktop-nav { display: none !important; }
           .tfc-hamburger { display: flex !important; }
           .tfc-nav-logo { height: 68px !important; }
-
-          /* Hide the center column entirely on tablet */
           .tfc-nav-center { display: none !important; }
-
-          /* Keep TICKETS in the right-side actions */
           .tfc-mobile-ticket { display: none !important; }
           .tfc-desktop-ticket { display: inline-flex !important; }
         }
-
-        /* ===== MOBILE (≤640px) ===== */
         @media (max-width: 640px) {
           .tfc-desktop-nav { display: none !important; }
           .tfc-hamburger { display: flex !important; }
           .tfc-nav-logo { height: 68px !important; }
-
-          /* On mobile: show ticket in center, hide from right */
           .tfc-mobile-ticket { display: inline-flex !important; padding: 10px 18px !important; font-size: 0.65rem !important; }
           .tfc-desktop-ticket { display: none !important; }
           .tfc-brochure-btn { display: none !important; }
-
           .tfc-nav-container { height: auto !important; padding: 15px 2.5% !important; }
         }
       `}</style>
@@ -179,28 +152,21 @@ export default function Navbar() {
 
           {/* CENTER: DESKTOP NAV OR MOBILE CTA */}
           <div className="tfc-nav-center">
-            
-            {/* Desktop Nav */}
             <div className="tfc-desktop-nav">
               <ul style={{ display: "flex", alignItems: "center", gap: 4, listStyle: "none", margin: 0, padding: "6px", background: pillBg, border: "1px solid " + pillBorder, borderRadius: 999 }}>
                 {navItems.map((item) => {
                   if (item.hasDropdown) {
-                    const isPartners = item.dropKey === "partners";
-                    const open    = isPartners ? dropOpen      : agendaDropOpen;
-                    const setOpen = isPartners ? setDropOpen   : setAgendaDropOpen;
-                    const items   = isPartners ? PARTNERS_DROPDOWN : AGENDA_DROPDOWN;
-                    const ref     = isPartners ? dropRef       : agendaDropRef;
                     return (
-                      <li key={item.path} style={{ position: "relative" }} ref={ref} onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+                      <li key={item.path} style={{ position: "relative" }} ref={dropRef} onMouseEnter={() => setDropOpen(true)} onMouseLeave={() => setDropOpen(false)}>
                         <Link to={item.path} className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
                           style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}
                         >
                           {item.label}
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: dropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
                             <path d="M6 9l6 6 6-6" />
                           </svg>
                         </Link>
-                        {renderDropdown(items, open, setOpen)}
+                        {renderDropdown(PARTNERS_DROPDOWN, dropOpen, setDropOpen)}
                       </li>
                     );
                   }
@@ -213,11 +179,9 @@ export default function Navbar() {
               </ul>
             </div>
 
-            {/* Mobile Ticket Button (Hidden on Desktop) */}
             <Link to="/tickets" className="tfc-mobile-ticket btn-primary"
               style={{ padding: "10px 24px", borderRadius: 999, fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s ease" }}
             >TICKETS</Link>
-
           </div>
 
           {/* RIGHT: ACTIONS */}
@@ -252,27 +216,23 @@ export default function Navbar() {
               <div style={{ padding: "20px 24px 80px", display: "flex", flexDirection: "column", gap: 4 }}>
                 {navItems.map((item) => {
                   if (item.hasDropdown) {
-                    const isPartners = item.dropKey === "partners";
-                    const mOpen    = isPartners ? mobileDropOpen      : mobileAgendaDropOpen;
-                    const setMOpen = isPartners ? setMobileDropOpen   : setMobileAgendaDropOpen;
-                    const items    = isPartners ? PARTNERS_DROPDOWN   : AGENDA_DROPDOWN;
                     return (
                       <div key={item.path} style={{ display: "flex", flexDirection: "column" }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                           <Link to={item.path} onClick={() => setMobileOpen(false)}
                             style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", padding: "12px 16px", borderRadius: 12, flex: 1, color: location.pathname === item.path ? "#7a3fd1" : textMain, background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent" }}
                           >{item.label}</Link>
-                          <button onClick={() => setMOpen(!mOpen)} style={{ background: "transparent", border: "none", color: textMain, cursor: "pointer", padding: "10px 16px", display: "flex", alignItems: "center" }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: mOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
+                          <button onClick={() => setMobileDropOpen(!mobileDropOpen)} style={{ background: "transparent", border: "none", color: textMain, cursor: "pointer", padding: "10px 16px", display: "flex", alignItems: "center" }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: mobileDropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
                               <path d="M6 9l6 6 6-6" />
                             </svg>
                           </button>
                         </div>
                         <AnimatePresence>
-                          {mOpen && (
+                          {mobileDropOpen && (
                             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}>
                               <div style={{ paddingLeft: 16, marginTop: 4, display: "flex", flexDirection: "column", gap: 4 }}>
-                                {items.map((d) => (
+                                {PARTNERS_DROPDOWN.map((d) => (
                                   <Link key={d.path} to={d.path} onClick={() => setMobileOpen(false)}
                                     style={{ display: "block", fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.8px", textTransform: "uppercase", textDecoration: "none", padding: "10px 16px", borderRadius: 10, color: location.pathname === d.path ? "#7a3fd1" : textMuted, background: location.pathname === d.path ? "rgba(122,63,209,0.08)" : "transparent" }}
                                   >— {d.label}</Link>

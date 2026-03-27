@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
+import SponsorMarquee from "../components/SponsorMarquee";
 import { Mic, Users, Calendar, Award, ChevronRight, X, Search } from "lucide-react";
 import { client, urlFor } from "../utils/sanity";
 
-const SPEAKERS_QUERY = `*[_type == "speaker"] | order(name asc) {
+const SPEAKERS_QUERY = `*[_type == "speaker"] | order(order asc) {
   _id,
   name,
   title,
@@ -417,6 +418,10 @@ export default function Speakers() {
             </div>
           </section>
 
+          {/* Where Our Speakers Work */}
+          <SponsorMarquee dark={dark} title="Where our speakers work at" />
+
+          {/* Advisory Council */}
           <section style={{
             padding: "5rem 5%",
             background: dark ? "rgba(122,63,209,0.04)" : "rgba(122,63,209,0.02)",

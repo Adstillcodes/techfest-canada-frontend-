@@ -13,67 +13,223 @@ export default function Footer() {
     return function () { obs.disconnect(); };
   }, []);
 
-  var bg        = dark ? "#06020f" : "#ffffff";
-  var iconColor = dark ? "rgba(200,185,255,0.55)" : "rgba(90,40,180,0.50)";
-  var iconHover = dark ? "#ffffff" : "#0d0520";
-  var textColor = dark ? "rgba(200,185,255,0.40)" : "rgba(90,40,180,0.45)";
-  var linkColor = dark ? "rgba(185,158,255,0.75)" : "#7a3fd1";
-  var borderTop = dark ? "1px solid rgba(155,135,245,0.10)" : "1px solid rgba(122,63,209,0.10)";
+  var bg         = dark ? "#06020f" : "#f5f0ff";
+  var skylineTop = dark ? "#06020f" : "#f5f0ff";
+  var skylineFill= dark ? "rgba(155,135,245,0.10)" : "rgba(122,63,209,0.10)";
+  var skylineStr = dark ? "rgba(155,135,245,0.18)" : "rgba(122,63,209,0.18)";
+  var windowGlow = dark ? "rgba(200,185,255,0.30)" : "rgba(122,63,209,0.22)";
+  var cnTower    = dark ? "rgba(185,158,255,0.22)" : "rgba(122,63,209,0.18)";
+  var iconColor  = dark ? "rgba(200,185,255,0.55)" : "rgba(90,40,180,0.50)";
+  var iconHover  = dark ? "#ffffff" : "#0d0520";
+  var textColor  = dark ? "rgba(200,185,255,0.40)" : "rgba(90,40,180,0.45)";
+  var linkColor  = dark ? "rgba(185,158,255,0.75)" : "#7a3fd1";
+  var borderTop  = dark ? "1px solid rgba(155,135,245,0.10)" : "1px solid rgba(122,63,209,0.10)";
 
   return (
     <footer style={{
       background: bg,
       borderTop: borderTop,
-      padding: "40px 6% 36px",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      gap: 16,
+      overflow: "hidden",
     }}>
-      {/* Social icons */}
-      <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-        {/* LinkedIn */}
-        <a href="https://www.linkedin.com/company/thetechfestival/posts/?feedView=all" aria-label="LinkedIn"
-          style={{ color: iconColor, transition: "color 0.2s ease, transform 0.2s ease", display: "flex" }}
-          onMouseEnter={function (e) { e.currentTarget.style.color = iconHover; e.currentTarget.style.transform = "translateY(-2px)"; }}
-          onMouseLeave={function (e) { e.currentTarget.style.color = iconColor; e.currentTarget.style.transform = "translateY(0)"; }}
+      {/* Toronto Skyline SVG */}
+      <div style={{ width: "100%", lineHeight: 0 }}>
+        <svg
+          viewBox="0 0 1440 180"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMax slice"
+          style={{ width: "100%", display: "block" }}
         >
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-          </svg>
-        </a>
+          {/* Sky gradient background within SVG */}
+          <defs>
+            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={skylineTop} stopOpacity="0" />
+              <stop offset="100%" stopColor={skylineTop} stopOpacity="1" />
+            </linearGradient>
+            <linearGradient id="towerGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={cnTower} />
+              <stop offset="100%" stopColor={skylineFill} />
+            </linearGradient>
+          </defs>
 
-        {/* X / Twitter */}
-        <a href="#" aria-label="X (Twitter)"
-          style={{ color: iconColor, transition: "color 0.2s ease, transform 0.2s ease", display: "flex" }}
-          onMouseEnter={function (e) { e.currentTarget.style.color = iconHover; e.currentTarget.style.transform = "translateY(-2px)"; }}
-          onMouseLeave={function (e) { e.currentTarget.style.color = iconColor; e.currentTarget.style.transform = "translateY(0)"; }}
-        >
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
-          </svg>
-        </a>
+          {/* ── CN Tower ── */}
+          {/* Base/legs */}
+          <polygon points="700,180 708,90 716,180" fill={cnTower} />
+          {/* Shaft */}
+          <rect x="710" y="30" width="4" height="60" fill={cnTower} />
+          {/* Pod */}
+          <ellipse cx="712" cy="88" rx="10" ry="5" fill={cnTower} />
+          <rect x="706" y="85" width="12" height="8" rx="2" fill={cnTower} />
+          {/* Antenna */}
+          <rect x="711.5" y="10" width="1" height="22" fill={cnTower} />
+          {/* Observation deck glow */}
+          <circle cx="712" cy="87" r="2" fill={windowGlow} />
 
-        {/* Instagram */}
-        <a href="https://www.instagram.com/thetechfestival?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" aria-label="Instagram"
-          style={{ color: iconColor, transition: "color 0.2s ease, transform 0.2s ease", display: "flex" }}
-          onMouseEnter={function (e) { e.currentTarget.style.color = iconHover; e.currentTarget.style.transform = "translateY(-2px)"; }}
-          onMouseLeave={function (e) { e.currentTarget.style.color = iconColor; e.currentTarget.style.transform = "translateY(0)"; }}
-        >
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-          </svg>
-        </a>
+          {/* ── Background buildings (far layer, shorter) ── */}
+          {/* Far left */}
+          <rect x="0"   y="140" width="60"  height="40" fill={skylineFill} />
+          <rect x="65"  y="130" width="45"  height="50" fill={skylineFill} />
+          <rect x="115" y="145" width="35"  height="35" fill={skylineFill} />
+          <rect x="155" y="125" width="50"  height="55" fill={skylineFill} />
+          <rect x="210" y="138" width="40"  height="42" fill={skylineFill} />
+          <rect x="255" y="120" width="55"  height="60" fill={skylineFill} />
+          <rect x="315" y="132" width="38"  height="48" fill={skylineFill} />
+          <rect x="358" y="118" width="48"  height="62" fill={skylineFill} />
+          <rect x="410" y="135" width="42"  height="45" fill={skylineFill} />
+          <rect x="457" y="110" width="36"  height="70" fill={skylineFill} />
+          {/* Around CN Tower */}
+          <rect x="498" y="128" width="44"  height="52" fill={skylineFill} />
+          <rect x="547" y="112" width="38"  height="68" fill={skylineFill} />
+          <rect x="590" y="125" width="42"  height="55" fill={skylineFill} />
+          <rect x="637" y="130" width="30"  height="50" fill={skylineFill} />
+          {/* Right of CN Tower */}
+          <rect x="740" y="130" width="32"  height="50" fill={skylineFill} />
+          <rect x="777" y="115" width="46"  height="65" fill={skylineFill} />
+          <rect x="828" y="128" width="40"  height="52" fill={skylineFill} />
+          <rect x="873" y="108" width="52"  height="72" fill={skylineFill} />
+          <rect x="930" y="122" width="38"  height="58" fill={skylineFill} />
+          <rect x="973" y="135" width="44"  height="45" fill={skylineFill} />
+          <rect x="1022" y="118" width="48" height="62" fill={skylineFill} />
+          <rect x="1075" y="130" width="36" height="50" fill={skylineFill} />
+          <rect x="1116" y="122" width="42" height="58" fill={skylineFill} />
+          <rect x="1163" y="140" width="38" height="40" fill={skylineFill} />
+          <rect x="1206" y="128" width="46" height="52" fill={skylineFill} />
+          <rect x="1257" y="138" width="40" height="42" fill={skylineFill} />
+          <rect x="1302" y="122" width="50" height="58" fill={skylineFill} />
+          <rect x="1357" y="135" width="38" height="45" fill={skylineFill} />
+          <rect x="1400" y="145" width="40" height="35" fill={skylineFill} />
+
+          {/* ── Foreground buildings (taller, outlined) ── */}
+          {/* Left cluster */}
+          <rect x="10"  y="105" width="52"  height="75" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="68"  y="88"  width="44"  height="92" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="118" y="98"  width="38"  height="82" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          {/* Stepped top */}
+          <rect x="120" y="90"  width="20"  height="10" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          <rect x="162" y="75"  width="55"  height="105" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          {/* Antenna on tall building */}
+          <rect x="188" y="68"  width="2"   height="10"  fill={skylineStr} />
+
+          <rect x="223" y="92"  width="48"  height="88"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="277" y="80"  width="52"  height="100" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="280" y="73"  width="18"  height="10"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          <rect x="335" y="95"  width="44"  height="85"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="385" y="72"  width="50"  height="108" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="388" y="65"  width="24"  height="10"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          <rect x="441" y="85"  width="46"  height="95"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="493" y="68"  width="52"  height="112" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          {/* Tall glass tower left of CN */}
+          <rect x="551" y="58"  width="48"  height="122" fill={skylineFill} stroke={skylineStr} strokeWidth="0.8" />
+          <rect x="554" y="50"  width="20"  height="12"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          <rect x="605" y="78"  width="44"  height="102" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="655" y="95"  width="36"  height="85"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          {/* Right of CN Tower */}
+          <rect x="738" y="92"  width="40"  height="88"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="784" y="65"  width="52"  height="115" fill={skylineFill} stroke={skylineStr} strokeWidth="0.8" />
+          <rect x="787" y="57"  width="22"  height="12"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          <rect x="842" y="82"  width="46"  height="98"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="894" y="62"  width="54"  height="118" fill={skylineFill} stroke={skylineStr} strokeWidth="0.8" />
+          <rect x="954" y="88"  width="42"  height="92"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="1002" y="72" width="50"  height="108" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="1005" y="65" width="22"  height="10"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          <rect x="1058" y="90" width="44"  height="90"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="1108" y="70" width="52"  height="110" fill={skylineFill} stroke={skylineStr} strokeWidth="0.8" />
+          <rect x="1111" y="62" width="20"  height="12"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          <rect x="1166" y="85" width="46"  height="95"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="1218" y="95" width="42"  height="85"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="1266" y="78" width="50"  height="102" fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="1322" y="92" width="44"  height="88"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+          <rect x="1372" y="105" width="68" height="75"  fill={skylineFill} stroke={skylineStr} strokeWidth="0.6" />
+
+          {/* Windows — scattered dots giving a city-at-night feel */}
+          {[
+            [78,100],[88,112],[78,124],[88,136],
+            [172,88],[182,100],[172,112],[192,88],[192,112],
+            [287,95],[297,107],[287,119],[307,95],[307,119],
+            [395,85],[405,97],[395,109],[415,85],
+            [503,80],[513,92],[503,104],[523,80],[523,104],
+            [561,72],[571,84],[561,96],[581,72],[571,108],
+            [561,120],[581,96],
+            [794,78],[804,90],[794,102],[814,78],[814,102],
+            [794,114],[804,126],
+            [904,75],[914,87],[904,99],[924,75],[924,99],
+            [1118,82],[1128,94],[1118,106],[1138,82],[1138,106],
+            [1276,90],[1286,102],[1276,114],[1296,90],
+          ].map(function(w, i) {
+            return <rect key={i} x={w[0]} y={w[1]} width="3" height="4" rx="0.5" fill={windowGlow} />;
+          })}
+
+          {/* Ground fade overlay */}
+          <rect x="0" y="0" width="1440" height="180" fill="url(#skyGrad)" />
+        </svg>
       </div>
 
-      {/* Copyright */}
-      <p style={{ fontSize: "0.82rem", color: textColor, margin: 0, letterSpacing: "0.2px" }}>
-        © 2026 The Tech Festival Canada. |{" "}
-        <Link to="/privacy" style={{ color: linkColor, textDecoration: "none", transition: "opacity 0.2s ease" }}
-          onMouseEnter={function (e) { e.currentTarget.style.opacity = "0.7"; }}
-          onMouseLeave={function (e) { e.currentTarget.style.opacity = "1"; }}
-        >Privacy Policy</Link>
-      </p>
+      {/* Social icons + copyright */}
+      <div style={{
+        background: bg,
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 16,
+        padding: "20px 6% 32px",
+      }}>
+        {/* Social icons */}
+        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          {/* LinkedIn */}
+          <a href="https://www.linkedin.com/company/thetechfestival/posts/?feedView=all" aria-label="LinkedIn"
+            style={{ color: iconColor, transition: "color 0.2s ease, transform 0.2s ease", display: "flex" }}
+            onMouseEnter={function (e) { e.currentTarget.style.color = iconHover; e.currentTarget.style.transform = "translateY(-2px)"; }}
+            onMouseLeave={function (e) { e.currentTarget.style.color = iconColor; e.currentTarget.style.transform = "translateY(0)"; }}
+          >
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+
+          {/* X / Twitter */}
+          <a href="https://x.com/thetechfestival" aria-label="X (Twitter)"
+            style={{ color: iconColor, transition: "color 0.2s ease, transform 0.2s ease", display: "flex" }}
+            onMouseEnter={function (e) { e.currentTarget.style.color = iconHover; e.currentTarget.style.transform = "translateY(-2px)"; }}
+            onMouseLeave={function (e) { e.currentTarget.style.color = iconColor; e.currentTarget.style.transform = "translateY(0)"; }}
+          >
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
+            </svg>
+          </a>
+
+          {/* Instagram */}
+          <a href="https://www.instagram.com/thetechfestival?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" aria-label="Instagram"
+            style={{ color: iconColor, transition: "color 0.2s ease, transform 0.2s ease", display: "flex" }}
+            onMouseEnter={function (e) { e.currentTarget.style.color = iconHover; e.currentTarget.style.transform = "translateY(-2px)"; }}
+            onMouseLeave={function (e) { e.currentTarget.style.color = iconColor; e.currentTarget.style.transform = "translateY(0)"; }}
+          >
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+            </svg>
+          </a>
+        </div>
+
+        {/* Copyright */}
+        <p style={{ fontSize: "0.82rem", color: textColor, margin: 0, letterSpacing: "0.2px" }}>
+          © 2026 The Tech Festival Canada. |{" "}
+          <Link to="/privacy" style={{ color: linkColor, textDecoration: "none", transition: "opacity 0.2s ease" }}
+            onMouseEnter={function (e) { e.currentTarget.style.opacity = "0.7"; }}
+            onMouseLeave={function (e) { e.currentTarget.style.opacity = "1"; }}
+          >Privacy Policy</Link>
+        </p>
+      </div>
     </footer>
   );
 }

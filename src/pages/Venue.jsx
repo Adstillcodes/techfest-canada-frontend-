@@ -3,17 +3,6 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence } from "fra
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 
-const AMENITIES = [
-  { label: "Indoor Pool",      desc: "Heated year-round" },
-  { label: "Spa & Wellness",   desc: "Full service spa" },
-  { label: "Fine Dining",      desc: "Harbour 60 restaurant" },
-  { label: "Fitness Centre",   desc: "State-of-the-art gym" },
-  { label: "Valet Parking",    desc: "On-site parking" },
-  { label: "High-Speed WiFi",  desc: "Throughout the venue" },
-  { label: "Airport Access",   desc: "15 min to Pearson" },
-  { label: "Transit Link",     desc: "Union Station nearby" },
-];
-
 const SPACES = [
   { name: "Grand Ballroom",      capacity: "1,200+", area: "12,000 sq ft", use: "Main Conference & Exhibition" },
   { name: "Harbour View Hall",   capacity: "600",    area: "6,500 sq ft",  use: "Keynote & Plenary Sessions" },
@@ -99,7 +88,6 @@ export default function Venue() {
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes pulseGlow { 0%,100%{opacity:0.4} 50%{opacity:0.9} }
         .venue-img-dot { width:10px;height:10px;border-radius:50%;border:none;cursor:pointer;transition:all 0.3s ease; }
-        .amenity-card:hover { transform:translateY(-6px) !important; }
         .space-card:hover { transform:translateY(-4px) !important; }
         .venue-bento-grid { display:grid; }
         .mobile-gallery-strip { display:none; }
@@ -108,12 +96,10 @@ export default function Venue() {
           .mobile-gallery-strip { display:block !important; }
           .venue-stats-row { flex-direction:column !important; gap:12px !important; }
           .spaces-grid { grid-template-columns:1fr !important; }
-          .amenities-grid { grid-template-columns:repeat(2,1fr) !important; }
           .location-grid { grid-template-columns:1fr !important; }
         }
         @media(min-width:641px) and (max-width:1024px){
           .spaces-grid { grid-template-columns:repeat(2,1fr) !important; }
-          .amenities-grid { grid-template-columns:repeat(4,1fr) !important; }
         }
       `}} />
 
@@ -278,31 +264,6 @@ export default function Venue() {
                       <div style={{ fontSize: "0.9rem", color: textMid }}>{space.area}</div>
                     </div>
                     <div style={{ background: dark ? "rgba(122,63,209,0.12)" : "rgba(122,63,209,0.07)", border: "1px solid " + (dark ? "rgba(122,63,209,0.25)" : "rgba(122,63,209,0.15)"), borderRadius: 8, padding: "9px 14px", fontSize: "0.88rem", fontWeight: 600, color: accent, lineHeight: 1.4 }}>{space.use}</div>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* AMENITIES */}
-      <section style={{ background: bg, padding: "6rem 5%" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <FadeIn>
-            <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "3px", textTransform: "uppercase", color: accent, marginBottom: 12 }}>Hotel Features</p>
-              <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.8rem,3.5vw,2.8rem)", fontWeight: 900, color: textMain }}>Everything You Need</h2>
-              <div style={{ width: 50, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", margin: "16px auto 0" }} />
-            </div>
-          </FadeIn>
-          <div className="amenities-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
-            {AMENITIES.map(function (a, i) {
-              return (
-                <FadeIn key={a.label} delay={i * 0.07}>
-                  <div className="amenity-card" style={{ background: cardBg, border: "1px solid " + cardBdr, borderRadius: 18, padding: "28px 22px", textAlign: "center", transition: "transform 0.3s ease", cursor: "default" }}>
-                    <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.88rem", fontWeight: 800, color: textMain, marginBottom: 8 }}>{a.label}</div>
-                    <div style={{ fontSize: "0.9rem", color: textMid, lineHeight: 1.6 }}>{a.desc}</div>
                   </div>
                 </FadeIn>
               );

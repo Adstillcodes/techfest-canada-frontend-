@@ -196,25 +196,6 @@ export default function Home() {
       <section id="hero-lower" style={{ position: "relative", background: bg, overflow: "hidden", padding: "6rem 5% 8rem" }}>
         <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
 
-          {/* Venue */}
-          <a href="/venue" style={{
-            textDecoration: "none", display: "flex", flexDirection: "column",
-            alignItems: "center", gap: 10, marginBottom: "2.5rem",
-            opacity: 0.6, transition: "opacity 0.2s ease",
-          }}
-            onMouseEnter={function(e) { e.currentTarget.style.opacity = "1"; }}
-            onMouseLeave={function(e) { e.currentTarget.style.opacity = "0.6"; }}
-          >
-            <span style={{
-              fontFamily: "'Orbitron', sans-serif", fontSize: "0.55rem",
-              fontWeight: 800, letterSpacing: "3px", textTransform: "uppercase",
-              color: dark ? "rgba(255,255,255,0.50)" : "rgba(13,5,32,0.40)",
-            }}>Venue</span>
-            <svg viewBox="0 0 520 72" style={{ height: "clamp(28px, 4.5vw, 48px)", width: "auto" }} xmlns="http://www.w3.org/2000/svg">
-              <text x="260" y="54" textAnchor="middle" fontFamily="Georgia, 'Times New Roman', Times, serif" fontSize="64" fontWeight="400" letterSpacing="12" fill={dark ? "rgba(255,255,255,0.80)" : "rgba(13,5,32,0.60)"}>WESTIN</text>
-            </svg>
-          </a>
-
           <TextReveal
             text="MEET BUILD SCALE"
             colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}

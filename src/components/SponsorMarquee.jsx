@@ -1,6 +1,6 @@
 // components/SponsorMarquee.jsx
 // Fetches sponsors from Sanity CMS. Add/remove sponsors in the Sanity Studio
-// under the "Sponsor" document type — no code changes needed.
+// under the "Sponsor" or "Sponsor Marquee" document types — no code changes needed.
 
 import React, { useEffect, useState } from "react";
 import imageUrlBuilder from "@sanity/image-url";
@@ -9,8 +9,8 @@ import { client } from "../utils/sanity";
 const builder = imageUrlBuilder(client);
 const urlFor = (source) => builder.image(source);
 
-// ─── GROQ query ───────────────────────────────────────────────────────────────
-const SPONSORS_QUERY = `
+// ─── GROQ queries ─────────────────────────────────────────────────────────────
+const HOME_QUERY = `
   *[_type == "sponsor" && active == true] | order(order asc) {
     _id,
     name,
@@ -19,15 +19,25 @@ const SPONSORS_QUERY = `
   }
 `;
 
+const SPONSORS_PAGE_QUERY = `
+  *[_type == "sponsorMarquee" && active == true] | order(order asc) {
+    _id,
+    name,
+    logo,
+    url,
+  }
+`;
+
 // ─── Component ────────────────────────────────────────────────────────────────
-export default function SponsorsMarquee({ dark }) {
+export default function SponsorsMarquee({ dark, type = "home" }) {
+  const query = type === "sponsorsPage" ? SPONSORS_PAGE_QUERY : HOME_QUERY;
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     client
-      .fetch(SPONSORS_QUERY)
+      .fetch(query)
       .then((data) => {
         setSponsors(data);
         setLoading(false);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import SponsorMarquee from "../components/SponsorMarquee";
 
 export default function Sponsors() {
   const [isDark, setIsDark] = useState(false);
@@ -47,6 +48,8 @@ export default function Sponsors() {
           </p>
         </motion.div>
       </main>
+
+      <SponsorMarquee dark={isDark} type="sponsorsPage" />
 
       <Footer />
     </div>

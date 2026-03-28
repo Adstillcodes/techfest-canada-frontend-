@@ -22,7 +22,7 @@ export default function Footer() {
     <footer style={{ background: bg, borderTop: bTop, display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", position: "relative" }}>
 
       {/* ── TORONTO SKYLINE PHOTO ── */}
-      <div style={{ width: "100%", position: "relative", height: "clamp(180px, 25vw, 320px)", overflow: "hidden" }}>
+      <div style={{ width: "100%", position: "relative", height: "clamp(240px, 32vw, 420px)", overflow: "hidden" }}>
         <img
           src="/toronto-skyline.png"
           alt=""

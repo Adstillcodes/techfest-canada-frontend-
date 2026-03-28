@@ -30,9 +30,9 @@ export default function Footer() {
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            objectPosition: "center 40%",
+            objectPosition: "center bottom",
             display: "block",
-            opacity: dark ? 0.15 : 0.10,
+            opacity: dark ? 0.22 : 0.12,
             filter: dark
               ? "brightness(0.6) contrast(1.1) saturate(0) sepia(0.3) hue-rotate(220deg)"
               : "brightness(0.9) contrast(1.05) saturate(0)",
@@ -41,13 +41,13 @@ export default function Footer() {
         />
         {/* Top fade into page bg */}
         <div style={{
-          position: "absolute", top: 0, left: 0, right: 0, height: "50%",
+          position: "absolute", top: 0, left: 0, right: 0, height: "35%",
           background: "linear-gradient(to bottom, " + bg + ", transparent)",
           pointerEvents: "none",
         }} />
         {/* Bottom fade into footer bg */}
         <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, height: "60%",
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "40%",
           background: "linear-gradient(to top, " + bg + ", transparent)",
           pointerEvents: "none",
         }} />

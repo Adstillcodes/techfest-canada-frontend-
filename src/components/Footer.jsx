@@ -21,61 +21,37 @@ export default function Footer() {
   return (
     <footer style={{ background: bg, borderTop: bTop, display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden", position: "relative" }}>
 
-      {/* ── TORONTO SKYLINE PHOTO ── */}
-      <div style={{ width: "100%", position: "relative", height: "clamp(240px, 32vw, 420px)", overflow: "hidden" }}>
+      {/* ── SOCIAL + COPYRIGHT with skyline behind ── */}
+      <div style={{ width: "100%", position: "relative", display: "flex", flexDirection: "column", alignItems: "center" }}>
+
+        {/* Skyline image — absolute, behind everything */}
         <img
           src="/toronto-skyline.png"
           alt=""
           style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
             width: "100%",
-            height: "100%",
+            height: "auto",
+            maxHeight: "100%",
             objectFit: "cover",
             objectPosition: "center bottom",
-            display: "block",
-            opacity: dark ? 0.22 : 0.12,
+            opacity: dark ? 0.08 : 0.06,
             filter: dark
-              ? "brightness(0.6) contrast(1.1) saturate(0) sepia(0.3) hue-rotate(220deg)"
-              : "brightness(0.9) contrast(1.05) saturate(0)",
+              ? "brightness(0.5) contrast(1.2) saturate(0)"
+              : "brightness(1) contrast(0.9) saturate(0)",
             pointerEvents: "none",
+            maskImage: "linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)",
           }}
         />
-        {/* Top fade into page bg */}
-        <div style={{
-          position: "absolute", top: 0, left: 0, right: 0, height: "35%",
-          background: "linear-gradient(to bottom, " + bg + ", transparent)",
-          pointerEvents: "none",
-        }} />
-        {/* Bottom fade into footer bg */}
-        <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, height: "40%",
-          background: "linear-gradient(to top, " + bg + ", transparent)",
-          pointerEvents: "none",
-        }} />
-        {/* Left fade */}
-        <div style={{
-          position: "absolute", top: 0, bottom: 0, left: 0, width: "15%",
-          background: "linear-gradient(to right, " + bg + ", transparent)",
-          pointerEvents: "none",
-        }} />
-        {/* Right fade */}
-        <div style={{
-          position: "absolute", top: 0, bottom: 0, right: 0, width: "15%",
-          background: "linear-gradient(to left, " + bg + ", transparent)",
-          pointerEvents: "none",
-        }} />
-        {/* Purple tint overlay for dark mode */}
-        {dark && (
-          <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(to top, rgba(6,2,15,0.7), rgba(122,63,209,0.08), rgba(6,2,15,0.5))",
-            pointerEvents: "none",
-          }} />
-        )}
-      </div>
 
-      {/* ── SOCIAL + COPYRIGHT ── */}
-      <div style={{ background: bg, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 16, padding: "10px 6% 32px" }}>
-        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+        {/* Spacer to give skyline room */}
+        <div style={{ height: "clamp(120px, 18vw, 220px)" }} />
+
+        {/* Social icons */}
+        <div style={{ display: "flex", gap: 24, alignItems: "center", position: "relative", zIndex: 2 }}>
 
           {/* LinkedIn */}
           <a href="https://www.linkedin.com/company/thetechfestival/posts/?feedView=all" aria-label="LinkedIn"
@@ -111,7 +87,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <p style={{ fontSize: "0.82rem", color: tCol, margin: 0, letterSpacing: "0.2px" }}>
+        <p style={{ fontSize: "0.82rem", color: tCol, margin: 0, letterSpacing: "0.2px", padding: "16px 0 32px", position: "relative", zIndex: 2 }}>
           © 2026 The Tech Festival Canada. |{" "}
           <Link to="/privacy" style={{ color: lCol, textDecoration: "none", transition: "opacity 0.2s ease" }}
             onMouseEnter={function (e) { e.currentTarget.style.opacity = "0.7"; }}

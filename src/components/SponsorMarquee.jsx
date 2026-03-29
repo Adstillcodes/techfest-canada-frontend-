@@ -10,17 +10,8 @@ const builder = imageUrlBuilder(client);
 const urlFor = (source) => builder.image(source);
 
 // ─── GROQ queries ─────────────────────────────────────────────────────────────
-const HOME_QUERY = `
-  *[_type == "sponsor" && active == true] | order(order asc) {
-    _id,
-    name,
-    logo,
-    url,
-  }
-`;
-
-const SPONSORS_PAGE_QUERY = `
-  *[_type == "sponsorMarquee" && active == true] | order(order asc) {
+const buildQuery = (schemaType) => `
+  *[_type == "${schemaType}" && active == true] | order(order asc) {
     _id,
     name,
     logo,
@@ -29,8 +20,12 @@ const SPONSORS_PAGE_QUERY = `
 `;
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export default function SponsorsMarquee({ dark, type = "home", title }) {
-  const query = type === "sponsorsPage" ? SPONSORS_PAGE_QUERY : HOME_QUERY;
+export default function SponsorsMarquee({
+  dark,
+  schemaType = "sponsor",
+  title,
+}) {
+  const query = buildQuery(schemaType);
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

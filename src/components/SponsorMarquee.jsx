@@ -24,8 +24,10 @@ export default function SponsorsMarquee({
   dark,
   schemaType = "sponsor",
   title,
+  invertForDark = schemaType === "sponsor",
 }) {
   const query = buildQuery(schemaType);
+  const logoFilter = dark && invertForDark ? "brightness(0) invert(1)" : "none";
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -116,7 +118,7 @@ export default function SponsorsMarquee({
           max-width: 180px;
           object-fit: contain;
           opacity: ${dark ? "0.90" : "0.70"};
-          filter: ${dark ? "brightness(0) invert(1)" : "none"};
+          filter: ${logoFilter};
           transition: opacity 0.2s ease;
         }
         .marquee-item:hover img { opacity: 1; }

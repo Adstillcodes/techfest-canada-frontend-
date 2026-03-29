@@ -67,7 +67,13 @@ export default function SponsorsMarquee({ dark, type = "home", title }) {
           textAlign: "center",
         }}
       >
-        <p style={{ opacity: 0.5, fontFamily: "'Orbitron',sans-serif", fontSize: "0.6rem" }}>
+        <p
+          style={{
+            opacity: 0.5,
+            fontFamily: "'Orbitron',sans-serif",
+            fontSize: "0.6rem",
+          }}
+        >
           Loading sponsors…
         </p>
       </section>
@@ -146,12 +152,37 @@ export default function SponsorsMarquee({ dark, type = "home", title }) {
       </div>
 
       <div style={{ position: "relative" }}>
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 100, background: `linear-gradient(to right, ${fade}, transparent)`, zIndex: 2, pointerEvents: "none" }} />
-        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 100, background: `linear-gradient(to left, ${fade}, transparent)`, zIndex: 2, pointerEvents: "none" }} />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 100,
+            background: `linear-gradient(to right, ${fade}, transparent)`,
+            zIndex: 2,
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: 100,
+            background: `linear-gradient(to left, ${fade}, transparent)`,
+            zIndex: 2,
+            pointerEvents: "none",
+          }}
+        />
 
         <div className="marquee-track">
           {items.map((sponsor, i) => {
-            const logoUrl = urlFor(sponsor.logo).height(60).auto("format").url();
+            const logoUrl = urlFor(sponsor.logo)
+              .height(60)
+              .auto("format")
+              .url();
 
             const img = (
               <img

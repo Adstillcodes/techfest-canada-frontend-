@@ -35,6 +35,14 @@ export default function AdminCampaignCalendar() {
   const [activeTab, setActiveTab] = useState("calendar");
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [addingCampaign, setAddingCampaign] = useState(null);
+  const [expandedCells, setExpandedCells] = useState({});
+
+  const toggleCell = (phase, audience) => {
+    setExpandedCells((prev) => {
+      const key = `${phase}-${audience}`;
+      return { ...prev, [key]: !prev[key] };
+    });
+  };
 
   useEffect(() => {
     fetchCalendar();
@@ -186,7 +194,7 @@ export default function AdminCampaignCalendar() {
                         <div className="text-gray-600 text-xs italic">No campaigns</div>
                       ) : (
                         <div className="space-y-2">
-                          {campaigns.slice(0, 3).map((c) => (
+                          {(expandedCells[`${phase}-${audience}`] ? campaigns : campaigns.slice(0, 3)).map((c) => (
                             <CampaignCard
                               key={c.id}
                               campaign={c}
@@ -194,9 +202,14 @@ export default function AdminCampaignCalendar() {
                             />
                           ))}
                           {campaigns.length > 3 && (
-                            <div className="text-gray-500 text-xs text-center">
-                              +{campaigns.length - 3} more
-                            </div>
+                            <button
+                              onClick={() => toggleCell(phase, audience)}
+                              className="text-gray-500 text-xs text-center w-full hover:text-purple-400 transition-colors"
+                            >
+                              {expandedCells[`${phase}-${audience}`]
+                                ? "Show less"
+                                : `+${campaigns.length - 3} more`}
+                            </button>
                           )}
                         </div>
                       )}
@@ -312,6 +325,10 @@ export default function AdminCampaignCalendar() {
             setSelectedCampaign((prev) => ({ ...prev, sendDate: updated.sendDate }));
             fetchCalendar();
           }}
+          onDelete={() => {
+            setSelectedCampaign(null);
+            fetchCalendar();
+          }}
         />
       )}
 
@@ -363,10 +380,29 @@ function CampaignCard({ campaign, onClick }) {
   );
 }
 
-function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate }) {
+function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate, onDelete }) {
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [newDate, setNewDate] = useState("");
   const [savingDate, setSavingDate] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this campaign? This action cannot be undone.")) {
+      return;
+    }
+    setDeleting(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API}/campaigns/automation/templates/${campaign.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      onDelete();
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to delete campaign");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const handleSaveDate = async () => {
     if (!newDate) return;
@@ -380,7 +416,7 @@ function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate }
       );
       setIsEditingDate(false);
       if (onUpdateDate) onUpdateDate(res.data);
-    } catch (err) {
+    } catch {
       alert("Failed to update date");
     } finally {
       setSavingDate(false);
@@ -478,20 +514,29 @@ function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate }
           </div>
         </div>
 
-        <div className="p-6 border-t border-gray-700 flex gap-3 justify-end">
-          <button onClick={onClose} className="btn-secondary">
-            Close
+        <div className="p-6 border-t border-gray-700 flex gap-3 justify-between">
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="btn-secondary bg-red-600/20 border-red-600/50 text-red-400 hover:bg-red-600/30 hover:border-red-500"
+          >
+            {deleting ? "Deleting..." : "Delete"}
           </button>
-          {campaign.status === "pending" && (
-            <>
-              <button onClick={onEdit} className="btn-secondary">
-                Edit & Preview
-              </button>
-              <button onClick={onSend} className="btn-primary bg-green-600 hover:bg-green-700">
-                Send Campaign
-              </button>
-            </>
-          )}
+          <div className="flex gap-3">
+            <button onClick={onClose} className="btn-secondary">
+              Close
+            </button>
+            {campaign.status === "pending" && (
+              <>
+                <button onClick={onEdit} className="btn-secondary">
+                  Edit & Preview
+                </button>
+                <button onClick={onSend} className="btn-primary bg-green-600 hover:bg-green-700">
+                  Send Campaign
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

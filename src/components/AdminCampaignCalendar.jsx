@@ -841,6 +841,7 @@ function AddCampaignModal({ phase, audience, onClose, onCreated }) {
             <input
               type="date"
               value={sendDate}
+              min={new Date().toISOString().split("T")[0]}
               onChange={(e) => setSendDate(e.target.value)}
               className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
             />

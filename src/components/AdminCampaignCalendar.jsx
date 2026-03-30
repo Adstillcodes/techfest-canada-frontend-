@@ -34,6 +34,7 @@ export default function AdminCampaignCalendar() {
   const [upcoming, setUpcoming] = useState([]);
   const [activeTab, setActiveTab] = useState("calendar");
   const [editingCampaign, setEditingCampaign] = useState(null);
+  const [addingCampaign, setAddingCampaign] = useState(null);
 
   useEffect(() => {
     fetchCalendar();
@@ -172,7 +173,15 @@ export default function AdminCampaignCalendar() {
                   const campaigns = calendar[phase]?.[audience] || [];
                   return (
                     <div key={audience} className="bg-[#0a0515] rounded-lg p-3 border border-gray-800">
-                      <div className="text-xs text-gray-400 uppercase mb-2">{audience}</div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs text-gray-400 uppercase">{audience}</span>
+                        <button
+                          onClick={() => setAddingCampaign({ phase, audience })}
+                          className="text-xs text-purple-400 hover:text-purple-300 hover:bg-purple-600/20 px-2 py-1 rounded transition-colors"
+                        >
+                          + Add
+                        </button>
+                      </div>
                       {campaigns.length === 0 ? (
                         <div className="text-gray-600 text-xs italic">No campaigns</div>
                       ) : (
@@ -314,6 +323,18 @@ export default function AdminCampaignCalendar() {
             fetchCalendar();
             fetchUpcoming();
             setEditingCampaign(null);
+          }}
+        />
+      )}
+
+      {addingCampaign && (
+        <AddCampaignModal
+          phase={addingCampaign.phase}
+          audience={addingCampaign.audience}
+          onClose={() => setAddingCampaign(null)}
+          onCreated={() => {
+            fetchCalendar();
+            setAddingCampaign(null);
           }}
         />
       )}
@@ -701,4 +722,95 @@ function generateDefaultHtml(campaign) {
   </div>
 </body>
 </html>`;
+}
+
+function AddCampaignModal({ phase, audience, onClose, onCreated }) {
+  const [subject, setSubject] = useState("");
+  const [purpose, setPurpose] = useState("");
+  const [sendDate, setSendDate] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!subject || !purpose || !sendDate) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `${API}/campaigns/automation/templates`,
+        { phase, audience, subject, purpose, sendDate },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      onCreated();
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to create campaign");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#1a1035] rounded-2xl max-w-md w-full">
+        <div className="p-6 border-b border-gray-700 flex justify-between items-start">
+          <div>
+            <h3 className="text-xl font-bold text-white">Add Campaign</h3>
+            <p className="text-gray-400 text-sm mt-1">
+              {phase} • {audience}
+            </p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">
+            ×
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-gray-400 text-sm mb-2">Subject *</label>
+            <input
+              type="text"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
+              placeholder="Enter email subject..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-400 text-sm mb-2">Purpose *</label>
+            <input
+              type="text"
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
+              placeholder="e.g., Early Bird Registration, Sponsor Spotlight..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-400 text-sm mb-2">Send Date *</label>
+            <input
+              type="date"
+              value={sendDate}
+              onChange={(e) => setSendDate(e.target.value)}
+              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button type="button" onClick={onClose} className="flex-1 btn-secondary">
+              Cancel
+            </button>
+            <button type="submit" disabled={saving} className="flex-1 btn-primary">
+              {saving ? "Creating..." : "Create Campaign"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }

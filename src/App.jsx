@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Home from "./pages/Home";
 import Programme from "./pages/Programme";
 import Speakers from "./pages/Speakers";
+import SpeakerProfile from "./pages/SpeakerProfile";
 import Sponsors from "./pages/Sponsors";
 import Tickets from "./pages/Tickets";
 import Resources from "./pages/Resources";
@@ -22,7 +23,7 @@ import Exhibit from "./pages/Exhibit";
 import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
 import ScrollToTop from "./components/ScrollToTop";
-import KycForm from "./pages/KycForm"; // <-- Added Import
+import KycForm from "./pages/KycForm";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
 function applySystemTheme() {
@@ -47,6 +48,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/programme" element={<Programme />} />
         <Route path="/speakers" element={<Speakers />} />
+        <Route path="/speakers/:id" element={<SpeakerProfile />} />
         <Route path="/sponsors" element={<Sponsors />} />
         <Route path="/tickets" element={<Tickets />} />
         <Route path="/first-timers" element={<Resources />} />
@@ -63,23 +65,22 @@ function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/agenda" element={<Agenda />} />
-       <Route path="/admin-login" element={<AdminLogin />} />
-
-<Route
-  path="/admin"
-  element={
-    <AdminRoute>
-      <Admin />
-    </AdminRoute>
-  }
-/>
+        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
+          }
+        />
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
         <Route path="/exhibit" element={<Exhibit />} />
         <Route path="/brochures" element={<Brochures />} />
         <Route path="/venue" element={<Venue />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/kyc" element={<KycForm />} /> {/* <-- Added KYC Route */}
+        <Route path="/kyc" element={<KycForm />} />
       </Routes>
       <TicketBar />
     </BrowserRouter>

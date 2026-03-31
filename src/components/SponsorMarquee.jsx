@@ -91,27 +91,25 @@ export default function SponsorsMarquee({ dark, title }) {
           align-items: center;
           width: max-content;
           animation: marquee-scroll 32s linear infinite;
-          gap: 16px;
-          padding: 0 8px;
+          gap: 12px;
+          padding: 4px 8px;
         }
         .marquee-track:hover { animation-play-state: paused; }
         .marquee-item {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 12px 28px;
+          padding: 12px 32px;
           height: 64px;
           flex-shrink: 0;
-          background: rgba(255, 255, 255, 0.07);
-          border: 1px solid rgba(255, 255, 255, 0.10);
-          border-radius: 14px;
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+          background: #ffffff;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 12px;
+          box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+          transition: box-shadow 0.25s ease, transform 0.25s ease;
         }
         .marquee-item:hover {
-          background: rgba(255, 255, 255, 0.13);
-          border-color: rgba(255, 255, 255, 0.20);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(155,135,245,0.3);
           transform: translateY(-2px);
         }
         .marquee-item img {
@@ -119,10 +117,9 @@ export default function SponsorsMarquee({ dark, title }) {
           width: auto;
           max-width: 160px;
           object-fit: contain;
-          opacity: 0.90;
+          opacity: 1;
           transition: opacity 0.25s ease;
         }
-        .marquee-item:hover img { opacity: 1; }
         .marquee-item img[data-name="Temasek"]    { height: 17px; }
         .marquee-item img[data-name="Amazon"]     { height: 26px; }
         .marquee-item img[data-name="DHL"]        { height: 52px; }

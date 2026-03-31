@@ -1,6 +1,6 @@
 // components/SponsorMarquee.jsx
 // Fetches sponsors from Sanity CMS. Add/remove sponsors in the Sanity Studio
-// under the "Sponsor" or "Sponsor Marquee" document types — no code changes needed.
+// under the "Sponsor" document type — no code changes needed.
 
 import React, { useEffect, useState } from "react";
 import imageUrlBuilder from "@sanity/image-url";
@@ -9,9 +9,9 @@ import { client } from "../utils/sanity";
 const builder = imageUrlBuilder(client);
 const urlFor = (source) => builder.image(source);
 
-// ─── GROQ queries ─────────────────────────────────────────────────────────────
-const buildQuery = (schemaType) => `
-  *[_type == "${schemaType}" && active == true] | order(order asc) {
+// ─── GROQ query ───────────────────────────────────────────────────────────────
+const SPONSORS_QUERY = `
+  *[_type == "sponsor" && active == true] | order(order asc) {
     _id,
     name,
     logo,
@@ -20,21 +20,14 @@ const buildQuery = (schemaType) => `
 `;
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export default function SponsorsMarquee({
-  dark,
-  schemaType = "sponsor",
-  title,
-  invertForDark = schemaType === "sponsor",
-}) {
-  const query = buildQuery(schemaType);
-  const logoFilter = dark && invertForDark ? "brightness(0) invert(1)" : "none";
+export default function SponsorsMarquee({ dark, title }) {
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     client
-      .fetch(query)
+      .fetch(SPONSORS_QUERY)
       .then((data) => {
         setSponsors(data);
         setLoading(false);
@@ -46,9 +39,9 @@ export default function SponsorsMarquee({
       });
   }, []);
 
-  const bg = dark ? "rgba(255,255,255,0.02)" : "rgba(122,63,209,0.02)";
-  const border = dark ? "rgba(155,135,245,0.10)" : "rgba(122,63,209,0.08)";
-  const fade = dark ? "#06020f" : "#ffffff";
+  const bg = dark ? "#0c0816" : "rgba(122,63,209,0.02)";
+  const border = dark ? "rgba(155,135,245,0.08)" : "rgba(122,63,209,0.08)";
+  const fade = dark ? "#0c0816" : "#ffffff";
 
   // Double the list so the CSS marquee loops seamlessly.
   const items = [...sponsors, ...sponsors];
@@ -64,13 +57,7 @@ export default function SponsorsMarquee({
           textAlign: "center",
         }}
       >
-        <p
-          style={{
-            opacity: 0.5,
-            fontFamily: "'Orbitron',sans-serif",
-            fontSize: "0.6rem",
-          }}
-        >
+        <p style={{ opacity: 0.5, fontFamily: "'Orbitron',sans-serif", fontSize: "0.6rem" }}>
           Loading sponsors…
         </p>
       </section>
@@ -80,6 +67,8 @@ export default function SponsorsMarquee({
   if (error || sponsors.length === 0) {
     return null;
   }
+
+  var displayTitle = title || "Our team includes alumni from";
 
   return (
     <section
@@ -108,7 +97,7 @@ export default function SponsorsMarquee({
           align-items: center;
           justify-content: center;
           padding: 0 44px;
-          border-right: 1px solid ${border};
+          border-right: 1px solid ${dark ? "rgba(255,255,255,0.06)" : border};
           height: 60px;
           flex-shrink: 0;
         }
@@ -117,11 +106,11 @@ export default function SponsorsMarquee({
           width: auto;
           max-width: 180px;
           object-fit: contain;
-          opacity: ${dark ? "0.90" : "0.70"};
-          filter: ${logoFilter};
-          transition: opacity 0.2s ease;
+          opacity: ${dark ? "0.82" : "0.70"};
+          filter: ${dark ? "none" : "none"};
+          transition: opacity 0.25s ease, filter 0.25s ease;
         }
-        .marquee-item:hover img { opacity: 1; }
+        .marquee-item:hover img { opacity: 1; ${dark ? "filter: brightness(1.15) saturate(1.1);" : ""} }
         .marquee-item img[data-name="Temasek"]    { height: 17px; }
         .marquee-item img[data-name="Amazon"]     { height: 26px; }
         .marquee-item img[data-name="DHL"]        { height: 58px; }
@@ -145,41 +134,16 @@ export default function SponsorsMarquee({
           color: dark ? "rgba(200,185,255,0.40)" : "rgba(13,5,32,0.35)",
         }}
       >
-        {title || "Our team includes alumni from"}
+        {displayTitle}
       </div>
 
       <div style={{ position: "relative" }}>
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: 100,
-            background: `linear-gradient(to right, ${fade}, transparent)`,
-            zIndex: 2,
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: 100,
-            background: `linear-gradient(to left, ${fade}, transparent)`,
-            zIndex: 2,
-            pointerEvents: "none",
-          }}
-        />
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 120, background: `linear-gradient(to right, ${fade}, transparent)`, zIndex: 2, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 120, background: `linear-gradient(to left, ${fade}, transparent)`, zIndex: 2, pointerEvents: "none" }} />
 
         <div className="marquee-track">
           {items.map((sponsor, i) => {
-            const logoUrl = urlFor(sponsor.logo)
-              .height(60)
-              .auto("format")
-              .url();
+            const logoUrl = urlFor(sponsor.logo).height(80).auto("format").url();
 
             const img = (
               <img

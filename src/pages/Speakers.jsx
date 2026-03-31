@@ -7,7 +7,6 @@ import emailjs from "@emailjs/browser";
 import { client, urlFor } from "../utils/sanity";
 import SponsorMarquee from "../components/SponsorMarquee";
 
-
 const STATS = [
   { icon: <Users size={18} />, value: "1000+", label: "Attendees" },
   { icon: <Mic size={18} />, value: "50+", label: "Speakers" },
@@ -361,37 +360,15 @@ function SpeakerCard({ speaker, isDark, card, border, text, sub, purple }) {
       {/* Info */}
       <div style={{ padding: "18px 16px 16px" }}>
         <Link to={`/speakers/${speaker._id}`} style={{ textDecoration: "none", color: "inherit" }}>
-          <div style={{ fontSize: "1rem", fontWeight: 700, color: purple, marginBottom: 3 }}>
+          <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#4ade80", marginBottom: 3, fontFamily: "'Orbitron', sans-serif", letterSpacing: "0.03em" }}>
             {speaker.name}
           </div>
-          <div style={{ fontSize: "0.78rem", fontWeight: 600, color: text, marginBottom: 2 }}>
+          <div style={{ fontSize: "0.72rem", fontWeight: 600, color: text, marginBottom: 2, fontFamily: "'Inter', sans-serif" }}>
             {speaker.title}
           </div>
           <div style={{ fontSize: "0.75rem", color: sub, marginBottom: 14 }}>
             {speaker.company}
           </div>
-        </Link>
-
-        <Link
-          to={`/speakers/${speaker._id}`}
-          style={{
-            display: "block",
-            textAlign: "center",
-            padding: "9px 0",
-            borderRadius: 8,
-            background: "transparent",
-            border: `1px solid ${purple}`,
-            color: purple,
-            fontSize: "0.8rem",
-            fontWeight: 700,
-            textDecoration: "none",
-            marginBottom: 10,
-            transition: "background 0.2s ease, color 0.2s ease",
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = purple; e.currentTarget.style.color = "#fff"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = purple; }}
-        >
-          View Profile →
         </Link>
 
         {/* LinkedIn */}
@@ -469,7 +446,7 @@ function ApplyToSpeak({ isDark, border, purple, sub }) {
         padding: "48px 40px",
         borderRadius: 20,
         border: `1px solid ${border}`,
-        background: "linear-gradient(135deg, rgba(155,135,245,0.12) 0%, rgba(245,166,35,0.06) 100%)",
+        background: isDark ? "rgba(155,135,245,0.06)" : "rgba(122,63,209,0.04)",
         textAlign: "center",
       }}>
         <h2 style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)", fontWeight: 800, fontFamily: "'Orbitron', sans-serif", marginBottom: 12, color: text }}>
@@ -481,17 +458,23 @@ function ApplyToSpeak({ isDark, border, purple, sub }) {
         <button
           onClick={() => setOpen(true)}
           style={{
-            padding: "14px 36px",
-            borderRadius: 8,
-            background: purple,
-            color: "#fff",
+            padding: "12px 36px",
+            borderRadius: 999,
+            background: "transparent",
+            color: purple,
             fontWeight: 700,
-            fontSize: "0.9rem",
-            border: "none",
+            fontSize: "0.82rem",
+            fontFamily: "'Orbitron', sans-serif",
+            letterSpacing: "1.5px",
+            textTransform: "uppercase",
+            border: `2px solid ${purple}`,
             cursor: "pointer",
+            transition: "background 0.2s ease, color 0.2s ease",
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = purple; e.currentTarget.style.color = "#fff"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = purple; }}
         >
-          Apply Now <ChevronRight size={16} style={{ verticalAlign: "middle" }} />
+          Apply Now →
         </button>
       </div>
 

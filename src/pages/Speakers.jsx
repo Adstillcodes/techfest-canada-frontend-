@@ -7,6 +7,7 @@ import emailjs from "@emailjs/browser";
 import { client, urlFor } from "../utils/sanity";
 import SponsorMarquee from "../components/SponsorMarquee";
 
+
 const STATS = [
   { icon: <Users size={18} />, value: "1000+", label: "Attendees" },
   { icon: <Mic size={18} />, value: "50+", label: "Speakers" },

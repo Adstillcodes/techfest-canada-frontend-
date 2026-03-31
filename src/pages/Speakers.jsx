@@ -300,29 +300,38 @@ export default function Speakers() {
 /* ── SPEAKER CARD ── */
 function SpeakerCard({ speaker, isDark, card, border, text, sub, purple }) {
   const [hovered, setHovered] = React.useState(false);
-
-  const imageUrl = speaker.image ? urlFor(speaker.image).width(400).height(400).url() : null;
+  const imageUrl = speaker.image ? urlFor(speaker.image).width(500).height(500).url() : null;
 
   return (
-    <div style={{
-      borderRadius: 16,
-      border: `1px solid ${border}`,
-      background: card,
-      overflow: "hidden",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease",
-      transform: hovered ? "translateY(-4px)" : "translateY(0)",
-      boxShadow: hovered
-        ? "0 16px 48px rgba(155,135,245,0.20)"
-        : "0 2px 12px rgba(0,0,0,0.10)",
-    }}>
+    <div
+      style={{
+        borderRadius: 20,
+        overflow: "hidden",
+        position: "relative",
+        transition: "transform 0.35s ease, box-shadow 0.35s ease",
+        transform: hovered ? "translateY(-6px) scale(1.01)" : "translateY(0) scale(1)",
+        boxShadow: hovered
+          ? "0 0 0 1.5px #9b87f5, 0 20px 60px rgba(155,135,245,0.30), 0 8px 24px rgba(0,0,0,0.25)"
+          : `0 0 0 1px ${border}, 0 4px 20px rgba(0,0,0,0.18)`,
+        background: isDark ? "#0e0520" : "#f5f0ff",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Animated gradient border glow behind card */}
+      <div style={{
+        position: "absolute", inset: -1, borderRadius: 21, zIndex: 0,
+        background: hovered
+          ? "linear-gradient(135deg, #9b87f5 0%, #f5a623 50%, #9b87f5 100%)"
+          : "transparent",
+        opacity: hovered ? 0.5 : 0,
+        transition: "opacity 0.4s ease",
+        pointerEvents: "none",
+      }} />
+
       {/* Photo */}
-      <Link
-        to={`/speakers/${speaker._id}`}
-        style={{ display: "block", textDecoration: "none" }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        <div style={{ position: "relative", paddingTop: "100%", overflow: "hidden", background: isDark ? "#1a0a3e" : "#ede9ff" }}>
+      <Link to={`/speakers/${speaker._id}`} style={{ display: "block", textDecoration: "none", position: "relative", zIndex: 1 }}>
+        <div style={{ position: "relative", paddingTop: "108%", overflow: "hidden", background: isDark ? "#1a0a3e" : "#ede9ff" }}>
           {imageUrl ? (
             <img
               src={imageUrl}
@@ -331,42 +340,66 @@ function SpeakerCard({ speaker, isDark, card, border, text, sub, purple }) {
                 position: "absolute", inset: 0,
                 width: "100%", height: "100%",
                 objectFit: "cover",
-                transition: "transform 0.5s ease, filter 0.5s ease",
-                transform: hovered ? "scale(1.07)" : "scale(1)",
-                filter: hovered ? "brightness(1.08) contrast(1.05)" : "brightness(1)",
+                objectPosition: "center top",
+                transition: "transform 0.6s ease, filter 0.4s ease",
+                transform: hovered ? "scale(1.06)" : "scale(1)",
+                filter: hovered ? "brightness(1.1) saturate(1.1)" : "brightness(0.95) saturate(1.05)",
               }}
             />
           ) : (
             <div style={{
               position: "absolute", inset: 0,
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "3rem", color: purple, opacity: 0.4,
+              color: purple, opacity: 0.3,
             }}>
-              <Mic size={48} />
+              <Mic size={56} />
             </div>
           )}
-          {/* Purple glow on hover */}
+
+          {/* Bottom gradient fade */}
           <div style={{
-            position: "absolute", inset: 0,
-            background: "radial-gradient(ellipse at 50% 80%, rgba(155,135,245,0.55) 0%, transparent 70%)",
-            opacity: hovered ? 1 : 0,
-            transition: "opacity 0.4s ease",
-            mixBlendMode: "screen",
+            position: "absolute", bottom: 0, left: 0, right: 0, height: "45%",
+            background: "linear-gradient(to top, rgba(10,3,26,0.92) 0%, transparent 100%)",
             pointerEvents: "none",
           }} />
-          {/* View Profile pill */}
+
+          {/* Nationality badge — top right */}
+          {speaker.country && (
+            <div style={{
+              position: "absolute", top: 12, right: 12,
+              background: "rgba(0,0,0,0.55)",
+              backdropFilter: "blur(8px)",
+              borderRadius: 999,
+              padding: "4px 10px",
+              fontSize: "0.7rem",
+              fontWeight: 600,
+              fontFamily: "'Orbitron', sans-serif",
+              color: "#fff",
+              letterSpacing: "0.5px",
+              display: "flex", alignItems: "center", gap: 5,
+              border: "1px solid rgba(255,255,255,0.12)",
+            }}>
+              {speaker.countryFlag && <span>{speaker.countryFlag}</span>}
+              {speaker.country}
+            </div>
+          )}
+
+          {/* View Profile pill on hover */}
           <div style={{
-            position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
-            background: "rgba(155,135,245,0.90)",
+            position: "absolute", bottom: 14, left: "50%", transform: "translateX(-50%)",
+            background: "rgba(155,135,245,0.92)",
+            backdropFilter: "blur(6px)",
             color: "#fff",
-            fontSize: "0.72rem",
+            fontSize: "0.68rem",
+            fontFamily: "'Orbitron', sans-serif",
             fontWeight: 700,
-            letterSpacing: "1px",
-            padding: "5px 14px",
+            letterSpacing: "1.2px",
+            padding: "6px 16px",
             borderRadius: 999,
             opacity: hovered ? 1 : 0,
-            transition: "opacity 0.3s ease",
+            transition: "opacity 0.3s ease, transform 0.3s ease",
             whiteSpace: "nowrap",
+            textTransform: "uppercase",
           }}>
             View Profile →
           </div>
@@ -374,16 +407,57 @@ function SpeakerCard({ speaker, isDark, card, border, text, sub, purple }) {
       </Link>
 
       {/* Info */}
-      <div style={{ padding: "18px 16px 16px" }}>
+      <div style={{ padding: "16px 16px 14px", position: "relative", zIndex: 1 }}>
         <Link to={`/speakers/${speaker._id}`} style={{ textDecoration: "none", color: "inherit" }}>
-          <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#4ade80", marginBottom: 3, fontFamily: "'Orbitron', sans-serif", letterSpacing: "0.03em" }}>
+          {/* Name */}
+          <div style={{
+            fontSize: "0.82rem",
+            fontWeight: 800,
+            color: "#4ade80",
+            marginBottom: 4,
+            fontFamily: "'Orbitron', sans-serif",
+            letterSpacing: "0.04em",
+            lineHeight: 1.3,
+          }}>
             {speaker.name}
           </div>
-          <div style={{ fontSize: "0.72rem", fontWeight: 600, color: text, marginBottom: 2, fontFamily: "'Inter', sans-serif" }}>
+          {/* Title */}
+          <div style={{
+            fontSize: "0.7rem",
+            fontWeight: 600,
+            color: isDark ? "rgba(220,210,255,0.75)" : "rgba(60,20,120,0.70)",
+            marginBottom: 6,
+            fontFamily: "'Orbitron', sans-serif",
+            letterSpacing: "0.02em",
+            lineHeight: 1.4,
+          }}>
             {speaker.title}
           </div>
-          <div style={{ fontSize: "0.75rem", color: sub, marginBottom: 14 }}>
-            {speaker.company}
+          {/* Company — pronounced */}
+          <div style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            background: isDark ? "rgba(155,135,245,0.12)" : "rgba(122,63,209,0.10)",
+            border: `1px solid ${isDark ? "rgba(155,135,245,0.22)" : "rgba(122,63,209,0.18)"}`,
+            borderRadius: 999,
+            padding: "3px 10px",
+            marginBottom: 12,
+          }}>
+            <div style={{
+              width: 5, height: 5, borderRadius: "50%",
+              background: "#9b87f5", flexShrink: 0,
+            }} />
+            <span style={{
+              fontSize: "0.68rem",
+              fontWeight: 700,
+              fontFamily: "'Orbitron', sans-serif",
+              color: isDark ? "#c8b9ff" : "#5a1fa8",
+              letterSpacing: "0.5px",
+              textTransform: "uppercase",
+            }}>
+              {speaker.company}
+            </span>
           </div>
         </Link>
 
@@ -401,16 +475,18 @@ function SpeakerCard({ speaker, isDark, card, border, text, sub, purple }) {
               gap: 8,
               width: "100%",
               padding: "9px 0",
-              borderRadius: 8,
+              borderRadius: 10,
               background: "#0A66C2",
               color: "#fff",
-              fontSize: "0.8rem",
+              fontSize: "0.72rem",
+              fontFamily: "'Orbitron', sans-serif",
               fontWeight: 700,
+              letterSpacing: "0.5px",
               textDecoration: "none",
-              transition: "background 0.2s ease",
+              transition: "background 0.2s ease, transform 0.2s ease",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#004182")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "#0A66C2")}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "#004182"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "#0A66C2"; }}
           >
             <LinkedInIcon />
             View on LinkedIn

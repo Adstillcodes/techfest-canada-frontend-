@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
-import Home from "./pages/Home";
 import Programme from "./pages/Programme";
 import Speakers from "./pages/Speakers";
 import SpeakerProfile from "./pages/Speakerprofile";

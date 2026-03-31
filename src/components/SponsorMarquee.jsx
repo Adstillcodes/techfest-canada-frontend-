@@ -39,9 +39,9 @@ export default function SponsorsMarquee({ dark, title }) {
       });
   }, []);
 
-  const bg = dark ? "#0c0816" : "rgba(122,63,209,0.02)";
-  const border = dark ? "rgba(155,135,245,0.08)" : "rgba(122,63,209,0.08)";
-  const fade = dark ? "#0c0816" : "#ffffff";
+  const bg = dark ? "#f8f6ff" : "rgba(122,63,209,0.02)";
+  const border = dark ? "rgba(122,63,209,0.12)" : "rgba(122,63,209,0.08)";
+  const fade = dark ? "#f8f6ff" : "#ffffff";
 
   // Double the list so the CSS marquee loops seamlessly.
   const items = [...sponsors, ...sponsors];
@@ -97,7 +97,7 @@ export default function SponsorsMarquee({ dark, title }) {
           align-items: center;
           justify-content: center;
           padding: 0 44px;
-          border-right: 1px solid ${dark ? "rgba(255,255,255,0.06)" : border};
+          border-right: 1px solid ${border};
           height: 60px;
           flex-shrink: 0;
         }
@@ -106,11 +106,10 @@ export default function SponsorsMarquee({ dark, title }) {
           width: auto;
           max-width: 180px;
           object-fit: contain;
-          opacity: ${dark ? "0.82" : "0.70"};
-          filter: ${dark ? "none" : "none"};
+          opacity: 0.75;
           transition: opacity 0.25s ease, filter 0.25s ease;
         }
-        .marquee-item:hover img { opacity: 1; ${dark ? "filter: brightness(1.15) saturate(1.1);" : ""} }
+        .marquee-item:hover img { opacity: 1; }
         .marquee-item img[data-name="Temasek"]    { height: 17px; }
         .marquee-item img[data-name="Amazon"]     { height: 26px; }
         .marquee-item img[data-name="DHL"]        { height: 58px; }
@@ -131,7 +130,7 @@ export default function SponsorsMarquee({ dark, title }) {
           fontWeight: 700,
           letterSpacing: "2px",
           textTransform: "uppercase",
-          color: dark ? "rgba(200,185,255,0.40)" : "rgba(13,5,32,0.35)",
+          color: "rgba(80,50,140,0.50)",
         }}
       >
         {displayTitle}

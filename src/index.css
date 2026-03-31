@@ -1,8 +1,86 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Orbitron:wght@700;800;900&display=swap');
+@import 'react-quill/dist/quill.snow.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.quill-dark {
+  --ql-toolbar-bg: #0a0515;
+  --ql-toolbar-border: #374151;
+  --ql-toolbar-handle-bg: #1a1035;
+  --ql-toolbar-handle-hover-bg: #7c3aed;
+  --ql-picker-bg: #0a0515;
+  --ql-picker-border: #374151;
+  --ql-picker-label-bg: #1a1035;
+}
+
+.quill-dark .ql-toolbar {
+  background: #0a0515;
+  border-color: #374151 !important;
+  border-radius: 8px 8px 0 0;
+}
+
+.quill-dark .ql-container {
+  background: #ffffff;
+  border-color: #374151 !important;
+  border-radius: 0 0 8px 8px;
+  font-family: 'DM Sans', Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  color: #1a1035;
+  min-height: 250px;
+}
+
+.quill-dark .ql-editor {
+  min-height: 250px;
+  color: #1a1035;
+}
+
+.quill-dark .ql-editor.ql-blank::before {
+  color: #9ca3af;
+  font-style: normal;
+}
+
+.quill-dark .ql-toolbar button:hover,
+.quill-dark .ql-toolbar button.ql-active {
+  background: #7c3aed;
+  border-radius: 4px;
+}
+
+.quill-dark .ql-toolbar button .ql-stroke {
+  stroke: #9ca3af;
+}
+
+.quill-dark .ql-toolbar button:hover .ql-stroke,
+.quill-dark .ql-toolbar button.ql-active .ql-stroke {
+  stroke: #ffffff;
+}
+
+.quill-dark .ql-toolbar button .ql-fill {
+  fill: #9ca3af;
+}
+
+.quill-dark .ql-toolbar button:hover .ql-fill,
+.quill-dark .ql-toolbar button.ql-active .ql-fill {
+  fill: #ffffff;
+}
+
+.quill-dark .ql-picker-label {
+  color: #9ca3af;
+}
+
+.quill-dark .ql-picker-options {
+  background: #0a0515;
+  border-color: #374151;
+}
+
+.quill-dark .ql-picker-item {
+  color: #d1d5db;
+}
+
+.quill-dark .ql-picker-item:hover {
+  color: #ffffff;
+}
 
 :root {
   font-family: 'DM Sans', system-ui, Helvetica, Arial, sans-serif;

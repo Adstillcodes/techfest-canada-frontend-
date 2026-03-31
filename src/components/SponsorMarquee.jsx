@@ -39,9 +39,9 @@ export default function SponsorsMarquee({ dark, title }) {
       });
   }, []);
 
-  const bg = dark ? "#f8f6ff" : "rgba(122,63,209,0.02)";
-  const border = dark ? "rgba(122,63,209,0.12)" : "rgba(122,63,209,0.08)";
-  const fade = dark ? "#f8f6ff" : "#ffffff";
+  const bg = dark ? "#0c0816" : "rgba(122,63,209,0.02)";
+  const border = dark ? "rgba(155,135,245,0.08)" : "rgba(122,63,209,0.08)";
+  const fade = dark ? "#0c0816" : "#ffffff";
 
   // Double the list so the CSS marquee loops seamlessly.
   const items = [...sponsors, ...sponsors];
@@ -88,49 +88,62 @@ export default function SponsorsMarquee({ dark, title }) {
         }
         .marquee-track {
           display: flex;
+          align-items: center;
           width: max-content;
           animation: marquee-scroll 32s linear infinite;
+          gap: 16px;
+          padding: 0 8px;
         }
         .marquee-track:hover { animation-play-state: paused; }
         .marquee-item {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 0 44px;
-          border-right: 1px solid ${border};
-          height: 60px;
+          padding: 12px 28px;
+          height: 64px;
           flex-shrink: 0;
+          background: rgba(255, 255, 255, 0.07);
+          border: 1px solid rgba(255, 255, 255, 0.10);
+          border-radius: 14px;
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+        }
+        .marquee-item:hover {
+          background: rgba(255, 255, 255, 0.13);
+          border-color: rgba(255, 255, 255, 0.20);
+          transform: translateY(-2px);
         }
         .marquee-item img {
-          height: 40px;
+          height: 36px;
           width: auto;
-          max-width: 180px;
+          max-width: 160px;
           object-fit: contain;
-          opacity: 0.75;
-          transition: opacity 0.25s ease, filter 0.25s ease;
+          opacity: 0.90;
+          transition: opacity 0.25s ease;
         }
         .marquee-item:hover img { opacity: 1; }
         .marquee-item img[data-name="Temasek"]    { height: 17px; }
         .marquee-item img[data-name="Amazon"]     { height: 26px; }
-        .marquee-item img[data-name="DHL"]        { height: 58px; }
-        .marquee-item img[data-name="Constellar"] { height: 50px; }
-        .marquee-item img[data-name="Ford"]       { height: 50px; }
-        .marquee-item img[data-name="KPMG"]       { height: 46px; }
+        .marquee-item img[data-name="DHL"]        { height: 52px; }
+        .marquee-item img[data-name="Constellar"] { height: 44px; }
+        .marquee-item img[data-name="Ford"]       { height: 44px; }
+        .marquee-item img[data-name="KPMG"]       { height: 40px; }
         .marquee-item img[data-name="Accenture"]  { height: 26px; }
         .marquee-item img[data-name="Cvent"]      { height: 26px; }
-        .marquee-item img[data-name="VMware"]     { height: 54px; }
+        .marquee-item img[data-name="VMware"]     { height: 48px; }
       `}</style>
 
       <div
         style={{
           textAlign: "center",
-          marginBottom: 18,
+          marginBottom: 20,
           fontFamily: "'Orbitron',sans-serif",
           fontSize: "0.6rem",
           fontWeight: 700,
           letterSpacing: "2px",
           textTransform: "uppercase",
-          color: "rgba(80,50,140,0.50)",
+          color: dark ? "rgba(200,185,255,0.40)" : "rgba(13,5,32,0.35)",
         }}
       >
         {displayTitle}
@@ -162,6 +175,7 @@ export default function SponsorsMarquee({ dark, title }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={sponsor.name}
+                    style={{ display: "flex", alignItems: "center" }}
                   >
                     {img}
                   </a>

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Home from "./pages/Home";
 import Programme from "./pages/Programme";
 import Speakers from "./pages/Speakers";
-import SpeakerProfile from "./pages/SpeakerProfile";
+import SpeakerProfile from "./pages/Speakerprofile";
 import Sponsors from "./pages/Sponsors";
 import Tickets from "./pages/Tickets";
 import Resources from "./pages/Resources";

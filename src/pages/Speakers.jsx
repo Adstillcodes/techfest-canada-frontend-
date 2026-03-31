@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { Mic, Users, Calendar, Award, ChevronRight, X, Search } from "lucide-react";
+import emailjs from "@emailjs/browser";
 import { client, urlFor } from "../utils/sanity";
 import SponsorMarquee from "../components/SponsorMarquee";
 
@@ -24,7 +25,6 @@ export default function Speakers() {
   const [speakers, setSpeakers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [expandedBios, setExpandedBios] = useState({});
 
   useEffect(() => {
     const sync = () => setIsDark(document.body.classList.contains("dark-mode"));
@@ -65,9 +65,6 @@ export default function Speakers() {
         s.bio?.toLowerCase().includes(q)
     );
   }, [speakers, search]);
-
-  const toggleBio = (id) =>
-    setExpandedBios((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const bg = isDark ? "#06020f" : "#ffffff";
   const text = isDark ? "#f0eaff" : "#0d0520";
@@ -200,8 +197,6 @@ export default function Speakers() {
                 text={text}
                 sub={sub}
                 purple={purple}
-                expanded={!!expandedBios[speaker._id]}
-                onToggle={() => toggleBio(speaker._id)}
               />
             ))}
           </div>
@@ -287,7 +282,7 @@ export default function Speakers() {
 }
 
 /* ── SPEAKER CARD ── */
-function SpeakerCard({ speaker, isDark, card, border, text, sub, purple, expanded, onToggle }) {
+function SpeakerCard({ speaker, isDark, card, border, text, sub, purple }) {
   const [hovered, setHovered] = React.useState(false);
 
   const imageUrl = speaker.image ? urlFor(speaker.image).width(400).height(400).url() : null;
@@ -371,39 +366,32 @@ function SpeakerCard({ speaker, isDark, card, border, text, sub, purple, expande
           <div style={{ fontSize: "0.78rem", fontWeight: 600, color: text, marginBottom: 2 }}>
             {speaker.title}
           </div>
-          <div style={{ fontSize: "0.75rem", color: sub, marginBottom: 10 }}>
+          <div style={{ fontSize: "0.75rem", color: sub, marginBottom: 14 }}>
             {speaker.company}
           </div>
         </Link>
 
-        {speaker.bio && (
-          <>
-            <p style={{
-              fontSize: "0.78rem",
-              color: sub,
-              lineHeight: 1.6,
-              marginBottom: 10,
-              display: "-webkit-box",
-              WebkitLineClamp: expanded ? "unset" : 3,
-              WebkitBoxOrient: "vertical",
-              overflow: expanded ? "visible" : "hidden",
-            }}>
-              {speaker.bio}
-            </p>
-            {speaker.bio.length > 120 && (
-              <button
-                onClick={onToggle}
-                style={{
-                  background: "none", border: "none", cursor: "pointer",
-                  color: purple, fontSize: "0.75rem", fontWeight: 600,
-                  padding: 0, marginBottom: 12,
-                }}
-              >
-                {expanded ? "Show less" : "Read more"}
-              </button>
-            )}
-          </>
-        )}
+        <Link
+          to={`/speakers/${speaker._id}`}
+          style={{
+            display: "block",
+            textAlign: "center",
+            padding: "9px 0",
+            borderRadius: 8,
+            background: "transparent",
+            border: `1px solid ${purple}`,
+            color: purple,
+            fontSize: "0.8rem",
+            fontWeight: 700,
+            textDecoration: "none",
+            marginBottom: 10,
+            transition: "background 0.2s ease, color 0.2s ease",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = purple; e.currentTarget.style.color = "#fff"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = purple; }}
+        >
+          View Profile →
+        </Link>
 
         {/* LinkedIn */}
         {speaker.linkedin && (
@@ -449,7 +437,6 @@ function ApplyToSpeak({ isDark, border, purple, sub }) {
     if (!form.name || !form.email) return;
     setStatus("loading");
     try {
-      const emailjs = await import("@emailjs/browser");
       await emailjs.send(
         "service_gy3fvru",
         "template_ufqzzep",

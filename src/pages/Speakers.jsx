@@ -206,16 +206,32 @@ export default function Speakers() {
         {!loading && (
           <div style={{
             marginTop: 60,
-            padding: "28px 32px",
-            borderRadius: 16,
-            border: `1px solid ${border}`,
-            background: card,
+            padding: "40px 32px",
+            borderRadius: 20,
+            border: "1px solid rgba(155,135,245,0.25)",
+            background: "linear-gradient(135deg, rgba(155,135,245,0.13) 0%, rgba(245,166,35,0.07) 100%)",
             textAlign: "center",
+            position: "relative",
+            overflow: "hidden",
           }}>
-            <div style={{ fontSize: "1.4rem", marginBottom: 8 }}>🎤</div>
-            <div style={{ fontWeight: 700, fontSize: "1rem", marginBottom: 6 }}>More Speakers Coming Soon</div>
-            <div style={{ fontSize: "0.85rem", color: sub }}>
-              We're finalizing our lineup. Check back for updates.
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "radial-gradient(ellipse 70% 80% at 50% 50%, rgba(155,135,245,0.10) 0%, transparent 70%)",
+              pointerEvents: "none",
+            }} />
+            <div style={{ fontSize: "1.8rem", marginBottom: 12 }}>🎤</div>
+            <div style={{
+              fontWeight: 800,
+              fontSize: "clamp(1rem, 3vw, 1.3rem)",
+              marginBottom: 8,
+              fontFamily: "'Orbitron', sans-serif",
+              letterSpacing: "0.04em",
+              color: isDark ? "#f0eaff" : "#0d0520",
+            }}>
+              More Speakers Coming Soon
+            </div>
+            <div style={{ fontSize: "0.85rem", color: sub, maxWidth: 420, margin: "0 auto" }}>
+              We're finalizing our lineup. Check back regularly for updates.
             </div>
           </div>
         )}

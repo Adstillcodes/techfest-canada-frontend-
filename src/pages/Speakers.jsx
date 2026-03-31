@@ -363,27 +363,6 @@ function SpeakerCard({ speaker, isDark, card, border, text, sub, purple }) {
             pointerEvents: "none",
           }} />
 
-          {/* Nationality badge — top right */}
-          {speaker.country && (
-            <div style={{
-              position: "absolute", top: 12, right: 12,
-              background: "rgba(0,0,0,0.55)",
-              backdropFilter: "blur(8px)",
-              borderRadius: 999,
-              padding: "4px 10px",
-              fontSize: "0.7rem",
-              fontWeight: 600,
-              fontFamily: "'Orbitron', sans-serif",
-              color: "#fff",
-              letterSpacing: "0.5px",
-              display: "flex", alignItems: "center", gap: 5,
-              border: "1px solid rgba(255,255,255,0.12)",
-            }}>
-              {speaker.countryFlag && <span>{speaker.countryFlag}</span>}
-              {speaker.country}
-            </div>
-          )}
-
           {/* View Profile pill on hover */}
           <div style={{
             position: "absolute", bottom: 14, left: "50%", transform: "translateX(-50%)",
@@ -413,7 +392,7 @@ function SpeakerCard({ speaker, isDark, card, border, text, sub, purple }) {
           <div style={{
             fontSize: "0.82rem",
             fontWeight: 800,
-            color: "#4ade80",
+            color: isDark ? "#4ade80" : "#6d28d9",
             marginBottom: 4,
             fontFamily: "'Orbitron', sans-serif",
             letterSpacing: "0.04em",

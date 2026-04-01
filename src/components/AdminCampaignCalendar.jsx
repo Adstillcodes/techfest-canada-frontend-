@@ -589,11 +589,60 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
   const [saving, setSaving] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const editorRef = useRef(null);
+  const codeEditorRef = useRef(null);
 
   const insertToken = (token) => {
     if (editorRef.current) {
       insertText(editorRef.current, `/${token}`);
     }
+  };
+
+  const insertImageToCodeEditor = (imgTag) => {
+    const textarea = codeEditorRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = htmlBody;
+    const newText = text.substring(0, start) + imgTag + text.substring(end);
+    setHtmlBody(newText);
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + imgTag.length, start + imgTag.length);
+    }, 0);
+  };
+
+  const handleCodeImageUrl = () => {
+    const url = window.prompt("Enter image URL:");
+    if (url) {
+      insertImageToCodeEditor(`<img src="${url}" alt="Image" style="max-width:100%;height:auto;" />`);
+    }
+  };
+
+  const handleCodeImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result;
+      if (base64) {
+        insertImageToCodeEditor(`<img src="${base64}" alt="Image" style="max-width:100%;height:auto;" />`);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const insertTokenToCodeEditor = (token) => {
+    const textarea = codeEditorRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const text = htmlBody;
+    const newText = text.substring(0, start) + `/${token}` + text.substring(start);
+    setHtmlBody(newText);
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + token.length + 1, start + token.length + 1);
+    }, 0);
   };
 
   const handleTemplateSelect = (template) => {
@@ -755,13 +804,47 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
           )}
 
           {activeTab === "code" && (
-            <textarea
-              value={htmlBody}
-              onChange={(e) => setHtmlBody(e.target.value)}
-              placeholder="<html><body><h1>Hello!</h1>...</body></html>"
-              rows={15}
-              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
-            />
+            <>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-gray-400 text-xs">Insert:</span>
+                {["firstname", "lastname", "company", "title", "location"].map((token) => (
+                  <button
+                    key={token}
+                    type="button"
+                    onClick={() => insertTokenToCodeEditor(token)}
+                    className="px-2 py-1 bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 text-xs rounded transition-colors border border-purple-600/30"
+                  >
+                    /{token}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 mb-3">
+                <button
+                  type="button"
+                  onClick={handleCodeImageUrl}
+                  className="px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 text-sm rounded transition-colors border border-purple-600/30 flex items-center gap-1"
+                >
+                  🔗 Add Image from URL
+                </button>
+                <label className="px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 text-sm rounded transition-colors border border-purple-600/30 flex items-center gap-1 cursor-pointer">
+                  📁 Upload Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCodeImageUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              <textarea
+                ref={codeEditorRef}
+                value={htmlBody}
+                onChange={(e) => setHtmlBody(e.target.value)}
+                placeholder="<html><body><h1>Hello!</h1>...</body></html>"
+                rows={15}
+                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
+              />
+            </>
           )}
 
           {activeTab === "text" && (

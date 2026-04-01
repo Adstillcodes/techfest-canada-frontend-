@@ -434,6 +434,15 @@ function EditAudienceModal({ audience, onClose, onSuccess }) {
   const [activeTab, setActiveTab] = useState("details");
   const [contacts, setContacts] = useState([]);
   const [loadingContacts, setLoadingContacts] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newContact, setNewContact] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    company: "",
+    title: "",
+    location: ""
+  });
 
   useEffect(() => {
     if (activeTab === "contacts") {
@@ -499,6 +508,32 @@ function EditAudienceModal({ audience, onClose, onSuccess }) {
     } catch (err) {
       console.error("Failed to add contacts:", err);
       setFeedback({ type: "error", message: "Failed to add contacts" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAddSingleContact = async () => {
+    if (!newContact.email.trim() || !newContact.email.includes("@")) {
+      setFeedback({ type: "error", message: "Valid email is required" });
+      return;
+    }
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `${API}/campaigns/audiences/${audience._id}/contacts`,
+        { contacts: [newContact] },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setNewContact({ email: "", firstName: "", lastName: "", company: "", title: "", location: "" });
+      setShowAddForm(false);
+      setFeedback({ type: "success", message: "Contact added successfully!" });
+      onSuccess();
+    } catch (err) {
+      console.error("Failed to add contact:", err);
+      setFeedback({ type: "error", message: "Failed to add contact" });
     } finally {
       setSaving(false);
     }
@@ -601,8 +636,84 @@ function EditAudienceModal({ audience, onClose, onSuccess }) {
 
                 <div className="space-y-4">
                   <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-gray-300 text-sm">
+                        Add Single Contact
+                      </label>
+                      <button
+                        onClick={() => setShowAddForm(!showAddForm)}
+                        className="text-xs text-purple-400 hover:text-purple-300"
+                      >
+                        {showAddForm ? "Cancel" : "Add New"}
+                      </button>
+                    </div>
+                    
+                    {showAddForm && (
+                      <div className="bg-[#0a0515] border border-gray-700 rounded-lg p-4 space-y-3">
+                        <div className="grid grid-cols-2 gap-3">
+                          <input
+                            type="email"
+                            value={newContact.email}
+                            onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
+                            placeholder="Email *"
+                            className="bg-[#0a0515] border border-gray-700 rounded px-3 py-2 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none text-sm"
+                          />
+                          <input
+                            type="text"
+                            value={newContact.firstName}
+                            onChange={(e) => setNewContact({ ...newContact, firstName: e.target.value })}
+                            placeholder="First Name"
+                            className="bg-[#0a0515] border border-gray-700 rounded px-3 py-2 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none text-sm"
+                          />
+                          <input
+                            type="text"
+                            value={newContact.lastName}
+                            onChange={(e) => setNewContact({ ...newContact, lastName: e.target.value })}
+                            placeholder="Last Name"
+                            className="bg-[#0a0515] border border-gray-700 rounded px-3 py-2 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none text-sm"
+                          />
+                          <input
+                            type="text"
+                            value={newContact.company}
+                            onChange={(e) => setNewContact({ ...newContact, company: e.target.value })}
+                            placeholder="Company"
+                            className="bg-[#0a0515] border border-gray-700 rounded px-3 py-2 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none text-sm"
+                          />
+                          <input
+                            type="text"
+                            value={newContact.title}
+                            onChange={(e) => setNewContact({ ...newContact, title: e.target.value })}
+                            placeholder="Job Title"
+                            className="bg-[#0a0515] border border-gray-700 rounded px-3 py-2 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none text-sm"
+                          />
+                          <input
+                            type="text"
+                            value={newContact.location}
+                            onChange={(e) => setNewContact({ ...newContact, location: e.target.value })}
+                            placeholder="Location"
+                            className="bg-[#0a0515] border border-gray-700 rounded px-3 py-2 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none text-sm"
+                          />
+                        </div>
+                        <button
+                          onClick={handleAddSingleContact}
+                          disabled={saving || !newContact.email.trim()}
+                          className="btn-primary text-sm w-full"
+                        >
+                          {saving ? "Adding..." : "Add Contact"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="flex-1 border-t border-gray-700" />
+                    <span className="px-4 text-gray-500 text-sm">or</span>
+                    <div className="flex-1 border-t border-gray-700" />
+                  </div>
+
+                  <div>
                     <label className="block text-gray-300 text-sm mb-2">
-                      Add Emails Manually (one per line)
+                      Add Multiple Emails (one per line)
                     </label>
                     <textarea
                       value={additionalEmails}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import {
   BarChart,
@@ -12,6 +12,7 @@ import {
   Cell,
 } from "recharts";
 import EmailEditorModal from "./EmailEditorModal";
+import TiptapEditor, { insertText } from "./ui/TiptapEditor";
 
 const API = "https://techfest-canada-backend.onrender.com/api";
 
@@ -308,6 +309,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
   });
   const [audiences, setAudiences] = useState([]);
   const [saving, setSaving] = useState(false);
+  const editorRef = useRef(null);
 
   useEffect(() => {
     fetchAudiences();
@@ -419,17 +421,47 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
           </div>
 
           <div>
-            <label className="block text-gray-300 text-sm mb-2">Email Content (HTML)</label>
-            <textarea
+            <label className="block text-gray-300 text-sm mb-2">Email Content</label>
+            
+            <div className="flex items-center gap-2 flex-wrap mb-3">
+              <span className="text-gray-400 text-xs">Insert:</span>
+              {["firstname", "lastname", "company", "title", "location"].map((token) => (
+                <button
+                  key={token}
+                  type="button"
+                  onClick={() => {
+                    if (editorRef.current) {
+                      insertText(editorRef.current, `/${token}`);
+                    }
+                  }}
+                  className="px-2 py-1 bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 text-xs rounded transition-colors border border-purple-600/30"
+                >
+                  /{token}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  if (editorRef.current) {
+                    editorRef.current.commands.clearContent();
+                  }
+                }}
+                className="ml-auto px-2 py-1 bg-gray-600/20 hover:bg-gray-600/40 text-gray-400 text-xs rounded transition-colors border border-gray-600/30"
+              >
+                Clear
+              </button>
+            </div>
+
+            <TiptapEditor
+              ref={editorRef}
               value={formData.template}
-              onChange={(e) => setFormData({ ...formData, template: e.target.value })}
-              placeholder="<html><body><h1>Hello!</h1>...</body></html>"
-              rows={10}
-              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
+              onChange={(html) => setFormData({ ...formData, template: html })}
+              placeholder="Start writing your email..."
+              minHeight="250px"
+              darkMode={true}
             />
             <p className="text-xs text-gray-500 mt-2">
-              Tip: Include {"{{name}}"} for personalization. Tracking pixel and links are
-              automatically added.
+              Tip: Use personalization tokens above or {"{{name}}"} for dynamic content. Tracking pixel and links are automatically added.
             </p>
           </div>
         </div>

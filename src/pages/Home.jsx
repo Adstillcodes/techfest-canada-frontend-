@@ -245,16 +245,6 @@ export default function Home() {
   const textMid  = dark ? "rgba(255,255,255,0.75)" : "rgba(13,5,32,0.78)";
   const accent   = dark ? "#b99eff"                : "#7a3fd1";
 
-  // Original logo mapping was correct — Dark.png for dark mode, Light.webp for light mode
-  const logoSrc = dark
-    ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png"
-    : "/Tech_Festival_Canada_Logo_Light_Transparent.webp";
-
-  const logoFilter = dark
-    ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))"
-    : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))";
-
-  // Bumped light mode overlay so the logo doesn't wash out against the video
   const heroOverlay = dark ? "rgba(6,2,15,0.65)" : "rgba(244,240,255,0.72)";
 
   return (
@@ -359,14 +349,14 @@ export default function Home() {
         >
           <motion.div variants={itemBlur} style={{ marginBottom: "2.2rem" }}>
             <img
-              src={logoSrc}       // ← fixed
+              src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
               alt="The Tech Festival Canada"
               style={{
                 width: "100%",
                 maxWidth: 980,
                 height: "auto",
                 objectFit: "contain",
-                filter: logoFilter,
+                filter: dark ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))" : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))",
               }}
             />
           </motion.div>

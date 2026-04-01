@@ -474,6 +474,8 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
             Purchase Booth
           </motion.button>
 
+        </motion.div>
+
       </div>
     </section>
   );

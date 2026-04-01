@@ -228,12 +228,14 @@ function AudienceDetailModal({ audience, onClose }) {
     setLoadingContacts(true);
     try {
       const token = localStorage.getItem("token");
+      console.log("Fetching contacts for audience:", audience._id);
       const res = await axios.get(`${API}/campaigns/audiences/${audience._id}/contacts`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("Contacts response:", res.data);
       setContacts(res.data.contacts || []);
     } catch (err) {
-      console.error("Failed to fetch contacts:", err);
+      console.error("Failed to fetch contacts:", err.response || err);
     } finally {
       setLoadingContacts(false);
     }

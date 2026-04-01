@@ -166,6 +166,14 @@ export default function AdminCampaignCalendar() {
     return `${diff} days`;
   };
 
+  const toggleCell = (phase, audience) => {
+    const key = `${phase}-${audience}`;
+    setExpandedCells((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-12">

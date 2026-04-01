@@ -11,6 +11,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import EmailEditorModal from "./EmailEditorModal";
 
 const API = "https://techfest-canada-backend.onrender.com/api";
 
@@ -29,6 +30,7 @@ export default function AdminEmailCampaigns() {
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [editingCampaign, setEditingCampaign] = useState(null);
 
   useEffect(() => {
     fetchCampaigns();
@@ -135,6 +137,12 @@ export default function AdminEmailCampaigns() {
                     className="text-xs px-3 py-1.5 bg-purple-600/20 text-purple-300 rounded hover:bg-purple-600/30"
                   >
                     View Stats
+                  </button>
+                  <button
+                    onClick={() => setEditingCampaign(campaign)}
+                    className="text-xs px-3 py-1.5 bg-yellow-600/20 text-yellow-300 rounded hover:bg-yellow-600/30"
+                  >
+                    Edit Email
                   </button>
                   <button
                     onClick={() => sendTestEmail(campaign._id)}
@@ -273,6 +281,18 @@ export default function AdminEmailCampaigns() {
             setSelectedCampaign(null);
             fetchCampaigns();
           }}
+        />
+      )}
+
+      {editingCampaign && (
+        <EmailEditorModal
+          campaign={editingCampaign}
+          onClose={() => setEditingCampaign(null)}
+          onSave={() => {
+            setEditingCampaign(null);
+            fetchCampaigns();
+          }}
+          mode="campaigns"
         />
       )}
     </div>

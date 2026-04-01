@@ -245,18 +245,16 @@ export default function Home() {
   const textMid  = dark ? "rgba(255,255,255,0.75)" : "rgba(13,5,32,0.78)";
   const accent   = dark ? "#b99eff"                : "#7a3fd1";
 
-  // ── FIX: match logo contrast to background ─────────────────────────────────
-  // "Light_Transparent" = white logo  → use on dark bg
-  // "Dark_Transparent"  = dark logo   → use on light bg
+  // Original logo mapping was correct — Dark.png for dark mode, Light.webp for light mode
   const logoSrc = dark
-    ? "/Tech_Festival_Canada_Logo_Light_Transparent.webp"
-    : "/Tech_Festival_Canada_Logo_Dark_Transparent.png";
+    ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png"
+    : "/Tech_Festival_Canada_Logo_Light_Transparent.webp";
 
   const logoFilter = dark
     ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))"
     : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))";
 
-  // ── FIX: stronger overlay in light mode so dark logo pops over video ───────
+  // Bumped light mode overlay so the logo doesn't wash out against the video
   const heroOverlay = dark ? "rgba(6,2,15,0.65)" : "rgba(244,240,255,0.72)";
 
   return (

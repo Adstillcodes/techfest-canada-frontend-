@@ -477,7 +477,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
           )}
           <button
             onClick={handleSubmit}
-            disabled={saving || !formData.name || !formData.subject}
+            disabled={saving || !formData.name || !formData.subject || !formData.audienceId || !formData.template}
             className="btn-primary"
           >
             {saving ? "Saving..." : campaign ? "Save Changes" : "Create Draft"}

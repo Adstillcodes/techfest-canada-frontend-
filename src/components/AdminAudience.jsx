@@ -367,6 +367,30 @@ function EditAudienceModal({ audience, onClose, onSuccess }) {
   const [saving, setSaving] = useState(false);
   const [importingCsv, setImportingCsv] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [activeTab, setActiveTab] = useState("details");
+  const [contacts, setContacts] = useState([]);
+  const [loadingContacts, setLoadingContacts] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "contacts") {
+      fetchContacts();
+    }
+  }, [activeTab]);
+
+  const fetchContacts = async () => {
+    setLoadingContacts(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/campaigns/audiences/${audience._id}/contacts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setContacts(res.data.contacts || []);
+    } catch (err) {
+      console.error("Failed to fetch contacts:", err);
+    } finally {
+      setLoadingContacts(false);
+    }
+  };
 
   const handleUpdateName = async () => {
     if (!name.trim() || name === audience.name) return;
@@ -458,93 +482,165 @@ function EditAudienceModal({ audience, onClose, onSuccess }) {
         </div>
 
         <div className="p-6 space-y-6">
-          <div>
-            <label className="block text-gray-300 text-sm mb-2">Audience Name</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="flex-1 bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
-              />
-              <button
-                onClick={handleUpdateName}
-                disabled={saving || !name.trim() || name === audience.name}
-                className="btn-primary whitespace-nowrap"
-              >
-                {saving ? "Saving..." : "Save Name"}
-              </button>
-            </div>
+          <div className="flex gap-4 border-b border-gray-700 pb-4">
+            <button
+              onClick={() => setActiveTab("details")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "details"
+                  ? "bg-purple-600 text-white"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Details
+            </button>
+            <button
+              onClick={() => setActiveTab("contacts")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "contacts"
+                  ? "bg-purple-600 text-white"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Contacts ({audience.contactCount || 0})
+            </button>
           </div>
 
-          <div className="border-t border-gray-700 pt-6">
-            <h4 className="text-white font-medium mb-4">Add Contacts</h4>
-
-            {feedback && (
-              <div className={`mb-4 p-3 rounded-lg text-sm ${feedback.type === "success" ? "bg-green-600/20 text-green-300" : "bg-red-600/20 text-red-300"}`}>
-                {feedback.message}
-              </div>
-            )}
-
-            <div className="space-y-4">
+          {activeTab === "details" && (
+            <div className="space-y-6">
               <div>
-                <label className="block text-gray-300 text-sm mb-2">
-                  Add Emails Manually (one per line)
-                </label>
-                <textarea
-                  value={additionalEmails}
-                  onChange={(e) => setAdditionalEmails(e.target.value)}
-                  placeholder="email@example.com&#10;another@example.com"
-                  rows={5}
-                  className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
-                />
-                <div className="flex justify-between items-center mt-2">
-                  <p className="text-xs text-gray-500">{emailCount} valid emails</p>
-                  <button
-                    onClick={handleAddEmails}
-                    disabled={saving || !additionalEmails.trim()}
-                    className="btn-secondary text-sm"
-                  >
-                    Add Emails
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <div className="flex-1 border-t border-gray-700" />
-                <span className="px-4 text-gray-500 text-sm">or</span>
-                <div className="flex-1 border-t border-gray-700" />
-              </div>
-
-              <div>
-                <label className="block text-gray-300 text-sm mb-2">Import CSV File</label>
+                <label className="block text-gray-300 text-sm mb-2">Audience Name</label>
                 <div className="flex gap-2">
-                  <label className="flex-1 cursor-pointer">
-                    <div className="bg-[#0a0515] border border-gray-700 border-dashed rounded-lg px-4 py-6 text-center hover:border-purple-500 transition-colors">
-                      <div className="text-purple-400 mb-2">📄</div>
-                      <p className="text-gray-400 text-sm">
-                        {csvFile ? csvFile.name : "Click to select CSV file"}
-                      </p>
-                      <p className="text-gray-500 text-xs mt-1">CSV should have columns: email, name (optional)</p>
-                      <input
-                        type="file"
-                        accept=".csv"
-                        onChange={(e) => setCsvFile(e.target.files[0])}
-                        className="hidden"
-                      />
-                    </div>
-                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="flex-1 bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
+                  />
                   <button
-                    onClick={handleCsvImport}
-                    disabled={importingCsv || !csvFile}
-                    className="btn-primary whitespace-nowrap self-end"
+                    onClick={handleUpdateName}
+                    disabled={saving || !name.trim() || name === audience.name}
+                    className="btn-primary whitespace-nowrap"
                   >
-                    {importingCsv ? "Importing..." : "Import CSV"}
+                    {saving ? "Saving..." : "Save Name"}
                   </button>
                 </div>
               </div>
+
+              <div className="border-t border-gray-700 pt-6">
+                <h4 className="text-white font-medium mb-4">Add Contacts</h4>
+
+                {feedback && (
+                  <div className={`mb-4 p-3 rounded-lg text-sm ${feedback.type === "success" ? "bg-green-600/20 text-green-300" : "bg-red-600/20 text-red-300"}`}>
+                    {feedback.message}
+                  </div>
+                )}
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-gray-300 text-sm mb-2">
+                      Add Emails Manually (one per line)
+                    </label>
+                    <textarea
+                      value={additionalEmails}
+                      onChange={(e) => setAdditionalEmails(e.target.value)}
+                      placeholder="email@example.com"
+                      rows={5}
+                      className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
+                    />
+                    <div className="flex justify-between items-center mt-2">
+                      <p className="text-xs text-gray-500">{emailCount} valid emails</p>
+                      <button
+                        onClick={handleAddEmails}
+                        disabled={saving || !additionalEmails.trim()}
+                        className="btn-secondary text-sm"
+                      >
+                        Add Emails
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="flex-1 border-t border-gray-700" />
+                    <span className="px-4 text-gray-500 text-sm">or</span>
+                    <div className="flex-1 border-t border-gray-700" />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-300 text-sm mb-2">Import CSV File</label>
+                    <div className="flex gap-2">
+                      <label className="flex-1 cursor-pointer">
+                        <div className="bg-[#0a0515] border border-gray-700 border-dashed rounded-lg px-4 py-6 text-center hover:border-purple-500 transition-colors">
+                          <div className="text-purple-400 mb-2">📄</div>
+                          <p className="text-gray-400 text-sm">
+                            {csvFile ? csvFile.name : "Click to select CSV file"}
+                          </p>
+                          <p className="text-gray-500 text-xs mt-1">CSV should have columns: email, name, firstname, lastname, company, title, location</p>
+                          <input
+                            type="file"
+                            accept=".csv"
+                            onChange={(e) => setCsvFile(e.target.files[0])}
+                            className="hidden"
+                          />
+                        </div>
+                      </label>
+                      <button
+                        onClick={handleCsvImport}
+                        disabled={importingCsv || !csvFile}
+                        className="btn-primary whitespace-nowrap self-end"
+                      >
+                        {importingCsv ? "Importing..." : "Import CSV"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+
+          {activeTab === "contacts" && (
+            <div>
+              {loadingContacts ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-purple-500 border-t-transparent" />
+                </div>
+              ) : contacts.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  No contacts in this audience
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="admin-table text-sm">
+                    <thead>
+                      <tr>
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Company</th>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Added</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {contacts.map((contact, idx) => (
+                        <tr key={idx}>
+                          <td className="text-white">{contact.email}</td>
+                          <td className="text-gray-300">{contact.firstName || "-"}</td>
+                          <td className="text-gray-300">{contact.lastName || "-"}</td>
+                          <td className="text-gray-300">{contact.company || "-"}</td>
+                          <td className="text-gray-300">{contact.title || "-"}</td>
+                          <td className="text-gray-300">{contact.location || "-"}</td>
+                          <td className="text-gray-400 text-xs">
+                            {contact.addedAt ? new Date(contact.addedAt).toLocaleDateString() : "-"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="p-6 border-t border-gray-700 flex justify-end">

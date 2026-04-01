@@ -10,8 +10,8 @@ const builder = imageUrlBuilder(client);
 const urlFor = (source) => builder.image(source);
 
 // ─── GROQ query ───────────────────────────────────────────────────────────────
-const SPONSORS_QUERY = `
-  *[_type == "sponsor" && active == true] | order(order asc) {
+const buildQuery = (schemaType) => `
+  *[_type == "${schemaType}" && active == true] | order(order asc) {
     _id,
     name,
     logo,
@@ -20,14 +20,15 @@ const SPONSORS_QUERY = `
 `;
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export default function SponsorsMarquee({ dark, title }) {
+export default function SponsorsMarquee({ dark, title, schemaType = "sponsor" }) {
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const query = buildQuery(schemaType);
     client
-      .fetch(SPONSORS_QUERY)
+      .fetch(query)
       .then((data) => {
         setSponsors(data);
         setLoading(false);

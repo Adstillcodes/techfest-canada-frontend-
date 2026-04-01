@@ -238,7 +238,7 @@ export default function Speakers() {
       </section>
 
       {/* ── WHERE SPEAKERS WORK ── */}
-      <SponsorMarquee dark={isDark} title="Where our speakers work at" />
+      <SponsorMarquee dark={isDark} title="Where our speakers work at" schemaType="sponsorMarquee" />
 
       {/* ── ADVISORY COUNCIL ── */}
       <section style={{

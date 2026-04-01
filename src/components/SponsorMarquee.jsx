@@ -136,11 +136,11 @@ export default function SponsorsMarquee({ dark, title }) {
           textAlign: "center",
           marginBottom: 20,
           fontFamily: "'Orbitron',sans-serif",
-          fontSize: "0.6rem",
-          fontWeight: 700,
-          letterSpacing: "2px",
+          fontSize: "0.72rem",
+          fontWeight: 900,
+          letterSpacing: "2.5px",
           textTransform: "uppercase",
-          color: dark ? "rgba(200,185,255,0.40)" : "rgba(13,5,32,0.35)",
+          color: dark ? "rgba(200,185,255,0.75)" : "rgba(13,5,32,0.65)",
         }}
       >
         {displayTitle}

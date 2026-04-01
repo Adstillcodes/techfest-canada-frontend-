@@ -499,6 +499,17 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
               >
                 HTML Code
               </button>
+              <button
+                type="button"
+                onClick={() => setEditorTab("preview")}
+                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                  editorTab === "preview"
+                    ? "bg-purple-600 text-white"
+                    : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                }`}
+              >
+                Preview
+              </button>
             </div>
 
             {editorTab === "visual" && (
@@ -585,6 +596,24 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
                   className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
                 />
               </>
+            )}
+
+            {editorTab === "preview" && (
+              <div className="border border-gray-700 rounded-lg overflow-hidden">
+                <div className="bg-white rounded-t-lg p-3 border-b">
+                  <div className="border-b pb-2 mb-2">
+                    <p className="text-gray-500 text-xs">Subject:</p>
+                    <p className="text-black font-semibold">{formData.subject || "No subject"}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">From:</p>
+                    <p className="text-black text-sm">The Tech Festival Canada &lt;hello@thetechfestival.com&gt;</p>
+                  </div>
+                </div>
+                <div className="bg-white rounded-b-lg p-4 min-h-[300px]">
+                  <div dangerouslySetInnerHTML={{ __html: formData.template || "<p className='text-gray-400'>No content</p>" }} />
+                </div>
+              </div>
             )}
 
             <p className="text-xs text-gray-500 mt-2">

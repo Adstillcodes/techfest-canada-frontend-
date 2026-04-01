@@ -182,7 +182,7 @@ export default function Home() {
         >
           <motion.div variants={itemBlur} style={{ marginBottom: "2.2rem" }}>
             <img
-              src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/white.mode.png"}
+              src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"}
               alt="The Tech Festival Canada"
               style={{ width: "100%", maxWidth: 980, height: "auto", objectFit: "contain", filter: dark ? "drop-shadow(0 0 50px rgba(155,135,245,0.22))" : "drop-shadow(0 10px 28px rgba(122,63,209,0.12))" }}
             />

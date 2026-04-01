@@ -194,6 +194,16 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
               Visual Editor
             </button>
             <button
+              onClick={() => setActiveTab("code")}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === "code"
+                  ? "bg-purple-600 text-white"
+                  : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+              }`}
+            >
+              HTML Code
+            </button>
+            <button
               onClick={() => setActiveTab("text")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === "text"
@@ -223,6 +233,16 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
               placeholder="Start writing your email..."
               minHeight="300px"
               darkMode={true}
+            />
+          )}
+
+          {activeTab === "code" && (
+            <textarea
+              value={htmlBody}
+              onChange={(e) => setHtmlBody(e.target.value)}
+              placeholder="<html><body><h1>Hello!</h1>...</body></html>"
+              rows={15}
+              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
             />
           )}
 

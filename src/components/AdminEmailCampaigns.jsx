@@ -309,6 +309,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
   });
   const [audiences, setAudiences] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [editorTab, setEditorTab] = useState("visual");
   const editorRef = useRef(null);
 
   useEffect(() => {
@@ -423,43 +424,83 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
           <div>
             <label className="block text-gray-300 text-sm mb-2">Email Content</label>
             
-            <div className="flex items-center gap-2 flex-wrap mb-3">
-              <span className="text-gray-400 text-xs">Insert:</span>
-              {["firstname", "lastname", "company", "title", "location"].map((token) => (
-                <button
-                  key={token}
-                  type="button"
-                  onClick={() => {
-                    if (editorRef.current) {
-                      insertText(editorRef.current, `/${token}`);
-                    }
-                  }}
-                  className="px-2 py-1 bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 text-xs rounded transition-colors border border-purple-600/30"
-                >
-                  /{token}
-                </button>
-              ))}
+            <div className="flex gap-2 mb-3">
               <button
                 type="button"
-                onClick={() => {
-                  if (editorRef.current) {
-                    editorRef.current.commands.clearContent();
-                  }
-                }}
-                className="ml-auto px-2 py-1 bg-gray-600/20 hover:bg-gray-600/40 text-gray-400 text-xs rounded transition-colors border border-gray-600/30"
+                onClick={() => setEditorTab("visual")}
+                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                  editorTab === "visual"
+                    ? "bg-purple-600 text-white"
+                    : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                }`}
               >
-                Clear
+                Visual Editor
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditorTab("code")}
+                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                  editorTab === "code"
+                    ? "bg-purple-600 text-white"
+                    : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                }`}
+              >
+                HTML Code
               </button>
             </div>
 
-            <TiptapEditor
-              ref={editorRef}
-              value={formData.template}
-              onChange={(html) => setFormData({ ...formData, template: html })}
-              placeholder="Start writing your email..."
-              minHeight="250px"
-              darkMode={true}
-            />
+            {editorTab === "visual" && (
+              <>
+                <div className="flex items-center gap-2 flex-wrap mb-3">
+                  <span className="text-gray-400 text-xs">Insert:</span>
+                  {["firstname", "lastname", "company", "title", "location"].map((token) => (
+                    <button
+                      key={token}
+                      type="button"
+                      onClick={() => {
+                        if (editorRef.current) {
+                          insertText(editorRef.current, `/${token}`);
+                        }
+                      }}
+                      className="px-2 py-1 bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 text-xs rounded transition-colors border border-purple-600/30"
+                    >
+                      /{token}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editorRef.current) {
+                        editorRef.current.commands.clearContent();
+                      }
+                    }}
+                    className="ml-auto px-2 py-1 bg-gray-600/20 hover:bg-gray-600/40 text-gray-400 text-xs rounded transition-colors border border-gray-600/30"
+                  >
+                    Clear
+                  </button>
+                </div>
+
+                <TiptapEditor
+                  ref={editorRef}
+                  value={formData.template}
+                  onChange={(html) => setFormData({ ...formData, template: html })}
+                  placeholder="Start writing your email..."
+                  minHeight="250px"
+                  darkMode={true}
+                />
+              </>
+            )}
+
+            {editorTab === "code" && (
+              <textarea
+                value={formData.template}
+                onChange={(e) => setFormData({ ...formData, template: e.target.value })}
+                placeholder="<html><body><h1>Hello!</h1>...</body></html>"
+                rows={12}
+                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
+              />
+            )}
+
             <p className="text-xs text-gray-500 mt-2">
               Tip: Use personalization tokens above or {"{{name}}"} for dynamic content. Tracking pixel and links are automatically added.
             </p>

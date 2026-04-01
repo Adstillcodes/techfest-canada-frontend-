@@ -4,10 +4,12 @@ import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useEffect, forwardRef, useImperativeHandle } from "react";
+import { useEffect, forwardRef, useImperativeHandle, useRef } from "react";
 
 const MenuBar = ({ editor, darkMode = false }) => {
   if (!editor) return null;
+
+  const fileInputRef = useRef(null);
 
   const baseBtn = `p-2 rounded hover:bg-purple-100 transition-colors`;
   const activeBtn = `p-2 rounded bg-purple-100 text-purple-700`;
@@ -23,11 +25,26 @@ const MenuBar = ({ editor, darkMode = false }) => {
     }
   };
 
-  const addImage = () => {
+  const addImageFromUrl = () => {
     const url = window.prompt("Enter image URL:");
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result;
+      if (base64) {
+        editor.chain().focus().setImage({ src: base64 }).run();
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   return (
@@ -107,9 +124,33 @@ const MenuBar = ({ editor, darkMode = false }) => {
       <button onClick={setLink} className={editor.isActive("link") ? active : btn} title="Add Link">
         <span className={darkMode ? "text-purple-300" : "text-purple-600"}>🔗</span>
       </button>
-      <button onClick={addImage} className={btn} title="Add Image">
-        <span className={darkMode ? "text-purple-300" : "text-purple-600"}>🖼️</span>
-      </button>
+      
+      <div className="relative inline-block">
+        <button className={btn} title="Add Image">
+          <span className={darkMode ? "text-purple-300" : "text-purple-600"}>🖼️</span>
+        </button>
+        <div className={`absolute top-full left-0 mt-1 ${darkMode ? "bg-[#1a1035]" : "bg-white"} border ${darkMode ? "border-gray-600" : "border-gray-200"} rounded shadow-lg z-10 flex flex-col min-w-[140px]`}>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className={`px-3 py-2 text-left text-sm ${darkMode ? "text-gray-300 hover:bg-purple-600/20" : "text-gray-700 hover:bg-gray-100"}`}
+          >
+            📁 Upload from device
+          </button>
+          <button
+            onClick={addImageFromUrl}
+            className={`px-3 py-2 text-left text-sm ${darkMode ? "text-gray-300 hover:bg-purple-600/20" : "text-gray-700 hover:bg-gray-100"}`}
+          >
+            🔗 From URL
+          </button>
+        </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="hidden"
+        />
+      </div>
     </div>
   );
 };

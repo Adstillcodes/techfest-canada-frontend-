@@ -389,6 +389,9 @@ export default function AdminCampaignCalendar() {
         <EmailEditorModal
           campaign={editingCampaign}
           onClose={() => setEditingCampaign(null)}
+          onSave={() => {
+            fetchCalendar();
+          }}
           onSend={() => {
             fetchCalendar();
             fetchUpcoming();
@@ -614,9 +617,9 @@ function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate, 
   );
 }
 
-function EmailEditorModal({ campaign, onClose, onSend }) {
+function EmailEditorModal({ campaign, onClose, onSend, onSave }) {
   const [subject, setSubject] = useState(campaign.subject || "");
-  const [htmlBody, setHtmlBody] = useState(campaign.htmlBody || generateDefaultHtml(campaign));
+  const [htmlBody, setHtmlBody] = useState(campaign.htmlBody || campaign.template || generateDefaultHtml(campaign));
   const [textBody, setTextBody] = useState(campaign.textBody || campaign.bodySummary || "");
   const [activeTab, setActiveTab] = useState("editor");
   const [sending, setSending] = useState(false);
@@ -624,6 +627,12 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const editorRef = useRef(null);
   const codeEditorRef = useRef(null);
+
+  useEffect(() => {
+    setSubject(campaign.subject || "");
+    setHtmlBody(campaign.htmlBody || campaign.template || generateDefaultHtml(campaign));
+    setTextBody(campaign.textBody || campaign.bodySummary || "");
+  }, [campaign]);
 
   const insertToken = (token) => {
     if (editorRef.current) {
@@ -695,6 +704,7 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("Template saved!");
+      onSave?.();
     } catch (err) {
       console.error("Save error:", err);
       alert(err.response?.data?.error || "Failed to save");

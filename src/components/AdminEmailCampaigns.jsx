@@ -317,6 +317,17 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
     fetchAudiences();
   }, []);
 
+  useEffect(() => {
+    if (campaign) {
+      setFormData({
+        name: campaign.name || "",
+        subject: campaign.subject || "",
+        audienceId: campaign.audienceId || "",
+        template: campaign.template || "",
+      });
+    }
+  }, [campaign]);
+
   const fetchAudiences = async () => {
     try {
       const token = localStorage.getItem("token");

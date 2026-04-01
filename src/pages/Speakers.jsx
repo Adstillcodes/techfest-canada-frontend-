@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import { Mic, Users, Calendar, Award, ChevronRight, X, Search } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { client, urlFor } from "../utils/sanity";
-import SponsorMarquee from "../components/SponsorMarquee";
+import SpeakerMarquee from "../components/SpeakerMarquee";
 
 const STATS = [
   { icon: <Users size={18} />, value: "1000+", label: "Attendees" },
@@ -238,7 +238,7 @@ export default function Speakers() {
       </section>
 
       {/* ── WHERE SPEAKERS WORK ── */}
-      <SponsorMarquee dark={isDark} title="Where our speakers work at" schemaType="sponsorMarquee" />
+      <SpeakerMarquee dark={isDark} title="Where our speakers work at" />
 
       {/* ── ADVISORY COUNCIL ── */}
       <section style={{

@@ -425,7 +425,7 @@ export default function Home() {
         <AboutUs onWriteToUs={() => setInquiryOpen(true)} />
       </div>
 
-      <SponsorMarquee dark={dark} schemaType="homeSponsor" />
+      <SponsorMarquee dark={dark} />
 
       <div style={{ height: "4rem", background: dark ? "#06020f" : "#ffffff" }} />
 

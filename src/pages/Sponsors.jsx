@@ -111,7 +111,7 @@ export default function Sponsors() {
         </motion.div>
       </main>
 
-      <SponsorMarquee dark={isDark} schemaType="sponsorMarquee" />
+      <SponsorMarquee dark={isDark} />
 
       <Footer />
     </div>

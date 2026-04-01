@@ -1,7 +1,3 @@
-// components/SponsorMarquee.jsx
-// Fetches sponsors from Sanity CMS. Add/remove sponsors in the Sanity Studio
-// under the "Sponsor" document type — no code changes needed.
-
 import React, { useEffect, useState } from "react";
 import imageUrlBuilder from "@sanity/image-url";
 import { client } from "../utils/sanity";
@@ -9,9 +5,8 @@ import { client } from "../utils/sanity";
 const builder = imageUrlBuilder(client);
 const urlFor = (source) => builder.image(source);
 
-// ─── GROQ query ───────────────────────────────────────────────────────────────
 const SPONSORS_QUERY = `
-  *[_type == "sponsor" && active == true] | order(order asc) {
+  *[_type == "sponsorMarquee" && active == true] | order(order asc) {
     _id,
     name,
     logo,
@@ -19,8 +14,7 @@ const SPONSORS_QUERY = `
   }
 `;
 
-// ─── Component ────────────────────────────────────────────────────────────────
-export default function SponsorMarquee({ dark, title }) {
+export default function SpeakerMarquee({ dark, title }) {
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -43,7 +37,6 @@ export default function SponsorMarquee({ dark, title }) {
   const border = dark ? "rgba(155,135,245,0.08)" : "rgba(122,63,209,0.08)";
   const fade = dark ? "#0c0816" : "#ffffff";
 
-  // Double the list so the CSS marquee loops seamlessly.
   const items = [...sponsors, ...sponsors];
 
   if (loading) {

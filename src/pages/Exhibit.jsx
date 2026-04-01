@@ -204,13 +204,18 @@ export default function Exhibit() {
   const getBoothInventory = (tier) => inventory.find((i) => i.tier === tier) || null;
 
   const handlePurchase = async (tier) => {
+    console.log("Purchase clicked for tier:", tier);
+    const inventoryItem = getBoothInventory(tier);
+    const price = inventoryItem?.price ?? parseInt(tier.price.replace(/[^0-9]/g, ''));
+    console.log("Price being sent:", price);
     try {
       const res = await fetch(`${API}/payments/create-checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier, type: "booth" }),
+        body: JSON.stringify({ tier, type: "booth", price }),
       });
       const data = await res.json();
+      console.log("Checkout response:", data);
       if (!res.ok) throw new Error(data.error || "Checkout failed");
       window.location.href = data.url;
     } catch (err) {

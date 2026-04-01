@@ -1,9 +1,7 @@
-
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
 
 const BOOTH_TIERS = [
   {
@@ -117,6 +115,16 @@ function BoothGallery({ images, isDark, border, cardBg }) {
         })}
       </AnimatePresence>
 
+      {/* For reference only label */}
+      <div style={{
+        position: "absolute", top: 12, left: 12, zIndex: 5,
+        background: "rgba(0,0,0,0.55)", backdropFilter: "blur(6px)",
+        padding: "4px 10px", borderRadius: 6,
+        fontSize: "0.58rem", fontFamily: "'Orbitron',sans-serif", fontWeight: 700,
+        letterSpacing: "1px", textTransform: "uppercase",
+        color: "rgba(255,255,255,0.65)", pointerEvents: "none",
+      }}>For reference only</div>
+
       {/* Dot navigation */}
       <div style={{
         position: "absolute", bottom: 14, left: 0, right: 0, zIndex: 5,
@@ -228,11 +236,18 @@ export default function Exhibit() {
         overflow: "hidden", background: isDark ? "#06020f" : "#f4f0ff",
         paddingTop: "clamp(120px, 15vw, 160px)", paddingBottom: "20px"
       }}>
-        <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
+        {/* Background photo */}
+        <img src="/exhibit-hero-bg.png" alt="" style={{
+          position: "absolute", inset: 0, width: "100%", height: "100%",
+          objectFit: "cover", objectPosition: "center",
+          opacity: isDark ? 0.18 : 0.12,
+          pointerEvents: "none", zIndex: 0,
+        }} />
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 1 }}>
           <div className={isDark ? "aurora-layer aurora-layer--dark" : "aurora-layer aurora-layer--light"} />
         </div>
         <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
+          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2,
           background: isDark
             ? "radial-gradient(ellipse 80% 60% at 50% 50%, transparent 20%, #06020f 100%)"
             : "radial-gradient(ellipse 80% 60% at 50% 50%, transparent 20%, #f4f0ff 100%)",
@@ -318,7 +333,7 @@ export default function Exhibit() {
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 28, overflow: "hidden", border: "1px solid " + border, background: cardBg, minHeight: 400 }}
         >
           <div style={{ position: "relative", background: isDark ? "#120a22" : "#ede8f7", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", minHeight: 300 }}>
-            <img src={isDark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada"
+            <img src={isDark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/white.mode.png"} alt="The Tech Festival Canada"
               style={{ width: "65%", maxWidth: 300, height: "auto", objectFit: "contain", filter: isDark ? "drop-shadow(0 0 40px rgba(122,63,209,0.25))" : "drop-shadow(0 8px 24px rgba(122,63,209,0.12))" }} />
             <div style={{ position: "absolute", width: "70%", height: "70%", borderRadius: "50%", background: isDark ? "radial-gradient(circle, rgba(122,63,209,0.15) 0%, transparent 70%)" : "radial-gradient(circle, rgba(122,63,209,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
           </div>
@@ -443,6 +458,22 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
             Enquire Now
           </motion.button>
 
+          <motion.button
+            className="btn-outline"
+            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+            onClick={function() { alert("Booth purchasing will be available soon. Please use Enquire Now to reserve your spot."); }}
+            style={{
+              display: "inline-block", textAlign: "center", marginTop: 12, padding: "14px 32px", borderRadius: 12,
+              background: "transparent", cursor: "pointer",
+              fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "1px", textTransform: "uppercase",
+              border: "1.5px solid " + (isDark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)"),
+              color: isDark ? "rgba(185,158,255,0.75)" : "#7a3fd1",
+              transition: "all 0.2s ease",
+            }}
+          >
+            Purchase Booth
+          </motion.button>
+
         </motion.div>
 
       </div>
@@ -565,23 +596,3 @@ function GradientSpan({ children }) {
     }}>{children}</span>
   );
 }
-
-/* ─── PRICE TOOLTIP COMPONENT ─── */
-function PriceWithAsterisk({ price, color, fontSize, fontWeight }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <span style={{ position: "relative", display: "inline-flex", alignItems: "baseline", gap: 2 }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: fontSize || "1.4rem", fontWeight: fontWeight || 800, color: color || "inherit" }}>{price}</span>
-      <span style={{ color: "#f5a623", fontSize: "0.7em", fontWeight: 900, cursor: "help", lineHeight: 1 }}>*</span>
-      {hovered && (
-        <span style={{ position: "absolute", bottom: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)", background: "rgba(0,0,0,0.88)", color: "#fff", fontSize: "0.68rem", fontFamily: "'Orbitron',sans-serif", fontWeight: 700, letterSpacing: "0.5px", padding: "8px 14px", borderRadius: 10, whiteSpace: "nowrap", zIndex: 999, pointerEvents: "none", boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }}>
-          Price subject to change
-        </span>
-      )}
-    </span>
-  );
-}
-

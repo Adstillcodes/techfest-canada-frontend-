@@ -14,7 +14,6 @@ function CheckIcon() {
   );
 }
 
-/* ─── PRICE TOOLTIP COMPONENT ─── */
 function PriceWithAsterisk({ price, color, fontSize, fontWeight, style }) {
   const [hovered, setHovered] = useState(false);
   return (
@@ -34,19 +33,6 @@ function PriceWithAsterisk({ price, color, fontSize, fontWeight, style }) {
 }
 
 const PASS_META = {
-  discover: {
-    label: "Discover Pass",
-    tagline: "Your gateway to The Tech Festival Canada.",
-    description: "Ideal for professionals, founders, innovators, students, and business leaders who want access to the core conference experience and the opportunity to engage with the ideas, people, and conversations shaping the future of technology.",
-    features: [
-      "2x Day Conference Access",
-      "Expo Floor Access",
-      "Networking Breaks",
-    ],
-    tier: "discover",
-    defaultPrice: 399,
-    featured: false,
-  },
   connect: {
     label: "Connect Pass",
     tagline: "More than just access to the conference.",
@@ -117,7 +103,7 @@ function PassCard({ meta, inventoryItem, onPurchase, dark }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        position: "relative", flex: "1 1 220px", maxWidth: 280, minWidth: 220,
+        position: "relative", flex: "1 1 260px", maxWidth: 340, minWidth: 240,
         borderRadius: 20, padding: "32px 26px 28px", display: "flex", flexDirection: "column",
         backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)",
         background: meta.featured
@@ -144,10 +130,12 @@ function PassCard({ meta, inventoryItem, onPurchase, dark }) {
         {meta.label}
       </div>
 
-      <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 2 }}>
         <PriceWithAsterisk price={price} color={textMain} fontSize="2.6rem" fontWeight={900} />
         <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.95rem", fontWeight: 800, color: textLight, letterSpacing: "1px", textTransform: "uppercase" }}>CAD</span>
       </div>
+
+      <p style={{ fontSize: "0.62rem", fontWeight: 600, color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.38)", letterSpacing: "0.3px", marginBottom: 4 }}>13% HST included</p>
 
       <div style={{ width: "100%", height: 1, background: dark ? "linear-gradient(90deg,transparent,rgba(255,255,255,0.12) 50%,transparent)" : "linear-gradient(90deg,transparent,rgba(122,63,209,0.18) 50%,transparent)", margin: "14px 0 16px" }} />
 
@@ -228,8 +216,8 @@ export default function Tickets() {
     }
   };
 
-  const passes     = ["discover", "connect", "influence", "power"];
-  const passLabels = { discover: "Discover", connect: "Connect", influence: "Influence", power: "Power" };
+  const passes     = ["connect", "influence", "power"];
+  const passLabels = { connect: "Connect", influence: "Influence", power: "Power" };
   const allFeatures = [
     "2x Day Conference Access",
     "Expo Floor Access",
@@ -241,7 +229,6 @@ export default function Tickets() {
     "VIP Lounge Access (Both Days)",
   ];
   const passFeatureMap = {
-    discover:  [true, true, true, false, false, false, false, false],
     connect:   [true, true, true, true,  true,  false, false, false],
     influence: [true, true, true, true,  true,  true,  false, false],
     power:     [true, true, true, true,  true,  true,  true,  true],
@@ -276,8 +263,8 @@ export default function Tickets() {
           <div style={{ maxWidth: 900, margin: "0 auto 80px", padding: "0 24px" }}>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "1rem", letterSpacing: "1px", textTransform: "uppercase", color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.40)", textAlign: "center", marginBottom: 28 }}>Pass Comparison</h2>
             <div style={{ backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", background: dark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.03)", border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(122,63,209,0.10)", borderRadius: 20, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-              <div style={{ minWidth: 600 }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1.5fr repeat(4, 1fr)", borderBottom: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(122,63,209,0.10)", padding: "14px 24px" }}>
+              <div style={{ minWidth: 500 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1.5fr repeat(3, 1fr)", borderBottom: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(122,63,209,0.10)", padding: "14px 24px" }}>
                   <div style={{ fontSize: "0.7rem", color: textMuted, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", display: "flex", alignItems: "center" }}>Feature</div>
                   {passes.map((p) => (
                     <div key={p} style={{ display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.62rem", letterSpacing: "0.8px", textTransform: "uppercase", color: p === "influence" ? (dark ? "#f5a623" : "#d98a14") : textMuted }}>
@@ -286,7 +273,7 @@ export default function Tickets() {
                   ))}
                 </div>
                 {allFeatures.map((feature, fi) => (
-                  <div key={feature} style={{ display: "grid", gridTemplateColumns: "1.5fr repeat(4, 1fr)", padding: "13px 24px", borderBottom: fi < allFeatures.length - 1 ? (dark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(122,63,209,0.05)") : "none", background: fi % 2 === 0 ? (dark ? "rgba(255,255,255,0.01)" : "rgba(122,63,209,0.02)") : "transparent" }}>
+                  <div key={feature} style={{ display: "grid", gridTemplateColumns: "1.5fr repeat(3, 1fr)", padding: "13px 24px", borderBottom: fi < allFeatures.length - 1 ? (dark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(122,63,209,0.05)") : "none", background: fi % 2 === 0 ? (dark ? "rgba(255,255,255,0.01)" : "rgba(122,63,209,0.02)") : "transparent" }}>
                     <div style={{ fontSize: "0.78rem", color: dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.80)", display: "flex", alignItems: "center" }}>{feature}</div>
                     {passes.map((p) => (
                       <div key={p} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>

@@ -215,6 +215,29 @@ export default function AdminAudience() {
 
 function AudienceDetailModal({ audience, onClose }) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [contacts, setContacts] = useState([]);
+  const [loadingContacts, setLoadingContacts] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "contacts" && contacts.length === 0) {
+      fetchContacts();
+    }
+  }, [activeTab]);
+
+  const fetchContacts = async () => {
+    setLoadingContacts(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/campaigns/audiences/${audience._id}/contacts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setContacts(res.data.contacts || []);
+    } catch (err) {
+      console.error("Failed to fetch contacts:", err);
+    } finally {
+      setLoadingContacts(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -268,8 +291,47 @@ function AudienceDetailModal({ audience, onClose }) {
           )}
 
           {activeTab === "contacts" && (
-            <div className="text-center py-8 text-gray-400">
-              Contact list view - integrate with backend to display contacts
+            <div>
+              {loadingContacts ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-purple-500 border-t-transparent" />
+                </div>
+              ) : contacts.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  No contacts in this audience
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="admin-table text-sm">
+                    <thead>
+                      <tr>
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Company</th>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Added</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {contacts.map((contact, idx) => (
+                        <tr key={idx}>
+                          <td className="text-white">{contact.email}</td>
+                          <td className="text-gray-300">{contact.firstName || "-"}</td>
+                          <td className="text-gray-300">{contact.lastName || "-"}</td>
+                          <td className="text-gray-300">{contact.company || "-"}</td>
+                          <td className="text-gray-300">{contact.title || "-"}</td>
+                          <td className="text-gray-300">{contact.location || "-"}</td>
+                          <td className="text-gray-400 text-xs">
+                            {contact.addedAt ? new Date(contact.addedAt).toLocaleDateString() : "-"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
         </div>

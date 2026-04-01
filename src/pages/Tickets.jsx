@@ -86,9 +86,9 @@ const PASS_META = {
 
 function PassCard({ meta, inventoryItem, onPurchase, dark }) {
   const [hovered, setHovered] = useState(false);
-  const price   = inventoryItem?.price ?? meta.defaultPrice;
+  const price     = inventoryItem?.price ?? meta.defaultPrice;
   const remaining = inventoryItem ? Math.max(inventoryItem.total - inventoryItem.sold, 0) : null;
-  const soldOut = remaining !== null && remaining <= 0;
+  const soldOut   = remaining !== null && remaining <= 0;
 
   const textMain  = dark ? "#ffffff"                : "#0d0520";
   const textMuted = dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.68)";
@@ -135,7 +135,7 @@ function PassCard({ meta, inventoryItem, onPurchase, dark }) {
         <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.95rem", fontWeight: 800, color: textLight, letterSpacing: "1px", textTransform: "uppercase" }}>CAD</span>
       </div>
 
-      <p style={{ fontSize: "0.62rem", fontWeight: 600, color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.38)", letterSpacing: "0.3px", marginBottom: 4 }}>13% HST included</p>
+      <p style={{ fontSize: "0.62rem", fontWeight: 600, color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.38)", letterSpacing: "0.3px", marginBottom: 4 }}>13% HST will be added at checkout</p>
 
       <div style={{ width: "100%", height: 1, background: dark ? "linear-gradient(90deg,transparent,rgba(255,255,255,0.12) 50%,transparent)" : "linear-gradient(90deg,transparent,rgba(122,63,209,0.18) 50%,transparent)", margin: "14px 0 16px" }} />
 
@@ -182,7 +182,7 @@ export default function Tickets() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("success") === "true") {
       setShowSuccessModal(true);
-      window.history.replaceState(null, '', window.location.pathname);
+      window.history.replaceState(null, "", window.location.pathname);
     }
   }, []);
 
@@ -229,14 +229,14 @@ export default function Tickets() {
     "VIP Lounge Access (Both Days)",
   ];
   const passFeatureMap = {
-    connect:   [true, true, true, true,  true,  false, false, false],
-    influence: [true, true, true, true,  true,  true,  false, false],
-    power:     [true, true, true, true,  true,  true,  true,  true],
+    connect:   [true, true, true, true, true, false, false, false],
+    influence: [true, true, true, true, true, true,  false, false],
+    power:     [true, true, true, true, true, true,  true,  true],
   };
 
-  const bg       = dark ? "#06020f" : "#ffffff";
-  const textMain = dark ? "#ffffff" : "#0d0520";
-  const textMuted= dark ? "rgba(255,255,255,0.60)" : "rgba(13,5,32,0.68)";
+  const bg        = dark ? "#06020f" : "#ffffff";
+  const textMain  = dark ? "#ffffff" : "#0d0520";
+  const textMuted = dark ? "rgba(255,255,255,0.60)" : "rgba(13,5,32,0.68)";
 
   return (
     <>
@@ -312,8 +312,10 @@ export default function Tickets() {
                 <p style={{ opacity: 0.8, margin: 0, fontSize: "1.1rem", lineHeight: 1.6 }}>Your ticket has been confirmed successfully.</p>
                 <p style={{ opacity: 0.6, marginTop: "8px", fontSize: "0.95rem" }}>Please check your email for more info.</p>
               </div>
-              <button onClick={() => { setShowSuccessModal(false); window.location.href = localStorage.getItem("token") ? "/dashboard" : "/register"; }}
-                style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white", padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif", textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%" }}>
+              <button
+                onClick={() => { setShowSuccessModal(false); window.location.href = localStorage.getItem("token") ? "/dashboard" : "/register"; }}
+                style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white", padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif", textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%" }}
+              >
                 {localStorage.getItem("token") ? "View Dashboard" : "Sign Up Now"}
               </button>
             </div>

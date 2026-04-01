@@ -132,7 +132,7 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
       onSave?.();
     } catch (err) {
       console.error("Save error:", err);
-      alert("Failed to save");
+      alert(err.response?.data?.error || "Failed to save");
     } finally {
       setSaving(false);
     }

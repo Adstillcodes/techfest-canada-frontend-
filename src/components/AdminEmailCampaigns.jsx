@@ -387,14 +387,17 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
         await axios.put(`${API}/campaigns/${campaign._id}`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        alert("Campaign saved!");
       } else {
         await axios.post(`${API}/campaigns`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        alert("Campaign created!");
       }
       onSuccess();
     } catch (err) {
       console.error("Failed to save campaign:", err);
+      alert(err.response?.data?.error || "Failed to save campaign");
     } finally {
       setSaving(false);
     }
@@ -673,7 +676,7 @@ function CampaignStatsModal({ campaign, onClose }) {
         </div>
 
         <div className="flex border-b border-gray-700">
-          {["overview", "timeline", "recipients"].map((tab) => (
+          {["overview", "preview", "timeline", "recipients"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -813,6 +816,24 @@ function CampaignStatsModal({ campaign, onClose }) {
                   No timeline data available yet
                 </div>
               )}
+            </div>
+          )}
+
+          {activeTab === "preview" && (
+            <div>
+              <div className="bg-white rounded-lg p-4 mb-4">
+                <div className="border-b pb-3 mb-3">
+                  <p className="text-gray-500 text-sm">Subject:</p>
+                  <p className="text-black font-semibold">{campaign.subject}</p>
+                </div>
+                <div className="border-b pb-3 mb-3">
+                  <p className="text-gray-500 text-sm">From:</p>
+                  <p className="text-black">The Tech Festival Canada &lt;hello@thetechfestival.com&gt;</p>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg p-6 min-h-[400px]">
+                <div dangerouslySetInnerHTML={{ __html: campaign.template || "<p>No email content</p>" }} />
+              </div>
             </div>
           )}
 

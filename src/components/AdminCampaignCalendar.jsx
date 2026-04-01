@@ -73,18 +73,26 @@ export default function AdminCampaignCalendar() {
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [addingCampaign, setAddingCampaign] = useState(null);
   const [expandedCells, setExpandedCells] = useState({});
-
-  const toggleCell = (phase, audience) => {
-    setExpandedCells((prev) => {
-      const key = `${phase}-${audience}`;
-      return { ...prev, [key]: !prev[key] };
-    });
-  };
+  const [audiences, setAudiences] = useState([]);
+  const [sendingAudience, setSendingAudience] = useState("");
 
   useEffect(() => {
     fetchCalendar();
     fetchUpcoming();
+    fetchAudiences();
   }, []);
+
+  const fetchAudiences = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API}/campaigns/audiences`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAudiences(res.data);
+    } catch (err) {
+      console.error("Failed to fetch audiences:", err);
+    }
+  };
 
   const fetchCalendar = async () => {
     try {
@@ -128,14 +136,19 @@ export default function AdminCampaignCalendar() {
   };
 
   const sendCampaign = async (templateId) => {
-    if (!confirm("Send this campaign to all contacts in the audience?")) return;
+    if (!sendingAudience) {
+      alert("Please select an audience to send to");
+      return;
+    }
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`${API}/campaigns/automation/templates/${templateId}/send`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(`${API}/campaigns/automation/templates/${templateId}/send`, 
+        { audienceId: sendingAudience },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       alert("Campaign sent!");
+      setSendingAudience("");
       fetchCalendar();
       fetchUpcoming();
     } catch (err) {
@@ -349,6 +362,9 @@ export default function AdminCampaignCalendar() {
       {selectedCampaign && (
         <CampaignDetailModal
           campaign={selectedCampaign}
+          audiences={audiences}
+          sendingAudience={sendingAudience}
+          setSendingAudience={setSendingAudience}
           onClose={() => setSelectedCampaign(null)}
           onSend={() => {
             sendCampaign(selectedCampaign._id || selectedCampaign.id);
@@ -417,7 +433,7 @@ function CampaignCard({ campaign, onClick }) {
   );
 }
 
-function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate, onDelete }) {
+function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate, onDelete, audiences, sendingAudience, setSendingAudience }) {
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [newDate, setNewDate] = useState("");
   const [savingDate, setSavingDate] = useState(false);
@@ -559,19 +575,37 @@ function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate, 
           >
             {deleting ? "Deleting..." : "Delete"}
           </button>
-          <div className="flex gap-3">
-            <button onClick={onClose} className="btn-secondary">
-              Close
-            </button>
+          <div className="flex gap-3 items-center">
             {campaign.status === "pending" && (
               <>
+                <select
+                  value={sendingAudience}
+                  onChange={(e) => setSendingAudience(e.target.value)}
+                  className="bg-[#0a0515] border border-gray-700 rounded px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none"
+                >
+                  <option value="">Select Audience...</option>
+                  {audiences?.map((aud) => (
+                    <option key={aud._id} value={aud._id}>
+                      {aud.name} ({aud.contactCount || 0})
+                    </option>
+                  ))}
+                </select>
                 <button onClick={onEdit} className="btn-secondary">
                   Edit & Preview
                 </button>
-                <button onClick={onSend} className="btn-primary bg-green-600 hover:bg-green-700">
+                <button 
+                  onClick={onSend} 
+                  disabled={!sendingAudience}
+                  className="btn-primary bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   Send Campaign
                 </button>
               </>
+            )}
+            {campaign.status !== "pending" && (
+              <button onClick={onClose} className="btn-secondary">
+                Close
+              </button>
             )}
           </div>
         </div>
@@ -663,6 +697,7 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
       alert("Template saved!");
     } catch (err) {
       console.error("Save error:", err);
+      alert(err.response?.data?.error || "Failed to save");
     } finally {
       setSaving(false);
     }

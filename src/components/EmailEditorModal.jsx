@@ -1,7 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import ReactQuill from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css";
+import TiptapEditor, { insertText } from "./ui/TiptapEditor";
 
 const API = "https://techfest-canada-backend.onrender.com/api";
 
@@ -41,21 +40,6 @@ const EMAIL_TEMPLATES = [
   },
 ];
 
-const quillModules = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline", "strike"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["link", "image"],
-    ["clean"],
-  ],
-};
-
-const quillFormats = [
-  "header", "bold", "italic", "underline", "strike",
-  "list", "bullet", "link", "image",
-];
-
 export default function EmailEditorModal({ campaign, onClose, onSave, mode = "campaigns" }) {
   const [subject, setSubject] = useState(campaign.subject || campaign.subjectLine || "");
   const [htmlBody, setHtmlBody] = useState(campaign.template || campaign.htmlBody || generateDefaultHtml(campaign));
@@ -63,17 +47,11 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
   const [activeTab, setActiveTab] = useState("editor");
   const [saving, setSaving] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
-  const quillRef = useRef(null);
+  const editorRef = useRef(null);
 
   const insertToken = (token) => {
-    const quill = quillRef.current?.getEditor();
-    if (quill) {
-      const range = quill.getSelection();
-      if (range) {
-        quill.insertText(range.index, `/${token}`, "api");
-      } else {
-        quill.insertText(0, `/${token}`, "api");
-      }
+    if (editorRef.current) {
+      insertText(editorRef.current, `/${token}`);
     }
   };
 
@@ -238,17 +216,14 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
           </div>
 
           {activeTab === "editor" && (
-            <div className="quill-dark rounded-lg overflow-hidden">
-              <ReactQuill
-                ref={quillRef}
-                value={htmlBody}
-                onChange={setHtmlBody}
-                modules={quillModules}
-                formats={quillFormats}
-                theme="snow"
-                style={{ minHeight: "300px" }}
-              />
-            </div>
+            <TiptapEditor
+              ref={editorRef}
+              value={htmlBody}
+              onChange={setHtmlBody}
+              placeholder="Start writing your email..."
+              minHeight="300px"
+              darkMode={true}
+            />
           )}
 
           {activeTab === "text" && (

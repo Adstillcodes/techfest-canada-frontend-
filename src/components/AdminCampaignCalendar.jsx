@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import ReactQuill from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css";
+import TiptapEditor, { insertText } from "./ui/TiptapEditor";
 
 const API = "https://techfest-canada-backend.onrender.com/api";
 
@@ -589,17 +588,11 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
   const [sending, setSending] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
-  const quillRef = useRef(null);
+  const editorRef = useRef(null);
 
   const insertToken = (token) => {
-    const quill = quillRef.current?.getEditor();
-    if (quill) {
-      const range = quill.getSelection();
-      if (range) {
-        quill.insertText(range.index, `/${token}`, "api");
-      } else {
-        quill.insertText(0, `/${token}`, "api");
-      }
+    if (editorRef.current) {
+      insertText(editorRef.current, `/${token}`);
     }
   };
 
@@ -643,21 +636,6 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
       setSending(false);
     }
   };
-
-  const quillModules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image"],
-      ["clean"],
-    ],
-  };
-
-  const quillFormats = [
-    "header", "bold", "italic", "underline", "strike",
-    "list", "bullet", "link", "image",
-  ];
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -756,17 +734,14 @@ function EmailEditorModal({ campaign, onClose, onSend }) {
           </div>
 
           {activeTab === "editor" && (
-            <div className="quill-dark rounded-lg overflow-hidden">
-              <ReactQuill
-                ref={quillRef}
-                value={htmlBody}
-                onChange={setHtmlBody}
-                modules={quillModules}
-                formats={quillFormats}
-                theme="snow"
-                style={{ minHeight: "300px" }}
-              />
-            </div>
+            <TiptapEditor
+              ref={editorRef}
+              value={htmlBody}
+              onChange={setHtmlBody}
+              placeholder="Start writing your email..."
+              minHeight="300px"
+              darkMode={true}
+            />
           )}
 
           {activeTab === "text" && (

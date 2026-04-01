@@ -265,7 +265,7 @@ export default function AboutUs({ onWriteToUs }) {
           <div style={{ flex: 1, position: "relative", zIndex: 10 }}>
             <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(122,63,209,0.12)", border: "1px solid rgba(122,63,209,0.28)", borderRadius: 999, padding: "4px 14px", marginBottom: 14, fontSize: "0.68rem", fontWeight: 700, letterSpacing: "1.2px", textTransform: "uppercase", color: "#b99eff" }}>
               <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#f5a623", boxShadow: "0 0 5px #f5a623", display: "inline-block" }} />
-              TFC 2026
+              TTFC 2026
             </div>
             <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.75rem", fontWeight: 900, marginBottom: "0.75rem", color: textMain, textTransform: "uppercase", letterSpacing: "-0.02em" }}>
               GET <span style={{ color: "#f5a623" }}>INVOLVED</span>

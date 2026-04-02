@@ -75,7 +75,6 @@ export default function AdminCampaignCalendar() {
   const [expandedCells, setExpandedCells] = useState({});
   const [audiences, setAudiences] = useState([]);
   const [sendingAudience, setSendingAudience] = useState("");
-  const [cleanupLoading, setCleanupLoading] = useState(false);
 
   useEffect(() => {
     fetchCalendar();
@@ -133,25 +132,6 @@ export default function AdminCampaignCalendar() {
       fetchCalendar();
     } catch (err) {
       console.error("Seed failed:", err);
-    }
-  };
-
-  const handleCleanup = async () => {
-    if (!confirm("This will fix any corrupted email templates in the database. Continue?")) return;
-    
-    setCleanupLoading(true);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.post(`${API}/campaigns/automation/cleanup-templates`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      alert(`Cleanup complete! ${res.data.fixedCount || 0} templates fixed, ${res.data.alreadyCleanCount || 0} were already clean.`);
-      fetchCalendar();
-    } catch (err) {
-      console.error("Cleanup failed:", err);
-      alert("Failed to cleanup templates. Check console for details.");
-    } finally {
-      setCleanupLoading(false);
     }
   };
 
@@ -216,16 +196,6 @@ export default function AdminCampaignCalendar() {
           </p>
         </div>
         <div className="flex gap-3">
-          <button onClick={handleCleanup} disabled={cleanupLoading} className="btn-secondary text-sm flex items-center gap-2">
-            {cleanupLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                Cleaning...
-              </>
-            ) : (
-              "🧹 Cleanup Templates"
-            )}
-          </button>
           <button onClick={handleSeed} className="btn-secondary text-sm">
             {seedStatus ? "Re-seed (done)" : "Initialize 54 Campaigns"}
           </button>

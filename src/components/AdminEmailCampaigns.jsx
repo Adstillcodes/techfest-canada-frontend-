@@ -32,6 +32,7 @@ export default function AdminEmailCampaigns() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [editingCampaign, setEditingCampaign] = useState(null);
+  const [cleanupLoading, setCleanupLoading] = useState(false);
 
   useEffect(() => {
     fetchCampaigns();
@@ -81,6 +82,25 @@ export default function AdminEmailCampaigns() {
     }
   };
 
+  const handleCleanup = async () => {
+    if (!confirm("This will fix any corrupted email templates in the database. Continue?")) return;
+    
+    setCleanupLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(`${API}/campaigns/cleanup-templates`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert(`Cleanup complete! ${res.data.fixedCount || 0} templates fixed, ${res.data.alreadyCleanCount || 0} were already clean.`);
+      fetchCampaigns();
+    } catch (err) {
+      console.error("Cleanup failed:", err);
+      alert("Failed to cleanup templates. Check console for details.");
+    } finally {
+      setCleanupLoading(false);
+    }
+  };
+
   return (
     <div className="admin-card">
       <div className="flex justify-between items-center mb-6">
@@ -90,9 +110,21 @@ export default function AdminEmailCampaigns() {
             Create and manage your email marketing campaigns
           </p>
         </div>
-        <button onClick={() => setShowCreateModal(true)} className="btn-primary">
-          + New Campaign
-        </button>
+        <div className="flex gap-3">
+          <button onClick={handleCleanup} disabled={cleanupLoading} className="btn-secondary text-sm flex items-center gap-2">
+            {cleanupLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                Cleaning...
+              </>
+            ) : (
+              "🧹 Cleanup Templates"
+            )}
+          </button>
+          <button onClick={() => setShowCreateModal(true)} className="btn-primary">
+            + New Campaign
+          </button>
+        </div>
       </div>
 
       {loading ? (

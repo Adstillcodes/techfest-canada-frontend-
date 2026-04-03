@@ -70,7 +70,7 @@ function ScrollP({ children, textMid, align, maxW }) {
   return (
     <motion.p ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ type: "spring", bounce: 0.2, duration: 1.4, delay: 0.3 }}
-      style={{ fontSize: "clamp(1rem,1.6vw,1.15rem)", color: textMid, lineHeight: 1.85, textAlign: align || "center", maxWidth: maxW || 700, margin: align === "left" ? "1.5rem 0 0" : "0 auto" }}
+      style={{ fontSize: "clamp(1.05rem,1.7vw,1.2rem)", color: textMid, lineHeight: 1.85, textAlign: align || "center", maxWidth: maxW || 700, margin: align === "left" ? "1.5rem 0 0" : "0 auto" }}
     >{children}</motion.p>
   );
 }
@@ -127,6 +127,8 @@ export default function Awards() {
           .aw-hero-split { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 2rem !important; }
           .aw-hero-left, .aw-hero-right { align-items: center !important; text-align: center !important; }
           .aw-hero-right { align-items: center !important; }
+          .aw-hero-trophy { order: -1 !important; margin-bottom: 1rem !important; }
+          .aw-hero-trophy img { width: clamp(160px, 40vw, 220px) !important; }
           .aw-hero-ctas { flex-direction: column !important; width: 100% !important; }
           .aw-hero-ctas a { width: 100% !important; justify-content: center !important; }
           .aw-feature-grid { grid-template-columns: 1fr !important; }
@@ -134,7 +136,12 @@ export default function Awards() {
           .aw-criteria-bar > div { flex: 1 1 calc(33% - 1px) !important; min-width: 80px !important; }
           .aw-timeline-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 16px !important; }
           .aw-timeline-inner { min-width: 600px !important; }
-          .aw-filter-row { flex-wrap: wrap !important; justify-content: center !important; }
+          .aw-filter-desktop { display: none !important; }
+          .aw-filter-mobile { display: block !important; }
+        }
+        @media (min-width: 769px) {
+          .aw-filter-desktop { display: flex !important; }
+          .aw-filter-mobile { display: none !important; }
         }
         @media (max-width: 480px) {
           .aw-criteria-bar > div { flex: 1 1 calc(50% - 1px) !important; }
@@ -161,25 +168,36 @@ export default function Awards() {
             </span>
           </motion.div>
 
-          {/* Headline — stacked center on mobile, split on desktop */}
-          <div className="aw-hero-split" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
-            <motion.div variants={itemBlur} className="aw-hero-left" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+          {/* Headline — split with trophy center */}
+          <div className="aw-hero-split" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "clamp(1rem,3vw,2rem)" }}>
+            <motion.div variants={itemBlur} className="aw-hero-left" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", flex: 1 }}>
               <TextReveal text="YOU HAVE" colors={[textMain, textMain]}
                 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.8rem,8vw,7rem)", fontWeight: 900, lineHeight: 0.95, letterSpacing: "-2px", justifyContent: "flex-start" }} />
               <TextReveal text="EARNED" colors={[textMain]} delay={0.2}
                 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.8rem,8vw,7rem)", fontWeight: 900, lineHeight: 0.95, letterSpacing: "-2px", justifyContent: "flex-start" }} />
 
-              <motion.p variants={itemBlur} style={{ fontSize: "clamp(0.88rem,1.3vw,1.02rem)", color: textMid, lineHeight: 1.75, maxWidth: 380, marginTop: 28 }}>
+              <motion.p variants={itemBlur} style={{ fontSize: "clamp(0.95rem,1.4vw,1.1rem)", color: textMid, lineHeight: 1.75, maxWidth: 380, marginTop: 28 }}>
                 The hard work is done. Now let Canada know about it.
               </motion.p>
 
-              <motion.div variants={itemBlur} style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 18, color: textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
+              <motion.div variants={itemBlur} style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 18, color: textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
                 Awards Night — October 26, 2026
               </motion.div>
             </motion.div>
 
-            <motion.div variants={itemBlur} className="aw-hero-right" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", textAlign: "right" }}>
+            {/* Center trophy — visible between text */}
+            <motion.div variants={itemBlur} className="aw-hero-trophy"
+              style={{ flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}>
+                <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{
+                  width: "clamp(200px, 22vw, 320px)", height: "auto",
+                  filter: dark ? "drop-shadow(0 16px 48px rgba(122,63,209,0.40)) drop-shadow(0 4px 16px rgba(245,166,35,0.15))" : "drop-shadow(0 16px 48px rgba(0,0,0,0.15))",
+                }} />
+              </motion.div>
+            </motion.div>
+
+            <motion.div variants={itemBlur} className="aw-hero-right" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", textAlign: "right", flex: 1 }}>
               <TextReveal text="THIS" colors={[textMain]} delay={0.15}
                 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.8rem,8vw,7rem)", fontWeight: 900, lineHeight: 0.95, letterSpacing: "-2px", justifyContent: "flex-end" }} />
               <TextReveal text="MOMENT." colors={["#f5a623"]} delay={0.3}
@@ -242,7 +260,7 @@ export default function Awards() {
               onMouseLeave={function (e) { e.currentTarget.style.borderColor = cardBdr; }}>
               <span style={{ display: "inline-block", background: "rgba(245,166,35,0.12)", color: "#f5a623", fontFamily: "'Orbitron',sans-serif", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "1.5px", padding: "5px 14px", borderRadius: 999, marginBottom: 20 }}>Nominations Open July 2026</span>
               <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: "clamp(1rem,2vw,1.3rem)", color: textMain, marginBottom: 10, lineHeight: 1.3 }}>The Catalyst Awards</h3>
-              <p style={{ fontSize: "0.92rem", color: textMid, lineHeight: 1.75, marginBottom: 20 }}>Honouring the pioneers transforming industries through technology. 25 core categories across the 5x5 pillar-sector matrix, plus 3 special recognition awards.</p>
+              <p style={{ fontSize: "0.98rem", color: textMid, lineHeight: 1.75, marginBottom: 20 }}>Honouring the pioneers transforming industries through technology. 25 core categories across the 5x5 pillar-sector matrix, plus 3 special recognition awards.</p>
               <a href="#awards-list" style={{ color: "#f5a623", fontFamily: "'Orbitron',sans-serif", fontSize: "0.72rem", fontWeight: 700, textDecoration: "none", letterSpacing: "1px", display: "inline-flex", alignItems: "center", gap: 6 }}>
                 View all categories <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
               </a>
@@ -265,15 +283,34 @@ export default function Awards() {
             style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 900, marginBottom: "0.5rem" }} />
           <DividerReveal accent={accent} />
 
-          <div className="aw-filter-row" style={{ display: "flex", gap: 8, marginBottom: 8, overflowX: "auto", paddingBottom: 16 }}>
+          {/* Pillar filters — desktop tabs */}
+          <div className="aw-filter-desktop" style={{ display: "flex", gap: 8, marginBottom: 8, overflowX: "auto", paddingBottom: 16 }}>
             {[{ key: "all", label: "All 25" }].concat(PILLARS.map(function (p) { return { key: p, label: p.length > 18 ? p.split(" ")[0] : p }; })).map(function (f) {
               var active = activePillar === f.key;
               return (
                 <button key={f.key} onClick={function () { setActivePillar(f.key); setExpandedRow(null); }}
-                  style={{ border: "1px solid " + (active ? "rgba(245,166,35,0.40)" : "transparent"), background: active ? "rgba(245,166,35,0.12)" : "transparent", color: active ? "#f5a623" : textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase", padding: "8px 16px", borderRadius: 999, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s ease" }}
+                  style={{ border: "1px solid " + (active ? "rgba(245,166,35,0.40)" : "transparent"), background: active ? "rgba(245,166,35,0.12)" : "transparent", color: active ? "#f5a623" : textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase", padding: "10px 18px", borderRadius: 999, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s ease" }}
                 >{f.label}</button>
               );
             })}
+          </div>
+
+          {/* Pillar filters — mobile dropdown */}
+          <div className="aw-filter-mobile" style={{ display: "none", marginBottom: 16 }}>
+            <select value={activePillar} onChange={function (e) { setActivePillar(e.target.value); setExpandedRow(null); }}
+              style={{
+                width: "100%", padding: "14px 18px", borderRadius: 12,
+                background: dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)",
+                border: "1px solid " + cardBdr, color: textMain,
+                fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 700,
+                letterSpacing: "0.5px", appearance: "none", WebkitAppearance: "none",
+                backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='" + (dark ? "%23b99eff" : "%237a3fd1") + "' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")",
+                backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center",
+                cursor: "pointer", outline: "none",
+              }}>
+              <option value="all">All 25 Categories</option>
+              {PILLARS.map(function (p) { return <option key={p} value={p}>{p}</option>; })}
+            </select>
           </div>
         </div>
 
@@ -340,8 +377,8 @@ export default function Awards() {
                   <ScrollReveal key={t.d} delay={i * 0.06}>
                     <div style={{ textAlign: "center", position: "relative", zIndex: 2, minWidth: 75, padding: "0 4px" }}>
                       <div style={{ width: t.h ? 14 : 8, height: t.h ? 14 : 8, borderRadius: "50%", background: t.h ? "#f5a623" : (dark ? "rgba(185,158,255,0.30)" : "rgba(122,63,209,0.20)"), margin: t.h ? "-3px auto 10px" : "0 auto 10px", boxShadow: t.h ? "0 0 14px rgba(245,166,35,0.40)" : "none" }} />
-                      <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.5rem", fontWeight: 800, color: t.h ? "#f5a623" : textSoft, letterSpacing: "1px", marginBottom: 3 }}>{t.d}</div>
-                      <div style={{ fontSize: "0.65rem", fontWeight: 700, color: textMain, lineHeight: 1.3 }}>{t.l}</div>
+                      <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.58rem", fontWeight: 800, color: t.h ? "#f5a623" : textSoft, letterSpacing: "1px", marginBottom: 3 }}>{t.d}</div>
+                      <div style={{ fontSize: "0.72rem", fontWeight: 700, color: textMain, lineHeight: 1.3 }}>{t.l}</div>
                     </div>
                   </ScrollReveal>
                 );
@@ -361,7 +398,7 @@ export default function Awards() {
             <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.8rem,4.5vw,3.2rem)", fontWeight: 900, color: textMain, lineHeight: 1.08, marginBottom: 18 }}>
               Ready to be <span style={{ color: "#f5a623" }}>recognised?</span>
             </h2>
-            <p style={{ fontSize: "1rem", color: textMid, lineHeight: 1.8, maxWidth: 480, margin: "0 auto 32px" }}>
+            <p style={{ fontSize: "1.05rem", color: textMid, lineHeight: 1.8, maxWidth: 480, margin: "0 auto 32px" }}>
               Nominations are free. Self-nominations and third-party nominations welcome. Portal opens July 1, 2026.
             </p>
             <div className="aw-hero-ctas" style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
@@ -453,18 +490,18 @@ function AwardRow({ award, dark, textMain, textMid, textSoft, cardBdr, isOpen, o
       onMouseEnter={function (e) { if (!isOpen) e.currentTarget.style.background = dark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.015)"; }}
       onMouseLeave={function (e) { if (!isOpen) e.currentTarget.style.background = "transparent"; }}
     >
-      <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(0.6rem,1vw,0.75rem)", fontWeight: 800, color: isOpen ? "#f5a623" : textSoft, minWidth: 30, transition: "color 0.25s ease" }}>
+      <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(0.68rem,1.1vw,0.82rem)", fontWeight: 800, color: isOpen ? "#f5a623" : textSoft, minWidth: 30, transition: "color 0.25s ease" }}>
         {award.num < 10 ? "0" + award.num : award.num}
       </span>
       <div style={{ flex: 1 }}>
-        <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(0.68rem,1.4vw,1rem)", fontWeight: 800, color: textMain, lineHeight: 1.35 }}>{award.name}</div>
+        <div style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(0.78rem,1.5vw,1.1rem)", fontWeight: 800, color: textMain, lineHeight: 1.35 }}>{award.name}</div>
         {isOpen && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} transition={{ duration: 0.25 }} style={{ marginTop: 10, display: "flex", gap: 10, flexWrap: "wrap" }}>
             {award.desc
-              ? <p style={{ fontSize: "0.85rem", color: textMid, lineHeight: 1.7, margin: 0 }}>{award.desc}</p>
+              ? <p style={{ fontSize: "0.92rem", color: textMid, lineHeight: 1.7, margin: 0 }}>{award.desc}</p>
               : <>
-                  <span style={{ fontSize: "0.65rem", padding: "4px 12px", borderRadius: 6, background: dark ? "rgba(185,158,255,0.10)" : "rgba(122,63,209,0.08)", color: dark ? "#b99eff" : "#7a3fd1", fontWeight: 700, fontFamily: "'Orbitron',sans-serif" }}>{award.pillar}</span>
-                  <span style={{ fontSize: "0.65rem", padding: "4px 12px", borderRadius: 6, background: "rgba(245,166,35,0.10)", color: "#f5a623", fontWeight: 700, fontFamily: "'Orbitron',sans-serif" }}>{award.sector}</span>
+                  <span style={{ fontSize: "0.72rem", padding: "5px 14px", borderRadius: 6, background: dark ? "rgba(185,158,255,0.10)" : "rgba(122,63,209,0.08)", color: dark ? "#b99eff" : "#7a3fd1", fontWeight: 700, fontFamily: "'Orbitron',sans-serif" }}>{award.pillar}</span>
+                  <span style={{ fontSize: "0.72rem", padding: "5px 14px", borderRadius: 6, background: "rgba(245,166,35,0.10)", color: "#f5a623", fontWeight: 700, fontFamily: "'Orbitron',sans-serif" }}>{award.sector}</span>
                 </>
             }
           </motion.div>

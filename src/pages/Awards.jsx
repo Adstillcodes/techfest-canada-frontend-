@@ -135,12 +135,8 @@ export default function Awards() {
           .aw-criteria-bar > div { flex: 1 1 calc(33% - 1px) !important; min-width: 80px !important; }
           .aw-timeline-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 16px !important; }
           .aw-timeline-inner { min-width: 600px !important; }
-          .aw-filter-desktop { display: none !important; }
-          .aw-filter-mobile { display: block !important; }
         }
         @media (min-width: 769px) {
-          .aw-filter-desktop { display: flex !important; }
-          .aw-filter-mobile { display: none !important; }
         }
         @media (max-width: 480px) {
           .aw-criteria-bar > div { flex: 1 1 calc(50% - 1px) !important; }
@@ -148,6 +144,9 @@ export default function Awards() {
       `}} />
 
       <Navbar />
+
+      {/* STICKY TROPHY — follows scroll, fades as you go */}
+      <StickyTrophy dark={dark} />
 
       {/* ════════════════════════════════════════════════
          HERO — EDGE TO EDGE, TROPHY OVERLAPPING
@@ -184,18 +183,18 @@ export default function Awards() {
             </div>
           </motion.div>
 
-          {/* CENTER TROPHY — large, overlapping */}
+          {/* CENTER TROPHY — large, tilted, overlapping */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8, y: 40 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
-            style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", zIndex: 5, width: "clamp(300px, 38vw, 550px)" }}>
-            <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
+            style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%) rotate(-6deg)", zIndex: 5, width: "clamp(300px, 40vw, 580px)" }}>
+            <motion.div animate={{ y: [0, -14, 0], rotate: [-6, -4, -6] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
               <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{
                 width: "100%", height: "auto",
                 filter: dark
-                  ? "drop-shadow(0 20px 60px rgba(122,63,209,0.50)) drop-shadow(0 8px 24px rgba(245,166,35,0.20))"
-                  : "drop-shadow(0 20px 60px rgba(0,0,0,0.20))",
+                  ? "drop-shadow(0 24px 80px rgba(122,63,209,0.55)) drop-shadow(0 8px 30px rgba(245,166,35,0.25))"
+                  : "drop-shadow(0 24px 80px rgba(0,0,0,0.22))",
               }} />
             </motion.div>
           </motion.div>
@@ -291,34 +290,16 @@ export default function Awards() {
             style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 900, marginBottom: "0.5rem" }} />
           <DividerReveal accent={accent} />
 
-          {/* Pillar filters — desktop tabs */}
-          <div className="aw-filter-desktop" style={{ display: "flex", gap: 8, marginBottom: 8, overflowX: "auto", paddingBottom: 16 }}>
-            {[{ key: "all", label: "All 25" }].concat(PILLARS.map(function (p) { return { key: p, label: p.length > 18 ? p.split(" ")[0] : p }; })).map(function (f) {
+          {/* Pillar filter tabs */}
+          <div style={{ display: "flex", gap: 8, marginBottom: 8, flexWrap: "wrap", justifyContent: "center", paddingBottom: 16 }}>
+            {[{ key: "all", label: "All 25" }].concat(PILLARS.map(function (p) { return { key: p, label: p.length > 18 ? p.split(" &")[0] : p }; })).map(function (f) {
               var active = activePillar === f.key;
               return (
                 <button key={f.key} onClick={function () { setActivePillar(f.key); setExpandedRow(null); }}
-                  style={{ border: "1px solid " + (active ? "rgba(245,166,35,0.40)" : "transparent"), background: active ? "rgba(245,166,35,0.12)" : "transparent", color: active ? "#f5a623" : textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase", padding: "10px 18px", borderRadius: 999, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s ease" }}
+                  style={{ border: "1px solid " + (active ? "rgba(245,166,35,0.40)" : cardBdr), background: active ? "rgba(245,166,35,0.12)" : "transparent", color: active ? "#f5a623" : textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.5px", textTransform: "uppercase", padding: "10px 16px", borderRadius: 999, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s ease" }}
                 >{f.label}</button>
               );
             })}
-          </div>
-
-          {/* Pillar filters — mobile dropdown */}
-          <div className="aw-filter-mobile" style={{ display: "none", marginBottom: 16 }}>
-            <select value={activePillar} onChange={function (e) { setActivePillar(e.target.value); setExpandedRow(null); }}
-              style={{
-                width: "100%", padding: "14px 18px", borderRadius: 12,
-                background: dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)",
-                border: "1px solid " + cardBdr, color: textMain,
-                fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 700,
-                letterSpacing: "0.5px", appearance: "none", WebkitAppearance: "none",
-                backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='" + (dark ? "%23b99eff" : "%237a3fd1") + "' stroke-width='3'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")",
-                backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center",
-                cursor: "pointer", outline: "none",
-              }}>
-              <option value="all">All 25 Categories</option>
-              {PILLARS.map(function (p) { return <option key={p} value={p}>{p}</option>; })}
-            </select>
           </div>
         </div>
 
@@ -520,5 +501,57 @@ function AwardRow({ award, dark, textMain, textMid, textSoft, cardBdr, isOpen, o
         <path d="M9 18l6-6-6-6" />
       </svg>
     </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   STICKY TROPHY — follows scroll, fades out
+   ═══════════════════════════════════════════════════════ */
+
+function StickyTrophy({ dark }) {
+  var s1 = useState(1); var opacity = s1[0]; var setOpacity = s1[1];
+  var s2 = useState(false); var pastHero = s2[0]; var setPastHero = s2[1];
+
+  useEffect(function () {
+    function onScroll() {
+      var scrollY = window.scrollY;
+      var vh = window.innerHeight;
+      // Fully visible in hero, starts fading after 1vh, gone by 3vh
+      if (scrollY < vh) {
+        setOpacity(1);
+        setPastHero(false);
+      } else if (scrollY < vh * 3) {
+        var fade = 1 - ((scrollY - vh) / (vh * 2));
+        setOpacity(Math.max(0.06, fade * 0.18));
+        setPastHero(true);
+      } else {
+        setOpacity(0.06);
+        setPastHero(true);
+      }
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return function () { window.removeEventListener("scroll", onScroll); };
+  }, []);
+
+  // Only show the sticky version after scrolling past hero
+  if (!pastHero) return null;
+
+  return (
+    <div style={{
+      position: "fixed", top: "50%", left: "50%",
+      transform: "translate(-50%, -50%) rotate(-6deg)",
+      zIndex: 1, pointerEvents: "none",
+      width: "clamp(250px, 30vw, 420px)",
+      opacity: opacity,
+      transition: "opacity 0.3s ease",
+    }}>
+      <img src="/awards-trophy-single.png" alt="" style={{
+        width: "100%", height: "auto",
+        filter: dark
+          ? "drop-shadow(0 16px 48px rgba(122,63,209,0.30)) brightness(0.7)"
+          : "drop-shadow(0 16px 48px rgba(0,0,0,0.08)) brightness(0.9)",
+      }} />
+    </div>
   );
 }

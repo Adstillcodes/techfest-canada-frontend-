@@ -124,11 +124,10 @@ export default function Awards() {
     <div style={{ background: bg, minHeight: "100vh", color: textMain, overflowX: "hidden" }}>
       <style dangerouslySetInnerHTML={{ __html: `
         @media (max-width: 768px) {
-          .aw-hero-split { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 2rem !important; }
-          .aw-hero-left, .aw-hero-right { align-items: center !important; text-align: center !important; }
-          .aw-hero-right { align-items: center !important; }
-          .aw-hero-trophy { order: -1 !important; margin-bottom: 1rem !important; }
-          .aw-hero-trophy img { width: clamp(160px, 40vw, 220px) !important; }
+          .aw-hero-left { position: relative !important; left: auto !important; bottom: auto !important; padding: 0 20px !important; text-align: center !important; align-items: center !important; }
+          .aw-hero-left h1 { font-size: clamp(2.8rem, 14vw, 4.5rem) !important; text-align: center !important; }
+          .aw-hero-right { position: relative !important; right: auto !important; bottom: auto !important; padding: 0 20px !important; text-align: center !important; align-items: center !important; }
+          .aw-hero-right h1 { font-size: clamp(2.8rem, 14vw, 4.5rem) !important; text-align: center !important; }
           .aw-hero-ctas { flex-direction: column !important; width: 100% !important; }
           .aw-hero-ctas a { width: 100% !important; justify-content: center !important; }
           .aw-feature-grid { grid-template-columns: 1fr !important; }
@@ -151,75 +150,84 @@ export default function Awards() {
       <Navbar />
 
       {/* ════════════════════════════════════════════════
-         HERO — TROPHY CENTERPIECE + SPLIT TEXT
+         HERO — EDGE TO EDGE, TROPHY OVERLAPPING
          ════════════════════════════════════════════════ */}
-      <section style={{ position: "relative", overflow: "hidden", background: bg, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+      <section style={{ position: "relative", overflow: "hidden", background: bg, height: "100vh", minHeight: 650, display: "flex", flexDirection: "column" }}>
 
         {/* Grid bg */}
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none", backgroundImage: "linear-gradient(" + (dark ? "rgba(122,63,209,0.03)" : "rgba(122,63,209,0.04)") + " 1px, transparent 1px), linear-gradient(90deg, " + (dark ? "rgba(122,63,209,0.03)" : "rgba(122,63,209,0.04)") + " 1px, transparent 1px)", backgroundSize: "80px 80px", maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%)", WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%)" }} />
 
-        <motion.div variants={containerVariants} initial="hidden" animate="visible"
-          style={{ position: "relative", zIndex: 5, width: "100%", maxWidth: 1400, margin: "0 auto", padding: "clamp(7rem,14vw,10rem) 5% clamp(3rem,6vw,5rem)" }}>
+        {/* Badge — top center */}
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.8 }}
+          style={{ position: "relative", zIndex: 20, textAlign: "center", paddingTop: "clamp(90px, 12vh, 130px)" }}>
+          <span style={{ display: "inline-block", background: "rgba(245,166,35,0.12)", border: "1px solid rgba(245,166,35,0.35)", color: "#f5a623", fontFamily: "'Orbitron',sans-serif", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", padding: "10px 24px", borderRadius: 999 }}>
+            Nominations Open July 2026
+          </span>
+        </motion.div>
 
-          {/* Badge */}
-          <motion.div variants={itemBlur} style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-            <span style={{ display: "inline-block", background: "rgba(245,166,35,0.12)", border: "1px solid rgba(245,166,35,0.35)", color: "#f5a623", fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", padding: "8px 22px", borderRadius: 999 }}>
-              Nominations Open July 2026
-            </span>
+        {/* Main hero layout — fills remaining space */}
+        <div style={{ flex: 1, position: "relative", display: "flex", alignItems: "center" }}>
+
+          {/* LEFT TEXT — flush to left edge */}
+          <motion.div initial={{ opacity: 0, x: -80 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            className="aw-hero-left"
+            style={{ position: "absolute", left: 0, bottom: "15%", zIndex: 10, paddingLeft: "clamp(20px, 4vw, 60px)" }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3.5rem, 11vw, 10rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-3px", color: textMain, textTransform: "uppercase", margin: 0 }}>
+              YOU<br />HAVE<br />EARNED
+            </h1>
+            <p style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.1rem)", color: textMid, lineHeight: 1.7, maxWidth: 360, marginTop: 28 }}>
+              The hard work is done. Now let Canada know about it.
+            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 18, color: textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+              October 26, 2026
+            </div>
           </motion.div>
 
-          {/* Headline — split with trophy center */}
-          <div className="aw-hero-split" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "clamp(1rem,3vw,2rem)" }}>
-            <motion.div variants={itemBlur} className="aw-hero-left" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", flex: 1 }}>
-              <TextReveal text="YOU HAVE" colors={[textMain, textMain]}
-                style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.8rem,8vw,7rem)", fontWeight: 900, lineHeight: 0.95, letterSpacing: "-2px", justifyContent: "flex-start" }} />
-              <TextReveal text="EARNED" colors={[textMain]} delay={0.2}
-                style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.8rem,8vw,7rem)", fontWeight: 900, lineHeight: 0.95, letterSpacing: "-2px", justifyContent: "flex-start" }} />
-
-              <motion.p variants={itemBlur} style={{ fontSize: "clamp(0.95rem,1.4vw,1.1rem)", color: textMid, lineHeight: 1.75, maxWidth: 380, marginTop: 28 }}>
-                The hard work is done. Now let Canada know about it.
-              </motion.p>
-
-              <motion.div variants={itemBlur} style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 18, color: textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
-                Awards Night — October 26, 2026
-              </motion.div>
+          {/* CENTER TROPHY — large, overlapping */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 40 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
+            style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", zIndex: 5, width: "clamp(300px, 38vw, 550px)" }}>
+            <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
+              <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{
+                width: "100%", height: "auto",
+                filter: dark
+                  ? "drop-shadow(0 20px 60px rgba(122,63,209,0.50)) drop-shadow(0 8px 24px rgba(245,166,35,0.20))"
+                  : "drop-shadow(0 20px 60px rgba(0,0,0,0.20))",
+              }} />
             </motion.div>
+          </motion.div>
 
-            {/* Center trophy — visible between text */}
-            <motion.div variants={itemBlur} className="aw-hero-trophy"
-              style={{ flex: "0 0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}>
-                <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{
-                  width: "clamp(200px, 22vw, 320px)", height: "auto",
-                  filter: dark ? "drop-shadow(0 16px 48px rgba(122,63,209,0.40)) drop-shadow(0 4px 16px rgba(245,166,35,0.15))" : "drop-shadow(0 16px 48px rgba(0,0,0,0.15))",
-                }} />
-              </motion.div>
-            </motion.div>
+          {/* RIGHT TEXT — flush to right edge, intentionally bleeds */}
+          <motion.div initial={{ opacity: 0, x: 80 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.2, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="aw-hero-right"
+            style={{ position: "absolute", right: 0, bottom: "15%", zIndex: 10, textAlign: "right", paddingRight: "clamp(20px, 4vw, 60px)" }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3.5rem, 11vw, 10rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-3px", color: textMain, textTransform: "uppercase", margin: 0 }}>
+              THIS
+            </h1>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3.5rem, 11vw, 10rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-3px", margin: 0, color: "#f5a623" }}>
+              MOMENT.
+            </h1>
+            <motion.a href="#awards-list" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 28, padding: "16px 38px", borderRadius: 14, background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#fff", textDecoration: "none", fontFamily: "'Orbitron',sans-serif", fontSize: "0.82rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase" }}>
+              Explore Awards
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </motion.a>
+          </motion.div>
+        </div>
 
-            <motion.div variants={itemBlur} className="aw-hero-right" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", textAlign: "right", flex: 1 }}>
-              <TextReveal text="THIS" colors={[textMain]} delay={0.15}
-                style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.8rem,8vw,7rem)", fontWeight: 900, lineHeight: 0.95, letterSpacing: "-2px", justifyContent: "flex-end" }} />
-              <TextReveal text="MOMENT." colors={["#f5a623"]} delay={0.3}
-                style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.8rem,8vw,7rem)", fontWeight: 900, lineHeight: 0.95, letterSpacing: "-2px", justifyContent: "flex-end" }} />
-
-              <motion.a href="#awards-list" variants={itemBlur} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 28, padding: "15px 36px", borderRadius: 14, background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#fff", textDecoration: "none", fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase" }}>
-                Explore Awards
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-              </motion.a>
-            </motion.div>
-          </div>
-
-          {/* Scroll hint */}
-          <motion.div variants={itemBlur} style={{ textAlign: "center", marginTop: "clamp(2.5rem,5vw,4rem)" }}>
-            <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
-              <span style={{ color: textSoft, fontSize: "0.55rem", fontFamily: "'Orbitron',sans-serif", letterSpacing: "3px" }}>(SCROLL)</span>
-            </motion.div>
+        {/* Scroll hint — bottom center */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
+          style={{ position: "absolute", bottom: 28, left: "50%", transform: "translateX(-50%)", zIndex: 20, textAlign: "center" }}>
+          <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
+            <span style={{ color: textSoft, fontSize: "0.58rem", fontFamily: "'Orbitron',sans-serif", letterSpacing: "3px" }}>(SCROLL)</span>
           </motion.div>
         </motion.div>
 
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 6, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
+        {/* Bottom fade */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 15, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
       </section>
 
       {/* ════════════════════════════════════════════════

@@ -73,6 +73,7 @@ export default function Navbar() {
     { label: "SPEAKERS",     path: "/speakers" },
     { label: "AGENDA",       path: "/agenda" },
     { label: "VENUE",        path: "/venue" },
+    { label: "AWARDS",       path: "/awards" },
   ];
 
   const isActive = (path) => {
@@ -146,7 +147,7 @@ export default function Navbar() {
           {/* LEFT: LOGO */}
           <div className="tfc-nav-left">
             <Link to="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
-              <img className="tfc-nav-logo" src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada" />
+              <img className="tfc-nav-logo" src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/white.mode.png"} alt="The Tech Festival Canada" />
             </Link>
           </div>
 

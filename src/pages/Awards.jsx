@@ -165,14 +165,14 @@ export default function Awards() {
           </span>
         </motion.div>
 
-        {/* Main hero — diagonal composition */}
+        {/* Main hero — trophy center, text corners */}
         <div style={{ flex: 1, position: "relative" }}>
 
-          {/* LEFT TEXT — top area */}
+          {/* LEFT TEXT — top left, max 45% width */}
           <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             className="aw-hero-left"
-            style={{ position: "absolute", left: "clamp(24px, 5vw, 80px)", top: "8%", zIndex: 10 }}>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3rem, 9vw, 8.5rem)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-3px", color: textMain, textTransform: "uppercase", margin: 0 }}>
+            style={{ position: "absolute", left: "clamp(24px, 5vw, 80px)", top: "5%", zIndex: 10, maxWidth: "42%" }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3rem, 8vw, 7rem)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-3px", color: textMain, textTransform: "uppercase", margin: 0 }}>
               YOU<br />HAVE<br />EARNED
             </h1>
             <p style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.08rem)", color: textMid, lineHeight: 1.7, maxWidth: 340, marginTop: 24 }}>
@@ -184,14 +184,14 @@ export default function Awards() {
             </div>
           </motion.div>
 
-          {/* CENTER TROPHY — dead center, tilted */}
+          {/* TROPHY — absolute center of the viewport */}
           <motion.div
             initial={{ opacity: 0, scale: 0.75, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
             className="aw-hero-trophy"
-            style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -48%)", zIndex: 8, width: "clamp(260px, 32vw, 480px)" }}>
-            <motion.div animate={{ y: [0, -14, 0], rotate: [-5, -3, -5] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", zIndex: 8, width: "clamp(220px, 26vw, 380px)" }}>
+            <motion.div animate={{ y: [0, -14, 0], rotate: [-4, -2, -4] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               style={{ transformOrigin: "center bottom" }}>
               <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{
                 width: "100%", height: "auto",
@@ -202,14 +202,14 @@ export default function Awards() {
             </motion.div>
           </motion.div>
 
-          {/* RIGHT TEXT — bottom area */}
+          {/* RIGHT TEXT — bottom right, max 45% width */}
           <motion.div initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.2, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="aw-hero-right"
-            style={{ position: "absolute", right: "clamp(24px, 5vw, 80px)", bottom: "12%", zIndex: 10, textAlign: "right" }}>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3rem, 9vw, 8.5rem)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-3px", color: textMain, textTransform: "uppercase", margin: 0 }}>
+            style={{ position: "absolute", right: "clamp(24px, 5vw, 80px)", bottom: "10%", zIndex: 10, textAlign: "right", maxWidth: "45%" }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3rem, 8vw, 7rem)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-3px", color: textMain, textTransform: "uppercase", margin: 0 }}>
               THIS
             </h1>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3rem, 9vw, 8.5rem)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-3px", margin: 0, color: "#f5a623" }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3rem, 8vw, 7rem)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-3px", margin: 0, color: "#f5a623" }}>
               MOMENT.
             </h1>
             <motion.a href="#awards-list" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}

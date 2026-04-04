@@ -168,7 +168,7 @@ export default function Awards() {
 
           {/* LEFT */}
           <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7.5vw, 7rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem, 6vw, 5.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
               YOU<br />HAVE<br />EARNED
             </h1>
             <p style={{ fontSize: "clamp(0.92rem, 1.2vw, 1.05rem)", color: textMid, lineHeight: 1.7, maxWidth: 340, marginTop: 24 }}>
@@ -188,7 +188,7 @@ export default function Awards() {
             style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "0 clamp(16px, 3vw, 48px)" }}>
             <motion.div animate={{ y: [0, -12, 0], rotate: [-3, -1, -3] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
               <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{
-                width: "clamp(200px, 24vw, 380px)", height: "auto",
+                width: "clamp(320px, 36vw, 520px)", height: "auto",
                 filter: dark
                   ? "drop-shadow(0 20px 60px rgba(122,63,209,0.50)) drop-shadow(0 6px 24px rgba(245,166,35,0.20))"
                   : "drop-shadow(0 20px 60px rgba(0,0,0,0.18))",
@@ -199,10 +199,10 @@ export default function Awards() {
           {/* RIGHT */}
           <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7.5vw, 7rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem, 6vw, 5.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
               THIS
             </h1>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7.5vw, 7rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", margin: 0, color: "#f5a623" }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem, 6vw, 5.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", margin: 0, color: "#f5a623" }}>
               MOMENT.
             </h1>
             <motion.a href="#awards-list" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}

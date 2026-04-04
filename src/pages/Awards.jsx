@@ -124,11 +124,9 @@ export default function Awards() {
     <div style={{ background: bg, minHeight: "100vh", color: textMain, overflowX: "hidden" }}>
       <style dangerouslySetInnerHTML={{ __html: `
         @media (max-width: 768px) {
-          .aw-hero-left { position: relative !important; left: auto !important; top: auto !important; padding: 0 20px !important; text-align: center !important; align-items: center !important; }
-          .aw-hero-left h1 { font-size: clamp(2.5rem, 13vw, 4rem) !important; text-align: center !important; }
-          .aw-hero-right { position: relative !important; right: auto !important; bottom: auto !important; padding: 0 20px !important; text-align: center !important; align-items: center !important; }
-          .aw-hero-right h1 { font-size: clamp(2.5rem, 13vw, 4rem) !important; text-align: center !important; }
-          .aw-hero-trophy { position: relative !important; left: auto !important; top: auto !important; transform: none !important; width: 200px !important; margin: 1.5rem auto !important; }
+          .aw-hero-grid { grid-template-columns: 1fr !important; text-align: center !important; gap: 2rem !important; padding: 0 20px !important; }
+          .aw-hero-grid > div { align-items: center !important; text-align: center !important; }
+          .aw-hero-grid h1 { font-size: clamp(2.2rem, 12vw, 3.5rem) !important; text-align: center !important; }
           .aw-hero-ctas { flex-direction: column !important; width: 100% !important; }
           .aw-hero-ctas a { width: 100% !important; justify-content: center !important; }
           .aw-feature-grid { grid-template-columns: 1fr !important; }
@@ -165,55 +163,50 @@ export default function Awards() {
           </span>
         </motion.div>
 
-        {/* Main hero — trophy center, text corners */}
-        <div style={{ flex: 1, position: "relative" }}>
+        {/* 3-column grid: text | trophy | text */}
+        <div className="aw-hero-grid" style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", maxWidth: 1500, margin: "0 auto", padding: "0 clamp(20px, 4vw, 60px)", gap: 0 }}>
 
-          {/* LEFT TEXT — top left, max 45% width */}
-          <motion.div initial={{ opacity: 0, x: -60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            className="aw-hero-left"
-            style={{ position: "absolute", left: "clamp(24px, 5vw, 80px)", top: "5%", zIndex: 10, maxWidth: "42%" }}>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3rem, 8vw, 7rem)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-3px", color: textMain, textTransform: "uppercase", margin: 0 }}>
+          {/* LEFT */}
+          <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7.5vw, 7rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
               YOU<br />HAVE<br />EARNED
             </h1>
-            <p style={{ fontSize: "clamp(0.95rem, 1.3vw, 1.08rem)", color: textMid, lineHeight: 1.7, maxWidth: 340, marginTop: 24 }}>
+            <p style={{ fontSize: "clamp(0.92rem, 1.2vw, 1.05rem)", color: textMid, lineHeight: 1.7, maxWidth: 340, marginTop: 24 }}>
               The hard work is done. Now let Canada know about it.
             </p>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16, color: textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.66rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16, color: textSoft, fontFamily: "'Orbitron',sans-serif", fontSize: "0.64rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
               October 26, 2026
             </div>
           </motion.div>
 
-          {/* TROPHY — absolute center of the viewport */}
+          {/* CENTER TROPHY */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.75, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
-            className="aw-hero-trophy"
-            style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", zIndex: 8, width: "clamp(220px, 26vw, 380px)" }}>
-            <motion.div animate={{ y: [0, -14, 0], rotate: [-4, -2, -4] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              style={{ transformOrigin: "center bottom" }}>
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "0 clamp(16px, 3vw, 48px)" }}>
+            <motion.div animate={{ y: [0, -12, 0], rotate: [-3, -1, -3] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
               <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{
-                width: "100%", height: "auto",
+                width: "clamp(200px, 24vw, 380px)", height: "auto",
                 filter: dark
-                  ? "drop-shadow(0 24px 80px rgba(122,63,209,0.55)) drop-shadow(0 8px 30px rgba(245,166,35,0.25))"
-                  : "drop-shadow(0 24px 80px rgba(0,0,0,0.22))",
+                  ? "drop-shadow(0 20px 60px rgba(122,63,209,0.50)) drop-shadow(0 6px 24px rgba(245,166,35,0.20))"
+                  : "drop-shadow(0 20px 60px rgba(0,0,0,0.18))",
               }} />
             </motion.div>
           </motion.div>
 
-          {/* RIGHT TEXT — bottom right, max 45% width */}
-          <motion.div initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1.2, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="aw-hero-right"
-            style={{ position: "absolute", right: "clamp(24px, 5vw, 80px)", bottom: "10%", zIndex: 10, textAlign: "right", maxWidth: "45%" }}>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3rem, 8vw, 7rem)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-3px", color: textMain, textTransform: "uppercase", margin: 0 }}>
+          {/* RIGHT */}
+          <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7.5vw, 7rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
               THIS
             </h1>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(3rem, 8vw, 7rem)", fontWeight: 900, lineHeight: 0.88, letterSpacing: "-3px", margin: 0, color: "#f5a623" }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7.5vw, 7rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", margin: 0, color: "#f5a623" }}>
               MOMENT.
             </h1>
             <motion.a href="#awards-list" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 24, padding: "15px 34px", borderRadius: 14, background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#fff", textDecoration: "none", fontFamily: "'Orbitron',sans-serif", fontSize: "0.8rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase" }}>
+              style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 24, padding: "14px 32px", borderRadius: 14, background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#fff", textDecoration: "none", fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase" }}>
               Explore Awards
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </motion.a>

@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+
 const BOOTH_TIERS = [
   {
     id: "single",

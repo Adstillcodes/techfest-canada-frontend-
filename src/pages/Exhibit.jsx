@@ -2,12 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { API } from "../utils/api";
 
 const BOOTH_TIERS = [
   {
-    id: "booth-single",
-    tier: "booth-single",
+    id: "single",
     title: "Single Booth",
     specs: "10 ft x 10 ft",
     price: "$2,499",
@@ -22,8 +20,7 @@ const BOOTH_TIERS = [
     images: ["/booths/single-1.jpg", "/booths/single-2.jpg", "/booths/single-3.jpg"]
   },
   {
-    id: "booth-double",
-    tier: "booth-double",
+    id: "double",
     title: "Double Booth",
     specs: "20 ft x 10 ft",
     price: "$4,499",
@@ -38,8 +35,7 @@ const BOOTH_TIERS = [
     images: ["/booths/double-1.jpg", "/booths/double-2.jpg", "/booths/double-3.jpg"]
   },
   {
-    id: "booth-triple",
-    tier: "booth-triple",
+    id: "triple",
     title: "Triple Booth",
     specs: "30 ft x 10 ft",
     price: "$5,999",
@@ -54,8 +50,7 @@ const BOOTH_TIERS = [
     images: ["/booths/triple-1.jpg", "/booths/triple-2.jpg", "/booths/triple-3.jpg"]
   },
   {
-    id: "booth-quadruple",
-    tier: "booth-quadruple",
+    id: "quadruple",
     title: "Quadruple Booth",
     specs: "40 ft x 10 ft",
     price: "$7,499",
@@ -168,8 +163,6 @@ function BoothGallery({ images, isDark, border, cardBg }) {
 export default function Exhibit() {
   const [isDark, setIsDark] = useState(true);
   const [selectedBooth, setSelectedBooth] = useState(null);
-  const [inventory, setInventory] = useState([]);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     setIsDark(document.body.classList.contains("dark-mode"));
@@ -179,50 +172,6 @@ export default function Exhibit() {
     obs.observe(document.body, { attributes: true, attributeFilter: ["class"] });
     return () => obs.disconnect();
   }, []);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("success") === "true") {
-      setShowSuccessModal(true);
-      window.history.replaceState(null, "", window.location.pathname);
-    }
-  }, []);
-
-  useEffect(() => {
-    const loadInventory = async () => {
-      try {
-        const res = await fetch(`${API}/admin/inventory/public`);
-        const data = await res.json();
-        setInventory(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error("Inventory fetch failed", err);
-      }
-    };
-    loadInventory();
-  }, []);
-
-  const getBoothInventory = (tier) => inventory.find((i) => i.tier === tier) || null;
-
-  const handlePurchase = async (tier) => {
-    console.log("Purchase clicked for tier:", tier);
-    const inventoryItem = getBoothInventory(tier);
-    const price = inventoryItem?.price ?? parseInt(tier.price.replace(/[^0-9]/g, ''));
-    console.log("Price being sent:", price);
-    try {
-      const res = await fetch(`${API}/payments/create-checkout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier, type: "booth", price }),
-      });
-      const data = await res.json();
-      console.log("Checkout response:", data);
-      if (!res.ok) throw new Error(data.error || "Checkout failed");
-      window.location.href = data.url;
-    } catch (err) {
-      console.error("Purchase error:", err);
-      alert(err.message || "Purchase failed");
-    }
-  };
 
   const bg        = isDark ? "#07030f"                : "#f4f0ff";
   const textMain  = isDark ? "#ffffff"                : "#0f0520";
@@ -360,8 +309,6 @@ export default function Exhibit() {
             cardBg={cardBg}
             index={index}
             onOpenModal={() => setSelectedBooth(tier)}
-            inventoryItem={getBoothInventory(tier.tier)}
-            onPurchase={handlePurchase}
           />
         ))}
       </div>
@@ -386,7 +333,7 @@ export default function Exhibit() {
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 28, overflow: "hidden", border: "1px solid " + border, background: cardBg, minHeight: 400 }}
         >
           <div style={{ position: "relative", background: isDark ? "#120a22" : "#ede8f7", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", minHeight: 300 }}>
-            <img src={isDark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada"
+            <img src={isDark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/white.mode.png"} alt="The Tech Festival Canada"
               style={{ width: "65%", maxWidth: 300, height: "auto", objectFit: "contain", filter: isDark ? "drop-shadow(0 0 40px rgba(122,63,209,0.25))" : "drop-shadow(0 8px 24px rgba(122,63,209,0.12))" }} />
             <div style={{ position: "absolute", width: "70%", height: "70%", borderRadius: "50%", background: isDark ? "radial-gradient(circle, rgba(122,63,209,0.15) 0%, transparent 70%)" : "radial-gradient(circle, rgba(122,63,209,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
           </div>
@@ -423,48 +370,6 @@ export default function Exhibit() {
         )}
       </AnimatePresence>
 
-      {/* ═══════════ SUCCESS MODAL ═══════════ */}
-      <AnimatePresence>
-        {showSuccessModal && (
-          <motion.div 
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{
-              position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center",
-              background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", padding: "24px"
-            }}
-            onClick={() => setShowSuccessModal(false)}
-          >
-            <motion.div 
-              initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                background: isDark ? "#120a22" : "#ffffff", width: "100%", maxWidth: "420px", borderRadius: "20px",
-                padding: "40px 32px", position: "relative", border: "1px solid " + border, boxShadow: "0 20px 40px rgba(0,0,0,0.4)", textAlign: "center"
-              }}
-            >
-              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, #7a3fd1, #f5a623)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 6 9 17l-5-5" />
-                </svg>
-              </div>
-              <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.5rem", fontWeight: 800, color: textMain, marginBottom: 12 }}>
-                Booth Confirmed!
-              </h3>
-              <p style={{ fontSize: "1rem", color: textMuted, lineHeight: 1.6, marginBottom: 28 }}>
-                Your booth has been reserved. Check your email for confirmation and next steps.
-              </p>
-              <button onClick={() => setShowSuccessModal(false)} style={{
-                width: "100%", padding: "14px", borderRadius: 10, border: "none", cursor: "pointer",
-                fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "1px",
-                background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#ffffff"
-              }}>
-                Continue Browsing
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <Footer />
     </div>
   );
@@ -474,13 +379,8 @@ export default function Exhibit() {
    BOOTH ROW COMPONENT
    ═══════════════════════════════════════════════════════ */
 
-function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, onOpenModal, inventoryItem, onPurchase }) {
+function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, onOpenModal }) {
   const hasBg = index % 2 === 0;
-  const price = inventoryItem?.price ?? parseInt(tier.price.replace(/[^0-9]/g, ''));
-  const remaining = inventoryItem ? Math.max(inventoryItem.total - inventoryItem.sold, 0) : null;
-  const soldOut = remaining !== null && remaining <= 0;
-
-  const formatPrice = (p) => "$" + p.toLocaleString();
 
   return (
     <section style={{
@@ -519,12 +419,7 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
             </h2>
             <div style={{ textAlign: "right" }}>
               <div style={{ fontFamily: "monospace", fontSize: "1.1rem", color: textMuted, marginBottom: 4 }}>{tier.specs}</div>
-              <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.4rem", fontWeight: 800, color: isDark ? "#f5a623" : "#d98a14" }}>{formatPrice(price)}</div>
-              {remaining !== null && (
-                <div style={{ fontSize: "0.75rem", fontWeight: 700, color: soldOut ? "#ff6b6b" : (isDark ? "rgba(200,185,255,0.6)" : "rgba(13,5,32,0.6)"), marginTop: 4 }}>
-                  {soldOut ? "Sold Out" : `${remaining} of ${inventoryItem.total} remaining`}
-                </div>
-              )}
+              <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.4rem", fontWeight: 800, color: isDark ? "#f5a623" : "#d98a14" }}>{tier.price}</div>
             </div>
           </div>
 
@@ -550,35 +445,33 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
             </div>
           </div>
           
-          {/* ENQUIRE NOW BUTTON */}
-          <motion.button 
-            onClick={onOpenModal}
+          {/* BUY NOW BUTTON — primary */}
+          <motion.button
             className="btn-primary"
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+            onClick={function() { alert("Booth purchasing will be available soon. Please use Enquire Now to reserve your spot."); }}
             style={{
               display: "inline-block", textAlign: "center", marginTop: 32, padding: "16px 32px", borderRadius: 12, border: "none", cursor: "pointer",
               fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "1px", textTransform: "uppercase"
             }}
           >
-            Enquire Now
+            Buy Now
           </motion.button>
 
-          <motion.button
+          <motion.button 
+            onClick={onOpenModal}
             className="btn-outline"
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            onClick={() => !soldOut && onPurchase(tier.tier)}
-            disabled={soldOut}
             style={{
               display: "inline-block", textAlign: "center", marginTop: 12, padding: "14px 32px", borderRadius: 12,
-              background: "transparent", cursor: soldOut ? "not-allowed" : "pointer",
+              background: "transparent", cursor: "pointer",
               fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "1px", textTransform: "uppercase",
-              border: "1.5px solid " + (soldOut ? "rgba(255,255,255,0.15)" : (isDark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)")),
-              color: soldOut ? (isDark ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.3)") : (isDark ? "rgba(185,158,255,0.75)" : "#7a3fd1"),
+              border: "1.5px solid " + (isDark ? "rgba(155,135,245,0.25)" : "rgba(122,63,209,0.20)"),
+              color: isDark ? "rgba(185,158,255,0.75)" : "#7a3fd1",
               transition: "all 0.2s ease",
-              opacity: soldOut ? 0.6 : 1
             }}
           >
-            {soldOut ? "Sold Out" : "Purchase Booth"}
+            Enquire Now
           </motion.button>
 
         </motion.div>

@@ -10,6 +10,7 @@ export default function NewsletterBar({ dark }) {
   var bg     = dark ? "linear-gradient(135deg, rgba(122,63,209,0.18), rgba(245,166,35,0.10))" : "linear-gradient(135deg, #7a3fd1, #c4607a, #f5a623)";
   var border = dark ? "rgba(155,135,245,0.20)" : "transparent";
 
+  
   function handleSubmit(e) {
     e.preventDefault();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email."); return; }

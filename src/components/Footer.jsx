@@ -2,242 +2,16 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 function TorontoSkyline({ dark }) {
-  var base = dark ? "rgba(155,135,245,0.06)" : "rgba(122,63,209,0.05)";
-  var mid  = dark ? "rgba(155,135,245,0.10)" : "rgba(122,63,209,0.08)";
-  var fore = dark ? "rgba(155,135,245,0.16)" : "rgba(122,63,209,0.12)";
-  var hero = dark ? "rgba(185,158,255,0.22)" : "rgba(122,63,209,0.16)";
-  var det  = dark ? "rgba(185,158,255,0.05)" : "rgba(122,63,209,0.04)";
-  var bg   = dark ? "#06020f" : "#ffffff";
+  var col = dark ? "rgba(155,135,245,0.14)" : "rgba(122,63,209,0.11)";
+  var refCol = dark ? "rgba(155,135,245,0.05)" : "rgba(122,63,209,0.04)";
+  var sky = "M0,300 L60,300 L60,260 L80,260 L80,240 Q100,220 120,240 L120,260 L150,260 L150,230 L165,230 L165,250 L180,250 L180,220 L195,220 L195,245 L215,245 L215,210 L230,210 L230,235 L250,235 L250,195 L258,190 L266,195 L266,220 L280,220 L280,185 L290,185 L290,170 L300,170 L300,195 L315,195 L315,165 L325,165 L325,150 L335,150 L335,175 L350,175 L350,200 L365,200 L365,160 L375,160 L375,140 L383,135 L391,140 L391,160 L400,160 L400,185 L415,185 L415,155 L425,155 L425,135 L435,135 L435,155 L445,155 L445,180 L460,180 L460,145 L468,145 L468,125 L475,120 L482,125 L482,145 L490,145 L490,175 L505,175 L505,150 L515,150 L515,130 L525,130 L525,150 L535,150 L535,180 L555,180 L555,160 L565,160 L565,140 L573,135 L581,140 L581,160 L590,160 L590,185 L610,185 L610,165 L618,100 L622,55 L625,25 L627,18 L629,15 L631,18 L633,25 L636,55 L640,100 L644,88 L660,88 L664,100 L648,100 L652,165 L660,165 L660,190 L680,190 L680,210 Q700,195 720,210 L720,230 L740,230 L740,185 L750,185 L750,170 L760,170 L760,185 L770,185 L770,215 L790,215 L790,175 L800,175 L800,160 L810,160 L810,175 L820,175 L820,210 L840,210 L840,190 L850,190 L850,175 L860,175 L860,190 L870,190 L870,220 L890,220 L890,240 L910,240 L910,255 L935,255 L935,270 L960,270 L960,280 L1000,280 L1000,290 L1100,290 L1100,295 L1200,300 Z";
 
   return (
-    <svg viewBox="0 0 1600 400" xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="xMidYMax slice" style={{ width: "100%", display: "block" }}>
-      <defs>
-        <linearGradient id="skyFadeB" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="65%" stopColor={bg} stopOpacity="0" />
-          <stop offset="100%" stopColor={bg} stopOpacity="1" />
-        </linearGradient>
-        <linearGradient id="skyFadeT" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={bg} stopOpacity="1" />
-          <stop offset="25%" stopColor={bg} stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="skyFadeL" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor={bg} stopOpacity="1" />
-          <stop offset="12%" stopColor={bg} stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="skyFadeR" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="88%" stopColor={bg} stopOpacity="0" />
-          <stop offset="100%" stopColor={bg} stopOpacity="1" />
-        </linearGradient>
-      </defs>
-
-      {/* ══ LAYER 1: Distant haze ══ */}
-      <g fill={base}>
-        <rect x="40" y="310" width="28" height="90" rx="1" />
-        <rect x="72" y="295" width="24" height="105" rx="1" />
-        <rect x="100" y="305" width="30" height="95" rx="1" />
-        <rect x="134" y="285" width="26" height="115" rx="1" />
-        <rect x="164" y="300" width="22" height="100" rx="1" />
-        <rect x="190" y="290" width="32" height="110" rx="1" />
-        <rect x="226" y="310" width="24" height="90" rx="1" />
-        <rect x="254" y="275" width="28" height="125" rx="1" />
-        <rect x="286" y="295" width="26" height="105" rx="1" />
-        <rect x="320" y="280" width="30" height="120" rx="1" />
-        <rect x="354" y="270" width="24" height="130" rx="1" />
-        <rect x="382" y="285" width="28" height="115" rx="1" />
-        <rect x="414" y="260" width="32" height="140" rx="1" />
-        <rect x="450" y="275" width="26" height="125" rx="1" />
-        <rect x="1050" y="270" width="30" height="130" rx="1" />
-        <rect x="1084" y="260" width="26" height="140" rx="1" />
-        <rect x="1114" y="280" width="32" height="120" rx="1" />
-        <rect x="1150" y="265" width="28" height="135" rx="1" />
-        <rect x="1182" y="285" width="24" height="115" rx="1" />
-        <rect x="1210" y="275" width="30" height="125" rx="1" />
-        <rect x="1244" y="295" width="26" height="105" rx="1" />
-        <rect x="1274" y="280" width="28" height="120" rx="1" />
-        <rect x="1306" y="300" width="24" height="100" rx="1" />
-        <rect x="1334" y="290" width="30" height="110" rx="1" />
-        <rect x="1368" y="305" width="26" height="95" rx="1" />
-        <rect x="1398" y="295" width="32" height="105" rx="1" />
-        <rect x="1434" y="310" width="28" height="90" rx="1" />
-        <rect x="1466" y="300" width="24" height="100" rx="1" />
-        <rect x="1494" y="315" width="30" height="85" rx="1" />
-        <rect x="1528" y="305" width="26" height="95" rx="1" />
-        <rect x="1558" y="315" width="32" height="85" rx="1" />
+    <svg viewBox="0 0 1200 380" preserveAspectRatio="xMidYMax slice" style={{ width: "100%", display: "block" }} xmlns="http://www.w3.org/2000/svg">
+      <path d={sky} fill={col} />
+      <g transform="translate(0,600) scale(1,-1)" opacity="0.4">
+        <path d={sky} fill={refCol} />
       </g>
-
-      {/* ══ LAYER 2: Mid-ground ══ */}
-      <g fill={mid}>
-        <rect x="55" y="288" width="22" height="112" rx="1" />
-        <rect x="80" y="272" width="26" height="128" rx="1" />
-        <rect x="110" y="282" width="20" height="118" rx="1" />
-        <rect x="135" y="260" width="28" height="140" rx="1" />
-        <rect x="167" y="275" width="24" height="125" rx="1" />
-        <rect x="195" y="265" width="30" height="135" rx="1" />
-        <rect x="229" y="280" width="22" height="120" rx="1" />
-        <rect x="255" y="252" width="26" height="148" rx="1" />
-        <rect x="285" y="268" width="24" height="132" rx="1" />
-        <rect x="330" y="255" width="28" height="145" rx="1" />
-        <rect x="362" y="240" width="32" height="160" rx="1" />
-        <rect x="398" y="250" width="26" height="150" rx="1" />
-        <rect x="428" y="235" width="30" height="165" rx="1" />
-        <rect x="462" y="248" width="24" height="152" rx="1" />
-        <rect x="490" y="230" width="28" height="170" rx="1" />
-        <rect x="144" y="252" width="2" height="10" />
-        <rect x="209" y="258" width="2" height="9" />
-        <rect x="268" y="244" width="2" height="10" />
-        <rect x="377" y="232" width="2" height="10" />
-        <rect x="442" y="228" width="2" height="9" />
-        <rect x="1060" y="240" width="30" height="160" rx="1" />
-        <rect x="1094" y="230" width="26" height="170" rx="1" />
-        <rect x="1124" y="250" width="28" height="150" rx="1" />
-        <rect x="1156" y="238" width="32" height="162" rx="1" />
-        <rect x="1192" y="255" width="24" height="145" rx="1" />
-        <rect x="1220" y="245" width="28" height="155" rx="1" />
-        <rect x="1252" y="265" width="26" height="135" rx="1" />
-        <rect x="1282" y="255" width="30" height="145" rx="1" />
-        <rect x="1316" y="270" width="24" height="130" rx="1" />
-        <rect x="1344" y="260" width="28" height="140" rx="1" />
-        <rect x="1376" y="275" width="26" height="125" rx="1" />
-        <rect x="1406" y="268" width="30" height="132" rx="1" />
-        <rect x="1440" y="280" width="24" height="120" rx="1" />
-        <rect x="1468" y="272" width="28" height="128" rx="1" />
-        <rect x="1500" y="285" width="26" height="115" rx="1" />
-        <rect x="1530" y="278" width="30" height="122" rx="1" />
-        <rect x="1106" y="222" width="2" height="10" />
-        <rect x="1171" y="230" width="2" height="10" />
-        <rect x="1296" y="248" width="2" height="9" />
-      </g>
-
-      {/* ══ LAYER 3: Foreground towers ══ */}
-      <g fill={fore}>
-        <rect x="90" y="258" width="24" height="142" rx="1" />
-        <rect x="118" y="242" width="28" height="158" rx="1" />
-        <rect x="150" y="250" width="22" height="150" rx="1" />
-        <rect x="176" y="235" width="26" height="165" rx="1" />
-        <rect x="206" y="248" width="24" height="152" rx="1" />
-        <rect x="234" y="230" width="28" height="170" rx="1" />
-        <rect x="238" y="222" width="20" height="10" rx="1" />
-        <rect x="242" y="214" width="12" height="10" rx="1" />
-        <rect x="246" y="208" width="4" height="8" />
-        <rect x="340" y="228" width="30" height="172" rx="1" />
-        <rect x="374" y="215" width="34" height="185" rx="1" />
-        <rect x="412" y="225" width="28" height="175" rx="1" />
-        <rect x="444" y="210" width="32" height="190" rx="1" />
-        <rect x="480" y="220" width="26" height="180" rx="1" />
-        <rect x="354" y="220" width="2" height="10" />
-        <rect x="390" y="207" width="2" height="10" />
-        <rect x="459" y="202" width="2" height="10" />
-
-        {/* Scotia Plaza */}
-        <rect x="870" y="182" width="48" height="218" rx="1" />
-        <rect x="876" y="170" width="36" height="14" rx="1" />
-        <rect x="881" y="158" width="26" height="14" rx="1" />
-        <rect x="886" y="148" width="16" height="12" rx="1" />
-        <rect x="890" y="140" width="8" height="10" />
-        <rect x="893" y="132" width="2" height="10" />
-
-        {/* First Canadian Place */}
-        <rect x="924" y="148" width="52" height="252" rx="1" />
-        <rect x="930" y="136" width="40" height="14" rx="1" />
-        <rect x="936" y="124" width="28" height="14" rx="1" />
-        <rect x="941" y="114" width="18" height="12" rx="1" />
-        <rect x="946" y="104" width="8" height="12" />
-        <rect x="949" y="96" width="2" height="10" />
-        <rect x="930" y="148" width="1.5" height="252" fill={det} />
-        <rect x="938" y="148" width="1.5" height="252" fill={det} />
-        <rect x="946" y="148" width="1.5" height="252" fill={det} />
-        <rect x="954" y="148" width="1.5" height="252" fill={det} />
-        <rect x="962" y="148" width="1.5" height="252" fill={det} />
-        <rect x="970" y="148" width="1.5" height="252" fill={det} />
-
-        {/* TD Centre */}
-        <rect x="982" y="175" width="44" height="225" rx="1" />
-        <rect x="1030" y="185" width="38" height="215" rx="1" />
-        <rect x="988" y="175" width="1.5" height="225" fill={det} />
-        <rect x="996" y="175" width="1.5" height="225" fill={det} />
-        <rect x="1004" y="175" width="1.5" height="225" fill={det} />
-        <rect x="1012" y="175" width="1.5" height="225" fill={det} />
-        <rect x="1020" y="175" width="1.5" height="225" fill={det} />
-
-        {/* Bay Adelaide */}
-        <rect x="1072" y="170" width="42" height="230" rx="1" />
-        <rect x="1078" y="160" width="30" height="12" rx="1" />
-        <rect x="1088" y="148" width="2" height="14" />
-
-        {/* Royal Bank Plaza */}
-        <rect x="1118" y="192" width="38" height="208" rx="1" />
-        <rect x="1160" y="200" width="34" height="200" rx="1" />
-        <rect x="1122" y="184" width="30" height="10" rx="1" />
-        <rect x="1126" y="176" width="22" height="10" rx="1" />
-        <rect x="1130" y="170" width="14" height="8" />
-
-        {/* Commerce Court */}
-        <rect x="1200" y="210" width="36" height="190" rx="1" />
-        <rect x="1206" y="200" width="24" height="12" rx="1" />
-        <rect x="1214" y="190" width="2" height="12" />
-
-        {/* Brookfield Place */}
-        <rect x="1242" y="195" width="40" height="205" rx="1" />
-        <rect x="1248" y="185" width="28" height="12" rx="1" />
-        <rect x="1253" y="175" width="18" height="12" rx="1" />
-        <rect x="1258" y="167" width="8" height="10" />
-        <rect x="1261" y="160" width="2" height="9" />
-
-        {/* East towers */}
-        <rect x="1288" y="220" width="32" height="180" rx="1" />
-        <rect x="1324" y="228" width="28" height="172" rx="1" />
-        <rect x="1356" y="238" width="34" height="162" rx="1" />
-        <rect x="1394" y="245" width="26" height="155" rx="1" />
-        <rect x="1424" y="235" width="30" height="165" rx="1" />
-        <rect x="1458" y="250" width="24" height="150" rx="1" />
-        <rect x="1486" y="242" width="28" height="158" rx="1" />
-        <rect x="1518" y="255" width="26" height="145" rx="1" />
-        <rect x="1548" y="248" width="32" height="152" rx="1" />
-        <rect x="1303" y="212" width="2" height="10" />
-        <rect x="1372" y="230" width="2" height="10" />
-        <rect x="1438" y="228" width="2" height="9" />
-        <rect x="1500" y="234" width="2" height="10" />
-      </g>
-
-      {/* ══ Rogers Centre ══ */}
-      <g fill={fore}>
-        <path d="M 520,400 Q 520,292 580,272 Q 615,260 650,258 Q 685,260 720,272 Q 780,292 780,400 Z" />
-        <path d="M 620,262 Q 600,310 570,400" fill="none" stroke={mid} strokeWidth="1.2" />
-        <path d="M 650,258 Q 650,310 650,400" fill="none" stroke={mid} strokeWidth="1.2" />
-        <path d="M 680,262 Q 700,310 730,400" fill="none" stroke={mid} strokeWidth="1.2" />
-        <path d="M 610,270 Q 650,265 690,270" fill="none" stroke={det} strokeWidth="2" />
-        <rect x="510" y="345" width="280" height="55" fill={mid} rx="2" />
-        <rect x="510" y="355" width="280" height="1" fill={det} />
-        <rect x="510" y="370" width="280" height="1" fill={det} />
-      </g>
-
-      {/* ══ CN Tower ══ */}
-      <g fill={hero}>
-        <polygon points="737,400 755,220 755,60 765,60 765,220 783,400" />
-        <rect x="730" y="185" width="60" height="20" rx="8" />
-        <rect x="735" y="175" width="50" height="12" rx="6" />
-        <rect x="742" y="205" width="36" height="8" rx="4" />
-        <rect x="746" y="115" width="28" height="16" rx="5" />
-        <rect x="749" y="108" width="22" height="9" rx="4" />
-        <rect x="756" y="32" width="8" height="78" />
-        <rect x="758" y="8" width="4" height="26" />
-        <circle cx="760" cy="7" r="3" />
-        <rect x="732" y="192" width="56" height="1.5" rx="1" fill={det} />
-        <rect x="732" y="198" width="56" height="1.5" rx="1" fill={det} />
-        <rect x="748" y="122" width="24" height="1" rx="1" fill={det} />
-        <rect x="755" y="60" width="1.5" height="340" fill={det} />
-        <rect x="763" y="60" width="1.5" height="340" fill={det} />
-      </g>
-
-      {/* Waterline */}
-      <rect x="0" y="392" width="1600" height="8" fill={dark ? "rgba(155,135,245,0.04)" : "rgba(122,63,209,0.03)"} rx="1" />
-
-      {/* Fades */}
-      <rect x="0" y="0" width="1600" height="400" fill="url(#skyFadeB)" />
-      <rect x="0" y="0" width="1600" height="400" fill="url(#skyFadeT)" />
-      <rect x="0" y="0" width="1600" height="400" fill="url(#skyFadeL)" />
-      <rect x="0" y="0" width="1600" height="400" fill="url(#skyFadeR)" />
     </svg>
   );
 }
@@ -265,6 +39,8 @@ export default function Footer() {
         <TorontoSkyline dark={dark} />
       </div>
       <div style={{ background: bg, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 16, padding: "10px 6% 32px" }}>
+
+        {/* Social icons */}
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
           <a href="https://www.linkedin.com/company/thetechfestival/posts/?feedView=all" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"
             style={{ color: iCol, transition: "color 0.2s ease, transform 0.2s ease", display: "flex" }}
@@ -282,6 +58,7 @@ export default function Footer() {
             onMouseLeave={function (e) { e.currentTarget.style.color = iCol; e.currentTarget.style.transform = "translateY(0)"; }}
           ><svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" /></svg></a>
         </div>
+
         <p style={{ fontSize: "0.82rem", color: tCol, margin: 0, letterSpacing: "0.2px" }}>
           © 2026 The Tech Festival Canada. |{" "}
           <Link to="/privacy" style={{ color: lCol, textDecoration: "none", transition: "opacity 0.2s ease" }}
@@ -293,7 +70,7 @@ export default function Footer() {
         {/* AtlasLink Markets */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, paddingBottom: 32 }}>
           <p style={{ fontSize: "0.68rem", color: tCol, margin: 0, letterSpacing: "0.8px", textTransform: "uppercase", fontWeight: 600 }}>An event by</p>
-          <img src="/atlaslink-logo.png" alt="AtlasLink Markets" style={{ height: 28, width: "auto", opacity: dark ? 0.6 : 0.5, filter: dark ? "brightness(1.2)" : "none" }} />
+           alt="AtlasLink Markets" style={{ height: 28, width: "auto", opacity: dark ? 0.6 : 0.5, filter: dark ? "brightness(1.2)" : "none" }} />
         </div>
       </div>
     </footer>

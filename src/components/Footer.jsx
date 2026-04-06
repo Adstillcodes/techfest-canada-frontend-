@@ -1,20 +1,5 @@
-import { Link } from "react-router-dom";
+\import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-
-function TorontoSkyline({ dark }) {
-  var col = dark ? "rgba(155,135,245,0.14)" : "rgba(122,63,209,0.11)";
-  var refCol = dark ? "rgba(155,135,245,0.05)" : "rgba(122,63,209,0.04)";
-  var sky = "M0,300 L60,300 L60,260 L80,260 L80,240 Q100,220 120,240 L120,260 L150,260 L150,230 L165,230 L165,250 L180,250 L180,220 L195,220 L195,245 L215,245 L215,210 L230,210 L230,235 L250,235 L250,195 L258,190 L266,195 L266,220 L280,220 L280,185 L290,185 L290,170 L300,170 L300,195 L315,195 L315,165 L325,165 L325,150 L335,150 L335,175 L350,175 L350,200 L365,200 L365,160 L375,160 L375,140 L383,135 L391,140 L391,160 L400,160 L400,185 L415,185 L415,155 L425,155 L425,135 L435,135 L435,155 L445,155 L445,180 L460,180 L460,145 L468,145 L468,125 L475,120 L482,125 L482,145 L490,145 L490,175 L505,175 L505,150 L515,150 L515,130 L525,130 L525,150 L535,150 L535,180 L555,180 L555,160 L565,160 L565,140 L573,135 L581,140 L581,160 L590,160 L590,185 L610,185 L610,165 L618,100 L622,55 L625,25 L627,18 L629,15 L631,18 L633,25 L636,55 L640,100 L644,88 L660,88 L664,100 L648,100 L652,165 L660,165 L660,190 L680,190 L680,210 Q700,195 720,210 L720,230 L740,230 L740,185 L750,185 L750,170 L760,170 L760,185 L770,185 L770,215 L790,215 L790,175 L800,175 L800,160 L810,160 L810,175 L820,175 L820,210 L840,210 L840,190 L850,190 L850,175 L860,175 L860,190 L870,190 L870,220 L890,220 L890,240 L910,240 L910,255 L935,255 L935,270 L960,270 L960,280 L1000,280 L1000,290 L1100,290 L1100,295 L1200,300 Z";
-
-  return (
-    <svg viewBox="0 0 1200 380" preserveAspectRatio="xMidYMax slice" style={{ width: "100%", display: "block" }} xmlns="http://www.w3.org/2000/svg">
-      <path d={sky} fill={col} />
-      <g transform="translate(0,600) scale(1,-1)" opacity="0.4">
-        <path d={sky} fill={refCol} />
-      </g>
-    </svg>
-  );
-}
 
 export default function Footer() {
   var s = useState(false); var dark = s[0]; var setDark = s[1];
@@ -35,10 +20,7 @@ export default function Footer() {
 
   return (
     <footer style={{ background: bg, borderTop: bTop, display: "flex", flexDirection: "column", alignItems: "center", overflow: "hidden" }}>
-      <div style={{ width: "100%", lineHeight: 0, marginBottom: -8 }}>
-        <TorontoSkyline dark={dark} />
-      </div>
-      <div style={{ background: bg, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 16, padding: "10px 6% 32px" }}>
+      <div style={{ background: bg, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 16, padding: "32px 6% 32px" }}>
 
         {/* Social icons */}
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>

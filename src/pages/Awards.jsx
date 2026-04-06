@@ -163,50 +163,42 @@ export default function Awards() {
           </span>
         </motion.div>
 
-        {/* 3-column grid: text | trophy | text */}
-        <div className="aw-hero-grid" style={{ flex: 1, display: "grid", gridTemplateColumns: "1.2fr auto 1fr", alignItems: "center", maxWidth: 1500, margin: "0 auto", padding: "0 clamp(20px, 4vw, 60px)", gap: 0 }}>
+        {/* 2-column: text left, trophy right */}
+        <div className="aw-hero-grid" style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", alignItems: "center", maxWidth: 1500, margin: "0 auto", padding: "0 clamp(20px, 4vw, 60px)", gap: "clamp(24px, 4vw, 48px)" }}>
 
-          {/* LEFT */}
-          <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            style={{ paddingRight: "clamp(0px, 2vw, 20px)" }}>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem, 6vw, 5.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
+          {/* LEFT — all text */}
+          <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}>
+            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7vw, 6.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
               YOU<br />HAVE<br />EARNED
             </h1>
-            <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "clamp(0.95rem, 1.3vw, 1.08rem)", color: textMid, lineHeight: 1.75, maxWidth: 360, marginTop: 28 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "0.25em", marginTop: "clamp(8px, 1.5vw, 16px)" }}>
+              <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7vw, 6.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>THIS</h1>
+              <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7vw, 6.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", margin: 0, color: "#f5a623" }}>MOMENT.</h1>
+            </div>
+            <p style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "clamp(0.95rem, 1.3vw, 1.1rem)", color: textMid, lineHeight: 1.75, maxWidth: 420, marginTop: 28 }}>
               The hard work is done. Now let Canada know about it.
             </p>
+            <motion.a href="#awards-list" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 24, padding: "15px 34px", borderRadius: 14, background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#fff", textDecoration: "none", fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase" }}>
+              Explore Awards
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </motion.a>
           </motion.div>
 
-          {/* CENTER TROPHY */}
+          {/* RIGHT — trophy, big */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "0 clamp(8px, 2vw, 32px)" }}>
-            <motion.div animate={{ y: [0, -12, 0], rotate: [-3, -1, -3] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
+            style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <motion.div animate={{ y: [0, -14, 0], rotate: [-3, -1, -3] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
               <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{
-                width: "clamp(280px, 32vw, 480px)", height: "auto",
+                width: "clamp(300px, 42vw, 600px)", height: "auto",
                 filter: dark
-                  ? "drop-shadow(0 20px 60px rgba(122,63,209,0.50)) drop-shadow(0 6px 24px rgba(245,166,35,0.20))"
-                  : "drop-shadow(0 20px 60px rgba(0,0,0,0.18))",
+                  ? "drop-shadow(0 24px 80px rgba(122,63,209,0.50)) drop-shadow(0 8px 28px rgba(245,166,35,0.20))"
+                  : "drop-shadow(0 24px 80px rgba(0,0,0,0.18))",
               }} />
             </motion.div>
-          </motion.div>
-
-          {/* RIGHT */}
-          <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", paddingLeft: "clamp(0px, 2vw, 20px)" }}>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem, 6vw, 5.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
-              THIS
-            </h1>
-            <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem, 6vw, 5.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", margin: 0, color: "#f5a623" }}>
-              MOMENT.
-            </h1>
-            <motion.a href="#awards-list" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-              style={{ display: "inline-flex", alignItems: "center", gap: 10, marginTop: 28, padding: "14px 32px", borderRadius: 14, background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#fff", textDecoration: "none", fontFamily: "'Orbitron',sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase" }}>
-              Explore Awards
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </motion.a>
           </motion.div>
         </div>
 
@@ -297,7 +289,7 @@ export default function Awards() {
 
         <div style={{ maxWidth: 1000, margin: "0 auto" }}>
           {filtered.map(function (award) {
-            return <AwardRow key={award.num} award={award} dark={dark} textMain={textMain} textMid={textMid} textSoft={textSoft} cardBdr={cardBdr} isOpen={expandedRow === award.num} onToggle={function () { setExpandedRow(expandedRow === award.num ? null : award.num); }} />;
+            return <AwardRow key={award.num} award={award} dark={dark} textMain={textMain} textMid={textMid} textSoft={textSoft} cardBdr={cardBdr} isOpen={false} onToggle={function () {}} />;
           })}
         </div>
 
@@ -457,14 +449,15 @@ function TrophyScroll({ bg, dark, textMain, textSoft, accent }) {
 function AwardRow({ award, dark, textMain, textMid, textSoft, cardBdr, isOpen, onToggle }) {
   var ref = useRef(null);
   var inView = useInView(ref, { once: true, margin: "-20px" });
+  var expandable = !!award.desc;
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.4, delay: (award.num % 5) * 0.03 }}
-      onClick={onToggle}
+      onClick={expandable ? onToggle : undefined}
       style={{
         display: "flex", alignItems: "center", gap: "clamp(12px,2vw,24px)",
         padding: "clamp(14px,2vw,22px) clamp(16px,3vw,32px)",
-        borderBottom: "1px solid " + cardBdr, cursor: "pointer",
+        borderBottom: "1px solid " + cardBdr, cursor: expandable ? "pointer" : "default",
         transition: "background 0.25s ease",
         background: isOpen ? (dark ? "rgba(245,166,35,0.08)" : "rgba(245,166,35,0.05)") : "transparent",
       }}
@@ -488,10 +481,10 @@ function AwardRow({ award, dark, textMain, textMid, textSoft, cardBdr, isOpen, o
           </motion.div>
         )}
       </div>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isOpen ? "#f5a623" : textSoft} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      {expandable && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isOpen ? "#f5a623" : textSoft} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
         style={{ flexShrink: 0, transition: "transform 0.25s ease, stroke 0.25s ease", transform: isOpen ? "rotate(90deg)" : "rotate(0deg)" }}>
         <path d="M9 18l6-6-6-6" />
-      </svg>
+      </svg>}
     </motion.div>
   );
 }

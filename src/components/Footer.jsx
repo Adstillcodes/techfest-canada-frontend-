@@ -69,8 +69,7 @@ export default function Footer() {
 
         {/* AtlasLink Markets */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, paddingBottom: 32 }}>
-          <p style={{ fontSize: "0.68rem", color: tCol, margin: 0, letterSpacing: "0.8px", textTransform: "uppercase", fontWeight: 600 }}>An event by</p>
-           alt="AtlasLink Markets" style={{ height: 28, width: "auto", opacity: dark ? 0.6 : 0.5, filter: dark ? "brightness(1.2)" : "none" }} />
+          <p style={{ fontSize: "0.68rem", color: tCol, margin: 0, letterSpacing: "0.8px", textTransform: "uppercase", fontWeight: 600 }}>An event by AtlasLink Markets</p>
         </div>
       </div>
     </footer>

@@ -270,7 +270,7 @@ export default function Awards() {
          ════════════════════════════════════════════════ */}
       <section id="awards-list" style={{ background: sectionBg, borderBottom: "1px solid " + cardBdr }}>
         <div style={{ maxWidth: 1000, margin: "0 auto", padding: "clamp(3rem,6vw,5rem) 5% 0" }}>
-          <TextReveal text="Discover Our Awards" colors={[textMain, textMain, accent]}
+          <TextReveal text="Discover Our Award Categories" colors={[textMain, textMain, textMain, accent]}
             style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 900, marginBottom: "0.5rem" }} />
           <DividerReveal accent={accent} />
 
@@ -387,7 +387,6 @@ export default function Awards() {
       </section>
 
       <NewsletterBar dark={dark} />
-      <SponsorMarquee dark={dark} />
       <Footer />
     </div>
   );
@@ -465,7 +464,7 @@ function AwardRow({ award, dark, textMain, textMid, textSoft, cardBdr, isOpen, o
       onMouseLeave={function (e) { if (!isOpen) e.currentTarget.style.background = "transparent"; }}
     >
       <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(0.68rem,1.1vw,0.82rem)", fontWeight: 800, color: isOpen ? "#f5a623" : textSoft, minWidth: 30, transition: "color 0.25s ease" }}>
-        {award.num < 10 ? "0" + award.num : award.num}
+        ★
       </span>
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "clamp(0.82rem,1.5vw,1.05rem)", fontWeight: 700, color: textMain, lineHeight: 1.4 }}>{award.name}</div>

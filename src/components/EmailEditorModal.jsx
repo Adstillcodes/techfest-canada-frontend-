@@ -40,7 +40,7 @@ const EMAIL_TEMPLATES = [
   },
 ];
 
-export default function EmailEditorModal({ campaign, onClose, onSave, mode = "campaigns" }) {
+export default function EmailEditorModal({ campaign, onClose, onSave, mode = "campaigns", isDark = true }) {
   const [subject, setSubject] = useState(campaign.subject || campaign.subjectLine || "");
   const [htmlBody, setHtmlBody] = useState(campaign.template || campaign.htmlBody || generateDefaultHtml(campaign));
   const [textBody, setTextBody] = useState(campaign.textBody || "");
@@ -48,6 +48,25 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
   const [saving, setSaving] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const editorRef = useRef(null);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      if (isDark !== document.body.classList.contains("dark-mode")) {
+        // Use the passed isDark prop, but also observe changes
+      }
+    };
+    checkDarkMode();
+  }, []);
+
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const textSecondary = isDark ? "text-gray-300" : "text-gray-700";
+  const modalBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const modalBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const inputBg = isDark ? "bg-[#0a0515]" : "bg-white";
+  const inputBorder = isDark ? "border-gray-700" : "border-gray-300";
+  const tabActive = isDark ? "bg-purple-600 text-white" : "bg-purple-600 text-white";
+  const tabInactive = isDark ? "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]" : "bg-gray-100 text-gray-700 hover:bg-gray-200";
   const codeEditorRef = useRef(null);
 
   const insertToken = (token) => {
@@ -172,31 +191,30 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#1a1035] rounded-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden flex flex-col">
-        <div className="p-6 border-b border-gray-700 flex justify-between items-start">
+      <div className={`${modalBg} rounded-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden flex flex-col`}>
+        <div className={`p-6 border-b ${modalBorder} flex justify-between items-start`}>
           <div>
-            <h3 className="text-xl font-bold text-white">Edit Email Content</h3>
-            <p className="text-gray-400 text-sm mt-1">{modalTitle}</p>
+            <h3 className={`text-xl font-bold ${textMain}`}>Edit Email Content</h3>
+            <p className={`${textMuted} text-sm mt-1`}>{modalTitle}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">
+          <button onClick={onClose} className={`${textMuted} hover:${textMain} text-2xl`}>
             ×
           </button>
         </div>
 
-        <div className="p-6 space-y-4 overflow-y-auto flex-1">
+        <div className="p-6 space-y-5 flex-1 overflow-y-auto">
           <div>
-            <label className="block text-gray-400 text-sm mb-2">Subject Line</label>
+            <label className={`block ${textMuted} text-sm mb-2`}>Subject Line</label>
             <input
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
-              placeholder="Enter email subject..."
+              className={`w-full ${inputBg} border ${inputBorder} rounded-lg px-4 py-3 ${textMain} focus:border-purple-500 focus:outline-none`}
             />
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-gray-400 text-sm">Personalization:</span>
+          <div>
+            <span className={`${textMuted} text-sm`}>Personalization:</span>
             {PERSONALIZATION_TOKENS.map((token) => (
               <button
                 key={token.key}
@@ -215,16 +233,16 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
           </div>
 
           {showTemplateSelector && (
-            <div className="bg-[#0a0515] border border-gray-700 rounded-lg p-4">
-              <p className="text-gray-400 text-sm mb-3">Select a template:</p>
+            <div className={`${inputBg} border ${inputBorder} rounded-lg p-4`}>
+              <p className={`${textMuted} text-sm mb-3`}>Select a template:</p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {EMAIL_TEMPLATES.map((template) => (
                   <button
                     key={template.id}
                     onClick={() => handleTemplateSelect(template)}
-                    className="p-3 bg-[#1a1035] hover:bg-[#2a1a45] border border-gray-600 hover:border-purple-500 rounded-lg text-left transition-colors"
+                    className={`p-3 ${modalBg} hover:bg-purple-900/30 border ${modalBorder} hover:border-purple-500 rounded-lg text-left transition-colors`}
                   >
-                    <span className="text-white text-sm font-medium">{template.name}</span>
+                    <span className={`${textMain} text-sm font-medium`}>{template.name}</span>
                   </button>
                 ))}
               </div>
@@ -237,7 +255,7 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === "editor"
                   ? "bg-purple-600 text-white"
-                  : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                  : tabInactive
               }`}
             >
               Visual Editor
@@ -247,7 +265,7 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === "code"
                   ? "bg-purple-600 text-white"
-                  : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                  : tabInactive
               }`}
             >
               HTML Code
@@ -257,7 +275,7 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === "text"
                   ? "bg-purple-600 text-white"
-                  : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                  : tabInactive
               }`}
             >
               Plain Text
@@ -267,7 +285,7 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === "preview"
                   ? "bg-purple-600 text-white"
-                  : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                  : tabInactive
               }`}
             >
               Preview
@@ -281,14 +299,14 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
               onChange={setHtmlBody}
               placeholder="Start writing your email..."
               minHeight="300px"
-              darkMode={true}
+              darkMode={isDark}
             />
           )}
 
           {activeTab === "code" && (
             <>
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-gray-400 text-xs">Insert:</span>
+                <span className={`${textMuted} text-xs`}>Insert:</span>
                 {["firstname", "lastname", "company", "title", "location"].map((token) => (
                   <button
                     key={token}
@@ -324,7 +342,7 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
                 onChange={(e) => setHtmlBody(e.target.value)}
                 placeholder="<html><body><h1>Hello!</h1>...</body></html>"
                 rows={15}
-                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm"
+                className={`w-full ${inputBg} border ${inputBorder} rounded-lg px-4 py-3 ${textMain} placeholder-gray-500 focus:border-purple-500 focus:outline-none resize-none font-mono text-sm`}
               />
             </>
           )}
@@ -332,13 +350,13 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
           {activeTab === "text" && (
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-gray-400 text-sm">Plain Text Body</label>
+                <label className={`${textMuted} text-sm`}>Plain Text Body</label>
                 <span className="text-xs text-gray-500">Text-only version for email clients</span>
               </div>
               <textarea
                 value={textBody}
                 onChange={(e) => setTextBody(e.target.value)}
-                className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none h-80"
+                className={`w-full ${inputBg} border ${inputBorder} rounded-lg px-4 py-3 ${textMain} focus:border-purple-500 focus:outline-none h-80`}
                 placeholder="Enter your plain text email content..."
               />
             </div>
@@ -347,22 +365,22 @@ export default function EmailEditorModal({ campaign, onClose, onSave, mode = "ca
           {activeTab === "preview" && (
             <div className="space-y-4">
               <div>
-                <label className="text-gray-400 text-sm mb-2 block">HTML Preview</label>
-                <div className="bg-white text-black rounded-lg p-4 max-h-80 overflow-y-auto border border-gray-700">
+                <label className={`${textMuted} text-sm mb-2 block`}>HTML Preview</label>
+                <div className="bg-white text-black rounded-lg p-4 max-h-80 overflow-y-auto border border-gray-300">
                   <div dangerouslySetInnerHTML={{ __html: htmlBody || "<p>No HTML content</p>" }} />
                 </div>
               </div>
               <div>
-                <label className="text-gray-400 text-sm mb-2 block">Text Preview</label>
-                <div className="bg-[#0a0515] border border-gray-700 rounded-lg p-4 max-h-48 overflow-y-auto">
-                  <pre className="whitespace-pre-wrap text-gray-300 font-sans text-sm">{textBody || "No text content"}</pre>
+                <label className={`${textMuted} text-sm mb-2 block`}>Text Preview</label>
+                <div className={`${inputBg} border ${inputBorder} rounded-lg p-4 max-h-48 overflow-y-auto`}>
+                  <pre className={`whitespace-pre-wrap ${textSecondary} font-sans text-sm`}>{textBody || "No text content"}</pre>
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        <div className="p-6 border-t border-gray-700 flex gap-3 justify-end">
+        <div className={`p-6 border-t ${modalBorder} flex gap-3 justify-end`}>
           <button onClick={handleSave} disabled={saving} className="btn-secondary">
             {saving ? "Saving..." : "Save Template"}
           </button>

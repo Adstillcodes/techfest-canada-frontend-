@@ -432,6 +432,7 @@ export default function AdminCampaignCalendar() {
             fetchUpcoming();
             setEditingCampaign(null);
           }}
+          isDark={isDark}
         />
       )}
 

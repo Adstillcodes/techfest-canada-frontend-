@@ -292,6 +292,7 @@ export default function AdminEmailCampaigns() {
         <CampaignStatsModal
           campaign={selectedCampaign}
           onClose={() => setSelectedCampaign(null)}
+          isDark={isDark}
         />
       )}
 
@@ -303,6 +304,7 @@ export default function AdminEmailCampaigns() {
             setSelectedCampaign(null);
             fetchCampaigns();
           }}
+          isDark={isDark}
         />
       )}
 
@@ -321,7 +323,7 @@ export default function AdminEmailCampaigns() {
   );
 }
 
-function CreateCampaignModal({ campaign, onClose, onSuccess }) {
+function CreateCampaignModal({ campaign, onClose, onSuccess, isDark = true }) {
   const [formData, setFormData] = useState({
     name: campaign?.name || "",
     subject: campaign?.subject || "",
@@ -332,6 +334,16 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
   const [saving, setSaving] = useState(false);
   const [editorTab, setEditorTab] = useState("visual");
   const editorRef = useRef(null);
+
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-300" : "text-gray-700";
+  const textSecondary = isDark ? "text-gray-400" : "text-gray-500";
+  const inputBg = isDark ? "bg-[#0a0515]" : "bg-white";
+  const inputBorder = isDark ? "border-gray-700" : "border-gray-300";
+  const modalBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const modalBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const tabActive = isDark ? "bg-purple-600 text-white" : "bg-purple-600 text-white";
+  const tabInactive = isDark ? "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]" : "bg-gray-100 text-gray-700 hover:bg-gray-200";
   const codeEditorRef = useRef(null);
 
   useEffect(() => {
@@ -456,45 +468,45 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#1a1035] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-        <div className="p-6 border-b border-gray-700 flex justify-between items-center">
-          <h3 className="text-xl font-bold text-white">
+      <div className={`${modalBg} rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden`}>
+        <div className={`p-6 border-b ${modalBorder} flex justify-between items-center`}>
+          <h3 className={`text-xl font-bold ${textMain}`}>
             {campaign ? "Edit Campaign" : "Create Campaign"}
           </h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">
+          <button onClick={onClose} className={`${textSecondary} hover:${textMain} text-2xl`}>
             ×
           </button>
         </div>
 
         <div className="p-6 space-y-5 overflow-y-auto max-h-[calc(90vh-180px)]">
           <div>
-            <label className="block text-gray-300 text-sm mb-2">Campaign Name</label>
+            <label className={`block ${textMuted} text-sm mb-2`}>Campaign Name</label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g., Summer Promo 2026"
-              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
+              className={`w-full ${inputBg} border ${inputBorder} rounded-lg px-4 py-3 ${textMain} placeholder-gray-500 focus:border-purple-500 focus:outline-none`}
             />
           </div>
 
           <div>
-            <label className="block text-gray-300 text-sm mb-2">Email Subject</label>
+            <label className={`block ${textMuted} text-sm mb-2`}>Email Subject</label>
             <input
               type="text"
               value={formData.subject}
               onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
               placeholder="e.g., Exclusive offer just for you!"
-              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
+              className={`w-full ${inputBg} border ${inputBorder} rounded-lg px-4 py-3 ${textMain} placeholder-gray-500 focus:border-purple-500 focus:outline-none`}
             />
           </div>
 
           <div>
-            <label className="block text-gray-300 text-sm mb-2">Select Audience</label>
+            <label className={`block ${textMuted} text-sm mb-2`}>Select Audience</label>
             <select
               value={formData.audienceId}
               onChange={(e) => setFormData({ ...formData, audienceId: e.target.value })}
-              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 focus:outline-none"
+              className={`w-full ${inputBg} border ${inputBorder} rounded-lg px-4 py-3 ${textMain} focus:border-purple-500 focus:outline-none`}
             >
               <option value="">Select an audience...</option>
               {audiences.map((aud) => (
@@ -506,7 +518,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
           </div>
 
           <div>
-            <label className="block text-gray-300 text-sm mb-2">Email Content</label>
+            <label className={`block ${textMuted} text-sm mb-2`}>Email Content</label>
             
             <div className="flex gap-2 mb-3">
               <button
@@ -515,7 +527,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
                 className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                   editorTab === "visual"
                     ? "bg-purple-600 text-white"
-                    : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                    : tabInactive
                 }`}
               >
                 Visual Editor
@@ -526,7 +538,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
                 className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                   editorTab === "code"
                     ? "bg-purple-600 text-white"
-                    : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                    : tabInactive
                 }`}
               >
                 HTML Code
@@ -537,7 +549,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
                 className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                   editorTab === "preview"
                     ? "bg-purple-600 text-white"
-                    : "bg-[#0a0515] text-gray-300 hover:bg-[#1a1035]"
+                    : tabInactive
                 }`}
               >
                 Preview
@@ -547,7 +559,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
             {editorTab === "visual" && (
               <>
                 <div className="flex items-center gap-2 flex-wrap mb-3">
-                  <span className="text-gray-400 text-xs">Insert:</span>
+                  <span className={`${textSecondary} text-xs`}>Insert:</span>
                   {["firstname", "lastname", "company", "title", "location"].map((token) => (
                     <button
                       key={token}
@@ -581,7 +593,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
                   onChange={(html) => setFormData({ ...formData, template: html })}
                   placeholder="Start writing your email..."
                   minHeight="250px"
-                  darkMode={true}
+                  darkMode={isDark}
                 />
               </>
             )}
@@ -676,7 +688,7 @@ function CreateCampaignModal({ campaign, onClose, onSuccess }) {
   );
 }
 
-function CampaignStatsModal({ campaign, onClose }) {
+function CampaignStatsModal({ campaign, onClose, isDark = true }) {
   const [activeTab, setActiveTab] = useState("overview");
   const [trackingData, setTrackingData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -707,6 +719,15 @@ function CampaignStatsModal({ campaign, onClose }) {
   const clickRate = sent > 0 ? ((uniqueClicks / sent) * 100).toFixed(1) : 0;
   const bounceRate = sent > 0 ? ((bounces / sent) * 100).toFixed(1) : 0;
 
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const textSecondary = isDark ? "text-gray-300" : "text-gray-700";
+  const modalBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const modalBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const statCardBg = isDark ? "bg-[#2a1850]" : "bg-gray-50";
+  const tabActive = isDark ? "text-purple-400" : "text-purple-600";
+  const tabInactive = isDark ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-gray-900";
+
   const pieData = [
     { name: "Opened", value: uniqueOpens },
     { name: "Clicked", value: uniqueClicks - (trackingData?.clickedWithoutOpen || 0) },
@@ -723,28 +744,28 @@ function CampaignStatsModal({ campaign, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#1a1035] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        <div className="p-6 border-b border-gray-700">
+      <div className={`${modalBg} rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden`}>
+        <div className={`p-6 border-b ${modalBorder}`}>
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-xl font-bold text-white">{campaign.name}</h3>
-              <p className="text-gray-400 text-sm">{campaign.subject}</p>
+              <h3 className={`text-xl font-bold ${textMain}`}>{campaign.name}</h3>
+              <p className={`${textMuted} text-sm`}>{campaign.subject}</p>
             </div>
-            <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">
+            <button onClick={onClose} className={`${textMuted} hover:${textMain} text-2xl`}>
               ×
             </button>
           </div>
         </div>
 
-        <div className="flex border-b border-gray-700">
+        <div className={`flex border-b ${modalBorder}`}>
           {["overview", "preview", "timeline", "recipients"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-6 py-3 text-sm font-medium capitalize ${
                 activeTab === tab
-                  ? "text-purple-400 border-b-2 border-purple-400"
-                  : "text-gray-400 hover:text-white"
+                  ? `${tabActive} border-b-2 border-purple-400`
+                  : tabInactive
               }`}
             >
               {tab}
@@ -760,27 +781,27 @@ function CampaignStatsModal({ campaign, onClose }) {
           ) : activeTab === "overview" && (
             <div className="space-y-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-[#2a1850] p-4 rounded-xl border border-purple-700">
-                  <p className="text-gray-400 text-sm">Total Sent</p>
-                  <p className="text-2xl font-bold text-white">{sent}</p>
+                <div className={`${statCardBg} p-4 rounded-xl border ${isDark ? 'border-purple-700' : 'border-purple-300'}`}>
+                  <p className={`${textMuted} text-sm`}>Total Sent</p>
+                  <p className={`text-2xl font-bold ${textMain}`}>{sent}</p>
                 </div>
-                <div className="bg-[#2a1850] p-4 rounded-xl border border-purple-700">
-                  <p className="text-gray-400 text-sm">Open Rate</p>
-                  <p className="text-2xl font-bold text-purple-400">{openRate}%</p>
+                <div className={`${statCardBg} p-4 rounded-xl border ${isDark ? 'border-purple-700' : 'border-purple-300'}`}>
+                  <p className={`${textMuted} text-sm`}>Open Rate</p>
+                  <p className={`text-2xl font-bold ${isDark ? 'text-purple-400' : 'text-purple-600'}`}>{openRate}%</p>
                 </div>
-                <div className="bg-[#2a1850] p-4 rounded-xl border border-purple-700">
-                  <p className="text-gray-400 text-sm">Click Rate</p>
-                  <p className="text-2xl font-bold text-amber-400">{clickRate}%</p>
+                <div className={`${statCardBg} p-4 rounded-xl border ${isDark ? 'border-purple-700' : 'border-purple-300'}`}>
+                  <p className={`${textMuted} text-sm`}>Click Rate</p>
+                  <p className={`text-2xl font-bold ${isDark ? 'text-amber-400' : 'text-amber-600'}`}>{clickRate}%</p>
                 </div>
-                <div className="bg-[#2a1850] p-4 rounded-xl border border-purple-700">
-                  <p className="text-gray-400 text-sm">Bounce Rate</p>
-                  <p className="text-2xl font-bold text-red-400">{bounceRate}%</p>
+                <div className={`${statCardBg} p-4 rounded-xl border ${isDark ? 'border-purple-700' : 'border-purple-300'}`}>
+                  <p className={`${textMuted} text-sm`}>Bounce Rate</p>
+                  <p className={`text-2xl font-bold ${isDark ? 'text-red-400' : 'text-red-600'}`}>{bounceRate}%</p>
                 </div>
               </div>
 
               {pieData.length > 0 && (
-                <div className="bg-[#2a1850] p-6 rounded-xl border border-gray-700">
-                  <h4 className="text-white font-semibold mb-4">Engagement Breakdown</h4>
+                <div className={`${statCardBg} p-6 rounded-xl border ${modalBorder}`}>
+                  <h4 className={`${textMain} font-semibold mb-4`}>Engagement Breakdown</h4>
                   <div className="flex items-center gap-8">
                     <ResponsiveContainer width={200} height={200}>
                       <PieChart>
@@ -806,8 +827,8 @@ function CampaignStatsModal({ campaign, onClose }) {
                             className="w-3 h-3 rounded"
                             style={{ backgroundColor: COLORS[index % COLORS.length] }}
                           />
-                          <span className="text-gray-300 text-sm">{entry.name}</span>
-                          <span className="text-white font-semibold ml-2">{entry.value}</span>
+                          <span className={`${textSecondary} text-sm`}>{entry.name}</span>
+                          <span className={`${textMain} font-semibold ml-2`}>{entry.value}</span>
                         </div>
                       ))}
                     </div>
@@ -815,34 +836,34 @@ function CampaignStatsModal({ campaign, onClose }) {
                 </div>
               )}
 
-              <div className="bg-[#2a1850] p-6 rounded-xl border border-gray-700">
-                <h4 className="text-white font-semibold mb-4">Detailed Stats</h4>
+              <div className={`${statCardBg} p-6 rounded-xl border ${modalBorder}`}>
+                <h4 className={`${textMain} font-semibold mb-4`}>Detailed Stats</h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Unique Opens</span>
-                    <span className="text-white font-semibold">{uniqueOpens}</span>
+                    <span className={textMuted}>Unique Opens</span>
+                    <span className={`${textMain} font-semibold`}>{uniqueOpens}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Total Opens</span>
-                    <span className="text-white font-semibold">{stats.totalOpens || 0}</span>
+                    <span className={textMuted}>Total Opens</span>
+                    <span className={`${textMain} font-semibold`}>{stats.totalOpens || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Unique Clicks</span>
-                    <span className="text-white font-semibold">{uniqueClicks}</span>
+                    <span className={textMuted}>Unique Clicks</span>
+                    <span className={`${textMain} font-semibold`}>{uniqueClicks}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Total Clicks</span>
-                    <span className="text-white font-semibold">{stats.totalClicks || 0}</span>
+                    <span className={textMuted}>Total Clicks</span>
+                    <span className={`${textMain} font-semibold`}>{stats.totalClicks || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Hard Bounces</span>
-                    <span className="text-white font-semibold">
+                    <span className={textMuted}>Hard Bounces</span>
+                    <span className={`${textMain} font-semibold`}>
                       {stats.hardBounces || 0}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Soft Bounces</span>
-                    <span className="text-white font-semibold">
+                    <span className={textMuted}>Soft Bounces</span>
+                    <span className={`${textMain} font-semibold`}>
                       {stats.softBounces || 0}
                     </span>
                   </div>

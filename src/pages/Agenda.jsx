@@ -7,6 +7,7 @@ import {
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+
 // ─── Protection ───────────────────────────────────────────────────
 function useProtection() {
   useEffect(() => {

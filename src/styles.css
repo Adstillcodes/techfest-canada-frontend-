@@ -602,8 +602,22 @@ body.dark-mode .feature-text h2 {
 }
 
 .ticket-badge.remaining {
-  background: rgba(245,166,35,0.15);
-  color: var(--brand-orange);
+  color: var(--text-main);
+}
+
+/* Inventory remaining status - dark mode */
+.remaining-low {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.remaining-ok {
+  color: #ffffff;
+}
+
+.remaining-ok-light {
+  color: #059669;
+  font-weight: 600;
 }
 
 .ticket-badge.vip {
@@ -1218,6 +1232,19 @@ html {
   font-weight: 600;
 }
 
+.inventory-input-light {
+  width: 90px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+
+  background: #ffffff;
+  color: #111827;
+
+  text-align: center;
+  font-weight: 600;
+}
+
 .inventory-input:focus {
   outline: none;
   border-color: var(--brand-purple);
@@ -1648,14 +1675,32 @@ body.dark-mode .mobile-link {
   border: 1px solid #3a256d;
 }
 
+.stat-card-light {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+}
+
 .stat-card p {
   color: #bba8ff;
+  font-size: 0.9rem;
+}
+
+.stat-card-light p {
+  color: #6b7280;
   font-size: 0.9rem;
 }
 
 .stat-card h2 {
   font-size: 1.8rem;
   font-weight: 700;
+}
+
+.stat-card-light h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
 }
 
 .tfc-desk-nav { display: none; }

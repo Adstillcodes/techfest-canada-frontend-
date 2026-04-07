@@ -14,12 +14,26 @@ import {
 
 export default function AdminAnalytics() {
 
+  const [isDark, setIsDark] = useState(true);
   const [range, setRange] = useState("week");
   const [data, setData] = useState([]);
   const [totals, setTotals] = useState({
     totalRevenue: 0,
     totalTickets: 0
   });
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.body.classList.contains("dark-mode"));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    
+    return () => observer.disconnect();
+  }, []);
 
   const fetchAnalytics = async () => {
 
@@ -55,6 +69,13 @@ export default function AdminAnalytics() {
       ? (totals?.totalRevenue / totals?.totalTickets).toFixed(2)
       : 0;
 
+  const textMain = isDark ? "white" : "#0d0520";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const buttonBg = isDark ? "#1a1035" : "#f3f4f6";
+  const buttonText = isDark ? "text-gray-300" : "text-gray-700";
+  const chartGrid = isDark ? "#333" : "#e5e7eb";
+  const chartAxis = isDark ? "#aaa" : "#6b7280";
+
   return (
     <div className="space-y-8">
 
@@ -62,23 +83,23 @@ export default function AdminAnalytics() {
 
       <div className="grid grid-cols-3 gap-6">
 
-        <div className="bg-[#1a1035] p-6 rounded-xl border border-purple-700">
-          <p className="text-gray-400">Total Revenue</p>
-          <h2 className="text-3xl font-bold text-white">
+        <div className={`${isDark ? 'bg-[#1a1035]' : 'bg-white'} p-6 rounded-xl border ${isDark ? 'border-purple-700' : 'border-purple-300'} shadow-sm`}>
+          <p className={textMuted}>Total Revenue</p>
+          <h2 className={`text-3xl font-bold ${textMain}`}>
             ${totals?.totalRevenue?.toLocaleString()}
           </h2>
         </div>
 
-        <div className="bg-[#1a1035] p-6 rounded-xl border border-purple-700">
-          <p className="text-gray-400">Tickets Sold</p>
-          <h2 className="text-3xl font-bold text-white">
+        <div className={`${isDark ? 'bg-[#1a1035]' : 'bg-white'} p-6 rounded-xl border ${isDark ? 'border-purple-700' : 'border-purple-300'} shadow-sm`}>
+          <p className={textMuted}>Tickets Sold</p>
+          <h2 className={`text-3xl font-bold ${textMain}`}>
             {totals?.totalTickets}
           </h2>
         </div>
 
-        <div className="bg-[#1a1035] p-6 rounded-xl border border-purple-700">
-          <p className="text-gray-400">Avg Ticket Price</p>
-          <h2 className="text-3xl font-bold text-white">
+        <div className={`${isDark ? 'bg-[#1a1035]' : 'bg-white'} p-6 rounded-xl border ${isDark ? 'border-purple-700' : 'border-purple-300'} shadow-sm`}>
+          <p className={textMuted}>Avg Ticket Price</p>
+          <h2 className={`text-3xl font-bold ${textMain}`}>
             ${avgPrice}
           </h2>
         </div>
@@ -94,7 +115,7 @@ export default function AdminAnalytics() {
           className={`px-4 py-2 rounded-lg ${
             range === "day"
               ? "bg-purple-600 text-white"
-              : "bg-[#1a1035] text-gray-300"
+              : `${buttonBg} ${buttonText}`
           }`}
         >
           Day
@@ -105,7 +126,7 @@ export default function AdminAnalytics() {
           className={`px-4 py-2 rounded-lg ${
             range === "week"
               ? "bg-purple-600 text-white"
-              : "bg-[#1a1035] text-gray-300"
+              : `${buttonBg} ${buttonText}`
           }`}
         >
           Week
@@ -116,7 +137,7 @@ export default function AdminAnalytics() {
           className={`px-4 py-2 rounded-lg ${
             range === "month"
               ? "bg-purple-600 text-white"
-              : "bg-[#1a1035] text-gray-300"
+              : `${buttonBg} ${buttonText}`
           }`}
         >
           Month
@@ -126,9 +147,9 @@ export default function AdminAnalytics() {
 
       {/* Revenue Chart */}
 
-      <div className="bg-[#1a1035] p-6 rounded-xl border border-purple-700">
+      <div className={`${isDark ? 'bg-[#1a1035]' : 'bg-white'} p-6 rounded-xl border ${isDark ? 'border-purple-700' : 'border-purple-300'} shadow-sm`}>
 
-        <h3 className="text-lg text-white mb-4">
+        <h3 className={`text-lg ${textMain} mb-4`}>
           Revenue Over Time
         </h3>
 
@@ -136,16 +157,23 @@ export default function AdminAnalytics() {
 
   <LineChart data={data}>
 
-    <CartesianGrid stroke="#333" />
+    <CartesianGrid stroke={chartGrid} />
 
     <XAxis
       dataKey="name"
-      stroke="#aaa"
+      stroke={chartAxis}
     />
 
-    <YAxis stroke="#aaa" />
+    <YAxis stroke={chartAxis} />
 
-    <Tooltip />
+    <Tooltip 
+      contentStyle={{
+        backgroundColor: isDark ? "#1a1035" : "#ffffff",
+        border: isDark ? "1px solid #7a3fd1" : "1px solid #7a3fd1",
+        borderRadius: "8px",
+        color: isDark ? "#fff" : "#0d0520"
+      }}
+    />
 
     <Line
       type="monotone"

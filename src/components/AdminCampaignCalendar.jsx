@@ -64,6 +64,7 @@ const formatDate = (dateStr) => {
 };
 
 export default function AdminCampaignCalendar() {
+  const [isDark, setIsDark] = useState(true);
   const [calendar, setCalendar] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
@@ -75,6 +76,19 @@ export default function AdminCampaignCalendar() {
   const [expandedCells, setExpandedCells] = useState({});
   const [audiences, setAudiences] = useState([]);
   const [sendingAudience, setSendingAudience] = useState("");
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.body.classList.contains("dark-mode"));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     fetchCalendar();
@@ -186,12 +200,21 @@ export default function AdminCampaignCalendar() {
     return sum + Object.values(phase).reduce((s, aud) => s + aud.length, 0);
   }, 0);
 
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const textSecondary = isDark ? "text-gray-300" : "text-gray-700";
+  const cardBg = isDark ? "bg-[#0a0515]" : "bg-white";
+  const cardBorder = isDark ? "border-gray-800" : "border-gray-200";
+  const tabBg = isDark ? "bg-[#1a1035]" : "bg-gray-100";
+  const tabHover = isDark ? "hover:bg-[#2a1850]" : "hover:bg-gray-200";
+  const headerBorder = isDark ? "border-gray-700" : "border-gray-200";
+
   return (
     <div className="admin-card">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white">Campaign Calendar</h2>
-          <p className="text-gray-400 text-sm mt-1">
+          <h2 className={`text-xl font-bold ${textMain}`}>Campaign Calendar</h2>
+          <p className={`${textMuted} text-sm mt-1`}>
             {totalCampaigns} campaigns across 5 phases • {upcoming.length} upcoming
           </p>
         </div>
@@ -202,7 +225,7 @@ export default function AdminCampaignCalendar() {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-6 border-b border-gray-700 pb-4">
+      <div className={`flex gap-2 mb-6 border-b ${headerBorder} pb-4`}>
         {["calendar", "upcoming", "by-audience"].map((tab) => (
           <button
             key={tab}
@@ -210,7 +233,7 @@ export default function AdminCampaignCalendar() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab
                 ? "bg-purple-600 text-white"
-                : "bg-[#1a1035] text-gray-300 hover:bg-[#2a1850]"
+                : `${tabBg} ${textSecondary} ${tabHover}`
             }`}
           >
             {tab === "calendar" ? "📅 Calendar" : tab === "upcoming" ? "⏰ Upcoming" : "👥 By Audience"}
@@ -229,7 +252,7 @@ export default function AdminCampaignCalendar() {
                 >
                   {phase}
                 </span>
-                <span className="text-gray-500 text-xs">
+                <span className={textMuted + " text-xs"}>
                   {Object.values(calendar[phase] || {}).flat().length} campaigns
                 </span>
               </div>
@@ -238,9 +261,9 @@ export default function AdminCampaignCalendar() {
                 {AUDIENCES.map((audience) => {
                   const campaigns = calendar[phase]?.[audience] || [];
                   return (
-                    <div key={audience} className="bg-[#0a0515] rounded-lg p-3 border border-gray-800">
+                    <div key={audience} className={`${cardBg} rounded-lg p-3 border ${cardBorder}`}>
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs text-gray-400 uppercase">{audience}</span>
+                        <span className={`text-xs ${textMuted} uppercase`}>{audience}</span>
                         <button
                           onClick={() => setAddingCampaign({ phase, audience })}
                           className="text-xs text-purple-400 hover:text-purple-300 hover:bg-purple-600/20 px-2 py-1 rounded transition-colors"
@@ -249,7 +272,7 @@ export default function AdminCampaignCalendar() {
                         </button>
                       </div>
                       {campaigns.length === 0 ? (
-                        <div className="text-gray-600 text-xs italic">No campaigns</div>
+                        <div className="text-gray-500 text-xs italic">No campaigns</div>
                       ) : (
                         <div className="space-y-2">
                           {(expandedCells[`${phase}-${audience}`] ? campaigns : campaigns.slice(0, 3)).map((c) => (
@@ -257,6 +280,7 @@ export default function AdminCampaignCalendar() {
                               key={c.id}
                               campaign={c}
                               onClick={() => setSelectedCampaign(c)}
+                              isDark={isDark}
                             />
                           ))}
                           {campaigns.length > 3 && (
@@ -423,23 +447,27 @@ export default function AdminCampaignCalendar() {
   );
 }
 
-function CampaignCard({ campaign, onClick }) {
+function CampaignCard({ campaign, onClick, isDark = true }) {
   const statusStyle = STATUS_BADGE[campaign.status] || STATUS_BADGE.pending;
+  const cardBg = isDark ? "bg-[#1a1035]" : "bg-gray-50";
+  const cardBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-500" : "text-gray-500";
 
   return (
     <div
       onClick={onClick}
-      className="bg-[#1a1035] rounded p-2 border border-gray-700 hover:border-purple-500 cursor-pointer transition-colors"
+      className={`${cardBg} rounded p-2 border ${cardBorder} hover:border-purple-500 cursor-pointer transition-colors`}
     >
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs text-gray-500">
+        <span className={`text-xs ${textMuted}`}>
           {formatDate(campaign.sendDate)}
         </span>
         <span className={`text-xs px-1.5 py-0.5 rounded ${statusStyle.bg} ${statusStyle.color}`}>
           {statusStyle.label}
         </span>
       </div>
-      <div className="text-xs text-white line-clamp-2">{campaign.subject}</div>
+      <div className={`text-xs ${textMain} line-clamp-2`}>{campaign.subject}</div>
     </div>
   );
 }

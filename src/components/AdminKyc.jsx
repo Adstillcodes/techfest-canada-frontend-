@@ -4,6 +4,7 @@ const API = "https://techfest-canada-backend.onrender.com/api";
 
 export default function AdminKyc() {
 
+  const [isDark, setIsDark] = useState(true);
   const [data, setData] = useState([]);
   const [filtered, setFiltered] = useState([]);
 
@@ -16,6 +17,19 @@ export default function AdminKyc() {
 
   // 🔥 NEW: modal state
   const [selected, setSelected] = useState(null);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.body.classList.contains("dark-mode"));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     loadData();
@@ -124,10 +138,15 @@ export default function AdminKyc() {
   const uniqueCountries = [...new Set(data.map(d => d.country_hq).filter(Boolean))];
   const uniqueIndustries = [...new Set(data.map(d => d.primary_industry).filter(Boolean))];
 
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const inputBg = isDark ? "bg-[#0a0515]" : "bg-white";
+  const inputBorder = isDark ? "border-gray-700" : "border-gray-300";
+
   return (
     <div className="admin-card">
 
-      <h2>KYC Submissions</h2>
+      <h2 className={textMain}>KYC Submissions</h2>
 
       {loading && <p>Loading KYC data...</p>}
 

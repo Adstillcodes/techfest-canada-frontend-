@@ -3,10 +3,20 @@ import { useEffect, useState } from "react";
 const API = "https://techfest-canada-backend.onrender.com/api";
 
 export default function AdminAttendees() {
+  const [isDark, setIsDark] = useState(true);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    loadUsers();
+    const checkDarkMode = () => {
+      setIsDark(document.body.classList.contains("dark-mode"));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    
+    return () => observer.disconnect();
   }, []);
 
   const loadUsers = async () => {
@@ -26,9 +36,16 @@ export default function AdminAttendees() {
     }
   };
 
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+
   return (
     <div className="admin-card">
-      <h2>Ticket Holders</h2>
+      <h2 className={textMain}>Ticket Holders</h2>
 
       <div className="table-wrapper">
         <table className="admin-table">
@@ -38,24 +55,29 @@ export default function AdminAttendees() {
               <th>Email</th>
               <th>Ticket Type</th>
               <th>Ticket ID</th>
+              <th>Status</th>
               <th>Purchase Date</th>
             </tr>
           </thead>
-
           <tbody>
-            {users.map((user) =>
-              user.tickets?.map((ticket, idx) => (
-                <tr key={user._id + idx}>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td className="ticket-type">{ticket.type}</td>
-                  <td className="ticket-id">{ticket.ticketId}</td>
-                  <td>
-                    {new Date(ticket.purchaseDate).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))
-            )}
+            {users.map((user) => (
+              <tr key={user._id || user.id || user.email}>
+                <td className={textMain}>{user.name}</td>
+                <td className={textMuted}>{user.email}</td>
+                <td className={textMain}>{user.ticketType}</td>
+                <td className={textMuted}>{user.ticketId}</td>
+                <td>
+                  <span className={`ticket-badge ${user.checkedIn ? "active" : ""}`}>
+                    {user.checkedIn ? "Checked In" : "Not Checked In"}
+                  </span>
+                </td>
+                <td className={textMuted}>
+                  {user.purchaseDate
+                    ? new Date(user.purchaseDate).toLocaleDateString()
+                    : "-"}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

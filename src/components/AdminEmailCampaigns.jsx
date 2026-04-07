@@ -27,11 +27,25 @@ const STATUS_COLORS = {
 const COLORS = ["#a855f7", "#f59e0b", "#22c55e", "#3b82f6"];
 
 export default function AdminEmailCampaigns() {
+  const [isDark, setIsDark] = useState(true);
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [editingCampaign, setEditingCampaign] = useState(null);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.body.classList.contains("dark-mode"));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     fetchCampaigns();
@@ -81,12 +95,19 @@ export default function AdminEmailCampaigns() {
     }
   };
 
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const textSecondary = isDark ? "text-gray-300" : "text-gray-700";
+  const cardBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const cardBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const statBg = isDark ? "bg-[#2a1850]" : "bg-gray-50";
+
   return (
     <div className="admin-card">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white">Email Campaigns</h2>
-          <p className="text-gray-400 text-sm mt-1">
+          <h2 className={`text-xl font-bold ${textMain}`}>Email Campaigns</h2>
+          <p className={`${textMuted} text-sm mt-1`}>
             Create and manage your email marketing campaigns
           </p>
         </div>
@@ -100,10 +121,10 @@ export default function AdminEmailCampaigns() {
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-purple-500 border-t-transparent" />
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="text-center py-16 border-2 border-dashed border-gray-700 rounded-xl">
+        <div className={`text-center py-16 border-2 border-dashed ${isDark ? "border-gray-700" : "border-gray-300"} rounded-xl`}>
           <div className="text-5xl mb-4">📧</div>
-          <h3 className="text-white font-semibold text-lg mb-2">No Campaigns Yet</h3>
-          <p className="text-gray-400 mb-6">Create your first email campaign to get started</p>
+          <h3 className={`${textMain} font-semibold text-lg mb-2`}>No Campaigns Yet</h3>
+          <p className={`${textMuted} mb-6`}>Create your first email campaign to get started</p>
           <button onClick={() => setShowCreateModal(true)} className="btn-primary">
             Create Campaign
           </button>
@@ -113,12 +134,12 @@ export default function AdminEmailCampaigns() {
           {campaigns.map((campaign) => (
             <div
               key={campaign._id}
-              className="bg-[#1a1035] border border-gray-700 rounded-xl p-5 hover:border-purple-600 transition-colors"
+              className={`${cardBg} border ${cardBorder} rounded-xl p-5 hover:border-purple-600 transition-colors`}
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="flex items-center gap-3 mb-1">
-                    <h3 className="text-white font-semibold text-lg">{campaign.name}</h3>
+                    <h3 className={`${textMain} font-semibold text-lg`}>{campaign.name}</h3>
                     <span
                       className="px-2 py-0.5 rounded text-xs font-medium uppercase"
                       style={{
@@ -129,7 +150,7 @@ export default function AdminEmailCampaigns() {
                       {campaign.status}
                     </span>
                   </div>
-                  <p className="text-gray-400 text-sm">{campaign.subject}</p>
+                  <p className={`${textMuted} text-sm`}>{campaign.subject}</p>
                 </div>
 
                 <div className="flex gap-2">
@@ -171,29 +192,29 @@ export default function AdminEmailCampaigns() {
               <div className="grid grid-cols-5 gap-4">
                 <div>
                   <p className="text-gray-500 text-xs uppercase mb-1">Sent</p>
-                  <p className="text-white font-semibold">{campaign.stats?.sent || 0}</p>
+                  <p className={`${textMain} font-semibold`}>{campaign.stats?.sent || 0}</p>
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs uppercase mb-1">Opens</p>
-                  <p className="text-white font-semibold">
+                  <p className={`${textMain} font-semibold`}>
                     {campaign.stats?.uniqueOpens || 0}
                   </p>
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs uppercase mb-1">Clicks</p>
-                  <p className="text-white font-semibold">
+                  <p className={`${textMain} font-semibold`}>
                     {campaign.stats?.uniqueClicks || 0}
                   </p>
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs uppercase mb-1">Bounces</p>
-                  <p className="text-white font-semibold">
+                  <p className={`${textMain} font-semibold`}>
                     {campaign.stats?.bounces || 0}
                   </p>
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs uppercase mb-1">Created</p>
-                  <p className="text-white text-sm">
+                  <p className={`${textMain} text-sm`}>
                     {new Date(campaign.createdAt).toLocaleDateString()}
                   </p>
                 </div>

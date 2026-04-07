@@ -4,8 +4,22 @@ const API = "https://techfest-canada-backend.onrender.com/api";
 
 export default function AdminInventory() {
 
+  const [isDark, setIsDark] = useState(true);
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.body.classList.contains("dark-mode"));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     loadInventory();
@@ -108,28 +122,30 @@ export default function AdminInventory() {
     0
   );
 
+  const cardClass = isDark ? "stat-card" : "stat-card stat-card-light";
+
   return (
     <div className="admin-card">
 
-      <h2>Ticket Inventory</h2>
+      <h2 className={isDark ? "text-white" : "text-gray-900"}>Ticket Inventory</h2>
 
       {/* ===== DASHBOARD STATS ===== */}
 
      <div className="inventory-stats">
 
-  <div className="stat-card">
-    <p>Total Revenue</p>
-    <h2>${totalRevenue.toLocaleString()}</h2>
+  <div className={cardClass}>
+    <p className={isDark ? "text-gray-400" : "text-gray-600"}>Total Revenue</p>
+    <h2 className={isDark ? "text-white" : "text-gray-900"}>${totalRevenue.toLocaleString()}</h2>
   </div>
 
-  <div className="stat-card">
-    <p>Tickets Sold</p>
-    <h2>{totalSold}</h2>
+  <div className={cardClass}>
+    <p className={isDark ? "text-gray-400" : "text-gray-600"}>Tickets Sold</p>
+    <h2 className={isDark ? "text-white" : "text-gray-900"}>{totalSold}</h2>
   </div>
 
-  <div className="stat-card">
-    <p>Tickets Remaining</p>
-    <h2>{totalRemaining}</h2>
+  <div className={cardClass}>
+    <p className={isDark ? "text-gray-400" : "text-gray-600"}>Tickets Remaining</p>
+    <h2 className={isDark ? "text-white" : "text-gray-900"}>{totalRemaining}</h2>
   </div>
 
 </div>
@@ -163,19 +179,19 @@ export default function AdminInventory() {
               return (
                 <tr key={item.tier}>
 
-                  <td>{item.tier.toUpperCase()}</td>
+                  <td className={isDark ? "text-white" : "text-gray-900"}>{item.tier.toUpperCase()}</td>
 
                   {/* PRICE */}
 
                   <td>
                     <input
   type="number"
-  className="inventory-input"
+  className={isDark ? "inventory-input" : "inventory-input inventory-input-light"}
   defaultValue={item.price}
   onBlur={(e) =>
     updatePrice(item.tier, e.target.value)
   }
-/>
+                    />
                   </td>
 
                   {/* TOTAL */}
@@ -183,7 +199,7 @@ export default function AdminInventory() {
                   <td>
                     <input
                       type="number"
-                      className="inventory-input"
+                      className={isDark ? "inventory-input" : "inventory-input inventory-input-light"}
                       
                      defaultValue={item.total}
                       onBlur={(e) =>
@@ -192,7 +208,7 @@ export default function AdminInventory() {
                     />
                   </td>
 
-                  <td>{item.sold}</td>
+                  <td className={isDark ? "text-white" : "text-gray-900"}>{item.sold}</td>
 
                   {/* REMAINING */}
 
@@ -200,7 +216,7 @@ export default function AdminInventory() {
                     className={
                       remaining <= 10
                         ? "remaining-low"
-                        : "remaining-ok"
+                        : isDark ? "remaining-ok" : "remaining-ok-light"
                     }
                   >
                     {remaining}
@@ -208,7 +224,7 @@ export default function AdminInventory() {
 
                   {/* REVENUE */}
 
-                  <td>${revenue}</td>
+                  <td className={isDark ? "text-white" : "text-gray-900"}>${revenue}</td>
 
                   {/* PROGRESS BAR */}
 
@@ -225,7 +241,7 @@ export default function AdminInventory() {
 
                     </div>
 
-                    <small>{Math.round(percent)}%</small>
+                    <small className={isDark ? "text-gray-400" : "text-gray-600"}>{Math.round(percent)}%</small>
 
                   </td>
 

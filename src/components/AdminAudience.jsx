@@ -4,6 +4,7 @@ import axios from "axios";
 const API = "https://techfest-canada-backend.onrender.com/api";
 
 export default function AdminAudience() {
+  const [isDark, setIsDark] = useState(true);
   const [audiences, setAudiences] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -11,6 +12,19 @@ export default function AdminAudience() {
   const [importing, setImporting] = useState(false);
   const [selectedAudience, setSelectedAudience] = useState(null);
   const [audienceStats, setAudienceStats] = useState(null);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.body.classList.contains("dark-mode"));
+    };
+    
+    checkDarkMode();
+    
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     fetchAudiences();
@@ -86,12 +100,19 @@ export default function AdminAudience() {
     }
   };
 
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const textSecondary = isDark ? "text-gray-300" : "text-gray-700";
+  const cardBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const inputBg = isDark ? "bg-[#0a0515]" : "bg-white";
+  const cardBorder = isDark ? "border-gray-700" : "border-gray-200";
+
   return (
     <div className="admin-card">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white">Audience Management</h2>
-          <p className="text-gray-400 text-sm mt-1">Manage your email contact lists</p>
+          <h2 className={`text-xl font-bold ${textMain}`}>Audience Management</h2>
+          <p className={`${textMuted} text-sm mt-1`}>Manage your email contact lists</p>
         </div>
 
         <div className="flex gap-3">
@@ -118,7 +139,7 @@ export default function AdminAudience() {
       ) : audiences.length === 0 ? (
         <div className="text-center py-12 border-2 border-dashed border-gray-700 rounded-xl">
           <div className="text-4xl mb-3">📋</div>
-          <h3 className="text-white font-semibold mb-2">No Audiences Yet</h3>
+          <h3 className={`${textMain} font-semibold mb-2`}>No Audiences Yet</h3>
           <p className="text-gray-400 text-sm mb-4">Import a CSV file or add contacts manually</p>
           <p className="text-xs text-gray-500">CSV should have columns: email, name (optional)</p>
         </div>
@@ -143,10 +164,10 @@ export default function AdminAudience() {
                       {audience.contactCount || 0} contacts
                     </span>
                   </td>
-                  <td className="text-gray-400 text-sm">
+                  <td className={textMuted}>
                     {new Date(audience.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="text-gray-400 text-sm">
+                  <td className={textMuted}>
                     {audience.updatedAt ? new Date(audience.updatedAt).toLocaleDateString() : "-"}
                   </td>
                   <td>
@@ -247,7 +268,7 @@ function AudienceDetailModal({ audience, onClose }) {
         <div className="p-6 border-b border-gray-700 flex justify-between items-center">
           <div>
             <h3 className="text-xl font-bold text-white">{audience.name}</h3>
-            <p className="text-gray-400 text-sm">{audience.contactCount || 0} contacts</p>
+            <p className={textMuted}>{audience.contactCount || 0} contacts</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">
             ×
@@ -274,17 +295,17 @@ function AudienceDetailModal({ audience, onClose }) {
           {activeTab === "overview" && (
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-[#2a1850] p-4 rounded-xl border border-purple-700">
-                <p className="text-gray-400 text-sm">Total Contacts</p>
+                <p className={textMuted}>Total Contacts</p>
                 <p className="text-2xl font-bold text-white">{audience.contactCount || 0}</p>
               </div>
               <div className="bg-[#2a1850] p-4 rounded-xl border border-purple-700">
-                <p className="text-gray-400 text-sm">Created</p>
+                <p className={textMuted}>Created</p>
                 <p className="text-lg font-bold text-white">
                   {new Date(audience.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <div className="bg-[#2a1850] p-4 rounded-xl border border-purple-700">
-                <p className="text-gray-400 text-sm">Last Updated</p>
+                <p className={textMuted}>Last Updated</p>
                 <p className="text-lg font-bold text-white">
                   {audience.updatedAt ? new Date(audience.updatedAt).toLocaleDateString() : "-"}
                 </p>
@@ -432,7 +453,7 @@ function AddAudienceModal({ onClose, onSuccess }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Marketing Leads"
-              className="w-full bg-[#0a0515] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
+              className={`w-full ${inputBg} border ${cardBorder} rounded-lg px-4 py-3 ${textMain} placeholder-gray-500 focus:border-purple-500 focus:outline-none`}
             />
           </div>
 
@@ -698,7 +719,7 @@ function EditAudienceModal({ audience, onClose, onSuccess }) {
         <div className="p-6 border-b border-gray-700 flex justify-between items-center">
           <div>
             <h3 className="text-xl font-bold text-white">Edit Audience</h3>
-            <p className="text-gray-400 text-sm">{audience.contactCount || 0} current contacts</p>
+            <p className={textMuted}>{audience.contactCount || 0} current contacts</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">
             ×
@@ -871,7 +892,7 @@ function EditAudienceModal({ audience, onClose, onSuccess }) {
                       <label className="flex-1 cursor-pointer">
                         <div className="bg-[#0a0515] border border-gray-700 border-dashed rounded-lg px-4 py-6 text-center hover:border-purple-500 transition-colors">
                           <div className="text-purple-400 mb-2">📄</div>
-                          <p className="text-gray-400 text-sm">
+                          <p className={textMuted}>
                             {csvFile ? csvFile.name : "Click to select CSV file"}
                           </p>
                           <p className="text-gray-500 text-xs mt-1">CSV should have columns: email, name, firstname, lastname, company, title, location</p>

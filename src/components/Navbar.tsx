@@ -159,14 +159,15 @@ export default function Navbar() {
                   if (item.hasDropdown) {
                     return (
                       <li key={item.path} style={{ position: "relative" }} ref={dropRef} onMouseEnter={() => setDropOpen(true)} onMouseLeave={() => setDropOpen(false)}>
-                        <Link to={item.path} className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
-                          style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}
+                        {/* PARTNERS label is intentionally not a link — only dropdown items navigate */}
+                        <span className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
+                          style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, cursor: "default" }}
                         >
                           {item.label}
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: dropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
                             <path d="M6 9l6 6 6-6" />
                           </svg>
-                        </Link>
+                        </span>
                         {renderDropdown(PARTNERS_DROPDOWN, dropOpen, setDropOpen)}
                       </li>
                     );
@@ -220,9 +221,10 @@ export default function Navbar() {
                     return (
                       <div key={item.path} style={{ display: "flex", flexDirection: "column" }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <Link to={item.path} onClick={() => setMobileOpen(false)}
-                            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", padding: "12px 16px", borderRadius: 12, flex: 1, color: location.pathname === item.path ? "#7a3fd1" : textMain, background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent" }}
-                          >{item.label}</Link>
+                          {/* PARTNERS label is intentionally not a link in mobile either */}
+                          <span
+                            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", padding: "12px 16px", borderRadius: 12, flex: 1, color: PARTNERS_DROPDOWN.some(d => d.path === location.pathname) ? "#7a3fd1" : textMain, background: PARTNERS_DROPDOWN.some(d => d.path === location.pathname) ? "rgba(122,63,209,0.08)" : "transparent", cursor: "default" }}
+                          >{item.label}</span>
                           <button onClick={() => setMobileDropOpen(!mobileDropOpen)} style={{ background: "transparent", border: "none", color: textMain, cursor: "pointer", padding: "10px 16px", display: "flex", alignItems: "center" }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: mobileDropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
                               <path d="M6 9l6 6 6-6" />

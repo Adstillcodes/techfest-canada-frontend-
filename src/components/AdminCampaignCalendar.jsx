@@ -52,10 +52,10 @@ const EMAIL_TEMPLATES = [
 ];
 
 const STATUS_BADGE = {
-  pending: { bg: "bg-gray-600/20", color: "text-gray-300", label: "Pending" },
-  draft: { bg: "bg-yellow-600/20", color: "text-yellow-300", label: "Draft" },
-  sent: { bg: "bg-green-600/20", color: "text-green-300", label: "Sent" },
-  skipped: { bg: "bg-red-600/20", color: "text-red-300", label: "Skipped" },
+  pending: { bg: "bg-gray-600/20", color: "text-gray-300", label: "Pending", lightColor: "#4b5563" },
+  draft: { bg: "bg-yellow-600/20", color: "text-yellow-300", label: "Draft", lightColor: "#92400e" },
+  sent: { bg: "bg-green-600/20", color: "text-green-300", label: "Sent", lightColor: "#15803d" },
+  skipped: { bg: "bg-red-600/20", color: "text-red-300", label: "Skipped", lightColor: "#b91c1c" },
 };
 
 const formatDate = (dateStr) => {
@@ -208,6 +208,8 @@ export default function AdminCampaignCalendar() {
   const tabBg = isDark ? "bg-[#1a1035]" : "bg-gray-100";
   const tabHover = isDark ? "hover:bg-[#2a1850]" : "hover:bg-gray-200";
   const headerBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const upcomingCardBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const byAudienceCardBg = isDark ? "bg-[#1a1035]" : "bg-white";
 
   return (
     <div className="admin-card">
@@ -307,7 +309,7 @@ export default function AdminCampaignCalendar() {
       {activeTab === "upcoming" && (
         <div>
           {upcoming.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">
+            <div className={`text-center py-12 ${textMuted}`}>
               No upcoming campaigns in the next 30 days
             </div>
           ) : (
@@ -315,14 +317,14 @@ export default function AdminCampaignCalendar() {
               {upcoming.map((c) => (
                 <div
                   key={c._id}
-                  className="bg-[#1a1035] border border-gray-700 rounded-lg p-4 flex items-center justify-between"
+                  className={`${upcomingCardBg} border ${cardBorder} rounded-lg p-4 flex items-center justify-between`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-white">
+                      <div className={`text-2xl font-bold ${textMain}`}>
                         {new Date(c.sendDate).getDate()}
                       </div>
-                      <div className="text-xs text-gray-400">
+                      <div className={`text-xs ${textMuted}`}>
                         {new Date(c.sendDate).toLocaleString("en-US", { month: "short" })}
                       </div>
                     </div>
@@ -333,8 +335,8 @@ export default function AdminCampaignCalendar() {
                         </span>
                         <span className="text-xs text-gray-500">{daysUntil(c.sendDate)}</span>
                       </div>
-                      <div className="text-white font-medium">{c.subject}</div>
-                      <div className="text-xs text-gray-400 mt-1">{c.purpose}</div>
+                      <div className={`${textMain} font-medium`}>{c.subject}</div>
+                      <div className={`text-xs ${textMuted} mt-1`}>{c.purpose}</div>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -414,6 +416,7 @@ export default function AdminCampaignCalendar() {
             setSelectedCampaign(null);
             fetchCalendar();
           }}
+          isDark={isDark}
         />
       )}
 
@@ -453,6 +456,8 @@ function CampaignCard({ campaign, onClick, isDark = true }) {
   const cardBorder = isDark ? "border-gray-700" : "border-gray-200";
   const textMain = isDark ? "text-white" : "text-gray-900";
   const textMuted = isDark ? "text-gray-500" : "text-gray-500";
+  const badgeBg = isDark ? "rgba(75, 85, 99, 0.2)" : "rgba(75, 85, 99, 0.15)";
+  const badgeColor = isDark ? statusStyle.color : statusStyle.lightColor;
 
   return (
     <div
@@ -463,7 +468,10 @@ function CampaignCard({ campaign, onClick, isDark = true }) {
         <span className={`text-xs ${textMuted}`}>
           {formatDate(campaign.sendDate)}
         </span>
-        <span className={`text-xs px-1.5 py-0.5 rounded ${statusStyle.bg} ${statusStyle.color}`}>
+        <span 
+          className="text-xs px-1.5 py-0.5 rounded"
+          style={{ backgroundColor: badgeBg, color: badgeColor }}
+        >
           {statusStyle.label}
         </span>
       </div>
@@ -472,11 +480,20 @@ function CampaignCard({ campaign, onClick, isDark = true }) {
   );
 }
 
-function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate, onDelete, audiences, sendingAudience, setSendingAudience }) {
+function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate, onDelete, audiences, sendingAudience, setSendingAudience, isDark = true }) {
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [newDate, setNewDate] = useState("");
   const [savingDate, setSavingDate] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const statusStyle = STATUS_BADGE[campaign.status] || STATUS_BADGE.pending;
+  const badgeBg = isDark ? "rgba(75, 85, 99, 0.2)" : "rgba(75, 85, 99, 0.15)";
+  const badgeColor = isDark ? statusStyle.color : statusStyle.lightColor;
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const modalBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const modalBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const inputBg = isDark ? "bg-[#0a0515]" : "bg-white";
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this campaign? This action cannot be undone.")) {
@@ -522,20 +539,23 @@ function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate, 
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#1a1035] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-        <div className="p-6 border-b border-gray-700 flex justify-between items-start">
+      <div className={`${modalBg} rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden`}>
+        <div className={`p-6 border-b ${modalBorder} flex justify-between items-start`}>
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs px-2 py-1 rounded bg-purple-600/20 text-purple-300">
                 {campaign.audience || campaign.phase}
               </span>
-              <span className={`text-xs px-2 py-1 rounded ${STATUS_BADGE[campaign.status]?.bg} ${STATUS_BADGE[campaign.status]?.color}`}>
+              <span 
+                className="text-xs px-2 py-1 rounded"
+                style={{ backgroundColor: badgeBg, color: badgeColor }}
+              >
                 {STATUS_BADGE[campaign.status]?.label}
               </span>
             </div>
-            <h3 className="text-xl font-bold text-white">{campaign.subject}</h3>
+            <h3 className={`text-xl font-bold ${textMain}`}>{campaign.subject}</h3>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl">
+          <button onClick={onClose} className={`${textMuted} hover:${textMain} text-2xl`}>
             ×
           </button>
         </div>
@@ -550,7 +570,7 @@ function CampaignDetailModal({ campaign, onClose, onSend, onEdit, onUpdateDate, 
                     type="date"
                     value={newDate || formatDateForInput(campaign.sendDate)}
                     onChange={(e) => setNewDate(e.target.value)}
-                    className="bg-[#0a0515] border border-gray-700 rounded px-3 py-1.5 text-white text-sm focus:border-purple-500 focus:outline-none"
+                    className={`${inputBg} border ${modalBorder} rounded px-3 py-1.5 ${textMain} text-sm focus:border-purple-500 focus:outline-none`}
                   />
                   <button
                     onClick={handleSaveDate}

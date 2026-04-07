@@ -23,7 +23,6 @@ import Exhibit from "./pages/Exhibit";
 import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
 import ScrollToTop from "./components/ScrollToTop";
-import { KycForm } from "./pages/KycForm";
 import Awards from "./pages/Awards";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
@@ -81,7 +80,6 @@ function App() {
         <Route path="/brochures" element={<Brochures />} />
         <Route path="/venue" element={<Venue />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/kyc" element={<KycForm />} />
         <Route path="/awards" element={<Awards />} />
       </Routes>
       <TicketBar />

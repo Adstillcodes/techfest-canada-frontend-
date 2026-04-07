@@ -374,8 +374,8 @@ export default function AdminCampaignCalendar() {
           sendingAudience={sendingAudience}
           setSendingAudience={setSendingAudience}
           onClose={() => setSelectedCampaign(null)}
-          onSend={() => {
-            sendCampaign(selectedCampaign._id || selectedCampaign.id);
+          onSend={async () => {
+            await sendCampaign(selectedCampaign._id || selectedCampaign.id);
             setSelectedCampaign(null);
           }}
           onEdit={() => {

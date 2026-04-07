@@ -94,7 +94,11 @@ export default function SponsorMarquee({ dark, title }) {
           gap: 12px;
           padding: 4px 8px;
         }
-        .marquee-track:hover { animation-play-state: paused; }
+        /* Only pause on devices with a real pointer (mouse). Tapping on
+           touchscreens fires a synthetic hover that would freeze the marquee. */
+        @media (hover: hover) and (pointer: fine) {
+          .marquee-track:hover { animation-play-state: paused; }
+        }
         .marquee-item {
           display: flex;
           align-items: center;
@@ -108,9 +112,11 @@ export default function SponsorMarquee({ dark, title }) {
           box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
           transition: box-shadow 0.25s ease, transform 0.25s ease;
         }
-        .marquee-item:hover {
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(155,135,245,0.3);
-          transform: translateY(-2px);
+        @media (hover: hover) and (pointer: fine) {
+          .marquee-item:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(155,135,245,0.3);
+            transform: translateY(-2px);
+          }
         }
         .marquee-item img {
           height: 36px;

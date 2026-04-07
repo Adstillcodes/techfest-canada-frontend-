@@ -23,7 +23,7 @@ import Exhibit from "./pages/Exhibit";
 import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
 import ScrollToTop from "./components/ScrollToTop";
-import KycForm from "./pages/KycForm";
+import { KycForm } from "./pages/KycForm";
 import Awards from "./pages/Awards";
 
 /* ================= SYSTEM THEME DETECTOR ================= */

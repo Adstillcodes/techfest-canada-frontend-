@@ -74,7 +74,17 @@ export default function AdminLogin() {
           required
           value={email}
           onChange={e=>setEmail(e.target.value)}
-          style={{width:"100%",padding:12,marginBottom:12}}
+          style={{
+            width:"100%",
+            padding:12,
+            marginBottom:12,
+            background:"#1a1035",
+            border:"1px solid rgba(122,63,209,0.3)",
+            borderRadius:8,
+            color:"#ffffff",
+            fontSize:"1rem",
+            outline:"none"
+          }}
         />
 
         <input
@@ -83,7 +93,17 @@ export default function AdminLogin() {
           required
           value={password}
           onChange={e=>setPassword(e.target.value)}
-          style={{width:"100%",padding:12,marginBottom:20}}
+          style={{
+            width:"100%",
+            padding:12,
+            marginBottom:20,
+            background:"#1a1035",
+            border:"1px solid rgba(122,63,209,0.3)",
+            borderRadius:8,
+            color:"#ffffff",
+            fontSize:"1rem",
+            outline:"none"
+          }}
         />
 
         <button

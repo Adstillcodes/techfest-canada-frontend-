@@ -22,6 +22,7 @@
     --bg-card: #F9F9FB;
     --bg-nav: rgba(255, 255, 255, 0.95);
     --bg-modal: var(--brand-white);
+    --bg-input: #ffffff;
     
     --text-main: var(--brand-black);
     --text-muted: var(--brand-charcoal);
@@ -1040,11 +1041,38 @@ html {
   padding: 14px;
   background: rgba(122,63,209,0.08);
   font-weight: 700;
+  color: var(--text-main);
 }
 
 .admin-table td {
   padding: 14px;
   border-bottom: 1px solid var(--border-main);
+  color: var(--text-main);
+}
+
+/* Admin input styles */
+.admin-input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-main);
+  background: var(--bg-input, #ffffff);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.admin-input:focus {
+  border-color: var(--brand-purple);
+}
+
+/* Admin card in light mode */
+.admin-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
 }
 
 /* Excel feel */

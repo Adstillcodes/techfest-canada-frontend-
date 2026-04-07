@@ -3,13 +3,6 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence } from "fra
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 
-const SPACES = [
-  { name: "Grand Ballroom",      capacity: "1,200+", area: "12,000 sq ft", use: "Main Conference & Exhibition" },
-  { name: "Harbour View Hall",   capacity: "600",    area: "6,500 sq ft",  use: "Keynote & Plenary Sessions" },
-  { name: "Lakeside Boardrooms", capacity: "30-80",  area: "800-2,400 sq ft", use: "CxO Breakfasts & Roundtables" },
-  { name: "Waterfront Terrace",  capacity: "400",    area: "Outdoor",      use: "Networking & Gala Dinner" },
-];
-
 // Use local images if available, fallback to real Westin-style hotel photos
 const IMAGES = [
   "/venue1.jpg",
@@ -18,11 +11,6 @@ const IMAGES = [
   "/venue4.jpg",
   "/venue5.jpg",
 ];
-
-// Fallback src handler
-function imgSrc(path, fallback) {
-  return path;
-}
 
 const GALLERY = [
   { src: "/venue1.jpg", fallback: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=85", label: "Aerial View" },
@@ -95,11 +83,7 @@ export default function Venue() {
           .venue-bento-grid { display:none !important; }
           .mobile-gallery-strip { display:block !important; }
           .venue-stats-row { flex-direction:column !important; gap:12px !important; }
-          .spaces-grid { grid-template-columns:1fr !important; }
           .location-grid { grid-template-columns:1fr !important; }
-        }
-        @media(min-width:641px) and (max-width:1024px){
-          .spaces-grid { grid-template-columns:repeat(2,1fr) !important; }
         }
       `}} />
 
@@ -234,40 +218,6 @@ export default function Venue() {
                 return <img key={i} src={img.src} alt={img.label} onError={function(e) { e.currentTarget.src = img.fallback; }} style={{ width: 280, height: 200, objectFit: "cover", borderRadius: 16, flexShrink: 0 }} />;
               })}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* EVENT SPACES */}
-      <section style={{ background: dark ? "rgba(122,63,209,0.05)" : "rgba(122,63,209,0.03)", borderTop: "1px solid " + cardBdr, borderBottom: "1px solid " + cardBdr, padding: "6rem 5%" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <FadeIn>
-            <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
-              <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.72rem", fontWeight: 800, letterSpacing: "3px", textTransform: "uppercase", color: accent, marginBottom: 12 }}>Event Infrastructure</p>
-              <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.8rem,3.5vw,2.8rem)", fontWeight: 900, color: textMain, marginBottom: 16 }}>World-Class Event Spaces</h2>
-              <div style={{ width: 50, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", margin: "0 auto 20px" }} />
-              <p style={{ fontSize: "1.05rem", color: textMid, maxWidth: 520, margin: "0 auto", lineHeight: 1.8 }}>Over 60,000 sq ft of flexible event space — purpose-built for the scale and ambition of TTFC 2026.</p>
-            </div>
-          </FadeIn>
-          <div className="spaces-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20 }}>
-            {SPACES.map(function (space, i) {
-              return (
-                <FadeIn key={space.name} delay={i * 0.1}>
-                  <div className="space-card" style={{ background: cardBg, border: "1px solid " + cardBdr, borderRadius: 22, padding: "32px 24px", transition: "transform 0.3s ease, box-shadow 0.3s ease", boxShadow: dark ? "0 4px 24px rgba(0,0,0,0.3)" : "0 4px 24px rgba(122,63,209,0.06)", cursor: "default", height: "100%" }}>
-                    <div style={{ width: 36, height: 3, borderRadius: 3, background: "linear-gradient(90deg,#7a3fd1,#f5a623)", marginBottom: 20 }} />
-                    <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.92rem", fontWeight: 900, color: textMain, marginBottom: 14, lineHeight: 1.3 }}>{space.name}</h3>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ fontSize: "1rem", fontWeight: 800, color: textMain }}>{space.capacity}</span>
-                        <span style={{ fontSize: "0.9rem", color: textMid }}>capacity</span>
-                      </div>
-                      <div style={{ fontSize: "0.9rem", color: textMid }}>{space.area}</div>
-                    </div>
-                    <div style={{ background: dark ? "rgba(122,63,209,0.12)" : "rgba(122,63,209,0.07)", border: "1px solid " + (dark ? "rgba(122,63,209,0.25)" : "rgba(122,63,209,0.15)"), borderRadius: 8, padding: "9px 14px", fontSize: "0.88rem", fontWeight: 600, color: accent, lineHeight: 1.4 }}>{space.use}</div>
-                  </div>
-                </FadeIn>
-              );
-            })}
           </div>
         </div>
       </section>

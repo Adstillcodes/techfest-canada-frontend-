@@ -393,6 +393,7 @@ function AddAudienceModal({ onClose, onSuccess, isDark = true }) {
   const modalBorder = isDark ? "border-gray-700" : "border-gray-200";
   const inputBg = isDark ? "bg-[#0a0515]" : "bg-white";
   const inputBorder = isDark ? "border-gray-700" : "border-gray-300";
+  const cardBorder = isDark ? "border-gray-700" : "border-gray-200";
 
   const handleSubmit = async () => {
     if (!name.trim() || !emails.trim()) return;

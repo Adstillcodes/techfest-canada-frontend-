@@ -207,6 +207,7 @@ export default function AdminAudience() {
             setSelectedAudience(null);
             setAudienceStats(null);
           }}
+          isDark={isDark}
         />
       )}
 
@@ -217,6 +218,7 @@ export default function AdminAudience() {
             setShowModal(false);
             fetchAudiences();
           }}
+          isDark={isDark}
         />
       )}
 
@@ -228,16 +230,23 @@ export default function AdminAudience() {
             setEditingAudience(null);
             fetchAudiences();
           }}
+          isDark={isDark}
         />
       )}
     </div>
   );
 }
 
-function AudienceDetailModal({ audience, onClose }) {
+function AudienceDetailModal({ audience, onClose, isDark = true }) {
   const [activeTab, setActiveTab] = useState("overview");
   const [contacts, setContacts] = useState([]);
   const [loadingContacts, setLoadingContacts] = useState(false);
+
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const textSecondary = isDark ? "text-gray-300" : "text-gray-700";
+  const modalBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const modalBorder = isDark ? "border-gray-700" : "border-gray-200";
 
   useEffect(() => {
     if (activeTab === "contacts" && contacts.length === 0) {
@@ -363,7 +372,7 @@ function AudienceDetailModal({ audience, onClose }) {
   );
 }
 
-function AddAudienceModal({ onClose, onSuccess }) {
+function AddAudienceModal({ onClose, onSuccess, isDark = true }) {
   const [name, setName] = useState("");
   const [emails, setEmails] = useState("");
   const [saving, setSaving] = useState(false);
@@ -376,6 +385,14 @@ function AddAudienceModal({ onClose, onSuccess }) {
     title: "",
     location: ""
   });
+
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const textSecondary = isDark ? "text-gray-300" : "text-gray-700";
+  const modalBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const modalBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const inputBg = isDark ? "bg-[#0a0515]" : "bg-white";
+  const inputBorder = isDark ? "border-gray-700" : "border-gray-300";
 
   const handleSubmit = async () => {
     if (!name.trim() || !emails.trim()) return;
@@ -570,7 +587,7 @@ function AddAudienceModal({ onClose, onSuccess }) {
   );
 }
 
-function EditAudienceModal({ audience, onClose, onSuccess }) {
+function EditAudienceModal({ audience, onClose, onSuccess, isDark = true }) {
   const [name, setName] = useState(audience.name);
   const [additionalEmails, setAdditionalEmails] = useState("");
   const [csvFile, setCsvFile] = useState(null);
@@ -589,6 +606,14 @@ function EditAudienceModal({ audience, onClose, onSuccess }) {
     title: "",
     location: ""
   });
+
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const textSecondary = isDark ? "text-gray-300" : "text-gray-700";
+  const modalBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const modalBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const inputBg = isDark ? "bg-[#0a0515]" : "bg-white";
+  const inputBorder = isDark ? "border-gray-700" : "border-gray-300";
 
   useEffect(() => {
     if (activeTab === "contacts") {

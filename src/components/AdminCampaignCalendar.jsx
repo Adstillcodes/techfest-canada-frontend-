@@ -445,6 +445,7 @@ export default function AdminCampaignCalendar() {
             fetchCalendar();
             setAddingCampaign(null);
           }}
+          isDark={isDark}
         />
       )}
     </div>
@@ -1228,11 +1229,18 @@ function generateCorporateTemplate(campaign) {
 </html>`;
 }
 
-function AddCampaignModal({ phase, audience, onClose, onCreated }) {
+function AddCampaignModal({ phase, audience, onClose, onCreated, isDark = true }) {
   const [subject, setSubject] = useState("");
   const [purpose, setPurpose] = useState("");
   const [sendDate, setSendDate] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const textMain = isDark ? "text-white" : "text-gray-900";
+  const textMuted = isDark ? "text-gray-400" : "text-gray-600";
+  const modalBg = isDark ? "bg-[#1a1035]" : "bg-white";
+  const modalBorder = isDark ? "border-gray-700" : "border-gray-200";
+  const inputBg = isDark ? "bg-[#0a0515]" : "bg-white";
+  const inputBorder = isDark ? "border-gray-700" : "border-gray-300";
 
   const handleSubmit = async (e) => {
     e.preventDefault();

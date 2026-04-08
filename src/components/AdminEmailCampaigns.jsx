@@ -285,6 +285,7 @@ export default function AdminEmailCampaigns() {
             setShowCreateModal(false);
             fetchCampaigns();
           }}
+          isDark={isDark}
         />
       )}
 

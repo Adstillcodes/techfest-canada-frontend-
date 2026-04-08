@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const API = import.meta.env.VITE_API_URL || "https://techfest-canada-backend.onrender.com/api";
+
 export default function NewsletterBar({ dark }) {
   var s1 = useState(""); var email = s1[0]; var setEmail = s1[1];
   var s2 = useState(false); var agreed = s2[0]; var setAgreed = s2[1];
@@ -11,12 +13,33 @@ export default function NewsletterBar({ dark }) {
   var border = dark ? "rgba(155,135,245,0.20)" : "transparent";
 
   
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setError("Please enter a valid email."); return; }
     if (!agreed) { setError("Please agree to receive communications."); return; }
     setError("");
-    setSubmitted(true);
+    
+    const subscribeUrl = `${API}/subscriptions/subscribe`;
+    console.log("[Newsletter] Submitting to:", subscribeUrl);
+    
+    try {
+      const res = await fetch(subscribeUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: "homepage" })
+      });
+      const data = await res.json();
+      console.log("[Newsletter] Response:", res.status, data);
+      
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setError(data.error || data.message || "Something went wrong. Please try again.");
+      }
+    } catch (err) {
+      console.error("[Newsletter] Error:", err);
+      setError("Something went wrong. Please try again.");
+    }
   }
 
   return (

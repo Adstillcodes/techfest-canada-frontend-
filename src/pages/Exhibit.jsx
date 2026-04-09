@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
+const API = import.meta.env.VITE_API_URL || "https://techfest-canada-backend.onrender.com/api";
 
 const BOOTH_TIERS = [
   {
@@ -174,6 +175,23 @@ export default function Exhibit() {
     return () => obs.disconnect();
   }, []);
 
+  const handlePurchaseBooth = async (tier) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API}/payments/create-checkout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+        body: JSON.stringify({ type: "booth", tier: `booth-${tier}` }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Checkout failed");
+      window.location.href = data.url;
+    } catch (err) {
+      console.error("Purchase error:", err);
+      alert(err.message || "Purchase failed. Please try again.");
+    }
+  };
+
   const bg        = isDark ? "#07030f"                : "#f4f0ff";
   const textMain  = isDark ? "#ffffff"                : "#0f0520";
   const textMuted = isDark ? "rgba(200,180,255,0.8)"  : "rgba(60,30,110,0.85)";
@@ -310,6 +328,7 @@ export default function Exhibit() {
             cardBg={cardBg}
             index={index}
             onOpenModal={() => setSelectedBooth(tier)}
+            onPurchase={() => handlePurchaseBooth(tier.id)}
           />
         ))}
       </div>
@@ -380,7 +399,7 @@ export default function Exhibit() {
    BOOTH ROW COMPONENT
    ═══════════════════════════════════════════════════════ */
 
-function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, onOpenModal }) {
+function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, onOpenModal, onPurchase }) {
   const hasBg = index % 2 === 0;
 
   return (
@@ -450,7 +469,7 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
           <motion.button
             className="btn-primary"
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            onClick={function() { alert("Booth purchasing will be available soon. Please use Enquire Now to reserve your spot."); }}
+            onClick={onPurchase}
             style={{
               display: "inline-block", textAlign: "center", marginTop: 32, padding: "16px 32px", borderRadius: 12, border: "none", cursor: "pointer",
               fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.95rem", letterSpacing: "1px", textTransform: "uppercase"
@@ -460,7 +479,7 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
           </motion.button>
 
           <motion.button 
-            onClick={onOpenModal}
+            onClick={() => setSelectedBooth(tier)}
             className="btn-outline"
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             style={{

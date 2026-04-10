@@ -693,12 +693,19 @@ function CampaignStatsModal({ campaign, onClose, isDark = true }) {
   const [activeTab, setActiveTab] = useState("overview");
   const [trackingData, setTrackingData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recipientPage, setRecipientPage] = useState(1);
+
+  // Reset page when campaign changes
+  useEffect(() => {
+    setRecipientPage(1);
+  }, [campaign._id]);
 
   useEffect(() => {
     const fetchTrackingData = async () => {
       try {
+        setLoading(true);
         const token = localStorage.getItem("token");
-        const res = await axios.get(`${API}/campaigns/${campaign._id}/tracking`, {
+        const res = await axios.get(`${API}/campaigns/${campaign._id}/tracking?page=${recipientPage}&limit=50`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTrackingData(res.data);
@@ -709,7 +716,7 @@ function CampaignStatsModal({ campaign, onClose, isDark = true }) {
       }
     };
     fetchTrackingData();
-  }, [campaign._id]);
+  }, [campaign._id, recipientPage]);
 
   const stats = campaign.stats || {};
   const sent = stats.sent || 0;
@@ -935,7 +942,7 @@ function CampaignStatsModal({ campaign, onClose, isDark = true }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {trackingData.recipients.slice(0, 50).map((r, i) => (
+                      {trackingData.recipients.map((r, i) => (
                         <tr key={i}>
                           <td className="font-mono text-sm">{r.email}</td>
                           <td>
@@ -962,10 +969,36 @@ function CampaignStatsModal({ campaign, onClose, isDark = true }) {
                       ))}
                     </tbody>
                   </table>
-                  {trackingData.recipients.length > 50 && (
-                    <p className="text-center text-gray-500 text-sm mt-4">
-                      Showing 50 of {trackingData.recipients.length} recipients
-                    </p>
+                  
+                  {trackingData.pagination && trackingData.pagination.totalPages > 1 && (
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-700">
+                      <button
+                        onClick={() => setRecipientPage(p => Math.max(1, p - 1))}
+                        disabled={recipientPage === 1}
+                        className={`px-4 py-2 rounded-lg text-sm ${
+                          recipientPage === 1
+                            ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                            : "bg-purple-600 text-white hover:bg-purple-500"
+                        }`}
+                      >
+                        Previous
+                      </button>
+                      <span className="text-gray-400 text-sm">
+                        Page {trackingData.pagination.page} of {trackingData.pagination.totalPages} 
+                        ({trackingData.pagination.totalRecords} total)
+                      </span>
+                      <button
+                        onClick={() => setRecipientPage(p => Math.min(trackingData.pagination.totalPages, p + 1))}
+                        disabled={recipientPage >= trackingData.pagination.totalPages}
+                        className={`px-4 py-2 rounded-lg text-sm ${
+                          recipientPage >= trackingData.pagination.totalPages
+                            ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                            : "bg-purple-600 text-white hover:bg-purple-500"
+                        }`}
+                      >
+                        Next
+                      </button>
+                    </div>
                   )}
                 </div>
               ) : (

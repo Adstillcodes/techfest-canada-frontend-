@@ -104,7 +104,7 @@ function CTAReveal(props) {
     >
       <motion.a href="/tickets" className="btn-primary"
         whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-        style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 36px", borderRadius: 14, textDecoration: "none", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.85rem", letterSpacing: "1.2px", textTransform: "uppercase" }}
+        style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 36px", borderRadius: 14, textDecoration: "none", fontFamily: "Arial, Helvetica, sans-serif", fontWeight: 800, fontSize: "0.85rem", letterSpacing: "1.2px", textTransform: "uppercase" }}
       >
         Get Your Pass
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
@@ -164,6 +164,14 @@ export default function Home() {
         @media (min-width: 641px) {
           .hero-sub { max-width: 920px !important; width: 100% !important; }
         }
+
+        /* ── Arial override: home page only ── */
+        body, h1, h2, h3, h4, h5, h6,
+        p, a, span, li, button, input, textarea, label,
+        .btn-primary, .btn-outline, .btn-disabled,
+        .hero-sub, .section-title {
+          font-family: Arial, Helvetica, sans-serif !important;
+        }
       `}</style>
 
       <Navbar />
@@ -199,7 +207,7 @@ export default function Home() {
           <TextReveal
             text="MEET BUILD SCALE"
             colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}
-            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(2.2rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.5rem", whiteSpace: "nowrap", flexWrap: "nowrap" }}
+            style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: "clamp(2.2rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-1px", marginBottom: "0.5rem", whiteSpace: "nowrap", flexWrap: "nowrap" }}
           />
           <SubtitleReveal textMid={textMid} />
           <CTAReveal dark={dark} textMain={textMain} accent={accent} />

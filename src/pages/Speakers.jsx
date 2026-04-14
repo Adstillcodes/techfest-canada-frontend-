@@ -308,11 +308,7 @@ function SpeakerCard({ speaker, dark, i }) {
         transition: "transform 0.25s ease, box-shadow 0.25s ease",
       }}
     >
-      {/* accent left stripe — matches session cards */}
-      <div style={{
-        position: "absolute", left: 0, top: 0, bottom: 0, width: "3px",
-        background: accent, borderRadius: "10px 0 0 10px", zIndex: 2,
-      }} />
+
 
       <Link to={`/speakers/${speaker._id}`} style={{ display: "block", textDecoration: "none", color: "inherit" }}>
         {/* Image */}
@@ -348,7 +344,7 @@ function SpeakerCard({ speaker, dark, i }) {
         </div>
 
         {/* Body */}
-        <div style={{ padding: "1.1rem 1.4rem 1.1rem 1.65rem" }}>
+        <div style={{ padding: "1.1rem 1.4rem" }}>
           {/* chips row — pillar + sector, Agenda-style */}
           <div style={{
             display: "flex", flexWrap: "wrap", alignItems: "center",
@@ -413,9 +409,8 @@ function SpeakerCard({ speaker, dark, i }) {
           {/* Company row */}
           {speaker.company && (
             <p style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: "0.64rem", fontWeight: 700, letterSpacing: "0.08em",
-              textTransform: "uppercase", color: mutedText,
+              fontSize: "0.82rem", lineHeight: 1.5,
+              color: mutedText,
             }}>
               {speaker.company}
             </p>
@@ -425,7 +420,7 @@ function SpeakerCard({ speaker, dark, i }) {
 
       {/* LinkedIn button */}
       {speaker.linkedin && (
-        <div style={{ padding: "0 1.4rem 1.1rem 1.65rem" }}>
+        <div style={{ padding: "0 1.4rem 1.1rem" }}>
           <a
             href={speaker.linkedin} target="_blank" rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}

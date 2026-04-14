@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
-import { Mic, Users, Calendar, Award, ChevronRight, X, Search, ChevronDown,
+import { Mic, Users, Calendar, Award, Layers, ChevronRight, X, Search, ChevronDown,
          Sparkles, Zap, Shield, Cpu, Leaf } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
@@ -10,10 +10,11 @@ import { client, urlFor } from "../utils/sanity";
 import SpeakerMarquee from "../components/SpeakerMarquee";
 
 const STATS = [
-  { icon: <Users size={18} />, value: "1000+", label: "Attendees" },
-  { icon: <Mic size={18} />, value: "50+", label: "Speakers" },
-  { icon: <Calendar size={18} />, value: "2", label: "Days" },
-  { icon: <Award size={18} />, value: "5", label: "Tech Pillars Covered" },
+  { icon: <Users size={18} />,    value: "1000+", label: "Attendees" },
+  { icon: <Mic size={18} />,      value: "100+",  label: "Speakers" },
+  { icon: <Calendar size={18} />, value: "2",     label: "Days" },
+  { icon: <Award size={18} />,    value: "5",     label: "Tech Pillars" },
+  { icon: <Layers size={18} />,   value: "5",     label: "Applied Sectors" },
 ];
 
 // ─── Pillar & Sector maps (identical structure to AgendaPage) ─────

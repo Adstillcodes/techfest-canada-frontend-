@@ -312,9 +312,9 @@ export default function Tickets() {
                 <p style={{ opacity: 0.8, margin: 0, fontSize: "1.1rem", lineHeight: 1.6 }}>Thank you for purchasing your ticket.</p>
                 <p style={{ opacity: 0.6, marginTop: "8px", fontSize: "0.95rem" }}>Please check your email for the invoice and QR code.</p>
               </div>
-              <button onClick={() => { setShowSuccessModal(false); window.location.href = localStorage.getItem("token") ? "/dashboard" : "/register"; }}
+              <button onClick={() => { setShowSuccessModal(false); window.location.href = "/"; }}
                 style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white", padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif", textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%" }}>
-                {localStorage.getItem("token") ? "View Dashboard" : "Sign Up Now"}
+                Back to Home
               </button>
             </div>
           </div>

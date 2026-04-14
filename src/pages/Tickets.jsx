@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { API } from "../utils/api";
@@ -34,6 +34,36 @@ function PriceWithAsterisk({ price, color, fontSize, fontWeight, style }) {
   );
 }
 
+// ─── Country list ─────────────────────────────────────────────────────────────
+const COUNTRIES = [
+  "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina",
+  "Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados",
+  "Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana",
+  "Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon",
+  "Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros",
+  "Congo (Brazzaville)","Congo (Kinshasa)","Costa Rica","Croatia","Cuba","Cyprus",
+  "Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt",
+  "El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland",
+  "France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala",
+  "Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia",
+  "Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya",
+  "Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya",
+  "Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali",
+  "Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco",
+  "Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal",
+  "Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia",
+  "Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru",
+  "Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda",
+  "Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa",
+  "San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles",
+  "Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa",
+  "South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland",
+  "Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga",
+  "Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine",
+  "United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu",
+  "Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe",
+];
+
 // ─── Form data ────────────────────────────────────────────────────────────────
 const SALUTATIONS = ["Mr.", "Mrs.", "Ms.", "Dr.", "H.E.", "Hon.", "Prof."];
 const JOB_LEVELS = ["Student", "Entry Level", "Mid Level Professional", "Manager", "Senior Manager", "Director", "Vice President", "C-Level / Executive", "Founder / Owner / Partner", "Government / Public Sector", "Investor", "Academic / Research", "Other"];
@@ -54,7 +84,16 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
+  const firstInputRef = useRef(null);
   const TOTAL_STEPS = 3;
+
+  // Autofocus first input on each step (helps mobile UX without triggering zoom)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (firstInputRef.current) firstInputRef.current.focus();
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [step]);
 
   const textMain  = dark ? "#ffffff"                : "#0d0520";
   const textMuted = dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.68)";
@@ -65,14 +104,42 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
   const set = (key, val) => { setForm(f => ({ ...f, [key]: val })); setErrors(e => ({ ...e, [key]: undefined })); };
   const toggleArr = (key, val) => set(key, form[key].includes(val) ? form[key].filter(x => x !== val) : [...form[key], val]);
 
+  // ── CRITICAL: font-size must be ≥ 16px on inputs/selects to prevent iOS zoom ──
   const inputStyle = (err) => ({
-    width: "100%", padding: "11px 14px", borderRadius: 10, border: `1px solid ${err ? "#e05555" : inputBorder}`,
-    background: inputBg, color: textMain, fontFamily: "inherit", fontSize: "0.82rem", outline: "none",
-    boxSizing: "border-box", transition: "border 0.2s",
+    width: "100%",
+    padding: "11px 14px",
+    borderRadius: 10,
+    border: `1px solid ${err ? "#e05555" : inputBorder}`,
+    background: inputBg,
+    color: textMain,
+    fontFamily: "inherit",
+    fontSize: "16px", // ← prevents iOS auto-zoom; visually fine at this size
+    outline: "none",
+    boxSizing: "border-box",
+    transition: "border 0.2s",
+    WebkitAppearance: "none", // consistent look on iOS
+    appearance: "none",
   });
+
   const labelStyle = { fontSize: "0.65rem", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", color: textMuted, display: "block", marginBottom: 6 };
   const fieldStyle = { display: "flex", flexDirection: "column", gap: 0 };
   const errStyle = { fontSize: "0.62rem", color: "#e05555", marginTop: 4 };
+
+  // Phone: digits + common separators only, max 15 chars
+  const handlePhoneChange = (val) => {
+    const cleaned = val.replace(/[^\d\s\-\+\(\)]/g, "").slice(0, 15);
+    set("businessNumber", cleaned);
+  };
+
+  // LinkedIn: auto-prefix https:// if user types without it
+  const handleLinkedInBlur = () => {
+    const v = form.linkedin.trim();
+    if (v && !v.startsWith("http") && !v.startsWith("linkedin")) {
+      set("linkedin", `https://linkedin.com/in/${v}`);
+    } else if (v && v.startsWith("linkedin.com")) {
+      set("linkedin", `https://${v}`);
+    }
+  };
 
   const validateStep = () => {
     const e = {};
@@ -80,17 +147,17 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
       if (!form.firstName.trim()) e.firstName = "Required";
       if (!form.lastName.trim()) e.lastName = "Required";
       if (!form.email.trim()) e.email = "Required";
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Invalid email";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Invalid email address";
       if (!form.organisation.trim()) e.organisation = "Required";
-      if (!form.country.trim()) e.country = "Required";
+      if (!form.country) e.country = "Please select your country";
     }
     if (step === 2) {
       if (!form.jobLevel) e.jobLevel = "Required";
       if (!form.jobFunction) e.jobFunction = "Required";
     }
     if (step === 3) {
-      if (form.topics.length === 0) e.topics = "Select at least one";
-      if (form.objectives.length === 0) e.objectives = "Select at least one";
+      if (form.topics.length === 0) e.topics = "Select at least one topic";
+      if (form.objectives.length === 0) e.objectives = "Select at least one objective";
       if (!form.consent1) e.consent1 = "Required";
       if (!form.consent2) e.consent2 = "Required";
     }
@@ -104,9 +171,11 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
 
   const pillCheck = (val, selected, onClick, err) => (
     <button key={val} onClick={() => onClick(val)}
-      style={{ padding: "7px 14px", borderRadius: 999, border: `1px solid ${selected ? "#7a3fd1" : (err ? "#e05555" : inputBorder)}`, background: selected ? "rgba(122,63,209,0.18)" : inputBg, color: selected ? (dark ? "#c8a8ff" : "#7a3fd1") : textMuted, fontSize: "0.72rem", fontWeight: selected ? 700 : 500, cursor: "pointer", transition: "all 0.15s", whiteSpace: "nowrap" }}
+      style={{ padding: "8px 14px", borderRadius: 999, border: `1px solid ${selected ? "#7a3fd1" : (err ? "#e05555" : inputBorder)}`, background: selected ? "rgba(122,63,209,0.18)" : inputBg, color: selected ? (dark ? "#c8a8ff" : "#7a3fd1") : textMuted, fontSize: "14px", fontWeight: selected ? 700 : 500, cursor: "pointer", transition: "all 0.15s", whiteSpace: "nowrap", WebkitTapHighlightColor: "transparent" }}
     >{val}</button>
   );
+
+  const stepTitles = ["Your Details", "Professional Profile", "Interests & Consent"];
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 9998, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(10px)" }}>
@@ -120,14 +189,22 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                 {tierLabel} Pass
               </div>
               <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "1rem", color: textMain, margin: 0 }}>
-                {step === 1 ? "Your Details" : step === 2 ? "Professional Profile" : "Interests & Consent"}
+                {stepTitles[step - 1]}
               </h2>
             </div>
-            <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: textMuted, fontSize: "1.4rem", lineHeight: 1, padding: 4 }}>×</button>
+            <button onClick={onClose}
+              style={{ background: "none", border: "none", cursor: "pointer", color: textMuted, fontSize: "1.4rem", lineHeight: 1, padding: "4px 8px", WebkitTapHighlightColor: "transparent" }}
+              aria-label="Close"
+            >×</button>
           </div>
 
-          {/* Progress bar */}
-          <div style={{ display: "flex", gap: 6, marginTop: 16, marginBottom: 20 }}>
+          {/* Step counter + progress */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <span style={{ fontSize: "0.62rem", color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.35)", fontWeight: 600, letterSpacing: "0.5px" }}>
+              Step {step} of {TOTAL_STEPS}
+            </span>
+          </div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
             {[1, 2, 3].map(s => (
               <div key={s} style={{ flex: 1, height: 3, borderRadius: 999, background: s <= step ? "linear-gradient(90deg, #7a3fd1, #f5a623)" : (dark ? "rgba(255,255,255,0.10)" : "rgba(122,63,209,0.12)"), transition: "background 0.3s" }} />
             ))}
@@ -135,63 +212,155 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
         </div>
 
         {/* Scrollable body */}
-        <div style={{ overflowY: "auto", padding: "0 28px 24px", flexGrow: 1 }}>
+        <div style={{ overflowY: "auto", padding: "0 28px 24px", flexGrow: 1, WebkitOverflowScrolling: "touch" }}>
 
           {/* ── Step 1: Personal Details ── */}
           {step === 1 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+              {/* Salutation */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>Salutation</label>
-                <select value={form.salutation} onChange={e => set("salutation", e.target.value)} style={inputStyle(false)}>
-                  <option value="">Select…</option>
-                  {SALUTATIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+                <div style={{ position: "relative" }}>
+                  <select
+                    value={form.salutation}
+                    onChange={e => set("salutation", e.target.value)}
+                    style={{ ...inputStyle(false), paddingRight: 36 }}
+                  >
+                    <option value="">Select…</option>
+                    {SALUTATIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: textMuted }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
               </div>
 
+              {/* First / Last name */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div style={fieldStyle}>
                   <label style={labelStyle}>First Name *</label>
-                  <input value={form.firstName} onChange={e => set("firstName", e.target.value)} placeholder="Jane" style={inputStyle(errors.firstName)} />
+                  <input
+                    ref={firstInputRef}
+                    value={form.firstName}
+                    onChange={e => set("firstName", e.target.value)}
+                    placeholder="Jane"
+                    autoComplete="given-name"
+                    style={inputStyle(errors.firstName)}
+                  />
                   {errors.firstName && <span style={errStyle}>{errors.firstName}</span>}
                 </div>
                 <div style={fieldStyle}>
                   <label style={labelStyle}>Last Name *</label>
-                  <input value={form.lastName} onChange={e => set("lastName", e.target.value)} placeholder="Smith" style={inputStyle(errors.lastName)} />
+                  <input
+                    value={form.lastName}
+                    onChange={e => set("lastName", e.target.value)}
+                    placeholder="Smith"
+                    autoComplete="family-name"
+                    style={inputStyle(errors.lastName)}
+                  />
                   {errors.lastName && <span style={errStyle}>{errors.lastName}</span>}
                 </div>
               </div>
 
+              {/* Job title */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>Job Title</label>
-                <input value={form.jobTitle} onChange={e => set("jobTitle", e.target.value)} placeholder="Chief Technology Officer" style={inputStyle(false)} />
+                <input
+                  value={form.jobTitle}
+                  onChange={e => set("jobTitle", e.target.value)}
+                  placeholder="e.g. Chief Technology Officer"
+                  autoComplete="organization-title"
+                  style={inputStyle(false)}
+                />
               </div>
 
+              {/* Organisation */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>Organisation Name *</label>
-                <input value={form.organisation} onChange={e => set("organisation", e.target.value)} placeholder="Acme Corp" style={inputStyle(errors.organisation)} />
+                <input
+                  value={form.organisation}
+                  onChange={e => set("organisation", e.target.value)}
+                  placeholder="e.g. Acme Corp"
+                  autoComplete="organization"
+                  style={inputStyle(errors.organisation)}
+                />
                 {errors.organisation && <span style={errStyle}>{errors.organisation}</span>}
               </div>
 
+              {/* Business phone — digits only, max 15 chars */}
               <div style={fieldStyle}>
-                <label style={labelStyle}>Business Number</label>
-                <input value={form.businessNumber} onChange={e => set("businessNumber", e.target.value)} placeholder="+1 (416) 000-0000" style={inputStyle(false)} />
+                <label style={labelStyle}>Business Phone</label>
+                <input
+                  type="tel"
+                  inputMode="tel"
+                  value={form.businessNumber}
+                  onChange={e => handlePhoneChange(e.target.value)}
+                  placeholder="+1 (416) 000-0000"
+                  autoComplete="tel"
+                  maxLength={15}
+                  style={inputStyle(false)}
+                />
+                <span style={{ fontSize: "0.60rem", color: dark ? "rgba(255,255,255,0.30)" : "rgba(13,5,32,0.35)", marginTop: 4 }}>
+                  Include country code (e.g. +1 for Canada/US)
+                </span>
               </div>
 
+              {/* Email */}
               <div style={fieldStyle}>
-                <label style={labelStyle}>Email Address *</label>
-                <input type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="jane@company.com" style={inputStyle(errors.email)} />
+                <label style={labelStyle}>Work Email *</label>
+                <input
+                  type="email"
+                  inputMode="email"
+                  value={form.email}
+                  onChange={e => set("email", e.target.value)}
+                  placeholder="jane@company.com"
+                  autoComplete="email"
+                  style={inputStyle(errors.email)}
+                />
                 {errors.email && <span style={errStyle}>{errors.email}</span>}
               </div>
 
+              {/* Country — dropdown */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>Country *</label>
-                <input value={form.country} onChange={e => set("country", e.target.value)} placeholder="Canada" style={inputStyle(errors.country)} />
+                <div style={{ position: "relative" }}>
+                  <select
+                    value={form.country}
+                    onChange={e => set("country", e.target.value)}
+                    style={{ ...inputStyle(errors.country), paddingRight: 36 }}
+                    autoComplete="country-name"
+                  >
+                    <option value="">Select your country…</option>
+                    {/* Priority entries */}
+                    <option value="Canada">🇨🇦 Canada</option>
+                    <option value="United States">🇺🇸 United States</option>
+                    <option value="United Kingdom">🇬🇧 United Kingdom</option>
+                    <option value="Australia">🇦🇺 Australia</option>
+                    <option disabled>──────────────</option>
+                    {COUNTRIES.filter(c => !["Canada","United States","United Kingdom","Australia"].includes(c)).map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: textMuted }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
                 {errors.country && <span style={errStyle}>{errors.country}</span>}
               </div>
 
+              {/* LinkedIn */}
               <div style={fieldStyle}>
-                <label style={labelStyle}>Your LinkedIn URL</label>
-                <input value={form.linkedin} onChange={e => set("linkedin", e.target.value)} placeholder="https://linkedin.com/in/yourname" style={inputStyle(false)} />
+                <label style={labelStyle}>LinkedIn Profile <span style={{ fontWeight: 500, letterSpacing: 0, textTransform: "none", color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.35)" }}>(optional)</span></label>
+                <input
+                  type="url"
+                  inputMode="url"
+                  value={form.linkedin}
+                  onChange={e => set("linkedin", e.target.value)}
+                  onBlur={handleLinkedInBlur}
+                  placeholder="linkedin.com/in/yourname"
+                  autoComplete="url"
+                  style={inputStyle(false)}
+                />
+                <span style={{ fontSize: "0.60rem", color: dark ? "rgba(255,255,255,0.30)" : "rgba(13,5,32,0.35)", marginTop: 4 }}>
+                  We'll auto-add https:// if needed
+                </span>
               </div>
             </div>
           )}
@@ -209,10 +378,17 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
 
               <div style={fieldStyle}>
                 <label style={labelStyle}>Job Function *</label>
-                <select value={form.jobFunction} onChange={e => set("jobFunction", e.target.value)} style={{ ...inputStyle(errors.jobFunction), paddingTop: 10, paddingBottom: 10 }}>
-                  <option value="">Select your function…</option>
-                  {JOB_FUNCTIONS.map(f => <option key={f} value={f}>{f}</option>)}
-                </select>
+                <div style={{ position: "relative" }}>
+                  <select
+                    value={form.jobFunction}
+                    onChange={e => set("jobFunction", e.target.value)}
+                    style={{ ...inputStyle(errors.jobFunction), paddingTop: 10, paddingBottom: 10, paddingRight: 36 }}
+                  >
+                    <option value="">Select your function…</option>
+                    {JOB_FUNCTIONS.map(f => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                  <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: textMuted }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                </div>
                 {errors.jobFunction && <span style={errStyle}>{errors.jobFunction}</span>}
               </div>
             </div>
@@ -222,7 +398,12 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
           {step === 3 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               <div style={fieldStyle}>
-                <label style={labelStyle}>Topics of Interest * <span style={{ color: textMuted, fontWeight: 500, letterSpacing: 0, textTransform: "none" }}>(select all that apply)</span></label>
+                <label style={labelStyle}>
+                  Topics of Interest *{" "}
+                  <span style={{ color: textMuted, fontWeight: 500, letterSpacing: 0, textTransform: "none" }}>
+                    ({form.topics.length} selected)
+                  </span>
+                </label>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
                   {TOPICS.map(t => pillCheck(t, form.topics.includes(t), () => toggleArr("topics", t), errors.topics))}
                 </div>
@@ -230,7 +411,12 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
               </div>
 
               <div style={fieldStyle}>
-                <label style={labelStyle}>Your objective of attending The Tech Festival Canada * <span style={{ color: textMuted, fontWeight: 500, letterSpacing: 0, textTransform: "none" }}>(select all that apply)</span></label>
+                <label style={labelStyle}>
+                  Objectives for attending *{" "}
+                  <span style={{ color: textMuted, fontWeight: 500, letterSpacing: 0, textTransform: "none" }}>
+                    ({form.objectives.length} selected)
+                  </span>
+                </label>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
                   {OBJECTIVES.map(o => pillCheck(o, form.objectives.includes(o), () => toggleArr("objectives", o), errors.objectives))}
                 </div>
@@ -245,15 +431,19 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                   { key: "consent1", text: "My consents hereto are given to the organisers and I agree to the organiser's terms of service and privacy policies." },
                   { key: "consent2", text: "I acknowledge and agree that the organisers will collect, use, process and/or disclose my personal information for the purposes of securing my registration and attendance for The Tech Festival Canada, including digital platform usage on the The Tech Festival Canada platform, and consent to the collection, use, processing and/or disclosure of my personal information by the organisers for the purposes of receiving updates on the agenda, activities/events, collaboration projects, industry news relating to The Tech Festival Canada." },
                 ].map(({ key, text }, i) => (
-                  <label key={key} style={{ display: "flex", gap: 12, alignItems: "flex-start", cursor: "pointer" }}>
+                  <label key={key} style={{ display: "flex", gap: 12, alignItems: "flex-start", cursor: "pointer", WebkitTapHighlightColor: "transparent" }}>
                     <div style={{ position: "relative", flexShrink: 0, marginTop: 1 }}>
-                      <input type="checkbox" checked={form[key]} onChange={e => set(key, e.target.checked)}
-                        style={{ position: "absolute", opacity: 0, width: 0, height: 0 }} />
-                      <div style={{ width: 18, height: 18, borderRadius: 5, border: `2px solid ${errors[key] ? "#e05555" : (form[key] ? "#7a3fd1" : inputBorder)}`, background: form[key] ? "#7a3fd1" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
-                        {form[key] && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>}
+                      <input
+                        type="checkbox"
+                        checked={form[key]}
+                        onChange={e => set(key, e.target.checked)}
+                        style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
+                      />
+                      <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${errors[key] ? "#e05555" : (form[key] ? "#7a3fd1" : inputBorder)}`, background: form[key] ? "#7a3fd1" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
+                        {form[key] && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>}
                       </div>
                     </div>
-                    <span style={{ fontSize: "0.74rem", color: textMuted, lineHeight: 1.6 }}>
+                    <span style={{ fontSize: "14px", color: textMuted, lineHeight: 1.6 }}>
                       <strong style={{ color: textMain, fontWeight: 700 }}>{i + 1}. </strong>{text}
                     </span>
                   </label>
@@ -267,13 +457,16 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
         {/* Footer buttons */}
         <div style={{ padding: "16px 28px 24px", flexShrink: 0, borderTop: dark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(122,63,209,0.08)", display: "flex", gap: 10 }}>
           {step > 1 && (
-            <button onClick={back} style={{ flex: 1, padding: "13px", borderRadius: 12, border: dark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(122,63,209,0.20)", background: "transparent", color: textMain, fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.65rem", letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer" }}>
-              Back
+            <button
+              onClick={back}
+              style={{ flex: 1, padding: "14px", borderRadius: 12, border: dark ? "1px solid rgba(255,255,255,0.14)" : "1px solid rgba(122,63,209,0.20)", background: "transparent", color: textMain, fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.65rem", letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", WebkitTapHighlightColor: "transparent" }}
+            >
+              ← Back
             </button>
           )}
           <button
             onClick={step < TOTAL_STEPS ? next : submit}
-            style={{ flex: 2, padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "white", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.65rem", letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", boxShadow: "0 4px 20px rgba(122,63,209,0.35)" }}
+            style={{ flex: 2, padding: "14px", borderRadius: 12, border: "none", background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "white", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.65rem", letterSpacing: "1px", textTransform: "uppercase", cursor: "pointer", boxShadow: "0 4px 20px rgba(122,63,209,0.35)", WebkitTapHighlightColor: "transparent" }}
           >
             {step < TOTAL_STEPS ? "Continue →" : "Proceed to Payment →"}
           </button>
@@ -379,7 +572,7 @@ function PassCard({ meta, inventoryItem, onPurchase, dark }) {
       <button
         disabled={soldOut}
         onClick={() => !soldOut && onPurchase(meta.tier, meta.label)}
-        style={{ marginTop: 24, width: "100%", padding: "13px 0", borderRadius: 12, border: "none", cursor: soldOut ? "not-allowed" : "pointer", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "1px", textTransform: "uppercase", color: soldOut ? (dark ? "rgba(255,255,255,0.3)" : "rgba(13,5,32,0.3)") : "white", background: soldOut ? (dark ? "rgba(255,255,255,0.05)" : "rgba(13,5,32,0.05)") : meta.featured ? "linear-gradient(135deg, #7a3fd1, #f5a623)" : (dark ? "rgba(122,63,209,0.35)" : "#7a3fd1"), boxShadow: soldOut || !meta.featured ? "none" : "0 4px 20px rgba(122,63,209,0.4)", transition: "all 0.2s" }}
+        style={{ marginTop: 24, width: "100%", padding: "13px 0", borderRadius: 12, border: "none", cursor: soldOut ? "not-allowed" : "pointer", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "1px", textTransform: "uppercase", color: soldOut ? (dark ? "rgba(255,255,255,0.3)" : "rgba(13,5,32,0.3)") : "white", background: soldOut ? (dark ? "rgba(255,255,255,0.05)" : "rgba(13,5,32,0.05)") : meta.featured ? "linear-gradient(135deg, #7a3fd1, #f5a623)" : (dark ? "rgba(122,63,209,0.35)" : "#7a3fd1"), boxShadow: soldOut || !meta.featured ? "none" : "0 4px 20px rgba(122,63,209,0.4)", transition: "all 0.2s", WebkitTapHighlightColor: "transparent" }}
         onMouseEnter={(e) => { if (!soldOut && !meta.featured) e.currentTarget.style.background = dark ? "rgba(122,63,209,0.55)" : "#6330b3"; }}
         onMouseLeave={(e) => { if (!soldOut && !meta.featured) e.currentTarget.style.background = dark ? "rgba(122,63,209,0.35)" : "#7a3fd1"; }}
       >
@@ -394,7 +587,6 @@ export default function Tickets() {
   const [inventory, setInventory]     = useState([]);
   const [dark, setDark]               = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  // Questionnaire state
   const [questionnaireOpen, setQuestionnaireOpen] = useState(false);
   const [pendingTier, setPendingTier]   = useState(null);
   const [pendingLabel, setPendingLabel] = useState("");
@@ -427,14 +619,12 @@ export default function Tickets() {
 
   const getTier = (tier) => inventory.find((i) => i.tier === tier) || null;
 
-  // Opens the questionnaire instead of going straight to Stripe
   const handleOpenQuestionnaire = (tier, label) => {
     setPendingTier(tier);
     setPendingLabel(label);
     setQuestionnaireOpen(true);
   };
 
-  // Called after questionnaire is completed — this is the ONLY place Stripe checkout is triggered
   const handlePurchase = async (formData) => {
     setQuestionnaireOpen(false);
     try {
@@ -556,7 +746,7 @@ export default function Tickets() {
                 <p style={{ opacity: 0.6, marginTop: "8px", fontSize: "0.95rem" }}>Please check your email for the invoice and QR code.</p>
               </div>
               <button onClick={() => { setShowSuccessModal(false); window.location.href = "/"; }}
-                style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white", padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif", textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%" }}>
+                style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white", padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif", textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%", WebkitTapHighlightColor: "transparent" }}>
                 Go to Home
               </button>
             </div>

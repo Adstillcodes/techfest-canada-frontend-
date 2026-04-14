@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { API } from "../utils/api";
@@ -15,6 +15,28 @@ function CheckIcon() {
   );
 }
 
+function ChevronDown({ color, size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color || "currentColor"} strokeWidth="2.5"
+      strokeLinecap="round" strokeLinejoin="round"
+      style={{ flexShrink: 0, transition: "transform 0.2s ease" }}
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+function TickSmall() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+      stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}
+
 // ─── Price display ────────────────────────────────────────────────────────────
 function PriceWithAsterisk({ price, color, fontSize, fontWeight, style }) {
   const [hovered, setHovered] = useState(false);
@@ -23,7 +45,9 @@ function PriceWithAsterisk({ price, color, fontSize, fontWeight, style }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: fontSize || "2.6rem", fontWeight: fontWeight || 900, color: color || "inherit", lineHeight: 1, letterSpacing: "-1px" }}>${typeof price === "number" ? price.toLocaleString() : price}</span>
+      <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: fontSize || "2.6rem", fontWeight: fontWeight || 900, color: color || "inherit", lineHeight: 1, letterSpacing: "-1px" }}>
+        ${typeof price === "number" ? price.toLocaleString() : price}
+      </span>
       <span style={{ color: "#f5a623", fontSize: "0.6em", fontWeight: 900, cursor: "help", lineHeight: 1 }}>*</span>
       {hovered && (
         <span style={{ position: "absolute", bottom: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)", background: "rgba(0,0,0,0.88)", color: "#fff", fontSize: "0.68rem", fontFamily: "'Orbitron',sans-serif", fontWeight: 700, letterSpacing: "0.5px", padding: "8px 14px", borderRadius: 10, whiteSpace: "nowrap", zIndex: 999, pointerEvents: "none", boxShadow: "0 4px 16px rgba(0,0,0,0.3)" }}>
@@ -64,6 +88,9 @@ const COUNTRIES = [
   "Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe",
 ];
 
+const PRIORITY_COUNTRIES = ["Canada", "United States", "United Kingdom", "Australia"];
+const COUNTRY_FLAGS = { Canada: "🇨🇦", "United States": "🇺🇸", "United Kingdom": "🇬🇧", Australia: "🇦🇺" };
+
 // ─── Form data ────────────────────────────────────────────────────────────────
 const SALUTATIONS = ["Mr.", "Mrs.", "Ms.", "Dr.", "H.E.", "Hon.", "Prof."];
 const JOB_LEVELS = ["Student", "Entry Level", "Mid Level Professional", "Manager", "Senior Manager", "Director", "Vice President", "C-Level / Executive", "Founder / Owner / Partner", "Government / Public Sector", "Investor", "Academic / Research", "Other"];
@@ -74,10 +101,313 @@ const OBJECTIVES = ["Education", "Investments", "Jobs", "Market Entry", "Network
 const EMPTY_FORM = {
   salutation: "", firstName: "", lastName: "", jobTitle: "",
   organisation: "", businessNumber: "", email: "", country: "",
-  linkedin: "", jobLevel: "", jobFunction: "",
+  linkedin: "", jobLevels: [], jobFunction: "",
   topics: [], objectives: [],
   consent1: false, consent2: false,
 };
+
+// ─── Custom Dropdown ──────────────────────────────────────────────────────────
+function CustomDropdown({
+  options,
+  value,           // string (single) or string[] (multi)
+  onChange,
+  placeholder = "Select…",
+  multi = false,
+  searchable = false,
+  dark,
+  error,
+  maxHeight = 220,
+  priorityOptions = [],
+  flagMap = {},
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const containerRef = useRef(null);
+  const searchRef = useRef(null);
+  const dropRef = useRef(null);
+
+  const textMain   = dark ? "#ffffff" : "#0d0520";
+  const textMuted  = dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.55)";
+  const inputBg    = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
+  const borderColor= error
+    ? "#e05555"
+    : open
+    ? "#7a3fd1"
+    : dark ? "rgba(255,255,255,0.14)" : "rgba(122,63,209,0.22)";
+  const dropBg     = dark ? "#16092e" : "#ffffff";
+  const hoverBg    = dark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.07)";
+  const selectedBg = dark ? "rgba(122,63,209,0.28)" : "rgba(122,63,209,0.12)";
+  const dividerColor = dark ? "rgba(255,255,255,0.07)" : "rgba(122,63,209,0.10)";
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(false);
+        setSearch("");
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (open && searchable && searchRef.current) {
+      setTimeout(() => searchRef.current?.focus(), 60);
+    }
+  }, [open, searchable]);
+
+  const isSelected = (opt) => {
+    if (multi) return Array.isArray(value) && value.includes(opt);
+    return value === opt;
+  };
+
+  const handleSelect = (opt) => {
+    if (multi) {
+      const arr = Array.isArray(value) ? value : [];
+      onChange(arr.includes(opt) ? arr.filter(x => x !== opt) : [...arr, opt]);
+    } else {
+      onChange(opt);
+      setOpen(false);
+      setSearch("");
+    }
+  };
+
+  const removeTag = (e, opt) => {
+    e.stopPropagation();
+    if (multi && Array.isArray(value)) onChange(value.filter(x => x !== opt));
+  };
+
+  const filteredOptions = options.filter(o =>
+    !search || o.toLowerCase().includes(search.toLowerCase())
+  );
+  const filteredPriority = priorityOptions.filter(o =>
+    !search || o.toLowerCase().includes(search.toLowerCase())
+  );
+  const filteredRest = filteredOptions.filter(o => !priorityOptions.includes(o));
+
+  // Label for single-select trigger
+  const singleLabel = !multi && value
+    ? (flagMap[value] ? `${flagMap[value]} ${value}` : value)
+    : null;
+
+  // Tags for multi-select trigger
+  const tags = multi && Array.isArray(value) ? value : [];
+
+  return (
+    <div ref={containerRef} style={{ position: "relative", userSelect: "none" }}>
+      {/* Trigger */}
+      <div
+        onClick={() => setOpen(o => !o)}
+        style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: multi && tags.length > 0 ? "8px 12px" : "11px 14px",
+          borderRadius: 10, border: `1px solid ${borderColor}`,
+          background: inputBg, cursor: "pointer", gap: 8,
+          transition: "border-color 0.2s, box-shadow 0.2s",
+          boxShadow: open ? `0 0 0 3px ${dark ? "rgba(122,63,209,0.20)" : "rgba(122,63,209,0.12)"}` : "none",
+          minHeight: 44,
+        }}
+      >
+        <div style={{ flex: 1, display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center", minWidth: 0 }}>
+          {multi && tags.length > 0 ? (
+            tags.map(tag => (
+              <span key={tag} style={{
+                display: "inline-flex", alignItems: "center", gap: 5,
+                background: dark ? "rgba(122,63,209,0.30)" : "rgba(122,63,209,0.12)",
+                color: dark ? "#c8a8ff" : "#6a30c0",
+                border: `1px solid ${dark ? "rgba(122,63,209,0.45)" : "rgba(122,63,209,0.28)"}`,
+                borderRadius: 6, padding: "3px 8px",
+                fontSize: "0.70rem", fontWeight: 700, letterSpacing: "0.3px",
+                maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              }}>
+                <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{tag}</span>
+                <span
+                  onClick={(e) => removeTag(e, tag)}
+                  style={{ cursor: "pointer", opacity: 0.7, lineHeight: 1, flexShrink: 0, fontSize: "0.9rem" }}
+                >×</span>
+              </span>
+            ))
+          ) : (
+            <span style={{
+              fontSize: "16px",
+              color: (multi ? tags.length === 0 : !value) ? textMuted : textMain,
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+            }}>
+              {multi
+                ? placeholder
+                : (singleLabel || placeholder)
+              }
+            </span>
+          )}
+        </div>
+        <span style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease", flexShrink: 0 }}>
+          <ChevronDown color={textMuted} />
+        </span>
+      </div>
+
+      {/* Dropdown panel */}
+      {open && (
+        <div
+          ref={dropRef}
+          style={{
+            position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0,
+            background: dropBg,
+            border: `1px solid ${dark ? "rgba(122,63,209,0.35)" : "rgba(122,63,209,0.18)"}`,
+            borderRadius: 12, zIndex: 9999,
+            boxShadow: dark
+              ? "0 12px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(122,63,209,0.12)"
+              : "0 12px 40px rgba(122,63,209,0.14), 0 2px 8px rgba(0,0,0,0.08)",
+            overflow: "hidden",
+            animation: "ddFadeIn 0.15s ease",
+          }}
+        >
+          <style>{`
+            @keyframes ddFadeIn {
+              from { opacity: 0; transform: translateY(-6px); }
+              to   { opacity: 1; transform: translateY(0); }
+            }
+            .dd-opt:hover { background: var(--dd-hover) !important; }
+          `}</style>
+
+          {searchable && (
+            <div style={{ padding: "10px 10px 6px", borderBottom: `1px solid ${dividerColor}` }}>
+              <div style={{ position: "relative" }}>
+                <svg style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", opacity: 0.4 }}
+                  width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={textMain} strokeWidth="2.5">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input
+                  ref={searchRef}
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="Search…"
+                  style={{
+                    width: "100%", padding: "8px 10px 8px 30px",
+                    borderRadius: 8, border: `1px solid ${dividerColor}`,
+                    background: dark ? "rgba(255,255,255,0.05)" : "rgba(122,63,209,0.04)",
+                    color: textMain, fontSize: "14px", outline: "none",
+                    boxSizing: "border-box", fontFamily: "inherit",
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {multi && (
+            <div style={{
+              padding: "8px 12px",
+              fontSize: "0.60rem", fontWeight: 700, letterSpacing: "1px",
+              textTransform: "uppercase",
+              color: dark ? "rgba(245,166,35,0.8)" : "#d98a14",
+              borderBottom: `1px solid ${dividerColor}`,
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+            }}>
+              <span>{Array.isArray(value) ? value.length : 0} selected</span>
+              {Array.isArray(value) && value.length > 0 && (
+                <span
+                  onClick={(e) => { e.stopPropagation(); onChange([]); }}
+                  style={{ cursor: "pointer", opacity: 0.7, fontSize: "0.60rem", color: "#e05555" }}
+                >
+                  Clear all
+                </span>
+              )}
+            </div>
+          )}
+
+          <div style={{ overflowY: "auto", maxHeight, WebkitOverflowScrolling: "touch" }}>
+            {filteredPriority.length > 0 && (
+              <>
+                {filteredPriority.map(opt => (
+                  <DropOption
+                    key={opt}
+                    opt={opt}
+                    label={flagMap[opt] ? `${flagMap[opt]} ${opt}` : opt}
+                    selected={isSelected(opt)}
+                    multi={multi}
+                    dark={dark}
+                    hoverBg={hoverBg}
+                    selectedBg={selectedBg}
+                    textMain={textMain}
+                    textMuted={textMuted}
+                    onSelect={handleSelect}
+                  />
+                ))}
+                {filteredRest.length > 0 && (
+                  <div style={{ height: 1, background: dividerColor, margin: "2px 0" }} />
+                )}
+              </>
+            )}
+            {(priorityOptions.length > 0 ? filteredRest : filteredOptions).map(opt => (
+              <DropOption
+                key={opt}
+                opt={opt}
+                label={flagMap[opt] ? `${flagMap[opt]} ${opt}` : opt}
+                selected={isSelected(opt)}
+                multi={multi}
+                dark={dark}
+                hoverBg={hoverBg}
+                selectedBg={selectedBg}
+                textMain={textMain}
+                textMuted={textMuted}
+                onSelect={handleSelect}
+              />
+            ))}
+            {filteredOptions.length === 0 && filteredPriority.length === 0 && (
+              <div style={{ padding: "14px 16px", fontSize: "0.78rem", color: textMuted, textAlign: "center" }}>
+                No results
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DropOption({ opt, label, selected, multi, dark, hoverBg, selectedBg, textMain, textMuted, onSelect }) {
+  return (
+    <div
+      className="dd-opt"
+      onClick={() => onSelect(opt)}
+      style={{
+        "--dd-hover": hoverBg,
+        display: "flex", alignItems: "center", gap: 10,
+        padding: "10px 14px", cursor: "pointer",
+        background: selected ? selectedBg : "transparent",
+        fontSize: "14px",
+        color: selected ? (dark ? "#c8a8ff" : "#6a30c0") : textMain,
+        fontWeight: selected ? 600 : 400,
+        transition: "background 0.12s",
+      }}
+    >
+      {multi && (
+        <div style={{
+          width: 18, height: 18, borderRadius: 5, flexShrink: 0,
+          border: `2px solid ${selected ? "#7a3fd1" : (dark ? "rgba(255,255,255,0.20)" : "rgba(122,63,209,0.30)")}`,
+          background: selected ? "#7a3fd1" : "transparent",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          transition: "all 0.12s",
+        }}>
+          {selected && <TickSmall />}
+        </div>
+      )}
+      {!multi && selected && (
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+          stroke={dark ? "#c8a8ff" : "#7a3fd1"} strokeWidth="3"
+          strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+      )}
+      {!multi && !selected && <div style={{ width: 13, flexShrink: 0 }} />}
+      <span style={{ flex: 1 }}>{label}</span>
+    </div>
+  );
+}
 
 // ─── Questionnaire Modal ──────────────────────────────────────────────────────
 function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
@@ -85,9 +415,8 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const firstInputRef = useRef(null);
-  const TOTAL_STEPS = 3;
+  const TOTAL_STEPS = 2;
 
-  // Autofocus first input on each step (helps mobile UX without triggering zoom)
   useEffect(() => {
     const timer = setTimeout(() => {
       if (firstInputRef.current) firstInputRef.current.focus();
@@ -95,43 +424,38 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
     return () => clearTimeout(timer);
   }, [step]);
 
-  const textMain  = dark ? "#ffffff"                : "#0d0520";
-  const textMuted = dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.68)";
-  const inputBg   = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
-  const inputBorder = dark ? "rgba(255,255,255,0.14)" : "rgba(122,63,209,0.20)";
-  const modalBg   = dark ? "#0e0820" : "#ffffff";
+  const textMain   = dark ? "#ffffff"                : "#0d0520";
+  const textMuted  = dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.68)";
+  const inputBg    = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
+  const inputBorder= dark ? "rgba(255,255,255,0.14)" : "rgba(122,63,209,0.20)";
+  const modalBg    = dark ? "#0e0820" : "#ffffff";
 
-  const set = (key, val) => { setForm(f => ({ ...f, [key]: val })); setErrors(e => ({ ...e, [key]: undefined })); };
-  const toggleArr = (key, val) => set(key, form[key].includes(val) ? form[key].filter(x => x !== val) : [...form[key], val]);
+  const set = (key, val) => {
+    setForm(f => ({ ...f, [key]: val }));
+    setErrors(e => ({ ...e, [key]: undefined }));
+  };
 
-  // ── CRITICAL: font-size must be ≥ 16px on inputs/selects to prevent iOS zoom ──
   const inputStyle = (err) => ({
-    width: "100%",
-    padding: "11px 14px",
-    borderRadius: 10,
+    width: "100%", padding: "11px 14px", borderRadius: 10,
     border: `1px solid ${err ? "#e05555" : inputBorder}`,
-    background: inputBg,
-    color: textMain,
-    fontFamily: "inherit",
-    fontSize: "16px", // ← prevents iOS auto-zoom; visually fine at this size
-    outline: "none",
-    boxSizing: "border-box",
-    transition: "border 0.2s",
-    WebkitAppearance: "none", // consistent look on iOS
-    appearance: "none",
+    background: inputBg, color: textMain, fontFamily: "inherit",
+    fontSize: "16px", outline: "none", boxSizing: "border-box",
+    transition: "border 0.2s, box-shadow 0.2s",
+    WebkitAppearance: "none", appearance: "none",
   });
 
-  const labelStyle = { fontSize: "0.65rem", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", color: textMuted, display: "block", marginBottom: 6 };
+  const labelStyle = {
+    fontSize: "0.65rem", fontWeight: 700, letterSpacing: "1px",
+    textTransform: "uppercase", color: textMuted, display: "block", marginBottom: 6,
+  };
   const fieldStyle = { display: "flex", flexDirection: "column", gap: 0 };
-  const errStyle = { fontSize: "0.62rem", color: "#e05555", marginTop: 4 };
+  const errStyle   = { fontSize: "0.62rem", color: "#e05555", marginTop: 4 };
 
-  // Phone: digits + common separators only, max 15 chars
   const handlePhoneChange = (val) => {
     const cleaned = val.replace(/[^\d\s\-\+\(\)]/g, "").slice(0, 15);
     set("businessNumber", cleaned);
   };
 
-  // LinkedIn: auto-prefix https:// if user types without it
   const handleLinkedInBlur = () => {
     const v = form.linkedin.trim();
     if (v && !v.startsWith("http") && !v.startsWith("linkedin")) {
@@ -144,19 +468,17 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
   const validateStep = () => {
     const e = {};
     if (step === 1) {
-      if (!form.firstName.trim()) e.firstName = "Required";
-      if (!form.lastName.trim()) e.lastName = "Required";
-      if (!form.email.trim()) e.email = "Required";
+      if (!form.firstName.trim())    e.firstName    = "Required";
+      if (!form.lastName.trim())     e.lastName     = "Required";
+      if (!form.email.trim())        e.email        = "Required";
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Invalid email address";
       if (!form.organisation.trim()) e.organisation = "Required";
-      if (!form.country) e.country = "Please select your country";
+      if (!form.country)             e.country      = "Please select your country";
+      if (form.jobLevels.length === 0) e.jobLevels  = "Select at least one level";
+      if (!form.jobFunction)         e.jobFunction  = "Required";
     }
     if (step === 2) {
-      if (!form.jobLevel) e.jobLevel = "Required";
-      if (!form.jobFunction) e.jobFunction = "Required";
-    }
-    if (step === 3) {
-      if (form.topics.length === 0) e.topics = "Select at least one topic";
+      if (form.topics.length === 0)     e.topics     = "Select at least one topic";
       if (form.objectives.length === 0) e.objectives = "Select at least one objective";
       if (!form.consent1) e.consent1 = "Required";
       if (!form.consent2) e.consent2 = "Required";
@@ -165,47 +487,44 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
     return Object.keys(e).length === 0;
   };
 
-  const next = () => { if (validateStep()) setStep(s => s + 1); };
-  const back = () => setStep(s => s - 1);
+  const next   = () => { if (validateStep()) setStep(s => s + 1); };
+  const back   = () => setStep(s => s - 1);
   const submit = () => { if (validateStep()) onSubmit(form); };
 
-  const pillCheck = (val, selected, onClick, err) => (
-    <button key={val} onClick={() => onClick(val)}
-      style={{ padding: "8px 14px", borderRadius: 999, border: `1px solid ${selected ? "#7a3fd1" : (err ? "#e05555" : inputBorder)}`, background: selected ? "rgba(122,63,209,0.18)" : inputBg, color: selected ? (dark ? "#c8a8ff" : "#7a3fd1") : textMuted, fontSize: "14px", fontWeight: selected ? 700 : 500, cursor: "pointer", transition: "all 0.15s", whiteSpace: "nowrap", WebkitTapHighlightColor: "transparent" }}
-    >{val}</button>
-  );
-
-  const stepTitles = ["Your Details", "Professional Profile", "Interests & Consent"];
+  const stepTitles    = ["Your Profile", "Interests & Consent"];
+  const stepSubtitles = ["Personal & professional details", "Topics, objectives & agreements"];
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 9998, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", background: "rgba(0,0,0,0.75)", backdropFilter: "blur(10px)" }}>
-      <div style={{ width: "100%", maxWidth: 560, maxHeight: "90vh", display: "flex", flexDirection: "column", background: modalBg, borderRadius: 24, border: dark ? "1px solid rgba(255,255,255,0.10)" : "1px solid rgba(122,63,209,0.14)", boxShadow: "0 24px 80px rgba(0,0,0,0.4)", overflow: "hidden" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 9998, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", background: "rgba(0,0,0,0.78)", backdropFilter: "blur(12px)" }}>
+      <div style={{ width: "100%", maxWidth: 580, maxHeight: "92vh", display: "flex", flexDirection: "column", background: modalBg, borderRadius: 24, border: dark ? "1px solid rgba(255,255,255,0.10)" : "1px solid rgba(122,63,209,0.14)", boxShadow: dark ? "0 28px 80px rgba(0,0,0,0.6)" : "0 28px 80px rgba(122,63,209,0.15)", overflow: "hidden" }}>
 
         {/* Header */}
         <div style={{ padding: "24px 28px 0", flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 6 }}>
             <div>
-              <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "#f5a623", marginBottom: 4 }}>
+              <div style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "1.8px", textTransform: "uppercase", color: "#f5a623", marginBottom: 4 }}>
                 {tierLabel} Pass
               </div>
-              <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "1rem", color: textMain, margin: 0 }}>
+              <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 900, fontSize: "1.05rem", color: textMain, margin: 0, lineHeight: 1.2 }}>
                 {stepTitles[step - 1]}
               </h2>
+              <p style={{ fontSize: "0.68rem", color: textMuted, margin: "4px 0 0", letterSpacing: "0.3px" }}>
+                {stepSubtitles[step - 1]}
+              </p>
             </div>
             <button onClick={onClose}
-              style={{ background: "none", border: "none", cursor: "pointer", color: textMuted, fontSize: "1.4rem", lineHeight: 1, padding: "4px 8px", WebkitTapHighlightColor: "transparent" }}
+              style={{ background: "none", border: "none", cursor: "pointer", color: textMuted, fontSize: "1.4rem", lineHeight: 1, padding: "4px 8px", WebkitTapHighlightColor: "transparent", flexShrink: 0, marginTop: 2 }}
               aria-label="Close"
             >×</button>
           </div>
 
-          {/* Step counter + progress */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-            <span style={{ fontSize: "0.62rem", color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.35)", fontWeight: 600, letterSpacing: "0.5px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "14px 0 6px" }}>
+            <span style={{ fontSize: "0.60rem", color: dark ? "rgba(255,255,255,0.30)" : "rgba(13,5,32,0.30)", fontWeight: 600, letterSpacing: "0.5px" }}>
               Step {step} of {TOTAL_STEPS}
             </span>
           </div>
           <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
-            {[1, 2, 3].map(s => (
+            {[1, 2].map(s => (
               <div key={s} style={{ flex: 1, height: 3, borderRadius: 999, background: s <= step ? "linear-gradient(90deg, #7a3fd1, #f5a623)" : (dark ? "rgba(255,255,255,0.10)" : "rgba(122,63,209,0.12)"), transition: "background 0.3s" }} />
             ))}
           </div>
@@ -214,24 +533,20 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
         {/* Scrollable body */}
         <div style={{ overflowY: "auto", padding: "0 28px 24px", flexGrow: 1, WebkitOverflowScrolling: "touch" }}>
 
-          {/* ── Step 1: Personal Details ── */}
+          {/* ── Step 1: Your Profile ── */}
           {step === 1 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
               {/* Salutation */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>Salutation</label>
-                <div style={{ position: "relative" }}>
-                  <select
-                    value={form.salutation}
-                    onChange={e => set("salutation", e.target.value)}
-                    style={{ ...inputStyle(false), paddingRight: 36 }}
-                  >
-                    <option value="">Select…</option>
-                    {SALUTATIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: textMuted }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
+                <CustomDropdown
+                  options={SALUTATIONS}
+                  value={form.salutation}
+                  onChange={v => set("salutation", v)}
+                  placeholder="Select…"
+                  dark={dark}
+                />
               </div>
 
               {/* First / Last name */}
@@ -286,7 +601,7 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                 {errors.organisation && <span style={errStyle}>{errors.organisation}</span>}
               </div>
 
-              {/* Business phone — digits only, max 15 chars */}
+              {/* Business phone */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>Business Phone</label>
                 <input
@@ -319,35 +634,30 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                 {errors.email && <span style={errStyle}>{errors.email}</span>}
               </div>
 
-              {/* Country — dropdown */}
+              {/* Country */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>Country *</label>
-                <div style={{ position: "relative" }}>
-                  <select
-                    value={form.country}
-                    onChange={e => set("country", e.target.value)}
-                    style={{ ...inputStyle(errors.country), paddingRight: 36 }}
-                    autoComplete="country-name"
-                  >
-                    <option value="">Select your country…</option>
-                    {/* Priority entries */}
-                    <option value="Canada">🇨🇦 Canada</option>
-                    <option value="United States">🇺🇸 United States</option>
-                    <option value="United Kingdom">🇬🇧 United Kingdom</option>
-                    <option value="Australia">🇦🇺 Australia</option>
-                    <option disabled>──────────────</option>
-                    {COUNTRIES.filter(c => !["Canada","United States","United Kingdom","Australia"].includes(c)).map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                  <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: textMuted }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
+                <CustomDropdown
+                  options={COUNTRIES.filter(c => !PRIORITY_COUNTRIES.includes(c))}
+                  priorityOptions={PRIORITY_COUNTRIES}
+                  flagMap={COUNTRY_FLAGS}
+                  value={form.country}
+                  onChange={v => set("country", v)}
+                  placeholder="Select your country…"
+                  searchable
+                  dark={dark}
+                  error={!!errors.country}
+                  maxHeight={200}
+                />
                 {errors.country && <span style={errStyle}>{errors.country}</span>}
               </div>
 
               {/* LinkedIn */}
               <div style={fieldStyle}>
-                <label style={labelStyle}>LinkedIn Profile <span style={{ fontWeight: 500, letterSpacing: 0, textTransform: "none", color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.35)" }}>(optional)</span></label>
+                <label style={labelStyle}>
+                  LinkedIn Profile{" "}
+                  <span style={{ fontWeight: 500, letterSpacing: 0, textTransform: "none", color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.35)" }}>(optional)</span>
+                </label>
                 <input
                   type="url"
                   inputMode="url"
@@ -362,41 +672,56 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                   We'll auto-add https:// if needed
                 </span>
               </div>
-            </div>
-          )}
 
-          {/* ── Step 2: Professional Profile ── */}
-          {step === 2 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Job Level *</label>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
-                  {JOB_LEVELS.map(l => pillCheck(l, form.jobLevel === l, () => set("jobLevel", l), errors.jobLevel))}
-                </div>
-                {errors.jobLevel && <span style={errStyle}>{errors.jobLevel}</span>}
+              {/* Divider */}
+              <div style={{ width: "100%", height: 1, background: dark ? "rgba(255,255,255,0.07)" : "rgba(122,63,209,0.10)", margin: "4px 0" }} />
+              <div style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.60rem", letterSpacing: "1.5px", textTransform: "uppercase", color: dark ? "#c8a8ff" : "#7a3fd1" }}>
+                Professional Profile
               </div>
 
+              {/* Job Level — multi-select */}
+              <div style={fieldStyle}>
+                <label style={labelStyle}>
+                  Job Level *{" "}
+                  <span style={{ color: textMuted, fontWeight: 500, letterSpacing: 0, textTransform: "none" }}>
+                    ({form.jobLevels.length} selected)
+                  </span>
+                </label>
+                <CustomDropdown
+                  options={JOB_LEVELS}
+                  value={form.jobLevels}
+                  onChange={v => set("jobLevels", v)}
+                  placeholder="Select all that apply…"
+                  multi
+                  dark={dark}
+                  error={!!errors.jobLevels}
+                  maxHeight={220}
+                />
+                {errors.jobLevels && <span style={errStyle}>{errors.jobLevels}</span>}
+              </div>
+
+              {/* Job Function */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>Job Function *</label>
-                <div style={{ position: "relative" }}>
-                  <select
-                    value={form.jobFunction}
-                    onChange={e => set("jobFunction", e.target.value)}
-                    style={{ ...inputStyle(errors.jobFunction), paddingTop: 10, paddingBottom: 10, paddingRight: 36 }}
-                  >
-                    <option value="">Select your function…</option>
-                    {JOB_FUNCTIONS.map(f => <option key={f} value={f}>{f}</option>)}
-                  </select>
-                  <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: textMuted }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
-                </div>
+                <CustomDropdown
+                  options={JOB_FUNCTIONS}
+                  value={form.jobFunction}
+                  onChange={v => set("jobFunction", v)}
+                  placeholder="Select your function…"
+                  dark={dark}
+                  error={!!errors.jobFunction}
+                  maxHeight={220}
+                />
                 {errors.jobFunction && <span style={errStyle}>{errors.jobFunction}</span>}
               </div>
             </div>
           )}
 
-          {/* ── Step 3: Interests & Consent ── */}
-          {step === 3 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          {/* ── Step 2: Interests & Consent ── */}
+          {step === 2 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+              {/* Topics */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>
                   Topics of Interest *{" "}
@@ -404,12 +729,20 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                     ({form.topics.length} selected)
                   </span>
                 </label>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
-                  {TOPICS.map(t => pillCheck(t, form.topics.includes(t), () => toggleArr("topics", t), errors.topics))}
-                </div>
+                <CustomDropdown
+                  options={TOPICS}
+                  value={form.topics}
+                  onChange={v => set("topics", v)}
+                  placeholder="Select all that apply…"
+                  multi
+                  dark={dark}
+                  error={!!errors.topics}
+                  maxHeight={240}
+                />
                 {errors.topics && <span style={errStyle}>{errors.topics}</span>}
               </div>
 
+              {/* Objectives */}
               <div style={fieldStyle}>
                 <label style={labelStyle}>
                   Objectives for attending *{" "}
@@ -417,15 +750,24 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                     ({form.objectives.length} selected)
                   </span>
                 </label>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 4 }}>
-                  {OBJECTIVES.map(o => pillCheck(o, form.objectives.includes(o), () => toggleArr("objectives", o), errors.objectives))}
-                </div>
+                <CustomDropdown
+                  options={OBJECTIVES}
+                  value={form.objectives}
+                  onChange={v => set("objectives", v)}
+                  placeholder="Select all that apply…"
+                  multi
+                  dark={dark}
+                  error={!!errors.objectives}
+                  maxHeight={240}
+                />
                 {errors.objectives && <span style={errStyle}>{errors.objectives}</span>}
               </div>
 
               {/* Consent */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: "20px", background: dark ? "rgba(122,63,209,0.08)" : "rgba(122,63,209,0.04)", borderRadius: 14, border: dark ? "1px solid rgba(122,63,209,0.20)" : "1px solid rgba(122,63,209,0.12)" }}>
-                <div style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.65rem", letterSpacing: "1.5px", textTransform: "uppercase", color: dark ? "#c8a8ff" : "#7a3fd1", marginBottom: 2 }}>Your Consent</div>
+                <div style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.65rem", letterSpacing: "1.5px", textTransform: "uppercase", color: dark ? "#c8a8ff" : "#7a3fd1", marginBottom: 2 }}>
+                  Your Consent
+                </div>
 
                 {[
                   { key: "consent1", text: "My consents hereto are given to the organisers and I agree to the organiser's terms of service and privacy policies." },
@@ -440,7 +782,7 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                         style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
                       />
                       <div style={{ width: 20, height: 20, borderRadius: 6, border: `2px solid ${errors[key] ? "#e05555" : (form[key] ? "#7a3fd1" : inputBorder)}`, background: form[key] ? "#7a3fd1" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s" }}>
-                        {form[key] && <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>}
+                        {form[key] && <TickSmall />}
                       </div>
                     </div>
                     <span style={{ fontSize: "14px", color: textMuted, lineHeight: 1.6 }}>
@@ -448,7 +790,9 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                     </span>
                   </label>
                 ))}
-                {(errors.consent1 || errors.consent2) && <span style={errStyle}>Both consents are required to proceed.</span>}
+                {(errors.consent1 || errors.consent2) && (
+                  <span style={errStyle}>Both consents are required to proceed.</span>
+                )}
               </div>
             </div>
           )}
@@ -584,12 +928,12 @@ function PassCard({ meta, inventoryItem, onPurchase, dark }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Tickets() {
-  const [inventory, setInventory]     = useState([]);
-  const [dark, setDark]               = useState(false);
+  const [inventory, setInventory]           = useState([]);
+  const [dark, setDark]                     = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [questionnaireOpen, setQuestionnaireOpen] = useState(false);
-  const [pendingTier, setPendingTier]   = useState(null);
-  const [pendingLabel, setPendingLabel] = useState("");
+  const [pendingTier, setPendingTier]       = useState(null);
+  const [pendingLabel, setPendingLabel]     = useState("");
 
   useEffect(() => {
     setDark(document.body.classList.contains("dark-mode"));
@@ -656,9 +1000,9 @@ export default function Tickets() {
     power:     [true, true, true, true,  true,  true,  true,  true],
   };
 
-  const bg       = dark ? "#06020f" : "#ffffff";
-  const textMain = dark ? "#ffffff" : "#0d0520";
-  const textMuted= dark ? "rgba(255,255,255,0.60)" : "rgba(13,5,32,0.68)";
+  const bg        = dark ? "#06020f" : "#ffffff";
+  const textMain  = dark ? "#ffffff" : "#0d0520";
+  const textMuted = dark ? "rgba(255,255,255,0.60)" : "rgba(13,5,32,0.68)";
 
   return (
     <>
@@ -682,6 +1026,7 @@ export default function Tickets() {
             ))}
           </div>
 
+          {/* Comparison table */}
           <div style={{ maxWidth: 900, margin: "0 auto 80px", padding: "0 24px" }}>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "1rem", letterSpacing: "1px", textTransform: "uppercase", color: dark ? "rgba(255,255,255,0.35)" : "rgba(13,5,32,0.40)", textAlign: "center", marginBottom: 28 }}>Pass Comparison</h2>
             <div style={{ backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", background: dark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.03)", border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(122,63,209,0.10)", borderRadius: 20, overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
@@ -745,8 +1090,10 @@ export default function Tickets() {
                 <p style={{ opacity: 0.8, margin: 0, fontSize: "1.1rem", lineHeight: 1.6 }}>Thank you for purchasing your ticket.</p>
                 <p style={{ opacity: 0.6, marginTop: "8px", fontSize: "0.95rem" }}>Please check your email for the invoice and QR code.</p>
               </div>
-              <button onClick={() => { setShowSuccessModal(false); window.location.href = "/"; }}
-                style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white", padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif", textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%", WebkitTapHighlightColor: "transparent" }}>
+              <button
+                onClick={() => { setShowSuccessModal(false); window.location.href = "/"; }}
+                style={{ background: "linear-gradient(135deg, #7a3fd1, #f5a623)", border: "none", color: "white", padding: "16px 32px", borderRadius: "12px", cursor: "pointer", fontFamily: "'Orbitron', sans-serif", textTransform: "uppercase", fontSize: "0.85rem", letterSpacing: "1px", fontWeight: 700, width: "100%", WebkitTapHighlightColor: "transparent" }}
+              >
                 Go to Home
               </button>
             </div>

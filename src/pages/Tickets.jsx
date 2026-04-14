@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState, useCallback } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -101,7 +102,7 @@ const OBJECTIVES = ["Education", "Investments", "Jobs", "Market Entry", "Network
 const EMPTY_FORM = {
   salutation: "", firstName: "", lastName: "", jobTitle: "",
   organisation: "", businessNumber: "", email: "", country: "",
-  linkedin: "", jobLevels: [], jobFunction: "",
+  linkedin: "", jobLevel: "", jobLevelOther: "", jobFunction: "",
   topics: [], objectives: [],
   consent1: false, consent2: false,
 };
@@ -109,7 +110,7 @@ const EMPTY_FORM = {
 // ─── Custom Dropdown ──────────────────────────────────────────────────────────
 function CustomDropdown({
   options,
-  value,           // string (single) or string[] (multi)
+  value,
   onChange,
   placeholder = "Select…",
   multi = false,
@@ -126,20 +127,19 @@ function CustomDropdown({
   const searchRef = useRef(null);
   const dropRef = useRef(null);
 
-  const textMain   = dark ? "#ffffff" : "#0d0520";
-  const textMuted  = dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.55)";
-  const inputBg    = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
-  const borderColor= error
+  const textMain    = dark ? "#ffffff" : "#0d0520";
+  const textMuted   = dark ? "rgba(255,255,255,0.55)" : "rgba(13,5,32,0.55)";
+  const inputBg     = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
+  const borderColor = error
     ? "#e05555"
     : open
     ? "#7a3fd1"
     : dark ? "rgba(255,255,255,0.14)" : "rgba(122,63,209,0.22)";
-  const dropBg     = dark ? "#16092e" : "#ffffff";
-  const hoverBg    = dark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.07)";
-  const selectedBg = dark ? "rgba(122,63,209,0.28)" : "rgba(122,63,209,0.12)";
+  const dropBg      = dark ? "#16092e" : "#ffffff";
+  const hoverBg     = dark ? "rgba(122,63,209,0.18)" : "rgba(122,63,209,0.07)";
+  const selectedBg  = dark ? "rgba(122,63,209,0.28)" : "rgba(122,63,209,0.12)";
   const dividerColor = dark ? "rgba(255,255,255,0.07)" : "rgba(122,63,209,0.10)";
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -182,20 +182,14 @@ function CustomDropdown({
     if (multi && Array.isArray(value)) onChange(value.filter(x => x !== opt));
   };
 
-  const filteredOptions = options.filter(o =>
-    !search || o.toLowerCase().includes(search.toLowerCase())
-  );
-  const filteredPriority = priorityOptions.filter(o =>
-    !search || o.toLowerCase().includes(search.toLowerCase())
-  );
-  const filteredRest = filteredOptions.filter(o => !priorityOptions.includes(o));
+  const filteredOptions  = options.filter(o => !search || o.toLowerCase().includes(search.toLowerCase()));
+  const filteredPriority = priorityOptions.filter(o => !search || o.toLowerCase().includes(search.toLowerCase()));
+  const filteredRest     = filteredOptions.filter(o => !priorityOptions.includes(o));
 
-  // Label for single-select trigger
   const singleLabel = !multi && value
     ? (flagMap[value] ? `${flagMap[value]} ${value}` : value)
     : null;
 
-  // Tags for multi-select trigger
   const tags = multi && Array.isArray(value) ? value : [];
 
   return (
@@ -238,10 +232,7 @@ function CustomDropdown({
               color: (multi ? tags.length === 0 : !value) ? textMuted : textMain,
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
             }}>
-              {multi
-                ? placeholder
-                : (singleLabel || placeholder)
-              }
+              {multi ? placeholder : (singleLabel || placeholder)}
             </span>
           )}
         </div>
@@ -424,15 +415,21 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
     return () => clearTimeout(timer);
   }, [step]);
 
-  const textMain   = dark ? "#ffffff"                : "#0d0520";
-  const textMuted  = dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.68)";
-  const inputBg    = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
-  const inputBorder= dark ? "rgba(255,255,255,0.14)" : "rgba(122,63,209,0.20)";
-  const modalBg    = dark ? "#0e0820" : "#ffffff";
+  const textMain    = dark ? "#ffffff"                : "#0d0520";
+  const textMuted   = dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.68)";
+  const inputBg     = dark ? "rgba(255,255,255,0.06)" : "rgba(122,63,209,0.04)";
+  const inputBorder = dark ? "rgba(255,255,255,0.14)" : "rgba(122,63,209,0.20)";
+  const modalBg     = dark ? "#0e0820" : "#ffffff";
 
   const set = (key, val) => {
     setForm(f => ({ ...f, [key]: val }));
     setErrors(e => ({ ...e, [key]: undefined }));
+  };
+
+  // When job level changes, clear the "Other" text if switching away
+  const setJobLevel = (val) => {
+    setForm(f => ({ ...f, jobLevel: val, jobLevelOther: val === "Other" ? f.jobLevelOther : "" }));
+    setErrors(e => ({ ...e, jobLevel: undefined, jobLevelOther: undefined }));
   };
 
   const inputStyle = (err) => ({
@@ -474,7 +471,9 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Invalid email address";
       if (!form.organisation.trim()) e.organisation = "Required";
       if (!form.country)             e.country      = "Please select your country";
-      if (form.jobLevels.length === 0) e.jobLevels  = "Select at least one level";
+      if (!form.jobLevel)            e.jobLevel     = "Required";
+      if (form.jobLevel === "Other" && !form.jobLevelOther.trim())
+                                     e.jobLevelOther = "Please describe your role";
       if (!form.jobFunction)         e.jobFunction  = "Required";
     }
     if (step === 2) {
@@ -679,25 +678,34 @@ function QuestionnaireModal({ dark, tierLabel, onClose, onSubmit }) {
                 Professional Profile
               </div>
 
-              {/* Job Level — multi-select */}
+              {/* Job Level — single-select */}
               <div style={fieldStyle}>
-                <label style={labelStyle}>
-                  Job Level *{" "}
-                  <span style={{ color: textMuted, fontWeight: 500, letterSpacing: 0, textTransform: "none" }}>
-                    ({form.jobLevels.length} selected)
-                  </span>
-                </label>
+                <label style={labelStyle}>Job Level *</label>
                 <CustomDropdown
                   options={JOB_LEVELS}
-                  value={form.jobLevels}
-                  onChange={v => set("jobLevels", v)}
-                  placeholder="Select all that apply…"
-                  multi
+                  value={form.jobLevel}
+                  onChange={setJobLevel}
+                  placeholder="Select your level…"
+                  multi={false}
                   dark={dark}
-                  error={!!errors.jobLevels}
+                  error={!!errors.jobLevel}
                   maxHeight={220}
                 />
-                {errors.jobLevels && <span style={errStyle}>{errors.jobLevels}</span>}
+                {errors.jobLevel && <span style={errStyle}>{errors.jobLevel}</span>}
+
+                {/* "Other" freetext — shown only when Other is selected */}
+                {form.jobLevel === "Other" && (
+                  <div style={{ marginTop: 10 }}>
+                    <input
+                      value={form.jobLevelOther}
+                      onChange={e => set("jobLevelOther", e.target.value)}
+                      placeholder="Please describe your role…"
+                      style={inputStyle(!!errors.jobLevelOther)}
+                      autoFocus
+                    />
+                    {errors.jobLevelOther && <span style={errStyle}>{errors.jobLevelOther}</span>}
+                  </div>
+                )}
               </div>
 
               {/* Job Function */}
@@ -853,10 +861,10 @@ function PassCard({ meta, inventoryItem, onPurchase, dark }) {
   const remaining = inventoryItem ? Math.max(inventoryItem.total - inventoryItem.sold, 0) : null;
   const soldOut   = remaining !== null && remaining <= 0;
 
-  const textMain   = dark ? "#ffffff"                : "#0d0520";
-  const textMuted  = dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.68)";
-  const textLight  = dark ? "rgba(255,255,255,0.40)" : "rgba(13,5,32,0.45)";
-  const cardBg     = dark ? "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)" : "#ffffff";
+  const textMain  = dark ? "#ffffff"                : "#0d0520";
+  const textMuted = dark ? "rgba(255,255,255,0.65)" : "rgba(13,5,32,0.68)";
+  const textLight = dark ? "rgba(255,255,255,0.40)" : "rgba(13,5,32,0.45)";
+  const cardBg    = dark ? "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)" : "#ffffff";
   const cardBorder = dark ? "1px solid rgba(255,255,255,0.10)" : "1px solid rgba(122,63,209,0.14)";
 
   return (
@@ -928,12 +936,12 @@ function PassCard({ meta, inventoryItem, onPurchase, dark }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Tickets() {
-  const [inventory, setInventory]           = useState([]);
-  const [dark, setDark]                     = useState(false);
+  const [inventory, setInventory]               = useState([]);
+  const [dark, setDark]                         = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [questionnaireOpen, setQuestionnaireOpen] = useState(false);
-  const [pendingTier, setPendingTier]       = useState(null);
-  const [pendingLabel, setPendingLabel]     = useState("");
+  const [pendingTier, setPendingTier]           = useState(null);
+  const [pendingLabel, setPendingLabel]         = useState("");
 
   useEffect(() => {
     setDark(document.body.classList.contains("dark-mode"));

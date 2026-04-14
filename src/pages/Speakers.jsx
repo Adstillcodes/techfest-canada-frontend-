@@ -337,10 +337,27 @@ function SpeakerCard({ speaker, dark, i }) {
             </div>
           )}
           <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0, height: "35%",
-            background: "linear-gradient(to top, rgba(10,3,26,0.85) 0%, transparent 100%)",
+            position: "absolute", bottom: 0, left: 0, right: 0, height: "45%",
+            background: "linear-gradient(to top, rgba(10,3,26,0.92) 0%, transparent 100%)",
             pointerEvents: "none",
           }} />
+          <div style={{
+            position: "absolute", bottom: 14, left: "50%",
+            transform: `translateX(-50%) translateY(${hovered ? 0 : 6}px)`,
+            background: `${accent}`,
+            backdropFilter: "blur(6px)",
+            color: "#fff",
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: "0.66rem", fontWeight: 700, letterSpacing: "0.1em",
+            padding: "6px 16px", borderRadius: 999,
+            opacity: hovered ? 1 : 0,
+            transition: "opacity 0.3s ease, transform 0.3s ease",
+            whiteSpace: "nowrap", textTransform: "uppercase",
+            boxShadow: `0 6px 20px ${accent}55`,
+            pointerEvents: "none",
+          }}>
+            View Profile →
+          </div>
         </div>
 
         {/* Body */}

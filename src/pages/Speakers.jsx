@@ -369,6 +369,9 @@ export default function Speakers() {
         </div>
       </section>
 
+      {/* ── WHERE SPEAKERS WORK (moved above filter bar) ── */}
+      <SpeakerMarquee dark={isDark} title="Where our speakers work at" />
+
       {/* ── STICKY FILTER BAR (same structure as AgendaPage) ── */}
       <div style={{
         position: "sticky", top: 64, zIndex: 50,
@@ -528,9 +531,6 @@ export default function Speakers() {
           </div>
         )}
       </section>
-
-      {/* ── WHERE SPEAKERS WORK ── */}
-      <SpeakerMarquee dark={isDark} title="Where our speakers work at" />
 
       {/* ── ADVISORY COUNCIL ── */}
       <section style={{ maxWidth: 900, margin: "0 auto", padding: "60px 24px", textAlign: "center" }}>

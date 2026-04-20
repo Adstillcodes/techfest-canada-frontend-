@@ -74,6 +74,7 @@ export default function Navbar() {
     { label: "AGENDA",       path: "/agenda" },
     { label: "VENUE",        path: "/venue" },
     { label: "AWARDS",       path: "/awards" },
+    { label: "VOLUNTEER",    path: "/volunteer" },
   ];
 
   const isActive = (path) => {
@@ -159,7 +160,6 @@ export default function Navbar() {
                   if (item.hasDropdown) {
                     return (
                       <li key={item.path} style={{ position: "relative" }} ref={dropRef} onMouseEnter={() => setDropOpen(true)} onMouseLeave={() => setDropOpen(false)}>
-                        {/* PARTNERS label is intentionally not a link — only dropdown items navigate */}
                         <span className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
                           style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, cursor: "default" }}
                         >
@@ -221,7 +221,6 @@ export default function Navbar() {
                     return (
                       <div key={item.path} style={{ display: "flex", flexDirection: "column" }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          {/* PARTNERS label is intentionally not a link in mobile either */}
                           <span
                             style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", padding: "12px 16px", borderRadius: 12, flex: 1, color: PARTNERS_DROPDOWN.some(d => d.path === location.pathname) ? "#7a3fd1" : textMain, background: PARTNERS_DROPDOWN.some(d => d.path === location.pathname) ? "rgba(122,63,209,0.08)" : "transparent", cursor: "default" }}
                           >{item.label}</span>

@@ -40,7 +40,6 @@ var REQUIREMENTS = [
 var ROLES = [
   {
     title: "Registration & Check-In",
-    icon: "📋",
     duties: [
       "Welcome attendees and speakers to The Tech Festival Canada 2026",
       "Assist attendees with digital check-in using our badge scanning system",
@@ -53,7 +52,6 @@ var ROLES = [
   },
   {
     title: "Hospitality & Wayfinding",
-    icon: "🤝",
     duties: [
       "Greet and welcome attendees throughout the venue",
       "Provide directions to sessions, exhibition halls, networking areas, and facilities",
@@ -66,7 +64,6 @@ var ROLES = [
   },
   {
     title: "Exhibition Floor Support",
-    icon: "🏢",
     duties: [
       "Check in exhibitors and assist with booth setup on Day 0 (Oct 25)",
       "Monitor attendee access to the Exhibition Hall during public hours",
@@ -78,7 +75,6 @@ var ROLES = [
   },
   {
     title: "Session & Stage Support",
-    icon: "🎤",
     duties: [
       "Manage session room entry and seating",
       "Ensure speakers are in the right room at the right time",
@@ -90,7 +86,6 @@ var ROLES = [
   },
   {
     title: "Social Media & Content",
-    icon: "📱",
     duties: [
       "Capture photos and short video clips throughout the event",
       "Post real-time updates to TTFC social channels (LinkedIn, X, Instagram)",
@@ -102,7 +97,6 @@ var ROLES = [
   },
   {
     title: "VIP & Speaker Liaison",
-    icon: "⭐",
     duties: [
       "Greet VIP guests and speakers upon arrival",
       "Escort speakers to green rooms, stages, and media areas",
@@ -124,7 +118,6 @@ function RoleAccordion({ role, dark }) {
   return (
     <div style={{ borderRadius: 16, border: "1px solid " + borderCol, overflow: "hidden", background: dark ? "rgba(255,255,255,0.02)" : "rgba(122,63,209,0.02)", transition: "all 0.2s" }}>
       <button onClick={function () { setOpen(!open); }} style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, padding: "18px 22px", background: "transparent", border: "none", cursor: "pointer", color: textMain, textAlign: "left" }}>
-        <span style={{ fontSize: "1.3rem" }}>{role.icon}</span>
         <span style={{ flex: 1, fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: "0.82rem", letterSpacing: "0.5px" }}>{role.title}</span>
         <ChevronDown open={open} />
       </button>
@@ -184,7 +177,6 @@ function VolunteerForm({ dark }) {
   if (status === "sent") {
     return (
       <div style={{ textAlign: "center", padding: "48px 24px" }}>
-        <div style={{ fontSize: "2.5rem", marginBottom: 16 }}>🎉</div>
         <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "1.3rem", color: textMain, marginBottom: 10 }}>Application Received!</h3>
         <p style={{ fontSize: "0.9rem", color: textMuted, lineHeight: 1.6 }}>Thank you for applying to volunteer at The Tech Festival Canada 2026. We'll review your application and get back to you within 5 business days.</p>
       </div>
@@ -331,19 +323,18 @@ export default function Volunteer() {
           {/* ─── KEY DATES ─── */}
           <section style={{ marginBottom: 60 }}>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "1.3rem", marginBottom: 24 }}>Key Dates</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 18 }}>
               {[
-                { date: "Now — Sep 30", label: "Applications Open", icon: "📝" },
-                { date: "Oct 10", label: "Acceptance Emails Sent", icon: "✉️" },
-                { date: "Oct 24", label: "Virtual Orientation", icon: "💻" },
-                { date: "Oct 25", label: "On-Site Setup Day", icon: "🔧" },
-                { date: "Oct 26–27", label: "Event Days", icon: "🎉" },
+                { date: "Now — Sep 30", label: "Applications Open" },
+                { date: "Oct 10", label: "Acceptance Emails Sent" },
+                { date: "Oct 24", label: "Virtual Orientation" },
+                { date: "Oct 25", label: "On-Site Setup Day" },
+                { date: "Oct 26–27", label: "Event Days" },
               ].map(function (d) {
                 return (
-                  <div key={d.label} style={{ background: sectionBg, border: "1px solid " + borderCol, borderRadius: 14, padding: "20px", textAlign: "center" }}>
-                    <div style={{ fontSize: "1.3rem", marginBottom: 8 }}>{d.icon}</div>
-                    <div style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.68rem", color: dark ? "#f5a623" : "#d98a14", letterSpacing: "0.5px", marginBottom: 4 }}>{d.date}</div>
-                    <div style={{ fontSize: "0.78rem", color: textMuted }}>{d.label}</div>
+                  <div key={d.label} style={{ background: sectionBg, border: "1px solid " + borderCol, borderRadius: 16, padding: "32px 24px", textAlign: "center" }}>
+                    <div style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "1rem", color: dark ? "#f5a623" : "#d98a14", letterSpacing: "0.5px", marginBottom: 10 }}>{d.date}</div>
+                    <div style={{ fontSize: "0.95rem", color: textMuted, lineHeight: 1.5 }}>{d.label}</div>
                   </div>
                 );
               })}

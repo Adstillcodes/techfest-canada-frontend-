@@ -28,6 +28,7 @@ import KycForm from "./pages/KycForm";
 import Volunteer from "./pages/Volunteer";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
+
 function applySystemTheme() {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const theme = prefersDark ? "dark" : "light";

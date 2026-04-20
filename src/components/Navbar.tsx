@@ -104,6 +104,7 @@ export default function Navbar() {
     </AnimatePresence>
   );
 
+  
   return (
     <>
       <style>{`

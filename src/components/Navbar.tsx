@@ -123,7 +123,7 @@ export default function Navbar() {
         .tfc-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
         .tfc-mobile-ticket { display: none !important; }
         .tfc-desktop-ticket { display: inline-flex !important; }
-        @media (min-width: 641px) and (max-width: 1024px) {
+        @media (min-width: 641px) and (max-width: 1280px) {
           .tfc-desktop-nav { display: none !important; }
           .tfc-hamburger { display: flex !important; }
           .tfc-nav-logo { height: 68px !important; }

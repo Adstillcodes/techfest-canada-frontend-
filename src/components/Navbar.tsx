@@ -109,9 +109,9 @@ export default function Navbar() {
       <style>{`
         .tfc-navbar-wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
         .tfc-nav-container { display: flex; align-items: center; justify-content: space-between; height: 80px; max-width: 1400px; margin: 0 auto; padding: 0 2.5%; gap: 16px; }
-        .tfc-nav-left { flex: 1; display: flex; justify-content: flex-start; align-items: center; }
-        .tfc-nav-center { display: flex; justify-content: center; align-items: center; }
-        .tfc-nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+        .tfc-nav-left { flex: 1; min-width: 200px; display: flex; justify-content: flex-start; align-items: center; }
+        .tfc-nav-center { display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
+        .tfc-nav-right { flex: 1; min-width: 200px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
         .tfc-nav-logo { height: 52px; width: auto; object-fit: contain; transition: height 0.3s ease; }
         .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
         .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }

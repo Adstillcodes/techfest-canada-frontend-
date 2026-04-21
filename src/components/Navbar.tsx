@@ -74,7 +74,6 @@ export default function Navbar() {
     { label: "AGENDA",       path: "/agenda" },
     { label: "VENUE",        path: "/venue" },
     { label: "AWARDS",       path: "/awards" },
-    { label: "VOLUNTEER",    path: "/volunteer" },
   ];
 
   const isActive = (path) => {
@@ -109,11 +108,11 @@ export default function Navbar() {
       <style>{`
         .tfc-navbar-wrap { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; width: 100%; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
         .tfc-nav-container { display: flex; align-items: center; justify-content: space-between; height: 80px; max-width: 1400px; margin: 0 auto; padding: 0 2.5%; gap: 16px; }
-        .tfc-nav-left { flex-shrink: 0; display: flex; justify-content: flex-start; align-items: center; }
-        .tfc-nav-center { flex: 1; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .tfc-nav-right { flex-shrink: 0; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
+        .tfc-nav-left { flex: 1; display: flex; justify-content: flex-start; align-items: center; }
+        .tfc-nav-center { display: flex; justify-content: center; align-items: center; }
+        .tfc-nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
         .tfc-nav-logo { height: 52px; width: auto; object-fit: contain; transition: height 0.3s ease; }
-        .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; padding: 9px 13px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
+        .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; padding: 9px 18px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
         .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
         .tfc-nav-link.active { background: rgba(122,63,209,0.14); }
         .tfc-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 6px; }
@@ -123,7 +122,7 @@ export default function Navbar() {
         .tfc-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
         .tfc-mobile-ticket { display: none !important; }
         .tfc-desktop-ticket { display: inline-flex !important; }
-        @media (min-width: 641px) and (max-width: 1280px) {
+        @media (min-width: 641px) and (max-width: 1024px) {
           .tfc-desktop-nav { display: none !important; }
           .tfc-hamburger { display: flex !important; }
           .tfc-nav-logo { height: 68px !important; }
@@ -148,7 +147,7 @@ export default function Navbar() {
           {/* LEFT: LOGO */}
           <div className="tfc-nav-left">
             <Link to="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
-              <img className="tfc-nav-logo" src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/Tech_Festival_Canada_Logo_Light_Transparent.webp"} alt="The Tech Festival Canada" />
+              <img className="tfc-nav-logo" src={dark ? "/Tech_Festival_Canada_Logo_Dark_Transparent.png" : "/white.mode.png"} alt="The Tech Festival Canada" />
             </Link>
           </div>
 
@@ -160,14 +159,16 @@ export default function Navbar() {
                   if (item.hasDropdown) {
                     return (
                       <li key={item.path} style={{ position: "relative" }} ref={dropRef} onMouseEnter={() => setDropOpen(true)} onMouseLeave={() => setDropOpen(false)}>
-                        <span className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
-                          style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, cursor: "default" }}
+                        <button
+                          onClick={(e) => { e.preventDefault(); setDropOpen(!dropOpen); }}
+                          className={"tfc-nav-link" + (isActive(item.path) ? " active" : "")}
+                          style={{ color: isActive(item.path) ? (dark ? "#ffffff" : "#0d0520") : textMuted, display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer" }}
                         >
                           {item.label}
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: dropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
                             <path d="M6 9l6 6 6-6" />
                           </svg>
-                        </span>
+                        </button>
                         {renderDropdown(PARTNERS_DROPDOWN, dropOpen, setDropOpen)}
                       </li>
                     );
@@ -221,9 +222,9 @@ export default function Navbar() {
                     return (
                       <div key={item.path} style={{ display: "flex", flexDirection: "column" }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                          <span
-                            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", padding: "12px 16px", borderRadius: 12, flex: 1, color: PARTNERS_DROPDOWN.some(d => d.path === location.pathname) ? "#7a3fd1" : textMain, background: PARTNERS_DROPDOWN.some(d => d.path === location.pathname) ? "rgba(122,63,209,0.08)" : "transparent", cursor: "default" }}
-                          >{item.label}</span>
+                          <Link to={item.path} onClick={() => setMobileOpen(false)}
+                            style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800, letterSpacing: "1px", textTransform: "uppercase", textDecoration: "none", padding: "12px 16px", borderRadius: 12, flex: 1, color: location.pathname === item.path ? "#7a3fd1" : textMain, background: location.pathname === item.path ? "rgba(122,63,209,0.08)" : "transparent" }}
+                          >{item.label}</Link>
                           <button onClick={() => setMobileDropOpen(!mobileDropOpen)} style={{ background: "transparent", border: "none", color: textMain, cursor: "pointer", padding: "10px 16px", display: "flex", alignItems: "center" }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: mobileDropOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
                               <path d="M6 9l6 6 6-6" />

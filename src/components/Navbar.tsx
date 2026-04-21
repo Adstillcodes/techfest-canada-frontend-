@@ -74,6 +74,7 @@ export default function Navbar() {
     { label: "AGENDA",       path: "/agenda" },
     { label: "VENUE",        path: "/venue" },
     { label: "AWARDS",       path: "/awards" },
+    { label: "VOLUNTEER",    path: "/volunteer" },
   ];
 
   const isActive = (path) => {

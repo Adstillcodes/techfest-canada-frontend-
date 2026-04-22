@@ -133,10 +133,10 @@ export default function Navbar() {
         .tfc-nav-center { flex: 1; display: flex; justify-content: center; align-items: center; min-width: 0; overflow: visible; }
         .tfc-nav-right { flex-shrink: 0; display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
         .tfc-nav-logo { height: 42px; width: auto; max-width: 160px; object-fit: contain; display: block; }
-        .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; padding: 8px 11px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; }
+        .tfc-nav-link { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; padding: 8px 11px; border-radius: 999px; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; white-space: nowrap; line-height: 1; display: flex; align-items: center; height: 32px; }
         .tfc-nav-link:hover { background: rgba(122,63,209,0.10); }
         .tfc-nav-link.active { background: rgba(122,63,209,0.14); }
-        .tfc-drop-btn { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; padding: 8px 11px; border-radius: 999px; white-space: nowrap; display: flex; align-items: center; gap: 5px; background: none; border: none; cursor: pointer; transition: background 0.2s ease; }
+        .tfc-drop-btn { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; padding: 8px 11px; border-radius: 999px; white-space: nowrap; display: flex; align-items: center; gap: 5px; background: none; border: none; cursor: pointer; transition: background 0.2s ease; line-height: 1; height: 32px; margin: 0; }
         .tfc-drop-btn:hover { background: rgba(122,63,209,0.10); }
         .tfc-drop-btn.active { background: rgba(122,63,209,0.14); }
         .tfc-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 6px; }
@@ -179,12 +179,12 @@ export default function Navbar() {
           {/* CENTER: DESKTOP NAV */}
           <div className="tfc-nav-center">
             <div className="tfc-desktop-nav">
-              <ul style={{ display: "flex", alignItems: "center", gap: 2, listStyle: "none", margin: 0, padding: "5px", background: pillBg, border: "1px solid " + pillBorder, borderRadius: 999 }}>
+              <ul style={{ display: "flex", alignItems: "center", gap: 2, listStyle: "none", margin: 0, padding: "4px 5px", background: pillBg, border: "1px solid " + pillBorder, borderRadius: 999, height: 42 }}>
                 {navItems.map((item) => {
                   if (item.hasDropdown) {
                     var dc = getDropConfig(item.dropKey);
                     return (
-                      <li key={item.dropKey} style={{ position: "relative" }}
+                      <li key={item.dropKey} style={{ position: "relative", display: "flex", alignItems: "center" }}
                         onMouseEnter={() => dc.setOpen(true)}
                         onMouseLeave={() => dc.setOpen(false)}
                       >
@@ -203,7 +203,7 @@ export default function Navbar() {
                     );
                   }
                   return (
-                    <li key={item.path}>
+                    <li key={item.path} style={{ display: "flex", alignItems: "center" }}>
                       <Link to={item.path} className={"tfc-nav-link" + (isActive(item) ? " active" : "")} style={{ color: isActive(item) ? textMain : textMuted }}>{item.label}</Link>
                     </li>
                   );

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 
 /* ============================================================
-   🎯 ADMIN LEADS — Full-width Apollo-style UI
+   🎯 ADMIN PROSPECTS — Full-width Apollo-style UI
    ============================================================ */
 
 const API_BASE = "https://techfest-canada-backend.onrender.com/api";
@@ -67,7 +67,7 @@ const CSV_FIELD_ALIASES = {
 
 const ALL_LEAD_FIELDS = [
   { key: "skip",          label: "— Skip this column —" },
-  { key: "leadName",      label: "Lead Name" },
+  { key: "leadName",      label: "Prospect Name" },
   { key: "companyName",   label: "Company Name" },
   { key: "jobTitle",      label: "Job Title" },
   { key: "industry",      label: "Industry" },
@@ -78,9 +78,9 @@ const ALL_LEAD_FIELDS = [
   { key: "linkedin",      label: "LinkedIn" },
   { key: "website",       label: "Website" },
   { key: "notes",         label: "Notes" },
-  { key: "score",         label: "Lead Score" },
+  { key: "score",         label: "Prospect Score" },
   { key: "dealSize",      label: "Deal Size" },
-  { key: "leadContact",   label: "Lead Contact (Rep)" },
+  { key: "leadContact",   label: "Prospect Contact (Rep)" },
 ];
 
 /* ----------------------------------------------------------
@@ -157,6 +157,8 @@ const blankLead = () => ({
   email: "", phone: "", linkedin: "", website: "",
   notes: "",
   followUpDate: "", followUpNotes: "",
+  reminderDate: "", reminderNotes: "",
+  meetingHeldDate: "", meetingNotes: "",
   contactMethod: CONTACT_METHODS[0],
   dealSize: "", dealCategories: [],
   status: "new",
@@ -176,6 +178,81 @@ const blankLead = () => ({
   company_full_address: "",
   company_description: "",
 });
+
+const DUMMY_PROSPECTS = [
+  {
+    id: "demo-1",
+    leadName: "Sarah Chen",
+    companyName: "TechFlow AI",
+    jobTitle: "Head of Marketing",
+    industry: "SaaS",
+    country: "United States",
+    city: "San Francisco",
+    score: 85,
+    email: "s.chen@techflow.ai",
+    phone: "+1 415 555 0123",
+    linkedin: "https://linkedin.com/in/sarahchen",
+    website: "techflow.ai",
+    notes: "Interested in sponsorship package. Follow up next week.",
+    followUpDate: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
+    followUpNotes: "Send pricing deck",
+    reminderDate: "",
+    reminderNotes: "",
+    meetingHeldDate: new Date(Date.now() - 5 * 86400000).toISOString().split('T')[0],
+    meetingNotes: "Initial discovery call. Very interested.",
+    contactMethod: "Email",
+    dealSize: 15000,
+    dealCategories: ["Sponsorship", "Branding"],
+    status: "qualified",
+    claimedBy: "me",
+    claimedByName: "You",
+    claimedAt: new Date().toISOString(),
+    lastContactedAt: new Date().toISOString(),
+    lastContactedBy: "You",
+    createdAt: new Date().toISOString(),
+    email_status: "validated",
+    company_size: "201-500",
+    company_annual_revenue_clean: 15000000,
+    company_total_funding_clean: 25000000,
+    company_founded_year: "2019",
+  },
+  {
+    id: "demo-2",
+    leadName: "Marcus Johnson",
+    companyName: "DataSphere Inc",
+    jobTitle: "Chief Technology Officer",
+    industry: "Data Analytics",
+    country: "United States",
+    city: "New York",
+    score: 72,
+    email: "mjohnson@datasphere.io",
+    phone: "+1 212 555 0456",
+    linkedin: "https://linkedin.com/in/marcusjohnson",
+    website: "datasphere.io",
+    notes: "Looking for partnership opportunities. Met at TechFest 2025.",
+    followUpDate: new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0],
+    followUpNotes: "Schedule demo call",
+    reminderDate: new Date(Date.now() + 1 * 86400000).toISOString().split('T')[0],
+    reminderNotes: "Send reminder about demo",
+    meetingHeldDate: "",
+    meetingNotes: "",
+    contactMethod: "LinkedIn",
+    dealSize: 50000,
+    dealCategories: ["Partnership", "Speaking Slot"],
+    status: "contacted",
+    claimedBy: null,
+    claimedByName: null,
+    claimedAt: null,
+    lastContactedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+    lastContactedBy: "System",
+    createdAt: new Date(Date.now() - 5 * 86400000).toISOString(),
+    email_status: "validated",
+    company_size: "501-1000",
+    company_annual_revenue_clean: 50000000,
+    company_total_funding_clean: 75000000,
+    company_founded_year: "2015",
+  }
+];
 
 /* ----------------------------------------------------------
    Auth header helper
@@ -273,7 +350,7 @@ export default function AdminLeads() {
   });
 
   /* ---- Core data ---- */
-  const [leads, setLeads] = useState([]);
+  const [leads, setLeads] = useState(() => [...DUMMY_PROSPECTS]);
   const [loading, setLoading] = useState(false);
   const [lastSynced, setLastSynced] = useState(null);
   const [syncing, setSyncing] = useState(false);
@@ -349,7 +426,7 @@ export default function AdminLeads() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const newLead = await res.json();
       setLeads((prev) => [newLead, ...prev]);
-      pushToast("Lead created", "success");
+      pushToast("Prospect created", "success");
       return newLead;
     } catch (err) {
       const local = { ...payload, id: `local-${Date.now()}`, createdAt: new Date().toISOString() };
@@ -390,7 +467,7 @@ export default function AdminLeads() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      pushToast(`Imported ${data.imported || newLeads.length} leads`, "success");
+      pushToast(`Imported ${data.imported || newLeads.length} prospects`, "success");
       await fetchLeads({ silent: true });
     } catch {
       const local = newLeads.map((l) => ({
@@ -398,7 +475,7 @@ export default function AdminLeads() {
         createdAt: new Date().toISOString(),
       }));
       setLeads((prev) => [...local, ...prev]);
-      pushToast(`Imported ${local.length} leads (local only)`, "warning");
+      pushToast(`Imported ${local.length} prospects (local only)`, "warning");
     }
   };
 
@@ -421,7 +498,7 @@ export default function AdminLeads() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const updated = await res.json();
       setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, ...updated } : l)));
-      pushToast("Lead claimed — others can't reach out now", "success");
+      pushToast("Prospect claimed — others can't reach out now", "success");
     } catch {
       pushToast("Could not claim on server (saved locally)", "warning");
     }
@@ -449,7 +526,7 @@ export default function AdminLeads() {
           body: JSON.stringify({ ids: idsArr }),
         });
       } catch { }
-      pushToast(`Deleted ${idsArr.length} leads`, "success");
+      pushToast(`Deleted ${idsArr.length} prospects`, "success");
     } else if (action === "update") {
       setLeads((prev) => prev.map((l) =>
         ids.has(l.id) ? { ...l, ...payload } : l
@@ -460,7 +537,7 @@ export default function AdminLeads() {
           body: JSON.stringify({ ids: idsArr, updates: payload }),
         });
       } catch { }
-      pushToast(`Updated ${idsArr.length} leads`, "success");
+      pushToast(`Updated ${idsArr.length} prospects`, "success");
     } else if (action === "claim") {
       const stamp = {
         claimedBy: currentUser.id, claimedByName: currentUser.name,
@@ -476,7 +553,7 @@ export default function AdminLeads() {
           })
         ));
       } catch { }
-      pushToast(`Claimed ${idsArr.length} leads`, "success");
+      pushToast(`Claimed ${idsArr.length} prospects`, "success");
     } else if (action === "release") {
       setLeads((prev) => prev.map((l) =>
         ids.has(l.id) ? { ...l, claimedBy: null, claimedByName: null, claimedAt: null } : l
@@ -488,7 +565,7 @@ export default function AdminLeads() {
           })
         ));
       } catch { }
-      pushToast(`Released ${idsArr.length} leads`, "success");
+      pushToast(`Released ${idsArr.length} prospects`, "success");
     }
     setSelectedIds(new Set());
   };
@@ -678,7 +755,7 @@ export default function AdminLeads() {
 
   const handleSave = async () => {
     if (!formData.leadName.trim()) {
-      pushToast("Lead name is required", "error"); return;
+      pushToast("Prospect name is required", "error"); return;
     }
     if (formMode === "create") await createLead(formData);
     else await updateLead(formData.id, formData);
@@ -688,8 +765,8 @@ export default function AdminLeads() {
   const handleExportCSV = () => {
     const fields = ALL_LEAD_FIELDS.filter((f) => f.key !== "skip");
     const csv = leadsToCSV(filteredLeads, fields);
-    downloadFile(`leads-${new Date().toISOString().slice(0, 10)}.csv`, csv);
-    pushToast(`Exported ${filteredLeads.length} leads`, "success");
+    downloadFile(`prospects-${new Date().toISOString().slice(0, 10)}.csv`, csv);
+    pushToast(`Exported ${filteredLeads.length} prospects`, "success");
   };
 
   const toggleSort = (field) =>
@@ -763,11 +840,11 @@ export default function AdminLeads() {
         <div className="leads-nav-left">
           <div className="leads-nav-brand">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <span>Leads</span>
+            <span>Prospects</span>
           </div>
           <div className="leads-nav-tabs">
             {[
-              { key: "search", label: "Lead Search" },
+              { key: "search", label: "Prospect Search" },
               { key: "lists", label: "Lists" },
               { key: "enrichment", label: "Enrichment" },
               { key: "analytics", label: "Analytics" },
@@ -784,7 +861,7 @@ export default function AdminLeads() {
         </div>
         <div className="leads-nav-right">
           <span className="leads-contacts-badge">
-            <span className="leads-live-dot" /> {stats.total} leads
+            <span className="leads-live-dot" /> {stats.total} prospects
           </span>
           <button className="leads-nav-icon" title="Refresh" onClick={() => fetchLeads()}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -802,7 +879,7 @@ export default function AdminLeads() {
         </div>
       </nav>
 
-      {/* ===== VIEW: LEAD SEARCH ===== */}
+      {/* ===== VIEW: PROSPECT SEARCH ===== */}
       {currentView === "search" && (
         <div className="leads-layout">
           {/* Sidebar */}
@@ -816,7 +893,7 @@ export default function AdminLeads() {
 
             <SidebarSection title="General Settings" defaultOpen>
               <SidebarInput label="File Name / Run Label" placeholder="e.g. US-SaaS-Marketing-Q2" value={fileName} onChange={setFileName} />
-              <SidebarInput label="Fetch Count (Max Leads)" type="number" placeholder="5000" value={fetchCount} onChange={(v) => setFetchCount(Number(v))} helper="Leave empty to fetch all matches" />
+              <SidebarInput label="Fetch Count (Max Prospects)" type="number" placeholder="5000" value={fetchCount} onChange={(v) => setFetchCount(Number(v))} helper="Leave empty to fetch all matches" />
             </SidebarSection>
 
             <SidebarSection title="People Targeting" defaultOpen>
@@ -879,6 +956,14 @@ export default function AdminLeads() {
                 <kbd className="leads-kbd">⌘K</kbd>
               </div>
               <div className="leads-export-group">
+                <button className="leads-btn-primary" onClick={openCreate}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  New Prospect
+                </button>
+                <button className="leads-btn-secondary" onClick={() => setShowImportModal(true)}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Import
+                </button>
                 <button className="leads-btn-secondary" onClick={handleExportCSV}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
                 <button className="leads-btn-secondary" onClick={handleExportCSV}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export XLSX</button>
                 <button className="leads-btn-secondary" onClick={handleExportCSV}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export JSON</button>
@@ -910,7 +995,7 @@ export default function AdminLeads() {
             <div className="leads-results-header">
               <div className="leads-results-title">
                 <h2>Search Results</h2>
-                <span className="leads-count-badge">{filteredLeads.length} leads</span>
+                <span className="leads-count-badge">{filteredLeads.length} prospects</span>
               </div>
               <div className="leads-sort">
                 <span>Sort by:</span>
@@ -930,10 +1015,10 @@ export default function AdminLeads() {
 
             <div className="leads-table-card">
               {loading ? (
-                <EmptyState icon={<Spinner />} title="Loading leads…" text="Fetching from your backend." />
+                <EmptyState icon={<Spinner />} title="Loading prospects…" text="Fetching from your backend." />
               ) : filteredLeads.length === 0 ? (
                 leads.length === 0 ? (
-                  <EmptyState icon="📭" title="No leads yet" text="Import a CSV or add one manually to get started." cta={{ label: "Add your first lead", onClick: openCreate }} secondaryCta={{ label: "Import CSV", onClick: () => setShowImportModal(true) }} />
+                  <EmptyState icon="📭" title="No prospects yet" text="Import a CSV or add one manually to get started." cta={{ label: "Add your first prospect", onClick: openCreate }} secondaryCta={{ label: "Import CSV", onClick: () => setShowImportModal(true) }} />
                 ) : (
                   <EmptyState icon="🔍" title="No matches" text="Try clearing a filter or adjusting your search." />
                 )
@@ -1007,8 +1092,8 @@ export default function AdminLeads() {
           onExport={() => {
             const selected = leads.filter((l) => selectedIds.has(l.id));
             const fields = ALL_LEAD_FIELDS.filter((f) => f.key !== "skip");
-            downloadFile(`selected-leads.csv`, leadsToCSV(selected, fields));
-            pushToast(`Exported ${selected.length} leads`, "success");
+            downloadFile(`selected-prospects.csv`, leadsToCSV(selected, fields));
+            pushToast(`Exported ${selected.length} prospects`, "success");
           }}
         />
       )}
@@ -1052,7 +1137,7 @@ export default function AdminLeads() {
       {/* ===== DELETE CONFIRM ===== */}
       {confirmDelete && (
         <ConfirmModal
-          title={confirmDelete === "bulk" ? `Delete ${selectedIds.size} leads?` : "Delete this lead?"}
+          title={confirmDelete === "bulk" ? `Delete ${selectedIds.size} prospects?` : "Delete this prospect?"}
           message="This action cannot be undone."
           confirmLabel="Delete"
           danger
@@ -1081,8 +1166,8 @@ export default function AdminLeads() {
 
 function ListsView({ leads, currentUserId, onOpen }) {
   const lists = [
-    { key: "mine", label: "My Leads", filter: (l) => l.claimedBy === currentUserId },
-    { key: "hot", label: "Hot Leads", filter: (l) => (Number(l.score) || 0) >= 80 },
+    { key: "mine", label: "My Prospects", filter: (l) => l.claimedBy === currentUserId },
+    { key: "hot", label: "Hot Prospects", filter: (l) => (Number(l.score) || 0) >= 80 },
     { key: "new", label: "New This Week", filter: (l) => l.createdAt && (Date.now() - new Date(l.createdAt).getTime()) < 7 * 86400000 },
     { key: "overdue", label: "Overdue Follow-ups", filter: (l) => isOverdue(l.followUpDate) },
     { key: "unclaimed", label: "Unclaimed", filter: (l) => !l.claimedBy },
@@ -1098,7 +1183,7 @@ function ListsView({ leads, currentUserId, onOpen }) {
     <div className="leads-view-page">
       <div className="leads-view-header">
         <h2>Lists</h2>
-        <p>Organize and access your saved lead segments.</p>
+        <p>Organize and access your saved prospect segments.</p>
       </div>
       <div className="leads-lists-layout">
         <div className="leads-lists-sidebar">
@@ -1120,11 +1205,11 @@ function ListsView({ leads, currentUserId, onOpen }) {
           <div className="leads-results-header" style={{ padding: "0 0 12px" }}>
             <div className="leads-results-title">
               <h3>{active?.label}</h3>
-              <span className="leads-count-badge">{listLeads.length} leads</span>
+              <span className="leads-count-badge">{listLeads.length} prospects</span>
             </div>
           </div>
           {listLeads.length === 0 ? (
-            <EmptyState icon="📂" title="No leads in this list" text="This list is empty right now." />
+            <EmptyState icon="📂" title="No prospects in this list" text="This list is empty right now." />
           ) : (
             <div className="leads-table-card" style={{ margin: 0 }}>
               <div className="leads-table-scroll">
@@ -1171,7 +1256,7 @@ function EnrichmentView({ leads, onImport, onExport }) {
     <div className="leads-view-page">
       <div className="leads-view-header">
         <h2>Enrichment</h2>
-        <p>Bulk enrich and verify your lead data.</p>
+        <p>Bulk enrich and verify your prospect data.</p>
       </div>
       <div className="leads-enrich-grid">
         <div className="leads-enrich-card">
@@ -1198,7 +1283,7 @@ function EnrichmentView({ leads, onImport, onExport }) {
       <div className="leads-enrich-actions">
         <button className="leads-btn-primary" onClick={onImport}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Import Leads to Enrich
+          Import Prospects to Enrich
         </button>
         <button className="leads-btn-secondary" onClick={onExport}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1240,12 +1325,12 @@ function AnalyticsView({ leads, stats }) {
     <div className="leads-view-page">
       <div className="leads-view-header">
         <h2>Analytics</h2>
-        <p>Insights and performance metrics from your lead pipeline.</p>
+        <p>Insights and performance metrics from your prospect pipeline.</p>
       </div>
 
       <div className="leads-stats-row">
-        <StatCard label="Total Leads" value={stats.total} icon="👥" accent="#6366f1" />
-        <StatCard label="Hot Leads" value={stats.hot} icon="🔥" accent="#22c55e" />
+        <StatCard label="Total Prospects" value={stats.total} icon="👥" accent="#6366f1" />
+        <StatCard label="Hot Prospects" value={stats.hot} icon="🔥" accent="#22c55e" />
         <StatCard label="Claimed by You" value={stats.claimedByMe} icon="✓" accent="#8b5cf6" />
         <StatCard label="Overdue" value={stats.overdue} icon="⏰" accent="#ef4444" />
         <StatCard label="Open Pipeline" value={fmtMoney(stats.pipeline)} icon="💰" accent="#f59e0b" isText />
@@ -1268,7 +1353,7 @@ function AnalyticsView({ leads, stats }) {
         </div>
 
         <div className="leads-analytics-card">
-          <h3>Leads by Country</h3>
+          <h3>Prospects by Country</h3>
           <div className="leads-chart">
             {countryCounts.map(([country, count]) => (
               <div key={country} className="leads-chart-row">
@@ -1455,7 +1540,7 @@ function Pagination({ page, totalPages, pageSize, totalItems, onPage, onPageSize
   return (
     <div className="leads-pagination">
       <div className="leads-pagination-info">
-        {totalItems === 0 ? "No leads" : `${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, totalItems)} of ${totalItems}`}
+        {totalItems === 0 ? "No prospects" : `${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, totalItems)} of ${totalItems}`}
       </div>
       <div className="leads-pagination-controls">
         <select className="leads-select" value={pageSize} onChange={(e) => onPageSize(Number(e.target.value))} style={{ padding: "6px 10px" }}>
@@ -1593,11 +1678,18 @@ function LeadDrawer({ lead, allLeads, currentUserId, onClose, onEdit, onDelete, 
             {companyAddress && <DrawerField label="Address" value={companyAddress} />}
           </DrawerSection>
 
+          <DrawerSection title="Ownership & Contact History">
+            <div className="leads-drawer-grid">
+              <DrawerField label="Claimed By" value={lead.claimedByName ? `${lead.claimedByName} (${fmtRelative(lead.claimedAt)})` : "Unclaimed"} />
+              <DrawerField label="Last Contacted By" value={lead.lastContactedBy ? `${lead.lastContactedBy} (${fmtRelative(lead.lastContactedAt)})` : "—"} />
+            </div>
+          </DrawerSection>
+
           <DrawerSection title="Deal">
             <div className="leads-drawer-grid">
               <DrawerField label="Deal Size" value={fmtMoney(lead.dealSize)} />
               <DrawerField label="Contact Method" value={lead.contactMethod} />
-              <DrawerField label="Lead Contact (Rep)" value={lead.leadContact} />
+              <DrawerField label="Prospect Contact (Rep)" value={lead.leadContact} />
             </div>
             {lead.dealCategories?.length > 0 && (
               <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -1607,13 +1699,23 @@ function LeadDrawer({ lead, allLeads, currentUserId, onClose, onEdit, onDelete, 
           </DrawerSection>
 
           <DrawerSection title="Follow-up">
-            <DrawerField label="Date" value={fmtDate(lead.followUpDate)} />
-            <DrawerField label="Notes" value={lead.followUpNotes} multiline />
+            <DrawerField label="Follow-up Date" value={fmtDate(lead.followUpDate)} />
+            <DrawerField label="Follow-up Notes" value={lead.followUpNotes} multiline />
+          </DrawerSection>
+
+          <DrawerSection title="Reminder">
+            <DrawerField label="Reminder Date" value={fmtDate(lead.reminderDate)} />
+            <DrawerField label="Reminder Notes" value={lead.reminderNotes} multiline />
+          </DrawerSection>
+
+          <DrawerSection title="Meeting Held">
+            <DrawerField label="Meeting Date" value={fmtDate(lead.meetingHeldDate)} />
+            <DrawerField label="Meeting Notes" value={lead.meetingNotes} multiline />
           </DrawerSection>
 
           <DrawerSection title="Notes">
-            <DrawerField label="Lead Notes" value={lead.notes} multiline />
-            {related && <DrawerField label="Related Lead" value={`${related.leadName} (${related.companyName || "—"})`} />}
+            <DrawerField label="Prospect Notes" value={lead.notes} multiline />
+            {related && <DrawerField label="Related Prospect" value={`${related.leadName} (${related.companyName || "—"})`} />}
             {lead.lastContactedAt && <DrawerField label="Last Contacted" value={`${fmtDate(lead.lastContactedAt)} by ${lead.lastContactedBy || "—"}`} />}
           </DrawerSection>
         </div>
@@ -1655,8 +1757,8 @@ function LeadFormModal({ mode, data, allLeads, onChange, onToggleCategory, onSav
       <div className="leads-modal">
         <div className="leads-modal-header">
           <div>
-            <div className="leads-modal-title">{mode === "create" ? "New Lead" : "Edit Lead"}</div>
-            <div className="leads-modal-sub">{mode === "create" ? "Add a lead manually. Required fields are marked *" : "Update lead information."}</div>
+            <div className="leads-modal-title">{mode === "create" ? "New Prospect" : "Edit Prospect"}</div>
+            <div className="leads-modal-sub">{mode === "create" ? "Add a prospect manually. Required fields are marked *" : "Update prospect information."}</div>
           </div>
           <button className="leads-icon-btn" onClick={onClose}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1666,7 +1768,7 @@ function LeadFormModal({ mode, data, allLeads, onChange, onToggleCategory, onSav
         <div className="leads-modal-body">
           <FormSection title="Identity">
             <FormRow>
-              <FormInput label="Lead Name *" value={data.leadName} onChange={(v) => onChange("leadName", v)} placeholder="Jane Doe" />
+              <FormInput label="Prospect Name *" value={data.leadName} onChange={(v) => onChange("leadName", v)} placeholder="Jane Doe" />
               <FormInput label="Job Title" value={data.jobTitle} onChange={(v) => onChange("jobTitle", v)} placeholder="VP Marketing" />
             </FormRow>
             <FormRow>
@@ -1678,8 +1780,8 @@ function LeadFormModal({ mode, data, allLeads, onChange, onToggleCategory, onSav
               <FormInput label="City" value={data.city} onChange={(v) => onChange("city", v)} placeholder="Toronto" />
             </FormRow>
             <FormRow>
-              <FormInput label="Lead Contact (rep)" value={data.leadContact} onChange={(v) => onChange("leadContact", v)} placeholder="Salesperson handling" />
-              <FormInput label="Lead Score (0–100)" type="number" min={0} max={100} value={data.score} onChange={(v) => onChange("score", v)} />
+              <FormInput label="Prospect Contact (rep)" value={data.leadContact} onChange={(v) => onChange("leadContact", v)} placeholder="Salesperson handling" />
+              <FormInput label="Prospect Score (0–100)" type="number" min={0} max={100} value={data.score} onChange={(v) => onChange("score", v)} />
             </FormRow>
           </FormSection>
 
@@ -1693,6 +1795,23 @@ function LeadFormModal({ mode, data, allLeads, onChange, onToggleCategory, onSav
               <FormInput label="Website" value={data.website} onChange={(v) => onChange("website", v)} placeholder="acme.com" />
             </FormRow>
             <FormSelect label="Method of Contact" value={data.contactMethod} onChange={(v) => onChange("contactMethod", v)} options={CONTACT_METHODS.map((m) => ({ value: m, label: m }))} />
+          </FormSection>
+
+          <FormSection title="Ownership & History">
+            <FormRow>
+              <div>
+                <FormLabel>Claimed By</FormLabel>
+                <div className="leads-input" style={{ display: "flex", alignItems: "center", color: "var(--leads-text-muted)" }}>
+                  {data.claimedByName ? `${data.claimedByName} (${fmtRelative(data.claimedAt)})` : "Unclaimed"}
+                </div>
+              </div>
+              <div>
+                <FormLabel>Last Contacted By</FormLabel>
+                <div className="leads-input" style={{ display: "flex", alignItems: "center", color: "var(--leads-text-muted)" }}>
+                  {data.lastContactedBy ? `${data.lastContactedBy} (${fmtRelative(data.lastContactedAt)})` : "—"}
+                </div>
+              </div>
+            </FormRow>
           </FormSection>
 
           <FormSection title="Deal">
@@ -1721,16 +1840,26 @@ function LeadFormModal({ mode, data, allLeads, onChange, onToggleCategory, onSav
             <FormTextarea label="Follow-up Notes" value={data.followUpNotes} onChange={(v) => onChange("followUpNotes", v)} placeholder="Reminders, what to bring up next..." />
           </FormSection>
 
+          <FormSection title="Reminder">
+            <FormInput label="Reminder Date" type="date" value={data.reminderDate} onChange={(v) => onChange("reminderDate", v)} />
+            <FormTextarea label="Reminder Notes" value={data.reminderNotes} onChange={(v) => onChange("reminderNotes", v)} placeholder="Set a reminder note..." />
+          </FormSection>
+
+          <FormSection title="Meeting Held">
+            <FormInput label="Meeting Date" type="date" value={data.meetingHeldDate} onChange={(v) => onChange("meetingHeldDate", v)} />
+            <FormTextarea label="Meeting Notes" value={data.meetingNotes} onChange={(v) => onChange("meetingNotes", v)} placeholder="Notes from the meeting..." />
+          </FormSection>
+
           <FormSection title="Notes & Relations">
-            <FormTextarea label="Lead Notes" value={data.notes} onChange={(v) => onChange("notes", v)} placeholder="Background, pain points, conversation history..." rows={5} />
-            <FormSelect label="Related Lead" value={data.relatedLeadId} onChange={(v) => onChange("relatedLeadId", v)}
+            <FormTextarea label="Prospect Notes" value={data.notes} onChange={(v) => onChange("notes", v)} placeholder="Background, pain points, conversation history..." rows={5} />
+            <FormSelect label="Related Prospect" value={data.relatedLeadId} onChange={(v) => onChange("relatedLeadId", v)}
               options={[{ value: "", label: "— None —" }, ...allLeads.filter((l) => l.id !== data.id).map((l) => ({ value: l.id, label: `${l.leadName}${l.companyName ? ` (${l.companyName})` : ""}` }))]} />
           </FormSection>
         </div>
 
         <div className="leads-modal-footer">
           <button className="leads-btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="leads-btn-primary" onClick={onSave}>{mode === "create" ? "Create Lead" : "Save Changes"}</button>
+          <button className="leads-btn-primary" onClick={onSave}>{mode === "create" ? "Create Prospect" : "Save Changes"}</button>
         </div>
       </div>
     </>
@@ -1834,10 +1963,10 @@ function CSVImportModal({ onClose, onImport }) {
       <div className="leads-modal" style={{ width: 800 }}>
         <div className="leads-modal-header">
           <div>
-            <div className="leads-modal-title">Import Leads from CSV</div>
+            <div className="leads-modal-title">Import Prospects from CSV</div>
             <div className="leads-modal-sub">
               {step === "upload" && "Upload a CSV file to get started."}
-              {step === "mapping" && `${headers.length} columns detected from ${fileName}. Map each column to a lead field.`}
+              {step === "mapping" && `${headers.length} columns detected from ${fileName}. Map each column to a prospect field.`}
             </div>
           </div>
           <button className="leads-icon-btn" onClick={onClose}>
@@ -1857,7 +1986,7 @@ function CSVImportModal({ onClose, onImport }) {
 
           {step === "mapping" && (
             <>
-              <div className="leads-import-status">✓ {mappedCount} of {headers.length} columns mapped · {totalToImport} leads ready to import</div>
+              <div className="leads-import-status">✓ {mappedCount} of {headers.length} columns mapped · {totalToImport} prospects ready to import</div>
               <div className="leads-form-section-title">Column mapping</div>
               <div className="leads-mapping-grid">
                 <div className="leads-mapping-head">CSV Column</div>
@@ -1904,7 +2033,7 @@ function CSVImportModal({ onClose, onImport }) {
         <div className="leads-modal-footer">
           {step === "mapping" && <button className="leads-btn-secondary" onClick={() => setStep("upload")} style={{ marginRight: "auto" }}>← Back</button>}
           <button className="leads-btn-secondary" onClick={onClose}>Cancel</button>
-          {step === "mapping" && <button className="leads-btn-primary" onClick={() => onImport(buildLeads())} disabled={totalToImport === 0}>Import {totalToImport} leads</button>}
+          {step === "mapping" && <button className="leads-btn-primary" onClick={() => onImport(buildLeads())} disabled={totalToImport === 0}>Import {totalToImport} prospects</button>}
         </div>
       </div>
     </>
@@ -2358,7 +2487,7 @@ function LeadsStyles() {
       /* ===== DRAWER & MODAL ===== */
       .leads-backdrop {
         position: fixed; inset: 0; background: rgba(2,6,23,0.6);
-        backdrop-filter: blur(4px); z-index: 998;
+        backdrop-filter: blur(4px); z-index: 99999;
         animation: leadsFadeIn 0.2s ease;
       }
       .leads-drawer {
@@ -2367,7 +2496,7 @@ function LeadsStyles() {
         background: var(--leads-surface);
         border-left: 1px solid var(--leads-border);
         box-shadow: var(--leads-shadow-xl);
-        z-index: 999; display: flex; flex-direction: column;
+        z-index: 100000; display: flex; flex-direction: column;
         animation: leadsSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .leads-drawer-header {
@@ -2450,12 +2579,12 @@ function LeadsStyles() {
       .leads-modal {
         position: fixed; top: 50%; left: 50%;
         transform: translate(-50%, -50%);
-        width: 680px; max-width: 95vw; max-height: 90vh;
+        width: 720px; max-width: 95vw; max-height: 92vh;
         background: var(--leads-surface);
         border: 1px solid var(--leads-border);
         border-radius: 14px;
         box-shadow: var(--leads-shadow-xl);
-        z-index: 999;
+        z-index: 100001;
         display: flex; flex-direction: column;
         animation: leadsModalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       }
@@ -2527,7 +2656,7 @@ function LeadsStyles() {
       .leads-toasts {
         position: fixed; top: 24px; right: 24px;
         display: flex; flex-direction: column; gap: 10px;
-        z-index: 1000; pointer-events: none;
+        z-index: 100002; pointer-events: none;
       }
       .leads-toast {
         padding: 12px 18px; border-radius: 10px;

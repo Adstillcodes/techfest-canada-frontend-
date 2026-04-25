@@ -10,6 +10,7 @@ import AdminKyc from "../components/AdminKyc";
 import AdminEmailCampaigns from "../components/AdminEmailCampaigns";
 import AdminAudience from "../components/AdminAudience";
 import AdminCampaignCalendar from "../components/AdminCampaignCalendar";
+import AdminLeads from "../components/AdminLeads"; // 👈 NEW
 
 const API = "https://techfest-canada-backend.onrender.com/api";
 
@@ -99,6 +100,17 @@ function AdminManagement() {
 }
 
 /* =========================================================
+   🎯 LEADS TAB WRAPPER
+========================================================= */
+function Leads() {
+  return (
+    <div className="admin-card">
+      <AdminLeads />
+    </div>
+  );
+}
+
+/* =========================================================
    🧠 MAIN ADMIN PAGE
 ========================================================= */
 export default function Admin() {
@@ -114,6 +126,7 @@ export default function Admin() {
   const tabs = [
     { label: "Overview", component: Overview },
     { label: "Attendees", component: AdminAttendees },
+    { label: "Leads", component: Leads }, // 👈 NEW TAB
     { label: "Inventory", component: AdminInventory },
     { label: "Scanner", component: CheckIn },
     { label: "Admins", component: AdminManagement },

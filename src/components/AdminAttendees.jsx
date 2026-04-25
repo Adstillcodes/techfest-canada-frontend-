@@ -110,7 +110,7 @@ export default function AdminAttendees() {
         }}>
           {syncResult.error 
             ? `Error: ${syncResult.error}`
-            : `Success! Synced ${syncResult.synced} attendees from Stripe. Skipped ${syncResult.skipped} (already exists or logged-in users).`
+            : `Success! Synced ${syncResult.synced} attendees from Stripe. Skipped ${syncResult.skipped} (purchases without email or booths).`
           }
         </div>
       )}

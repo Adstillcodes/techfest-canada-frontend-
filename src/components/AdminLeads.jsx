@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 
 /* ============================================================
-   🎯 ADMIN LEADS — Apollo/Lusha-style UI
+   🎯 ADMIN LEADS — Full-width Apollo-style UI
    ============================================================ */
 
 const API_BASE = "https://techfest-canada-backend.onrender.com/api";
@@ -110,9 +110,7 @@ const fmtMoney = (n) => {
 const fmtDate = (d) => {
   if (!d) return "—";
   try {
-    return new Date(d).toLocaleDateString("en-US", {
-      month: "short", day: "numeric", year: "numeric",
-    });
+    return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   } catch { return "—"; }
 };
 
@@ -166,7 +164,6 @@ const blankLead = () => ({
   leadContact: "",
   claimedBy: null, claimedByName: null, claimedAt: null,
   lastContactedAt: null, lastContactedBy: null,
-  // Extended schema fields from PDF
   email_status: "unknown",
   functionalLevel: "",
   company_domain: "",
@@ -259,13 +256,16 @@ function copyToClipboard(text) {
    MAIN COMPONENT
 ============================================================ */
 export default function AdminLeads() {
-  /* ---- Theme (default dark to match screenshot) ---- */
+  /* ---- Theme ---- */
   const [theme, setTheme] = useState(() => {
     if (typeof window === "undefined") return "dark";
     return localStorage.getItem("leads_theme") || "dark";
   });
   useEffect(() => { localStorage.setItem("leads_theme", theme); }, [theme]);
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
+
+  /* ---- View switcher ---- */
+  const [currentView, setCurrentView] = useState("search");
 
   /* ---- Current user ---- */
   const [currentUser, setCurrentUser] = useState({
@@ -761,25 +761,40 @@ export default function AdminLeads() {
       {/* ===== TOP NAVIGATION ===== */}
       <nav className="leads-nav">
         <div className="leads-nav-left">
-          <div className="leads-logo-mark">⚡</div>
-          <span className="leads-logo-text">LeadForge</span>
+          <div className="leads-nav-brand">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span>Leads</span>
+          </div>
           <div className="leads-nav-tabs">
-            <button>Prospecting</button>
-            <button className="active">Lead Search</button>
-            <button>Lists</button>
-            <button>Enrichment</button>
-            <button>Analytics</button>
+            {[
+              { key: "search", label: "Lead Search" },
+              { key: "lists", label: "Lists" },
+              { key: "enrichment", label: "Enrichment" },
+              { key: "analytics", label: "Analytics" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                className={currentView === tab.key ? "active" : ""}
+                onClick={() => setCurrentView(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
         <div className="leads-nav-right">
           <span className="leads-contacts-badge">
-            <span className="leads-live-dot" /> 450M+ contacts
+            <span className="leads-live-dot" /> {stats.total} leads
           </span>
-          <button className="leads-nav-icon" title="Notifications">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <button className="leads-nav-icon" title="Refresh" onClick={() => fetchLeads()}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
           </button>
-          <button className="leads-nav-icon" title="Settings" onClick={toggleTheme}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.68 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <button className="leads-nav-icon" title="Toggle theme" onClick={toggleTheme}>
+            {theme === "dark" ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            )}
           </button>
           <div className="leads-avatar-sm" style={{ background: avatarColor(currentUser.name) }}>
             {initialsOf(currentUser.name)}
@@ -787,197 +802,198 @@ export default function AdminLeads() {
         </div>
       </nav>
 
-      <div className="leads-layout">
-        {/* ===== SIDEBAR ===== */}
-        <aside className="leads-sidebar">
-          <div className="leads-sidebar-header">
-            <h3>Search Filters</h3>
-            {activeFilterCount > 0 && (
-              <button className="leads-clear-all" onClick={resetFilters}>Clear all</button>
-            )}
-          </div>
+      {/* ===== VIEW: LEAD SEARCH ===== */}
+      {currentView === "search" && (
+        <div className="leads-layout">
+          {/* Sidebar */}
+          <aside className="leads-sidebar">
+            <div className="leads-sidebar-header">
+              <h3>Search Filters</h3>
+              {activeFilterCount > 0 && (
+                <button className="leads-clear-all" onClick={resetFilters}>Clear all</button>
+              )}
+            </div>
 
-          <SidebarSection title="General Settings" defaultOpen>
-            <SidebarInput label="File Name / Run Label" placeholder="e.g. US-SaaS-Marketing-Q2" value={fileName} onChange={setFileName} />
-            <SidebarInput label="Fetch Count (Max Leads)" type="number" placeholder="5000" value={fetchCount} onChange={(v) => setFetchCount(Number(v))} helper="Leave empty to fetch all matches" />
-          </SidebarSection>
+            <SidebarSection title="General Settings" defaultOpen>
+              <SidebarInput label="File Name / Run Label" placeholder="e.g. US-SaaS-Marketing-Q2" value={fileName} onChange={setFileName} />
+              <SidebarInput label="Fetch Count (Max Leads)" type="number" placeholder="5000" value={fetchCount} onChange={(v) => setFetchCount(Number(v))} helper="Leave empty to fetch all matches" />
+            </SidebarSection>
 
-          <SidebarSection title="People Targeting" defaultOpen>
-            <SidebarInput label="Job Title" placeholder='e.g. "Head of Marketing","VP Marketing"' value={filters.jobTitle} onChange={(v) => setFilters((f) => ({ ...f, jobTitle: v }))} />
-            <div className="leads-filter-group">
-              <div className="leads-filter-label">Functional Level</div>
-              <div className="leads-checkbox-grid">
-                {FUNCTIONAL_LEVELS.map((level) => (
-                  <label key={level} className="leads-checkbox-label">
-                    <input type="checkbox" checked={filters.functionalLevel.includes(level)} onChange={() => toggleFunctionalLevel(level)} />
-                    <span>{level}</span>
+            <SidebarSection title="People Targeting" defaultOpen>
+              <SidebarInput label="Job Title" placeholder='e.g. "Head of Marketing","VP Marketing"' value={filters.jobTitle} onChange={(v) => setFilters((f) => ({ ...f, jobTitle: v }))} />
+              <div className="leads-filter-group">
+                <div className="leads-filter-label">Functional Level</div>
+                <div className="leads-checkbox-grid">
+                  {FUNCTIONAL_LEVELS.map((level) => (
+                    <label key={level} className="leads-checkbox-label">
+                      <input type="checkbox" checked={filters.functionalLevel.includes(level)} onChange={() => toggleFunctionalLevel(level)} />
+                      <span>{level}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </SidebarSection>
+
+            <SidebarSection title="Location (Include)" defaultOpen>
+              <SidebarInput label="Region / Country / State" placeholder="e.g. United States, EMEA" value={contactLocation} onChange={setContactLocation} />
+              <SidebarInput label="City" placeholder="e.g. San Francisco" value={contactCity} onChange={setContactCity} />
+            </SidebarSection>
+
+            <SidebarSection title="Email Quality" defaultOpen>
+              <div className="leads-checkbox-group">
+                {EMAIL_STATUS_OPTIONS.map((s) => (
+                  <label key={s.value} className="leads-checkbox-label">
+                    <input type="checkbox" checked={filters.emailStatus.includes(s.value)} onChange={() => toggleEmailStatus(s.value)} />
+                    <span>{s.label}</span>
                   </label>
                 ))}
               </div>
-            </div>
-          </SidebarSection>
+            </SidebarSection>
 
-          <SidebarSection title="Location (Include)" defaultOpen>
-            <SidebarInput label="Region / Country / State" placeholder="e.g. United States, EMEA" value={contactLocation} onChange={setContactLocation} />
-            <SidebarInput label="City" placeholder="e.g. San Francisco" value={contactCity} onChange={setContactCity} />
-          </SidebarSection>
+            <SidebarSection title="Company Targeting">
+              <SidebarInput label="Company Domain" placeholder="e.g. google.com" value={companyDomain} onChange={setCompanyDomain} />
+              <SidebarSelect label="Company Size" value={filters.size} onChange={(v) => setFilters((f) => ({ ...f, size: v }))}
+                options={[{ value: "all", label: "Any size" }, ...SIZE_OPTIONS.map((s) => ({ value: s, label: s }))]} />
+              <SidebarSelect label="Industry" value={filters.industry} onChange={(v) => setFilters((f) => ({ ...f, industry: v }))}
+                options={[{ value: "all", label: "All industries" }, ...uniqueIndustries.map((c) => ({ value: c, label: c }))]} />
+            </SidebarSection>
 
-          <SidebarSection title="Email Quality" defaultOpen>
-            <div className="leads-checkbox-group">
-              {EMAIL_STATUS_OPTIONS.map((s) => (
-                <label key={s.value} className="leads-checkbox-label">
-                  <input type="checkbox" checked={filters.emailStatus.includes(s.value)} onChange={() => toggleEmailStatus(s.value)} />
-                  <span>{s.label}</span>
-                </label>
-              ))}
-            </div>
-          </SidebarSection>
-
-          <SidebarSection title="Company Targeting">
-            <SidebarInput label="Company Domain" placeholder="e.g. google.com" value={companyDomain} onChange={setCompanyDomain} />
-            <SidebarSelect label="Company Size" value={filters.size} onChange={(v) => setFilters((f) => ({ ...f, size: v }))}
-              options={[{ value: "all", label: "Any size" }, ...SIZE_OPTIONS.map((s) => ({ value: s, label: s }))]} />
-            <SidebarSelect label="Industry" value={filters.industry} onChange={(v) => setFilters((f) => ({ ...f, industry: v }))}
-              options={[{ value: "all", label: "All industries" }, ...uniqueIndustries.map((c) => ({ value: c, label: c }))]} />
-          </SidebarSection>
-
-          <div className="leads-sidebar-actions">
-            <button className="leads-btn-primary leads-btn-run" onClick={() => fetchLeads()}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              Run Search
-            </button>
-            <button className="leads-btn-secondary leads-btn-save" onClick={() => pushToast("Search config saved", "success")}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-              Save Search Config
-            </button>
-          </div>
-        </aside>
-
-        {/* ===== MAIN CONTENT ===== */}
-        <main className="leads-main">
-          <div className="leads-main-header">
-            <div className="leads-search-bar">
-              <svg className="leads-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input
-                type="text"
-                placeholder="Search results by name, company, or domain…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <kbd className="leads-kbd">⌘K</kbd>
-            </div>
-            <div className="leads-export-group">
-              <button className="leads-btn-secondary" onClick={handleExportCSV}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export CSV
+            <div className="leads-sidebar-actions">
+              <button className="leads-btn-primary leads-btn-run" onClick={() => fetchLeads()}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Run Search
               </button>
-              <button className="leads-btn-secondary" onClick={handleExportCSV}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export XLSX
-              </button>
-              <button className="leads-btn-secondary" onClick={handleExportCSV}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export JSON
+              <button className="leads-btn-secondary leads-btn-save" onClick={() => pushToast("Search config saved", "success")}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save Search Config
               </button>
             </div>
-          </div>
+          </aside>
 
-          {/* Active filter pills */}
-          {activeFilterCount > 0 && (
-            <div className="leads-active-bar">
-              <span className="leads-active-label">Active filters:</span>
-              {search && <FilterPill label={`Search: "${search}"`} onRemove={() => removeFilter("search")} />}
-              {filters.jobTitle && <FilterPill label={`Title: ${filters.jobTitle}`} onRemove={() => removeFilter("jobTitle")} />}
-              {filters.functionalLevel.map((l) => <FilterPill key={l} label={l} onRemove={() => toggleFunctionalLevel(l)} />)}
-              {filters.emailStatus.map((s) => {
-                const meta = EMAIL_STATUS_OPTIONS.find((o) => o.value === s);
-                return <FilterPill key={s} label={meta?.label || s} onRemove={() => toggleEmailStatus(s)} />;
-              })}
-              {contactLocation && <FilterPill label={`Loc: ${contactLocation}`} onRemove={() => removeFilter("contactLocation")} />}
-              {contactCity && <FilterPill label={`City: ${contactCity}`} onRemove={() => removeFilter("contactCity")} />}
-              {companyDomain && <FilterPill label={`Domain: ${companyDomain}`} onRemove={() => removeFilter("companyDomain")} />}
-              {filters.size !== "all" && <FilterPill label={`Size: ${filters.size}`} onRemove={() => removeFilter("size")} />}
-              {filters.industry !== "all" && <FilterPill label={filters.industry} onRemove={() => removeFilter("industry")} />}
-              {filters.country !== "all" && <FilterPill label={filters.country} onRemove={() => removeFilter("country")} />}
-              {filters.status !== "all" && <FilterPill label={statusMeta(filters.status).label} onRemove={() => removeFilter("status")} />}
-              {filters.score !== "all" && <FilterPill label={`Score: ${filters.score}`} onRemove={() => removeFilter("score")} />}
-              {filters.claim !== "all" && <FilterPill label={`Claim: ${filters.claim}`} onRemove={() => removeFilter("claim")} />}
+          {/* Main */}
+          <main className="leads-main">
+            <div className="leads-main-header">
+              <div className="leads-search-bar">
+                <svg className="leads-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" placeholder="Search results by name, company, or domain…" value={search} onChange={(e) => setSearch(e.target.value)} />
+                <kbd className="leads-kbd">⌘K</kbd>
+              </div>
+              <div className="leads-export-group">
+                <button className="leads-btn-secondary" onClick={handleExportCSV}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+                <button className="leads-btn-secondary" onClick={handleExportCSV}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export XLSX</button>
+                <button className="leads-btn-secondary" onClick={handleExportCSV}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export JSON</button>
+              </div>
             </div>
-          )}
 
-          {/* Results header */}
-          <div className="leads-results-header">
-            <div className="leads-results-title">
-              <h2>Search Results</h2>
-              <span className="leads-count-badge">{filteredLeads.length} leads</span>
-            </div>
-            <div className="leads-sort">
-              <span>Sort by:</span>
-              <select value={`${sortBy.field}-${sortBy.direction}`} onChange={(e) => {
-                const [field, direction] = e.target.value.split("-");
-                setSortBy({ field, direction });
-              }}>
-                <option value="score-desc">Relevance</option>
-                <option value="leadName-asc">Name A-Z</option>
-                <option value="leadName-desc">Name Z-A</option>
-                <option value="companyName-asc">Company A-Z</option>
-                <option value="dealSize-desc">Deal Size ↓</option>
-                <option value="createdAt-desc">Newest</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Table */}
-          <div className="leads-table-card">
-            {loading ? (
-              <EmptyState icon={<Spinner />} title="Loading leads…" text="Fetching from your backend." />
-            ) : filteredLeads.length === 0 ? (
-              leads.length === 0 ? (
-                <EmptyState icon="📭" title="No leads yet" text="Import a CSV or add one manually to get started." cta={{ label: "Add your first lead", onClick: openCreate }} secondaryCta={{ label: "Import CSV", onClick: () => setShowImportModal(true) }} />
-              ) : (
-                <EmptyState icon="🔍" title="No matches" text="Try clearing a filter or adjusting your search." />
-              )
-            ) : (
-              <>
-                <div className="leads-table-scroll">
-                  <table className="leads-table">
-                    <thead>
-                      <tr>
-                        <th className="th-checkbox"><input type="checkbox" className="leads-checkbox" checked={allSelected} ref={(el) => { if (el) el.indeterminate = !allSelected && someSelected; }} onChange={toggleSelectAll} /></th>
-                        <th>Person</th>
-                        <th>Company</th>
-                        <th>Title</th>
-                        <th>Location</th>
-                        <th>Email Status</th>
-                        <th>Company Size</th>
-                        <th>Revenue / Funding</th>
-                        <th className="th-actions">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pagedLeads.map((lead) => (
-                        <ApolloLeadRow
-                          key={lead.id}
-                          lead={lead}
-                          selected={selectedIds.has(lead.id)}
-                          currentUserId={currentUser.id}
-                          onToggleSelect={() => toggleSelect(lead.id)}
-                          onOpen={() => setDrawerLead(lead)}
-                          onClaim={() => claimLead(lead.id)}
-                          onRelease={() => releaseLead(lead.id)}
-                          onEdit={() => openEdit(lead)}
-                          onDelete={() => setConfirmDelete(lead.id)}
-                        />
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <Pagination page={page} totalPages={totalPages} pageSize={pageSize} totalItems={filteredLeads.length} onPage={setPage} onPageSize={setPageSize} />
-              </>
+            {activeFilterCount > 0 && (
+              <div className="leads-active-bar">
+                <span className="leads-active-label">Active filters:</span>
+                {search && <FilterPill label={`Search: "${search}"`} onRemove={() => removeFilter("search")} />}
+                {filters.jobTitle && <FilterPill label={`Title: ${filters.jobTitle}`} onRemove={() => removeFilter("jobTitle")} />}
+                {filters.functionalLevel.map((l) => <FilterPill key={l} label={l} onRemove={() => toggleFunctionalLevel(l)} />)}
+                {filters.emailStatus.map((s) => {
+                  const meta = EMAIL_STATUS_OPTIONS.find((o) => o.value === s);
+                  return <FilterPill key={s} label={meta?.label || s} onRemove={() => toggleEmailStatus(s)} />;
+                })}
+                {contactLocation && <FilterPill label={`Loc: ${contactLocation}`} onRemove={() => removeFilter("contactLocation")} />}
+                {contactCity && <FilterPill label={`City: ${contactCity}`} onRemove={() => removeFilter("contactCity")} />}
+                {companyDomain && <FilterPill label={`Domain: ${companyDomain}`} onRemove={() => removeFilter("companyDomain")} />}
+                {filters.size !== "all" && <FilterPill label={`Size: ${filters.size}`} onRemove={() => removeFilter("size")} />}
+                {filters.industry !== "all" && <FilterPill label={filters.industry} onRemove={() => removeFilter("industry")} />}
+                {filters.country !== "all" && <FilterPill label={filters.country} onRemove={() => removeFilter("country")} />}
+                {filters.status !== "all" && <FilterPill label={statusMeta(filters.status).label} onRemove={() => removeFilter("status")} />}
+                {filters.score !== "all" && <FilterPill label={`Score: ${filters.score}`} onRemove={() => removeFilter("score")} />}
+                {filters.claim !== "all" && <FilterPill label={`Claim: ${filters.claim}`} onRemove={() => removeFilter("claim")} />}
+              </div>
             )}
-          </div>
-        </main>
-      </div>
+
+            <div className="leads-results-header">
+              <div className="leads-results-title">
+                <h2>Search Results</h2>
+                <span className="leads-count-badge">{filteredLeads.length} leads</span>
+              </div>
+              <div className="leads-sort">
+                <span>Sort by:</span>
+                <select value={`${sortBy.field}-${sortBy.direction}`} onChange={(e) => {
+                  const [field, direction] = e.target.value.split("-");
+                  setSortBy({ field, direction });
+                }}>
+                  <option value="score-desc">Relevance</option>
+                  <option value="leadName-asc">Name A-Z</option>
+                  <option value="leadName-desc">Name Z-A</option>
+                  <option value="companyName-asc">Company A-Z</option>
+                  <option value="dealSize-desc">Deal Size ↓</option>
+                  <option value="createdAt-desc">Newest</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="leads-table-card">
+              {loading ? (
+                <EmptyState icon={<Spinner />} title="Loading leads…" text="Fetching from your backend." />
+              ) : filteredLeads.length === 0 ? (
+                leads.length === 0 ? (
+                  <EmptyState icon="📭" title="No leads yet" text="Import a CSV or add one manually to get started." cta={{ label: "Add your first lead", onClick: openCreate }} secondaryCta={{ label: "Import CSV", onClick: () => setShowImportModal(true) }} />
+                ) : (
+                  <EmptyState icon="🔍" title="No matches" text="Try clearing a filter or adjusting your search." />
+                )
+              ) : (
+                <>
+                  <div className="leads-table-scroll">
+                    <table className="leads-table">
+                      <thead>
+                        <tr>
+                          <th className="th-checkbox"><input type="checkbox" className="leads-checkbox" checked={allSelected} ref={(el) => { if (el) el.indeterminate = !allSelected && someSelected; }} onChange={toggleSelectAll} /></th>
+                          <th>Person</th>
+                          <th>Company</th>
+                          <th>Title</th>
+                          <th>Location</th>
+                          <th>Email Status</th>
+                          <th>Company Size</th>
+                          <th>Revenue / Funding</th>
+                          <th className="th-actions">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pagedLeads.map((lead) => (
+                          <ApolloLeadRow
+                            key={lead.id}
+                            lead={lead}
+                            selected={selectedIds.has(lead.id)}
+                            currentUserId={currentUser.id}
+                            onToggleSelect={() => toggleSelect(lead.id)}
+                            onOpen={() => setDrawerLead(lead)}
+                            onClaim={() => claimLead(lead.id)}
+                            onRelease={() => releaseLead(lead.id)}
+                            onEdit={() => openEdit(lead)}
+                            onDelete={() => setConfirmDelete(lead.id)}
+                          />
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <Pagination page={page} totalPages={totalPages} pageSize={pageSize} totalItems={filteredLeads.length} onPage={setPage} onPageSize={setPageSize} />
+                </>
+              )}
+            </div>
+          </main>
+        </div>
+      )}
+
+      {/* ===== VIEW: LISTS ===== */}
+      {currentView === "lists" && (
+        <ListsView leads={leads} currentUserId={currentUser.id} onOpen={(lead) => setDrawerLead(lead)} />
+      )}
+
+      {/* ===== VIEW: ENRICHMENT ===== */}
+      {currentView === "enrichment" && (
+        <EnrichmentView leads={leads} onImport={() => setShowImportModal(true)} onExport={handleExportCSV} />
+      )}
+
+      {/* ===== VIEW: ANALYTICS ===== */}
+      {currentView === "analytics" && (
+        <AnalyticsView leads={leads} stats={stats} />
+      )}
 
       {/* ===== BULK ACTION BAR ===== */}
       {selectedIds.size > 0 && (
@@ -1060,10 +1076,249 @@ export default function AdminLeads() {
 }
 
 /* ============================================================
+   VIEWS
+============================================================ */
+
+function ListsView({ leads, currentUserId, onOpen }) {
+  const lists = [
+    { key: "mine", label: "My Leads", filter: (l) => l.claimedBy === currentUserId },
+    { key: "hot", label: "Hot Leads", filter: (l) => (Number(l.score) || 0) >= 80 },
+    { key: "new", label: "New This Week", filter: (l) => l.createdAt && (Date.now() - new Date(l.createdAt).getTime()) < 7 * 86400000 },
+    { key: "overdue", label: "Overdue Follow-ups", filter: (l) => isOverdue(l.followUpDate) },
+    { key: "unclaimed", label: "Unclaimed", filter: (l) => !l.claimedBy },
+    { key: "validated", label: "Validated Emails", filter: (l) => l.email_status === "validated" },
+  ];
+
+  const [activeList, setActiveList] = useState("mine");
+
+  const active = lists.find((l) => l.key === activeList);
+  const listLeads = active ? leads.filter(active.filter) : [];
+
+  return (
+    <div className="leads-view-page">
+      <div className="leads-view-header">
+        <h2>Lists</h2>
+        <p>Organize and access your saved lead segments.</p>
+      </div>
+      <div className="leads-lists-layout">
+        <div className="leads-lists-sidebar">
+          {lists.map((list) => {
+            const count = leads.filter(list.filter).length;
+            return (
+              <button
+                key={list.key}
+                className={`leads-list-item ${activeList === list.key ? "active" : ""}`}
+                onClick={() => setActiveList(list.key)}
+              >
+                <span className="leads-list-name">{list.label}</span>
+                <span className="leads-list-count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="leads-lists-content">
+          <div className="leads-results-header" style={{ padding: "0 0 12px" }}>
+            <div className="leads-results-title">
+              <h3>{active?.label}</h3>
+              <span className="leads-count-badge">{listLeads.length} leads</span>
+            </div>
+          </div>
+          {listLeads.length === 0 ? (
+            <EmptyState icon="📂" title="No leads in this list" text="This list is empty right now." />
+          ) : (
+            <div className="leads-table-card" style={{ margin: 0 }}>
+              <div className="leads-table-scroll">
+                <table className="leads-table">
+                  <thead>
+                    <tr>
+                      <th>Person</th><th>Company</th><th>Title</th><th>Location</th><th>Email Status</th><th>Company Size</th><th>Revenue / Funding</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {listLeads.slice(0, 50).map((lead) => (
+                      <ApolloLeadRow
+                        key={lead.id}
+                        lead={lead}
+                        selected={false}
+                        currentUserId={currentUserId}
+                        onToggleSelect={() => {}}
+                        onOpen={() => onOpen(lead)}
+                        onClaim={() => {}}
+                        onRelease={() => {}}
+                        onEdit={() => {}}
+                        onDelete={() => {}}
+                        hideCheckbox
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EnrichmentView({ leads, onImport, onExport }) {
+  const enriched = leads.filter((l) => l.email_status === "validated").length;
+  const withPhone = leads.filter((l) => l.phone).length;
+  const withLinkedIn = leads.filter((l) => l.linkedin).length;
+  const withCompanyData = leads.filter((l) => l.company_size || l.company_annual_revenue_clean).length;
+
+  return (
+    <div className="leads-view-page">
+      <div className="leads-view-header">
+        <h2>Enrichment</h2>
+        <p>Bulk enrich and verify your lead data.</p>
+      </div>
+      <div className="leads-enrich-grid">
+        <div className="leads-enrich-card">
+          <div className="leads-enrich-icon" style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e" }}>✉</div>
+          <div className="leads-enrich-value">{enriched} <span>/ {leads.length}</span></div>
+          <div className="leads-enrich-label">Emails Validated</div>
+        </div>
+        <div className="leads-enrich-card">
+          <div className="leads-enrich-icon" style={{ background: "rgba(59,130,246,0.12)", color: "#3b82f6" }}>☎</div>
+          <div className="leads-enrich-value">{withPhone} <span>/ {leads.length}</span></div>
+          <div className="leads-enrich-label">Phones Enriched</div>
+        </div>
+        <div className="leads-enrich-card">
+          <div className="leads-enrich-icon" style={{ background: "rgba(139,92,246,0.12)", color: "#8b5cf6" }}>in</div>
+          <div className="leads-enrich-value">{withLinkedIn} <span>/ {leads.length}</span></div>
+          <div className="leads-enrich-label">LinkedIn Profiles</div>
+        </div>
+        <div className="leads-enrich-card">
+          <div className="leads-enrich-icon" style={{ background: "rgba(245,158,11,0.12)", color: "#f59e0b" }}>🏢</div>
+          <div className="leads-enrich-value">{withCompanyData} <span>/ {leads.length}</span></div>
+          <div className="leads-enrich-label">Company Data</div>
+        </div>
+      </div>
+      <div className="leads-enrich-actions">
+        <button className="leads-btn-primary" onClick={onImport}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Import Leads to Enrich
+        </button>
+        <button className="leads-btn-secondary" onClick={onExport}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Enriched Data
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function AnalyticsView({ leads, stats }) {
+  const statusCounts = useMemo(() => {
+    const counts = {};
+    STATUS_OPTIONS.forEach((s) => counts[s.value] = 0);
+    leads.forEach((l) => { if (counts[l.status] !== undefined) counts[l.status]++; });
+    return STATUS_OPTIONS.map((s) => ({ ...s, count: counts[s.value] }));
+  }, [leads]);
+
+  const countryCounts = useMemo(() => {
+    const counts = {};
+    leads.forEach((l) => { if (l.country) counts[l.country] = (counts[l.country] || 0) + 1; });
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  }, [leads]);
+
+  const scoreDistribution = useMemo(() => {
+    return [
+      { label: "Hot (80+)", count: leads.filter((l) => (Number(l.score) || 0) >= 80).length, color: "#22c55e" },
+      { label: "Warm (60-79)", count: leads.filter((l) => { const s = Number(l.score) || 0; return s >= 60 && s < 80; }).length, color: "#10b981" },
+      { label: "Lukewarm (40-59)", count: leads.filter((l) => { const s = Number(l.score) || 0; return s >= 40 && s < 60; }).length, color: "#f59e0b" },
+      { label: "Cold (<40)", count: leads.filter((l) => (Number(l.score) || 0) < 40).length, color: "#94a3b8" },
+    ];
+  }, [leads]);
+
+  const maxStatus = Math.max(...statusCounts.map((s) => s.count), 1);
+  const maxCountry = Math.max(...countryCounts.map((c) => c[1]), 1);
+  const maxScore = Math.max(...scoreDistribution.map((s) => s.count), 1);
+
+  return (
+    <div className="leads-view-page">
+      <div className="leads-view-header">
+        <h2>Analytics</h2>
+        <p>Insights and performance metrics from your lead pipeline.</p>
+      </div>
+
+      <div className="leads-stats-row">
+        <StatCard label="Total Leads" value={stats.total} icon="👥" accent="#6366f1" />
+        <StatCard label="Hot Leads" value={stats.hot} icon="🔥" accent="#22c55e" />
+        <StatCard label="Claimed by You" value={stats.claimedByMe} icon="✓" accent="#8b5cf6" />
+        <StatCard label="Overdue" value={stats.overdue} icon="⏰" accent="#ef4444" />
+        <StatCard label="Open Pipeline" value={fmtMoney(stats.pipeline)} icon="💰" accent="#f59e0b" isText />
+      </div>
+
+      <div className="leads-analytics-grid">
+        <div className="leads-analytics-card">
+          <h3>Pipeline by Status</h3>
+          <div className="leads-chart">
+            {statusCounts.map((s) => (
+              <div key={s.value} className="leads-chart-row">
+                <span className="leads-chart-label">{s.label}</span>
+                <div className="leads-chart-bar-bg">
+                  <div className="leads-chart-bar-fill" style={{ width: `${(s.count / maxStatus) * 100}%`, background: s.color }} />
+                </div>
+                <span className="leads-chart-value">{s.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="leads-analytics-card">
+          <h3>Leads by Country</h3>
+          <div className="leads-chart">
+            {countryCounts.map(([country, count]) => (
+              <div key={country} className="leads-chart-row">
+                <span className="leads-chart-label">{country}</span>
+                <div className="leads-chart-bar-bg">
+                  <div className="leads-chart-bar-fill" style={{ width: `${(count / maxCountry) * 100}%`, background: "var(--leads-accent)" }} />
+                </div>
+                <span className="leads-chart-value">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="leads-analytics-card">
+          <h3>Score Distribution</h3>
+          <div className="leads-chart">
+            {scoreDistribution.map((s) => (
+              <div key={s.label} className="leads-chart-row">
+                <span className="leads-chart-label">{s.label}</span>
+                <div className="leads-chart-bar-bg">
+                  <div className="leads-chart-bar-fill" style={{ width: `${(s.count / maxScore) * 100}%`, background: s.color }} />
+                </div>
+                <span className="leads-chart-value">{s.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
    SUB-COMPONENTS
 ============================================================ */
 
 function Spinner() { return <div className="leads-spinner" />; }
+
+function StatCard({ label, value, icon, accent, sub, isText }) {
+  return (
+    <div className="leads-stat-card">
+      <div className="leads-stat-icon" style={{ background: `${accent}18`, color: accent }}>{icon}</div>
+      <div className="leads-stat-body">
+        <div className="leads-stat-label">{label}</div>
+        <div className="leads-stat-value" style={{ fontSize: isText ? 18 : 24, color: accent }}>{value}</div>
+        {sub && <div className="leads-stat-sub">{sub}</div>}
+      </div>
+    </div>
+  );
+}
 
 function SidebarSection({ title, children, defaultOpen = false }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -1082,13 +1337,7 @@ function SidebarInput({ label, value, onChange, type = "text", placeholder, help
   return (
     <div className="leads-sidebar-field">
       <label className="leads-sidebar-label">{label}</label>
-      <input
-        className="leads-sidebar-input"
-        type={type}
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => onChange(type === "number" ? Number(e.target.value) : e.target.value)}
-      />
+      <input className="leads-sidebar-input" type={type} value={value} placeholder={placeholder} onChange={(e) => onChange(type === "number" ? Number(e.target.value) : e.target.value)} />
       {helper && <div className="leads-sidebar-helper">{helper}</div>}
     </div>
   );
@@ -1114,16 +1363,20 @@ function FilterPill({ label, onRemove }) {
   );
 }
 
-function ApolloLeadRow({ lead, selected, currentUserId, onToggleSelect, onOpen, onClaim, onRelease, onEdit, onDelete }) {
+function ApolloLeadRow({ lead, selected, currentUserId, onToggleSelect, onOpen, onClaim, onRelease, onEdit, onDelete, hideCheckbox }) {
+  const overdue = isOverdue(lead.followUpDate);
   const claimedByMe = lead.claimedBy === currentUserId;
   const claimedByOther = lead.claimedBy && !claimedByMe;
   const loc = [lead.city, lead.country].filter(Boolean).join(", ") || "—";
 
   return (
     <tr className={`leads-row ${selected ? "selected" : ""} ${claimedByOther ? "locked" : ""}`} onClick={onOpen}>
-      <td onClick={(e) => e.stopPropagation()} className="td-checkbox">
-        <input type="checkbox" className="leads-checkbox" checked={selected} onChange={onToggleSelect} />
-      </td>
+      {!hideCheckbox && (
+        <td onClick={(e) => e.stopPropagation()} className="td-checkbox">
+          <input type="checkbox" className="leads-checkbox" checked={selected} onChange={onToggleSelect} />
+        </td>
+      )}
+      {hideCheckbox && <td />}
       <td>
         <div className="leads-person-cell">
           <div className="leads-avatar" style={{ background: avatarColor(lead.leadName) }}>{initialsOf(lead.leadName)}</div>
@@ -1679,13 +1932,13 @@ function ConfirmModal({ title, message, confirmLabel = "Confirm", danger, onConf
 const React = { Fragment: ({ children }) => <>{children}</> };
 
 /* ============================================================
-   STYLES — Apollo/Lusha dark SaaS theme
+   STYLES
 ============================================================ */
 function LeadsStyles() {
   return (
     <style>{`
       .leads-root {
-        /* === DARK THEME (Apollo-style) === */
+        /* === DARK === */
         --leads-bg: #080b12;
         --leads-surface: #0f131f;
         --leads-surface-hover: #161d2e;
@@ -1743,19 +1996,19 @@ function LeadsStyles() {
       /* ===== NAV ===== */
       .leads-nav {
         height: 56px; background: var(--leads-surface); border-bottom: 1px solid var(--leads-border);
-        display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
+        display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
         flex-shrink: 0;
       }
-      .leads-nav-left { display: flex; align-items: center; gap: 24px; }
-      .leads-logo-mark {
-        width: 32px; height: 32px; border-radius: 8px; background: var(--leads-accent);
-        display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px;
+      .leads-nav-left { display: flex; align-items: center; gap: 32px; }
+      .leads-nav-brand {
+        display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 800; color: var(--leads-text);
       }
-      .leads-logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+      .leads-nav-brand svg { color: var(--leads-accent); }
       .leads-nav-tabs { display: flex; gap: 4px; }
       .leads-nav-tabs button {
         background: transparent; border: none; color: var(--leads-text-muted);
-        padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+        padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer;
+        transition: all 0.15s ease;
       }
       .leads-nav-tabs button:hover { color: var(--leads-text-secondary); background: var(--leads-bg); }
       .leads-nav-tabs button.active { color: var(--leads-text); background: var(--leads-bg); }
@@ -1881,7 +2134,7 @@ function LeadsStyles() {
         padding: 14px 24px; flex-wrap: wrap; gap: 12px;
       }
       .leads-results-title { display: flex; align-items: center; gap: 10px; }
-      .leads-results-title h2 { margin: 0; font-size: 16px; font-weight: 800; }
+      .leads-results-title h2, .leads-results-title h3 { margin: 0; font-size: 16px; font-weight: 800; }
       .leads-count-badge {
         background: var(--leads-elevated); color: var(--leads-text-muted);
         padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
@@ -2019,6 +2272,88 @@ function LeadsStyles() {
       .leads-bulk-count { font-size: 14px; font-weight: 600; color: var(--leads-text); white-space: nowrap; }
       .leads-bulk-num { background: var(--leads-accent); color: #fff; padding: 2px 10px; border-radius: 999px; font-weight: 800; margin-right: 6px; }
       .leads-bulk-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+      /* ===== VIEWS ===== */
+      .leads-view-page { flex: 1; padding: 24px; overflow-y: auto; }
+      .leads-view-header { margin-bottom: 24px; }
+      .leads-view-header h2 { margin: 0 0 4px; font-size: 22px; font-weight: 800; }
+      .leads-view-header p { margin: 0; color: var(--leads-text-muted); font-size: 14px; }
+
+      .leads-stats-row {
+        display: grid; grid-template-columns: repeat(5, 1fr);
+        gap: 16px; margin-bottom: 24px;
+      }
+      .leads-stat-card {
+        background: var(--leads-surface); border: 1px solid var(--leads-border);
+        border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px;
+        box-shadow: var(--leads-shadow-sm);
+      }
+      .leads-stat-icon {
+        width: 44px; height: 44px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px; flex-shrink: 0;
+      }
+      .leads-stat-body { min-width: 0; }
+      .leads-stat-label { font-size: 12px; font-weight: 700; color: var(--leads-text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+      .leads-stat-value { font-weight: 800; margin-top: 4px; letter-spacing: -0.02em; }
+      .leads-stat-sub { font-size: 11px; color: var(--leads-text-subtle); margin-top: 2px; }
+
+      .leads-analytics-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .leads-analytics-card {
+        background: var(--leads-surface); border: 1px solid var(--leads-border);
+        border-radius: 12px; padding: 20px;
+        box-shadow: var(--leads-shadow-sm);
+      }
+      .leads-analytics-card h3 { margin: 0 0 16px; font-size: 14px; font-weight: 700; color: var(--leads-text-secondary); }
+
+      .leads-chart { display: flex; flex-direction: column; gap: 12px; }
+      .leads-chart-row { display: grid; grid-template-columns: 110px 1fr 40px; align-items: center; gap: 10px; }
+      .leads-chart-label { font-size: 12px; color: var(--leads-text-muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .leads-chart-bar-bg { height: 8px; background: var(--leads-bg); border-radius: 4px; overflow: hidden; }
+      .leads-chart-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+      .leads-chart-value { font-size: 12px; font-weight: 700; color: var(--leads-text); text-align: right; }
+
+      .leads-enrich-grid {
+        display: grid; grid-template-columns: repeat(4, 1fr);
+        gap: 16px; margin-bottom: 24px;
+      }
+      .leads-enrich-card {
+        background: var(--leads-surface); border: 1px solid var(--leads-border);
+        border-radius: 12px; padding: 24px; text-align: center;
+        box-shadow: var(--leads-shadow-sm);
+      }
+      .leads-enrich-icon {
+        width: 48px; height: 48px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; margin: 0 auto 12px;
+      }
+      .leads-enrich-value { font-size: 28px; font-weight: 800; color: var(--leads-text); }
+      .leads-enrich-value span { font-size: 16px; color: var(--leads-text-muted); font-weight: 600; }
+      .leads-enrich-label { font-size: 13px; color: var(--leads-text-muted); margin-top: 4px; font-weight: 600; }
+
+      .leads-enrich-actions { display: flex; gap: 12px; }
+
+      .leads-lists-layout { display: flex; gap: 20px; height: calc(100vh - 180px); }
+      .leads-lists-sidebar {
+        width: 260px; background: var(--leads-surface); border: 1px solid var(--leads-border);
+        border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
+      }
+      .leads-list-item {
+        width: 100%; display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 16px; background: none; border: none; border-bottom: 1px solid var(--leads-border);
+        color: var(--leads-text); font-size: 13px; font-weight: 600; cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .leads-list-item:hover { background: var(--leads-surface-hover); }
+      .leads-list-item.active { background: var(--leads-accent-soft); color: var(--leads-accent); }
+      .leads-list-count {
+        background: var(--leads-bg); color: var(--leads-text-muted);
+        padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700;
+      }
+      .leads-lists-content { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
       /* ===== DRAWER & MODAL ===== */
       .leads-backdrop {
@@ -2215,7 +2550,7 @@ function LeadsStyles() {
         animation: leadsSpin 0.8s linear infinite; margin: 0 auto 12px;
       }
 
-      /* ===== BUTTONS (reused) ===== */
+      /* ===== BUTTONS ===== */
       .leads-btn-primary {
         background: var(--leads-accent); color: #fff; border: none;
         padding: 9px 18px; border-radius: 8px; font-weight: 600; font-size: 14px;
@@ -2264,6 +2599,11 @@ function LeadsStyles() {
         to { opacity: 1; transform: translateX(0); }
       }
 
+      @media (max-width: 1100px) {
+        .leads-stats-row { grid-template-columns: repeat(3, 1fr); }
+        .leads-analytics-grid { grid-template-columns: 1fr; }
+        .leads-enrich-grid { grid-template-columns: repeat(2, 1fr); }
+      }
       @media (max-width: 900px) {
         .leads-sidebar { display: none; }
         .leads-layout { flex-direction: column; }
@@ -2273,6 +2613,10 @@ function LeadsStyles() {
         .leads-table { font-size: 12px; }
         .leads-table th, .leads-table td { padding: 8px; }
         .leads-bulk-bar { left: 12px; right: 12px; transform: none; bottom: 12px; }
+        .leads-stats-row { grid-template-columns: repeat(2, 1fr); }
+        .leads-enrich-grid { grid-template-columns: 1fr; }
+        .leads-lists-layout { flex-direction: column; height: auto; }
+        .leads-lists-sidebar { width: 100%; }
       }
     `}</style>
   );

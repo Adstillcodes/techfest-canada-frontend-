@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 
 /* ============================================================
-   🎯 ADMIN PROSPECTS — Full-width Apollo-style UI
+   🎯 ADMIN PROSPECTS — Role-based, no claims, contact log
    ============================================================ */
 
 const API_BASE = "https://techfest-canada-backend.onrender.com/api";
@@ -38,8 +38,7 @@ const SIZE_OPTIONS = [
 ];
 
 const CONTACT_METHODS = [
-  "Email", "Phone Call", "LinkedIn", "Cold Outreach",
-  "Referral", "Event / In-Person", "Inbound Form", "Other",
+  "Phone Call", "Email", "Meeting", "Instant Messaging"
 ];
 
 const DEAL_CATEGORIES = [
@@ -160,6 +159,7 @@ const blankLead = () => ({
   reminderDate: "", reminderNotes: "",
   meetingHeldDate: "", meetingNotes: "",
   contactMethod: CONTACT_METHODS[0],
+  contactLog: [],
   dealSize: "", dealCategories: [],
   status: "new",
   relatedLeadId: "",
@@ -201,12 +201,16 @@ const DUMMY_PROSPECTS = [
     meetingHeldDate: new Date(Date.now() - 5 * 86400000).toISOString().split('T')[0],
     meetingNotes: "Initial discovery call. Very interested.",
     contactMethod: "Email",
+    contactLog: [
+      { date: new Date(Date.now() - 5 * 86400000).toISOString().split('T')[0], method: "Meeting", notes: "Discovery call" },
+      { date: new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0], method: "Email", notes: "Sent intro deck" }
+    ],
     dealSize: 15000,
     dealCategories: ["Sponsorship", "Branding"],
     status: "qualified",
-    claimedBy: "me",
-    claimedByName: "You",
-    claimedAt: new Date().toISOString(),
+    claimedBy: null,
+    claimedByName: null,
+    claimedAt: null,
     lastContactedAt: new Date().toISOString(),
     lastContactedBy: "You",
     createdAt: new Date().toISOString(),
@@ -236,7 +240,10 @@ const DUMMY_PROSPECTS = [
     reminderNotes: "Send reminder about demo",
     meetingHeldDate: "",
     meetingNotes: "",
-    contactMethod: "LinkedIn",
+    contactMethod: "Phone Call",
+    contactLog: [
+      { date: new Date(Date.now() - 10 * 86400000).toISOString().split('T')[0], method: "Phone Call", notes: "Cold outreach" }
+    ],
     dealSize: 50000,
     dealCategories: ["Partnership", "Speaking Slot"],
     status: "contacted",
@@ -341,6 +348,10 @@ export default function AdminLeads() {
   useEffect(() => { localStorage.setItem("leads_theme", theme); }, [theme]);
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
+  /* ---- Role ---- */
+  const [userRole, setUserRole] = useState("admin");
+  const isAdmin = userRole === "admin";
+
   /* ---- View switcher ---- */
   const [currentView, setCurrentView] = useState("search");
 
@@ -361,7 +372,6 @@ export default function AdminLeads() {
   const [filters, setFilters] = useState({
     status: "all", score: "all", followUp: "all",
     country: "all", industry: "all", company: "all",
-    owner: "all", claim: "all",
     jobTitle: "", functionalLevel: [], emailStatus: [], size: "all"
   });
   const [sortBy, setSortBy] = useState({ field: "score", direction: "desc" });
@@ -479,97 +489,6 @@ export default function AdminLeads() {
     }
   };
 
-  const claimLead = async (id) => {
-    const optimistic = {
-      claimedBy: currentUser.id, claimedByName: currentUser.name,
-      claimedAt: new Date().toISOString(),
-    };
-    setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, ...optimistic } : l)));
-    try {
-      const res = await fetch(`${API_BASE}/leads/${id}/claim`, {
-        method: "POST", headers: authHeaders(),
-      });
-      if (res.status === 409) {
-        const data = await res.json().catch(() => ({}));
-        pushToast(`Already claimed by ${data.claimedByName || "someone else"}`, "error");
-        await fetchLeads({ silent: true });
-        return;
-      }
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const updated = await res.json();
-      setLeads((prev) => prev.map((l) => (l.id === id ? { ...l, ...updated } : l)));
-      pushToast("Prospect claimed — others can't reach out now", "success");
-    } catch {
-      pushToast("Could not claim on server (saved locally)", "warning");
-    }
-  };
-
-  const releaseLead = async (id) => {
-    setLeads((prev) => prev.map((l) =>
-      l.id === id ? { ...l, claimedBy: null, claimedByName: null, claimedAt: null } : l
-    ));
-    try {
-      await fetch(`${API_BASE}/leads/${id}/release`, {
-        method: "POST", headers: authHeaders(),
-      });
-      pushToast("Released — back in the pool", "success");
-    } catch { }
-  };
-
-  const bulkAction = async (action, ids, payload) => {
-    const idsArr = Array.from(ids);
-    if (action === "delete") {
-      setLeads((prev) => prev.filter((l) => !ids.has(l.id)));
-      try {
-        await fetch(`${API_BASE}/leads/bulk-delete`, {
-          method: "POST", headers: authHeaders(),
-          body: JSON.stringify({ ids: idsArr }),
-        });
-      } catch { }
-      pushToast(`Deleted ${idsArr.length} prospects`, "success");
-    } else if (action === "update") {
-      setLeads((prev) => prev.map((l) =>
-        ids.has(l.id) ? { ...l, ...payload } : l
-      ));
-      try {
-        await fetch(`${API_BASE}/leads/bulk-update`, {
-          method: "POST", headers: authHeaders(),
-          body: JSON.stringify({ ids: idsArr, updates: payload }),
-        });
-      } catch { }
-      pushToast(`Updated ${idsArr.length} prospects`, "success");
-    } else if (action === "claim") {
-      const stamp = {
-        claimedBy: currentUser.id, claimedByName: currentUser.name,
-        claimedAt: new Date().toISOString(),
-      };
-      setLeads((prev) => prev.map((l) =>
-        ids.has(l.id) && !l.claimedBy ? { ...l, ...stamp } : l
-      ));
-      try {
-        await Promise.all(idsArr.map((id) =>
-          fetch(`${API_BASE}/leads/${id}/claim`, {
-            method: "POST", headers: authHeaders(),
-          })
-        ));
-      } catch { }
-      pushToast(`Claimed ${idsArr.length} prospects`, "success");
-    } else if (action === "release") {
-      setLeads((prev) => prev.map((l) =>
-        ids.has(l.id) ? { ...l, claimedBy: null, claimedByName: null, claimedAt: null } : l
-      ));
-      try {
-        await Promise.all(idsArr.map((id) =>
-          fetch(`${API_BASE}/leads/${id}/release`, {
-            method: "POST", headers: authHeaders(),
-          })
-        ));
-      } catch { }
-      pushToast(`Released ${idsArr.length} prospects`, "success");
-    }
-    setSelectedIds(new Set());
-  };
-
   /* ---- Initial load + polling ---- */
   useEffect(() => { fetchCurrentUser(); fetchLeads(); }, [fetchCurrentUser, fetchLeads]);
 
@@ -594,8 +513,6 @@ export default function AdminLeads() {
     [...new Set(leads.map((l) => l.industry).filter(Boolean))].sort(), [leads]);
   const uniqueCompanies = useMemo(() =>
     [...new Set(leads.map((l) => l.companyName).filter(Boolean))].sort(), [leads]);
-  const uniqueOwners = useMemo(() =>
-    [...new Set(leads.map((l) => l.claimedByName).filter(Boolean))].sort(), [leads]);
 
   /* ---- Filter + sort ---- */
   const filteredLeads = useMemo(() => {
@@ -613,16 +530,6 @@ export default function AdminLeads() {
     if (filters.country !== "all") out = out.filter((l) => l.country === filters.country);
     if (filters.industry !== "all") out = out.filter((l) => l.industry === filters.industry);
     if (filters.company !== "all") out = out.filter((l) => l.companyName === filters.company);
-    if (filters.owner !== "all") {
-      out = filters.owner === "unclaimed"
-        ? out.filter((l) => !l.claimedBy)
-        : out.filter((l) => l.claimedByName === filters.owner);
-    }
-    if (filters.claim !== "all") {
-      if (filters.claim === "available") out = out.filter((l) => !l.claimedBy);
-      if (filters.claim === "mine") out = out.filter((l) => l.claimedBy === currentUser.id);
-      if (filters.claim === "others") out = out.filter((l) => l.claimedBy && l.claimedBy !== currentUser.id);
-    }
     if (filters.score !== "all") {
       out = out.filter((l) => {
         const s = Number(l.score) || 0;
@@ -691,7 +598,7 @@ export default function AdminLeads() {
     });
 
     return out;
-  }, [leads, search, filters, sortBy, currentUser.id, contactLocation, contactCity, companyDomain]);
+  }, [leads, search, filters, sortBy, contactLocation, contactCity, companyDomain]);
 
   /* ---- Pagination ---- */
   const totalPages = Math.max(1, Math.ceil(filteredLeads.length / pageSize));
@@ -707,12 +614,11 @@ export default function AdminLeads() {
     const total = leads.length;
     const hot = leads.filter((l) => (Number(l.score) || 0) >= 80).length;
     const overdue = leads.filter((l) => isOverdue(l.followUpDate)).length;
-    const claimedByMe = leads.filter((l) => l.claimedBy === currentUser.id).length;
     const pipeline = leads
       .filter((l) => !["won", "lost"].includes(l.status))
       .reduce((sum, l) => sum + (Number(l.dealSize) || 0), 0);
-    return { total, hot, overdue, claimedByMe, pipeline };
-  }, [leads, currentUser.id]);
+    return { total, hot, overdue, pipeline };
+  }, [leads]);
 
   /* ---- Selection helpers ---- */
   const allSelected = pagedLeads.length > 0 && pagedLeads.every((l) => selectedIds.has(l.id));
@@ -753,6 +659,28 @@ export default function AdminLeads() {
         : [...prev.dealCategories, cat],
     }));
 
+  const addContactLog = () => {
+    setFormData((prev) => ({
+      ...prev,
+      contactLog: [...prev.contactLog, { date: new Date().toISOString().split('T')[0], method: CONTACT_METHODS[0], notes: "" }]
+    }));
+  };
+
+  const updateContactLog = (idx, key, value) => {
+    setFormData((prev) => {
+      const next = [...prev.contactLog];
+      next[idx] = { ...next[idx], [key]: value };
+      return { ...prev, contactLog: next };
+    });
+  };
+
+  const removeContactLog = (idx) => {
+    setFormData((prev) => ({
+      ...prev,
+      contactLog: prev.contactLog.filter((_, i) => i !== idx)
+    }));
+  };
+
   const handleSave = async () => {
     if (!formData.leadName.trim()) {
       pushToast("Prospect name is required", "error"); return;
@@ -780,7 +708,6 @@ export default function AdminLeads() {
     setFilters({
       status: "all", score: "all", followUp: "all",
       country: "all", industry: "all", company: "all",
-      owner: "all", claim: "all",
       jobTitle: "", functionalLevel: [], emailStatus: [], size: "all"
     });
     setSearch("");
@@ -846,7 +773,6 @@ export default function AdminLeads() {
             {[
               { key: "search", label: "Prospect Search" },
               { key: "lists", label: "Lists" },
-              { key: "enrichment", label: "Enrichment" },
               { key: "analytics", label: "Analytics" },
             ].map((tab) => (
               <button
@@ -860,6 +786,14 @@ export default function AdminLeads() {
           </div>
         </div>
         <div className="leads-nav-right">
+          <button
+            className="leads-role-toggle"
+            onClick={() => setUserRole((r) => (r === "admin" ? "employee" : "admin"))}
+            title={`Switch to ${userRole === "admin" ? "Employee" : "Admin"} view`}
+          >
+            <span className={`leads-role-dot ${userRole}`} />
+            {userRole === "admin" ? "Admin" : "Employee"}
+          </button>
           <span className="leads-contacts-badge">
             <span className="leads-live-dot" /> {stats.total} prospects
           </span>
@@ -960,10 +894,12 @@ export default function AdminLeads() {
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   New Prospect
                 </button>
-                <button className="leads-btn-secondary" onClick={() => setShowImportModal(true)}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  Import
-                </button>
+                {isAdmin && (
+                  <button className="leads-btn-secondary" onClick={() => setShowImportModal(true)}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Import
+                  </button>
+                )}
                 <button className="leads-btn-secondary" onClick={handleExportCSV}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
                 <button className="leads-btn-secondary" onClick={handleExportCSV}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export XLSX</button>
                 <button className="leads-btn-secondary" onClick={handleExportCSV}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export JSON</button>
@@ -988,7 +924,6 @@ export default function AdminLeads() {
                 {filters.country !== "all" && <FilterPill label={filters.country} onRemove={() => removeFilter("country")} />}
                 {filters.status !== "all" && <FilterPill label={statusMeta(filters.status).label} onRemove={() => removeFilter("status")} />}
                 {filters.score !== "all" && <FilterPill label={`Score: ${filters.score}`} onRemove={() => removeFilter("score")} />}
-                {filters.claim !== "all" && <FilterPill label={`Claim: ${filters.claim}`} onRemove={() => removeFilter("claim")} />}
               </div>
             )}
 
@@ -1018,7 +953,7 @@ export default function AdminLeads() {
                 <EmptyState icon={<Spinner />} title="Loading prospects…" text="Fetching from your backend." />
               ) : filteredLeads.length === 0 ? (
                 leads.length === 0 ? (
-                  <EmptyState icon="📭" title="No prospects yet" text="Import a CSV or add one manually to get started." cta={{ label: "Add your first prospect", onClick: openCreate }} secondaryCta={{ label: "Import CSV", onClick: () => setShowImportModal(true) }} />
+                  <EmptyState icon="📭" title="No prospects yet" text="Import a CSV or add one manually to get started." cta={{ label: "Add your first prospect", onClick: openCreate }} secondaryCta={isAdmin ? { label: "Import CSV", onClick: () => setShowImportModal(true) } : undefined} />
                 ) : (
                   <EmptyState icon="🔍" title="No matches" text="Try clearing a filter or adjusting your search." />
                 )
@@ -1046,10 +981,9 @@ export default function AdminLeads() {
                             lead={lead}
                             selected={selectedIds.has(lead.id)}
                             currentUserId={currentUser.id}
+                            isAdmin={isAdmin}
                             onToggleSelect={() => toggleSelect(lead.id)}
                             onOpen={() => setDrawerLead(lead)}
-                            onClaim={() => claimLead(lead.id)}
-                            onRelease={() => releaseLead(lead.id)}
                             onEdit={() => openEdit(lead)}
                             onDelete={() => setConfirmDelete(lead.id)}
                           />
@@ -1070,11 +1004,6 @@ export default function AdminLeads() {
         <ListsView leads={leads} currentUserId={currentUser.id} onOpen={(lead) => setDrawerLead(lead)} />
       )}
 
-      {/* ===== VIEW: ENRICHMENT ===== */}
-      {currentView === "enrichment" && (
-        <EnrichmentView leads={leads} onImport={() => setShowImportModal(true)} onExport={handleExportCSV} />
-      )}
-
       {/* ===== VIEW: ANALYTICS ===== */}
       {currentView === "analytics" && (
         <AnalyticsView leads={leads} stats={stats} />
@@ -1083,11 +1012,14 @@ export default function AdminLeads() {
       {/* ===== BULK ACTION BAR ===== */}
       {selectedIds.size > 0 && (
         <BulkActionBar
+          isAdmin={isAdmin}
           count={selectedIds.size}
           onClear={() => setSelectedIds(new Set())}
-          onClaim={() => bulkAction("claim", selectedIds)}
-          onRelease={() => bulkAction("release", selectedIds)}
-          onChangeStatus={(status) => bulkAction("update", selectedIds, { status })}
+          onChangeStatus={(status) => {
+            setLeads((prev) => prev.map((l) => selectedIds.has(l.id) ? { ...l, status } : l));
+            setSelectedIds(new Set());
+            pushToast(`Updated ${selectedIds.size} prospects`, "success");
+          }}
           onDelete={() => setConfirmDelete("bulk")}
           onExport={() => {
             const selected = leads.filter((l) => selectedIds.has(l.id));
@@ -1104,11 +1036,10 @@ export default function AdminLeads() {
           lead={leads.find((l) => l.id === drawerLead.id) || drawerLead}
           allLeads={leads}
           currentUserId={currentUser.id}
+          isAdmin={isAdmin}
           onClose={() => setDrawerLead(null)}
           onEdit={() => openEdit(drawerLead)}
           onDelete={() => setConfirmDelete(drawerLead.id)}
-          onClaim={() => claimLead(drawerLead.id)}
-          onRelease={() => releaseLead(drawerLead.id)}
           onStatusChange={(s) => updateLead(drawerLead.id, { status: s })}
         />
       )}
@@ -1121,13 +1052,16 @@ export default function AdminLeads() {
           allLeads={leads}
           onChange={handleFormChange}
           onToggleCategory={toggleDealCategory}
+          onAddContactLog={addContactLog}
+          onUpdateContactLog={updateContactLog}
+          onRemoveContactLog={removeContactLog}
           onSave={handleSave}
           onClose={() => setShowFormModal(false)}
         />
       )}
 
       {/* ===== CSV IMPORT MODAL ===== */}
-      {showImportModal && (
+      {showImportModal && isAdmin && (
         <CSVImportModal
           onClose={() => setShowImportModal(false)}
           onImport={async (rows) => { await bulkImport(rows); setShowImportModal(false); }}
@@ -1135,15 +1069,20 @@ export default function AdminLeads() {
       )}
 
       {/* ===== DELETE CONFIRM ===== */}
-      {confirmDelete && (
+      {confirmDelete && isAdmin && (
         <ConfirmModal
           title={confirmDelete === "bulk" ? `Delete ${selectedIds.size} prospects?` : "Delete this prospect?"}
           message="This action cannot be undone."
           confirmLabel="Delete"
           danger
           onConfirm={async () => {
-            if (confirmDelete === "bulk") await bulkAction("delete", selectedIds);
-            else await deleteLead(confirmDelete);
+            if (confirmDelete === "bulk") {
+              const idsArr = Array.from(selectedIds);
+              setLeads((prev) => prev.filter((l) => !selectedIds.has(l.id)));
+              try { await fetch(`${API_BASE}/leads/bulk-delete`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ ids: idsArr }) }); } catch {}
+              pushToast(`Deleted ${idsArr.length} prospects`, "success");
+              setSelectedIds(new Set());
+            } else await deleteLead(confirmDelete);
             setConfirmDelete(null); setDrawerLead(null);
           }}
           onCancel={() => setConfirmDelete(null)}
@@ -1166,15 +1105,13 @@ export default function AdminLeads() {
 
 function ListsView({ leads, currentUserId, onOpen }) {
   const lists = [
-    { key: "mine", label: "My Prospects", filter: (l) => l.claimedBy === currentUserId },
     { key: "hot", label: "Hot Prospects", filter: (l) => (Number(l.score) || 0) >= 80 },
     { key: "new", label: "New This Week", filter: (l) => l.createdAt && (Date.now() - new Date(l.createdAt).getTime()) < 7 * 86400000 },
     { key: "overdue", label: "Overdue Follow-ups", filter: (l) => isOverdue(l.followUpDate) },
-    { key: "unclaimed", label: "Unclaimed", filter: (l) => !l.claimedBy },
     { key: "validated", label: "Validated Emails", filter: (l) => l.email_status === "validated" },
   ];
 
-  const [activeList, setActiveList] = useState("mine");
+  const [activeList, setActiveList] = useState("hot");
 
   const active = lists.find((l) => l.key === activeList);
   const listLeads = active ? leads.filter(active.filter) : [];
@@ -1226,10 +1163,9 @@ function ListsView({ leads, currentUserId, onOpen }) {
                         lead={lead}
                         selected={false}
                         currentUserId={currentUserId}
+                        isAdmin={false}
                         onToggleSelect={() => {}}
                         onOpen={() => onOpen(lead)}
-                        onClaim={() => {}}
-                        onRelease={() => {}}
                         onEdit={() => {}}
                         onDelete={() => {}}
                         hideCheckbox
@@ -1241,54 +1177,6 @@ function ListsView({ leads, currentUserId, onOpen }) {
             </div>
           )}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function EnrichmentView({ leads, onImport, onExport }) {
-  const enriched = leads.filter((l) => l.email_status === "validated").length;
-  const withPhone = leads.filter((l) => l.phone).length;
-  const withLinkedIn = leads.filter((l) => l.linkedin).length;
-  const withCompanyData = leads.filter((l) => l.company_size || l.company_annual_revenue_clean).length;
-
-  return (
-    <div className="leads-view-page">
-      <div className="leads-view-header">
-        <h2>Enrichment</h2>
-        <p>Bulk enrich and verify your prospect data.</p>
-      </div>
-      <div className="leads-enrich-grid">
-        <div className="leads-enrich-card">
-          <div className="leads-enrich-icon" style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e" }}>✉</div>
-          <div className="leads-enrich-value">{enriched} <span>/ {leads.length}</span></div>
-          <div className="leads-enrich-label">Emails Validated</div>
-        </div>
-        <div className="leads-enrich-card">
-          <div className="leads-enrich-icon" style={{ background: "rgba(59,130,246,0.12)", color: "#3b82f6" }}>☎</div>
-          <div className="leads-enrich-value">{withPhone} <span>/ {leads.length}</span></div>
-          <div className="leads-enrich-label">Phones Enriched</div>
-        </div>
-        <div className="leads-enrich-card">
-          <div className="leads-enrich-icon" style={{ background: "rgba(139,92,246,0.12)", color: "#8b5cf6" }}>in</div>
-          <div className="leads-enrich-value">{withLinkedIn} <span>/ {leads.length}</span></div>
-          <div className="leads-enrich-label">LinkedIn Profiles</div>
-        </div>
-        <div className="leads-enrich-card">
-          <div className="leads-enrich-icon" style={{ background: "rgba(245,158,11,0.12)", color: "#f59e0b" }}>🏢</div>
-          <div className="leads-enrich-value">{withCompanyData} <span>/ {leads.length}</span></div>
-          <div className="leads-enrich-label">Company Data</div>
-        </div>
-      </div>
-      <div className="leads-enrich-actions">
-        <button className="leads-btn-primary" onClick={onImport}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Import Prospects to Enrich
-        </button>
-        <button className="leads-btn-secondary" onClick={onExport}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Export Enriched Data
-        </button>
       </div>
     </div>
   );
@@ -1331,7 +1219,6 @@ function AnalyticsView({ leads, stats }) {
       <div className="leads-stats-row">
         <StatCard label="Total Prospects" value={stats.total} icon="👥" accent="#6366f1" />
         <StatCard label="Hot Prospects" value={stats.hot} icon="🔥" accent="#22c55e" />
-        <StatCard label="Claimed by You" value={stats.claimedByMe} icon="✓" accent="#8b5cf6" />
         <StatCard label="Overdue" value={stats.overdue} icon="⏰" accent="#ef4444" />
         <StatCard label="Open Pipeline" value={fmtMoney(stats.pipeline)} icon="💰" accent="#f59e0b" isText />
       </div>
@@ -1448,14 +1335,11 @@ function FilterPill({ label, onRemove }) {
   );
 }
 
-function ApolloLeadRow({ lead, selected, currentUserId, onToggleSelect, onOpen, onClaim, onRelease, onEdit, onDelete, hideCheckbox }) {
-  const overdue = isOverdue(lead.followUpDate);
-  const claimedByMe = lead.claimedBy === currentUserId;
-  const claimedByOther = lead.claimedBy && !claimedByMe;
+function ApolloLeadRow({ lead, selected, currentUserId, isAdmin, onToggleSelect, onOpen, onEdit, onDelete, hideCheckbox }) {
   const loc = [lead.city, lead.country].filter(Boolean).join(", ") || "—";
 
   return (
-    <tr className={`leads-row ${selected ? "selected" : ""} ${claimedByOther ? "locked" : ""}`} onClick={onOpen}>
+    <tr className={`leads-row ${selected ? "selected" : ""}`} onClick={onOpen}>
       {!hideCheckbox && (
         <td onClick={(e) => e.stopPropagation()} className="td-checkbox">
           <input type="checkbox" className="leads-checkbox" checked={selected} onChange={onToggleSelect} />
@@ -1494,19 +1378,14 @@ function ApolloLeadRow({ lead, selected, currentUserId, onToggleSelect, onOpen, 
         </div>
       </td>
       <td onClick={(e) => e.stopPropagation()} className="td-actions">
-        {claimedByMe ? (
-          <button className="leads-action-btn claimed" onClick={onRelease}>Release</button>
-        ) : claimedByOther ? (
-          <span className="leads-locked-text">🔒 {lead.claimedByName}</span>
-        ) : (
-          <button className="leads-action-btn" onClick={onClaim}>Claim</button>
-        )}
         <button className="leads-icon-btn" title="Edit" onClick={onEdit}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
-        <button className="leads-icon-btn leads-icon-btn-danger" title="Delete" onClick={onDelete}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-        </button>
+        {isAdmin && (
+          <button className="leads-icon-btn leads-icon-btn-danger" title="Delete" onClick={onDelete}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        )}
       </td>
     </tr>
   );
@@ -1556,19 +1435,17 @@ function Pagination({ page, totalPages, pageSize, totalItems, onPage, onPageSize
   );
 }
 
-function BulkActionBar({ count, onClear, onClaim, onRelease, onChangeStatus, onDelete, onExport }) {
+function BulkActionBar({ isAdmin, count, onClear, onChangeStatus, onDelete, onExport }) {
   return (
     <div className="leads-bulk-bar">
       <div className="leads-bulk-count"><span className="leads-bulk-num">{count}</span> selected<button className="leads-btn-text" onClick={onClear} style={{ marginLeft: 12 }}>Clear</button></div>
       <div className="leads-bulk-actions">
-        <button className="leads-btn-secondary" onClick={onClaim}>Claim</button>
-        <button className="leads-btn-secondary" onClick={onRelease}>Release</button>
         <select className="leads-select" onChange={(e) => { if (e.target.value) { onChangeStatus(e.target.value); e.target.value = ""; } }} defaultValue="">
           <option value="">Set status…</option>
           {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
         <button className="leads-btn-secondary" onClick={onExport}>Export</button>
-        <button className="leads-btn-danger" onClick={onDelete}>Delete</button>
+        {isAdmin && <button className="leads-btn-danger" onClick={onDelete}>Delete</button>}
       </div>
     </div>
   );
@@ -1577,9 +1454,7 @@ function BulkActionBar({ count, onClear, onClaim, onRelease, onChangeStatus, onD
 /* ============================================================
    DRAWER
 ============================================================ */
-function LeadDrawer({ lead, allLeads, currentUserId, onClose, onEdit, onDelete, onClaim, onRelease, onStatusChange }) {
-  const claimedByMe = lead.claimedBy === currentUserId;
-  const claimedByOther = lead.claimedBy && !claimedByMe;
+function LeadDrawer({ lead, allLeads, currentUserId, isAdmin, onClose, onEdit, onDelete, onStatusChange }) {
   const related = allLeads.find((l) => l.id === lead.relatedLeadId);
 
   const companySize = lead.company_size || lead.companySize || "—";
@@ -1609,27 +1484,6 @@ function LeadDrawer({ lead, allLeads, currentUserId, onClose, onEdit, onDelete, 
           </button>
         </div>
 
-        {claimedByOther && (
-          <div className="leads-claim-banner locked">
-            <span className="leads-claim-banner-icon">🔒</span>
-            Claimed by <b>{lead.claimedByName}</b> · {fmtRelative(lead.claimedAt)}
-          </div>
-        )}
-        {claimedByMe && (
-          <div className="leads-claim-banner mine">
-            <span className="leads-claim-banner-icon">✓</span>
-            You claimed this {fmtRelative(lead.claimedAt)}.
-            <button className="leads-mini-btn" onClick={onRelease}>Release</button>
-          </div>
-        )}
-        {!lead.claimedBy && (
-          <div className="leads-claim-banner available">
-            <span className="leads-claim-banner-icon">🟢</span>
-            Available — claim before reaching out
-            <button className="leads-mini-btn primary" onClick={onClaim}>Claim</button>
-          </div>
-        )}
-
         <div className="leads-drawer-quick">
           <button className="leads-quick-btn" onClick={onEdit}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -1638,7 +1492,7 @@ function LeadDrawer({ lead, allLeads, currentUserId, onClose, onEdit, onDelete, 
           {lead.email && <a className="leads-quick-btn" href={`mailto:${lead.email}`}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email</a>}
           {lead.phone && <a className="leads-quick-btn" href={`tel:${lead.phone}`}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Call</a>}
           {lead.linkedin && <a className="leads-quick-btn" href={lead.linkedin} target="_blank" rel="noreferrer"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>}
-          <button className="leads-quick-btn leads-quick-btn-danger" onClick={onDelete}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Delete</button>
+          {isAdmin && <button className="leads-quick-btn leads-quick-btn-danger" onClick={onDelete}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Delete</button>}
         </div>
 
         <div className="leads-drawer-section">
@@ -1676,6 +1530,24 @@ function LeadDrawer({ lead, allLeads, currentUserId, onClose, onEdit, onDelete, 
             </div>
             {companyDesc && <div className="leads-drawer-desc">{companyDesc}</div>}
             {companyAddress && <DrawerField label="Address" value={companyAddress} />}
+          </DrawerSection>
+
+          <DrawerSection title="Contact Log">
+            {lead.contactLog?.length > 0 ? (
+              <div className="leads-contact-log-list">
+                {lead.contactLog.map((log, i) => (
+                  <div key={i} className="leads-contact-log-item">
+                    <div className="leads-contact-log-meta">
+                      <span className="leads-contact-log-date">{fmtDate(log.date)}</span>
+                      <span className="leads-contact-log-method">{log.method}</span>
+                    </div>
+                    <div className="leads-contact-log-notes">{log.notes || "—"}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="leads-field-value empty">No contact history logged yet.</div>
+            )}
           </DrawerSection>
 
           <DrawerSection title="Ownership & Contact History">
@@ -1750,7 +1622,7 @@ function DrawerField({ label, value, multiline, copyable, link }) {
 /* ============================================================
    FORM MODAL
 ============================================================ */
-function LeadFormModal({ mode, data, allLeads, onChange, onToggleCategory, onSave, onClose }) {
+function LeadFormModal({ mode, data, allLeads, onChange, onToggleCategory, onAddContactLog, onUpdateContactLog, onRemoveContactLog, onSave, onClose }) {
   return (
     <>
       <div className="leads-backdrop" onClick={onClose} />
@@ -1794,7 +1666,26 @@ function LeadFormModal({ mode, data, allLeads, onChange, onToggleCategory, onSav
               <FormInput label="LinkedIn" value={data.linkedin} onChange={(v) => onChange("linkedin", v)} placeholder="https://linkedin.com/in/ ..." />
               <FormInput label="Website" value={data.website} onChange={(v) => onChange("website", v)} placeholder="acme.com" />
             </FormRow>
-            <FormSelect label="Method of Contact" value={data.contactMethod} onChange={(v) => onChange("contactMethod", v)} options={CONTACT_METHODS.map((m) => ({ value: m, label: m }))} />
+            <FormSelect label="Preferred Contact Method" value={data.contactMethod} onChange={(v) => onChange("contactMethod", v)} options={CONTACT_METHODS.map((m) => ({ value: m, label: m }))} />
+          </FormSection>
+
+          <FormSection title="Contact Log">
+            <div className="leads-contact-log-editor">
+              {data.contactLog.map((log, idx) => (
+                <div key={idx} className="leads-contact-log-row">
+                  <input className="leads-input" type="date" value={log.date} onChange={(e) => onUpdateContactLog(idx, "date", e.target.value)} />
+                  <select className="leads-input" value={log.method} onChange={(e) => onUpdateContactLog(idx, "method", e.target.value)}>
+                    {CONTACT_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                  <input className="leads-input" value={log.notes} placeholder="Notes..." onChange={(e) => onUpdateContactLog(idx, "notes", e.target.value)} />
+                  <button className="leads-contact-log-remove" onClick={() => onRemoveContactLog(idx)} title="Remove">✕</button>
+                </div>
+              ))}
+              <button className="leads-contact-log-add" onClick={onAddContactLog}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Contact Entry
+              </button>
+            </div>
           </FormSection>
 
           <FormSection title="Ownership & History">
@@ -2142,6 +2033,15 @@ function LeadsStyles() {
       .leads-nav-tabs button:hover { color: var(--leads-text-secondary); background: var(--leads-bg); }
       .leads-nav-tabs button.active { color: var(--leads-text); background: var(--leads-bg); }
       .leads-nav-right { display: flex; align-items: center; gap: 12px; }
+      .leads-role-toggle {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--leads-bg); color: var(--leads-text-muted);
+        padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+        border: 1px solid var(--leads-border); cursor: pointer;
+      }
+      .leads-role-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--leads-text-subtle); }
+      .leads-role-dot.admin { background: var(--leads-success); }
+      .leads-role-dot.employee { background: var(--leads-warning); }
       .leads-contacts-badge {
         display: inline-flex; align-items: center; gap: 6px;
         background: var(--leads-bg); color: var(--leads-text-muted);
@@ -2299,7 +2199,6 @@ function LeadsStyles() {
       .leads-row { cursor: pointer; transition: background 0.1s ease; }
       .leads-row:hover td { background: var(--leads-surface-hover); }
       .leads-row.selected td { background: var(--leads-accent-soft); }
-      .leads-row.locked td { opacity: 0.6; }
       .leads-row:last-child td { border-bottom: none; }
 
       .leads-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--leads-accent); }
@@ -2337,16 +2236,6 @@ function LeadsStyles() {
       .leads-revenue-cell { min-width: 0; }
       .leads-revenue-main { font-weight: 600; color: var(--leads-text); font-size: 13px; }
       .leads-revenue-sub { font-size: 11px; color: var(--leads-text-muted); margin-top: 1px; }
-
-      .leads-action-btn {
-        background: var(--leads-accent-soft); color: var(--leads-accent);
-        border: 1px solid var(--leads-accent-soft-hover);
-        padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 700;
-        cursor: pointer; transition: all 0.15s ease;
-      }
-      .leads-action-btn:hover { background: var(--leads-accent-soft-hover); }
-      .leads-action-btn.claimed { background: rgba(34,197,94,0.12); color: var(--leads-success); border-color: rgba(34,197,94,0.25); }
-      .leads-locked-text { font-size: 12px; color: var(--leads-danger); font-weight: 700; }
 
       .leads-icon-btn {
         background: transparent; border: 1px solid var(--leads-border);
@@ -2409,7 +2298,7 @@ function LeadsStyles() {
       .leads-view-header p { margin: 0; color: var(--leads-text-muted); font-size: 14px; }
 
       .leads-stats-row {
-        display: grid; grid-template-columns: repeat(5, 1fr);
+        display: grid; grid-template-columns: repeat(4, 1fr);
         gap: 16px; margin-bottom: 24px;
       }
       .leads-stat-card {
@@ -2444,26 +2333,6 @@ function LeadsStyles() {
       .leads-chart-bar-bg { height: 8px; background: var(--leads-bg); border-radius: 4px; overflow: hidden; }
       .leads-chart-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
       .leads-chart-value { font-size: 12px; font-weight: 700; color: var(--leads-text); text-align: right; }
-
-      .leads-enrich-grid {
-        display: grid; grid-template-columns: repeat(4, 1fr);
-        gap: 16px; margin-bottom: 24px;
-      }
-      .leads-enrich-card {
-        background: var(--leads-surface); border: 1px solid var(--leads-border);
-        border-radius: 12px; padding: 24px; text-align: center;
-        box-shadow: var(--leads-shadow-sm);
-      }
-      .leads-enrich-icon {
-        width: 48px; height: 48px; border-radius: 12px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 24px; margin: 0 auto 12px;
-      }
-      .leads-enrich-value { font-size: 28px; font-weight: 800; color: var(--leads-text); }
-      .leads-enrich-value span { font-size: 16px; color: var(--leads-text-muted); font-weight: 600; }
-      .leads-enrich-label { font-size: 13px; color: var(--leads-text-muted); margin-top: 4px; font-weight: 600; }
-
-      .leads-enrich-actions { display: flex; gap: 12px; }
 
       .leads-lists-layout { display: flex; gap: 20px; height: calc(100vh - 180px); }
       .leads-lists-sidebar {
@@ -2509,16 +2378,6 @@ function LeadsStyles() {
       .leads-drawer-sub { font-size: 13px; color: var(--leads-text-muted); margin-top: 2px; }
       .leads-drawer-meta { font-size: 12px; color: var(--leads-text-subtle); margin-top: 2px; }
 
-      .leads-claim-banner {
-        padding: 12px 20px; font-size: 13px; font-weight: 600;
-        display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
-        border-bottom: 1px solid var(--leads-border);
-      }
-      .leads-claim-banner-icon { font-size: 14px; }
-      .leads-claim-banner.locked { background: rgba(239,68,68,0.08); color: var(--leads-danger); }
-      .leads-claim-banner.mine { background: var(--leads-accent-soft); color: var(--leads-accent); }
-      .leads-claim-banner.available { background: rgba(34,197,94,0.08); color: var(--leads-success); }
-
       .leads-drawer-quick {
         display: flex; gap: 8px; padding: 14px 20px; border-bottom: 1px solid var(--leads-border); flex-wrap: wrap;
       }
@@ -2547,6 +2406,19 @@ function LeadsStyles() {
         border-radius: 8px; font-size: 13px; color: var(--leads-text-secondary); line-height: 1.6;
       }
 
+      .leads-contact-log-list { display: flex; flex-direction: column; gap: 10px; }
+      .leads-contact-log-item {
+        background: var(--leads-bg); border: 1px solid var(--leads-border);
+        border-radius: 8px; padding: 10px 12px;
+      }
+      .leads-contact-log-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+      .leads-contact-log-date { font-size: 12px; font-weight: 700; color: var(--leads-text); }
+      .leads-contact-log-method {
+        font-size: 11px; font-weight: 700; color: var(--leads-accent);
+        background: var(--leads-accent-soft); padding: 2px 8px; border-radius: 999px;
+      }
+      .leads-contact-log-notes { font-size: 13px; color: var(--leads-text-secondary); }
+
       .leads-section-label {
         font-size: 11px; font-weight: 800; color: var(--leads-text-muted);
         text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px;
@@ -2566,15 +2438,6 @@ function LeadsStyles() {
       .leads-field-link:hover { text-decoration: underline; }
       .leads-field-copy { opacity: 0.4; background: none; border: none; cursor: pointer; font-size: 11px; padding: 0; }
       .leads-field-copy:hover { opacity: 1; }
-
-      .leads-mini-btn {
-        background: transparent; border: 1px solid currentColor;
-        padding: 2px 10px; border-radius: 5px; font-size: 11px; font-weight: 700;
-        cursor: pointer; color: inherit; transition: all 0.15s ease;
-      }
-      .leads-mini-btn:hover { background: rgba(255,255,255,0.06); }
-      .leads-mini-btn.primary { background: var(--leads-accent); color: #fff; border-color: var(--leads-accent); }
-      .leads-mini-btn.primary:hover { background: var(--leads-accent-hover); }
 
       .leads-modal {
         position: fixed; top: 50%; left: 50%;
@@ -2617,6 +2480,27 @@ function LeadsStyles() {
       }
       .leads-input:focus { border-color: var(--leads-accent); box-shadow: 0 0 0 3px var(--leads-accent-soft); }
       .leads-input::placeholder { color: var(--leads-text-subtle); }
+
+      .leads-contact-log-editor { display: flex; flex-direction: column; gap: 10px; }
+      .leads-contact-log-row {
+        display: grid; grid-template-columns: 130px 130px 1fr 32px;
+        gap: 8px; align-items: center;
+      }
+      .leads-contact-log-remove {
+        background: transparent; border: 1px solid var(--leads-border);
+        color: var(--leads-text-muted); width: 28px; height: 28px;
+        border-radius: 6px; cursor: pointer; display: flex;
+        align-items: center; justify-content: center; font-size: 12px;
+      }
+      .leads-contact-log-remove:hover { background: rgba(239,68,68,0.1); border-color: var(--leads-danger); color: var(--leads-danger); }
+      .leads-contact-log-add {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--leads-accent-soft); color: var(--leads-accent);
+        border: 1px solid var(--leads-accent-soft-hover);
+        padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700;
+        cursor: pointer; width: fit-content;
+      }
+      .leads-contact-log-add:hover { background: var(--leads-accent-soft-hover); }
 
       /* ===== CSV IMPORT ===== */
       .leads-dropzone {
@@ -2729,9 +2613,8 @@ function LeadsStyles() {
       }
 
       @media (max-width: 1100px) {
-        .leads-stats-row { grid-template-columns: repeat(3, 1fr); }
+        .leads-stats-row { grid-template-columns: repeat(2, 1fr); }
         .leads-analytics-grid { grid-template-columns: 1fr; }
-        .leads-enrich-grid { grid-template-columns: repeat(2, 1fr); }
       }
       @media (max-width: 900px) {
         .leads-sidebar { display: none; }
@@ -2739,11 +2622,11 @@ function LeadsStyles() {
         .leads-drawer { width: 100vw; }
         .leads-drawer-grid { grid-template-columns: 1fr; }
         .leads-form-row { grid-template-columns: 1fr; }
+        .leads-contact-log-row { grid-template-columns: 1fr 1fr 1fr 32px; }
         .leads-table { font-size: 12px; }
         .leads-table th, .leads-table td { padding: 8px; }
         .leads-bulk-bar { left: 12px; right: 12px; transform: none; bottom: 12px; }
         .leads-stats-row { grid-template-columns: repeat(2, 1fr); }
-        .leads-enrich-grid { grid-template-columns: 1fr; }
         .leads-lists-layout { flex-direction: column; height: auto; }
         .leads-lists-sidebar { width: 100%; }
       }

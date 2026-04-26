@@ -637,6 +637,47 @@ export default function ProspectCRM() {
     setSelectedIds(new Set());
   };
 
+  const generateLeads = async () => {
+    setSyncing(true);
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      
+      const filterPayload = {
+        jobTitle: filters.jobTitle || "",
+        functionalLevel: filters.functionalLevel || [],
+        companyDomain: companyDomain || "",
+        companySize: filters.size !== "all" ? filters.size : "",
+        contactLocation: contactLocation || "",
+        contactCity: contactCity || "",
+        industry: filters.industry !== "all" ? filters.industry : "",
+        fetchCount: fetchCount || 5000,
+      };
+      
+      const res = await fetch(`${API_BASE}/leads/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(filterPayload),
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Generation failed");
+      }
+      
+      pushToast(`Generated ${data.generated} leads from Apify`, "success");
+      
+      await fetchLeads({ silent: true });
+    } catch (err) {
+      console.error("Generate error:", err);
+      pushToast(err.message || "Failed to generate leads", "error");
+    } finally {
+      setLoading(false);
+      setSyncing(false);
+    }
+  };
+
   /* ---- Initial load ---- */
   useEffect(() => { fetchCurrentUser(); fetchLeads(); }, [fetchCurrentUser, fetchLeads]);
 
@@ -1041,9 +1082,9 @@ export default function ProspectCRM() {
             )}
 
             <div className="crm-sidebar-actions">
-              <button className="crm-btn-primary crm-btn-run" onClick={() => fetchLeads()}>
+              <button className="crm-btn-primary crm-btn-run" onClick={generateLeads} disabled={syncing}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                Run Search
+                {syncing ? "Generating..." : "Run Search"}
               </button>
             </div>
           </aside>

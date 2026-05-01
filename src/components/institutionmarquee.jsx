@@ -5,6 +5,7 @@ import { client } from "../utils/sanity";
 const builder = imageUrlBuilder(client);
 const urlFor = (source) => builder.image(source);
 
+
 const INSTITUTIONS_QUERY = `
   *[_type == "institutionMarquee" && active == true] | order(order asc) {
     _id,

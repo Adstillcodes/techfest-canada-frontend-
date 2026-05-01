@@ -26,6 +26,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Awards from "./pages/Awards";
 import KycForm from "./pages/KycForm";
 import Volunteer from "./pages/Volunteer";
+import InstitutionsInvolved from "./pages/InstitutionsInvolved";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
 
@@ -87,6 +88,7 @@ function App() {
         <Route path="/awards" element={<Awards />} />
         <Route path="/kyc" element={<KycForm />} />
         <Route path="/volunteer" element={<Volunteer />} />
+        <Route path="/institutions-involved" element={<InstitutionsInvolved />} />
       </Routes>
       <TicketBar />
     </BrowserRouter>

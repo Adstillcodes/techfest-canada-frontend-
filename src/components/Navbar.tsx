@@ -6,7 +6,8 @@ import AuthModal from "./AuthModal";
 const PARTNERS_DROPDOWN = [
   { label: "Sponsor", path: "/sponsor" },
   { label: "Exhibit", path: "/exhibit" },
-  { label: "KYC Form", path: "/kyc" }
+  { label: "KYC Form", path: "/kyc" },
+  { label: "Institutions Involved", path: "/institutions-involved" }
 ];
 
 const MORE_DROPDOWN = [

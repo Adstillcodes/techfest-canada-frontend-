@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import InstitutionMarquee from "../components/InstitutionMarquee";
 
+
 const PLACEHOLDER_COUNT = 9;
 
 export default function InstitutionsInvolved() {

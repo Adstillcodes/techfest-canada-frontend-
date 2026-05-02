@@ -15,6 +15,7 @@ const MORE_DROPDOWN = [
   { label: "Volunteer", path: "/volunteer" }
 ];
 
+
 export default function Navbar() {
   const [authOpen, setAuthOpen] = useState(false);
   const [theme, setTheme] = useState("light");

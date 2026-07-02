@@ -4,9 +4,10 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SponsorMarquee from "../components/SponsorMarquee";
 import NewsletterBar from "../components/NewsletterBar";
+import NominationForm from "../components/NominationForm";
 
 /* ═══════════════════════════════════════════════════════
-   ANIMATION VARIANTS (from Home.jsx)
+   ANIMATION VARIANTS
    ═══════════════════════════════════════════════════════ */
 
 var containerVariants = {
@@ -135,27 +136,17 @@ export default function Awards() {
           .aw-timeline-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; padding-bottom: 16px !important; }
           .aw-timeline-inner { min-width: 600px !important; }
         }
-        @media (min-width: 769px) {
-        }
         @media (max-width: 480px) {
           .aw-criteria-bar > div { flex: 1 1 calc(50% - 1px) !important; }
         }
       `}} />
 
       <Navbar />
-
-      {/* STICKY TROPHY — follows scroll, fades as you go */}
       <StickyTrophy dark={dark} />
 
-      {/* ════════════════════════════════════════════════
-         HERO — EDGE TO EDGE, TROPHY OVERLAPPING
-         ════════════════════════════════════════════════ */}
+      {/* ════════════════ HERO ════════════════ */}
       <section style={{ position: "relative", overflow: "hidden", background: bg, height: "100vh", minHeight: 700, display: "flex", flexDirection: "column" }}>
-
-        {/* Grid bg */}
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none", backgroundImage: "linear-gradient(" + (dark ? "rgba(122,63,209,0.03)" : "rgba(122,63,209,0.04)") + " 1px, transparent 1px), linear-gradient(90deg, " + (dark ? "rgba(122,63,209,0.03)" : "rgba(122,63,209,0.04)") + " 1px, transparent 1px)", backgroundSize: "80px 80px", maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%)", WebkitMaskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%)" }} />
-
-        {/* Badge — top center */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.8 }}
           style={{ position: "relative", zIndex: 20, textAlign: "center", paddingTop: "clamp(90px, 12vh, 130px)" }}>
           <span style={{ display: "inline-block", background: "rgba(245,166,35,0.12)", border: "1px solid rgba(245,166,35,0.35)", color: "#f5a623", fontFamily: "'Orbitron',sans-serif", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", padding: "10px 24px", borderRadius: 999 }}>
@@ -163,10 +154,7 @@ export default function Awards() {
           </span>
         </motion.div>
 
-        {/* 2-column: text left, trophy right */}
         <div className="aw-hero-grid" style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 1fr", alignItems: "center", maxWidth: 1500, margin: "0 auto", padding: "0 clamp(20px, 4vw, 60px)", gap: "clamp(24px, 4vw, 48px)" }}>
-
-          {/* LEFT — all text */}
           <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}>
             <h1 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.5rem, 7vw, 6.5rem)", fontWeight: 900, lineHeight: 0.9, letterSpacing: "-2px", color: textMain, textTransform: "uppercase", margin: 0 }}>
               YOU<br />HAVE<br />EARNED
@@ -185,42 +173,25 @@ export default function Awards() {
             </motion.a>
           </motion.div>
 
-          {/* RIGHT — trophy, big */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, duration: 1.2, ease: [0.22, 1, 0.36, 1] }} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <motion.div animate={{ y: [0, -14, 0], rotate: [-3, -1, -3] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
-              <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{
-                width: "clamp(300px, 42vw, 600px)", height: "auto",
-                filter: dark
-                  ? "drop-shadow(0 24px 80px rgba(122,63,209,0.50)) drop-shadow(0 8px 28px rgba(245,166,35,0.20))"
-                  : "drop-shadow(0 24px 80px rgba(0,0,0,0.18))",
+              <img src="/awards-trophy-single.png" alt="The Catalyst Award" style={{ width: "clamp(300px, 42vw, 600px)", height: "auto",
+                filter: dark ? "drop-shadow(0 24px 80px rgba(122,63,209,0.50)) drop-shadow(0 8px 28px rgba(245,166,35,0.20))" : "drop-shadow(0 24px 80px rgba(0,0,0,0.18))",
               }} />
             </motion.div>
           </motion.div>
         </div>
 
-        {/* Scroll hint */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
-          style={{ position: "absolute", bottom: 28, left: "50%", transform: "translateX(-50%)", zIndex: 20, textAlign: "center" }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }} style={{ position: "absolute", bottom: 28, left: "50%", transform: "translateX(-50%)", zIndex: 20, textAlign: "center" }}>
           <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
             <span style={{ color: textSoft, fontSize: "0.58rem", fontFamily: "'Orbitron',sans-serif", letterSpacing: "3px" }}>(SCROLL)</span>
           </motion.div>
         </motion.div>
-
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 120, zIndex: 15, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
       </section>
 
-      {/* ════════════════════════════════════════════════
-         TROPHY — SCROLL-DRIVEN 3D ANIMATION
-         ════════════════════════════════════════════════ */}
       <TrophyScroll bg={bg} dark={dark} textMain={textMain} textSoft={textSoft} accent={accent} />
 
-      {/* ════════════════════════════════════════════════
-         TAGLINE
-         ════════════════════════════════════════════════ */}
       <section style={{ padding: "5rem 5%", background: bg }}>
         <div style={{ maxWidth: 820, margin: "0 auto", textAlign: "center" }}>
           <DividerReveal accent={accent} />
@@ -230,16 +201,11 @@ export default function Awards() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════
-         OWN YOUR INDUSTRY
-         ════════════════════════════════════════════════ */}
       <section style={{ padding: "6rem 5%", background: sectionBg, borderTop: "1px solid " + cardBdr, borderBottom: "1px solid " + cardBdr }}>
         <div className="aw-feature-grid" style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(2rem,5vw,5rem)", alignItems: "center" }}>
           <div>
-            <TextReveal text="OWN YOUR" colors={[textMain, textMain]}
-              style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem,5vw,4.5rem)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-1px", justifyContent: "flex-start" }} />
-            <TextReveal text="INDUSTRY" colors={["#f5a623"]} delay={0.15}
-              style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem,5vw,4.5rem)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-1px", justifyContent: "flex-start" }} />
+            <TextReveal text="OWN YOUR" colors={[textMain, textMain]} style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem,5vw,4.5rem)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-1px", justifyContent: "flex-start" }} />
+            <TextReveal text="INDUSTRY" colors={["#f5a623"]} delay={0.15} style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(2.2rem,5vw,4.5rem)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-1px", justifyContent: "flex-start" }} />
             <ScrollP textMid={textMid} align="left" maxW={480}>
               You set the standard. Our jury confirms it. The companies, teams, and individuals who win earn more than a trophy — they earn a story the market trusts and teams are proud to tell.
             </ScrollP>
@@ -265,16 +231,11 @@ export default function Awards() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════
-         AWARD CATEGORIES LIST
-         ════════════════════════════════════════════════ */}
       <section id="awards-list" style={{ background: sectionBg, borderBottom: "1px solid " + cardBdr }}>
         <div style={{ maxWidth: 1000, margin: "0 auto", padding: "clamp(3rem,6vw,5rem) 5% 0" }}>
-          <TextReveal text="Discover Our Award Categories" colors={[textMain, textMain, textMain, accent]}
-            style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 900, marginBottom: "0.5rem" }} />
+          <TextReveal text="Discover Our Award Categories" colors={[textMain, textMain, textMain, accent]} style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.8rem,4vw,2.8rem)", fontWeight: 900, marginBottom: "0.5rem" }} />
           <DividerReveal accent={accent} />
 
-          {/* Pillar filter tabs */}
           <div style={{ display: "flex", gap: 8, marginBottom: 8, flexWrap: "wrap", justifyContent: "center", paddingBottom: 16 }}>
             {PILLARS.map(function (p) { return { key: p, label: p.length > 18 ? p.split(" &")[0] : p }; }).map(function (f) {
               var active = activePillar === f.key;
@@ -301,9 +262,6 @@ export default function Awards() {
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════
-         JUDGING & TIMELINE
-         ════════════════════════════════════════════════ */}
       <section style={{ padding: "clamp(4rem,8vw,7rem) 5%", background: bg }}>
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
           <ScrollReveal>
@@ -330,7 +288,6 @@ export default function Awards() {
             </div>
           </ScrollReveal>
 
-          {/* Timeline */}
           <ScrollReveal delay={0.15}>
             <h3 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.4rem,3vw,2.2rem)", fontWeight: 900, color: textMain, marginTop: "clamp(4rem,7vw,6rem)", marginBottom: 32, textAlign: "center" }}>Road to Awards Night</h3>
           </ScrollReveal>
@@ -362,8 +319,11 @@ export default function Awards() {
       </section>
 
       {/* ════════════════════════════════════════════════
-         CTA
+         NOMINATION FORM (expanding inline)
          ════════════════════════════════════════════════ */}
+      <NominationForm dark={dark} textMain={textMain} textMid={textMid} textSoft={textSoft} accent={accent} cardBg={cardBg} cardBdr={cardBdr} />
+
+      {/* ════════════════ CTA ════════════════ */}
       <section style={{ padding: "clamp(4rem,8vw,7rem) 5%", background: sectionBg, borderTop: "1px solid " + cardBdr }}>
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
           <ScrollReveal>
@@ -393,7 +353,7 @@ export default function Awards() {
 }
 
 /* ═══════════════════════════════════════════════════════
-   TROPHY SCROLL — 3D perspective animation
+   TROPHY SCROLL
    ═══════════════════════════════════════════════════════ */
 
 function TrophyScroll({ bg, dark, textMain, textSoft, accent }) {
@@ -414,8 +374,6 @@ function TrophyScroll({ bg, dark, textMain, textSoft, accent }) {
   return (
     <div ref={containerRef} style={{ height: isMobile ? "45rem" : "65rem", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", padding: isMobile ? "1rem" : "3rem 5%", background: bg }}>
       <div style={{ width: "100%", position: "relative", perspective: "1000px" }}>
-
-        {/* Title above */}
         <motion.div style={{ translateY: translateY, maxWidth: 800, margin: "0 auto 2rem", textAlign: "center" }}>
           <p style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "2.5px", textTransform: "uppercase", color: textSoft, marginBottom: 14 }}>The Catalyst Awards</p>
           <h2 style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(1.6rem,3.5vw,3rem)", fontWeight: 900, color: textMain, lineHeight: 1.1, margin: 0 }}>
@@ -424,14 +382,8 @@ function TrophyScroll({ bg, dark, textMain, textSoft, accent }) {
           </h2>
         </motion.div>
 
-        {/* Trophy image with 3D scroll */}
-        <motion.div style={{
-          rotateX: rotate, scale: scale,
-          maxWidth: 900, margin: "0 auto", width: "100%",
-          borderRadius: 24, overflow: "hidden",
-          boxShadow: dark
-            ? "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026"
-            : "0 9px 20px rgba(122,63,209,0.08), 0 37px 37px rgba(122,63,209,0.06), 0 84px 50px rgba(122,63,209,0.03)",
+        <motion.div style={{ rotateX: rotate, scale: scale, maxWidth: 900, margin: "0 auto", width: "100%", borderRadius: 24, overflow: "hidden",
+          boxShadow: dark ? "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026" : "0 9px 20px rgba(122,63,209,0.08), 0 37px 37px rgba(122,63,209,0.06), 0 84px 50px rgba(122,63,209,0.03)",
           border: "1px solid " + (dark ? "rgba(155,135,245,0.12)" : "rgba(122,63,209,0.10)"),
         }}>
           <img src="/awards-trophy-single.png" alt="The Catalyst Award Trophy" style={{ width: "100%", height: "auto", display: "block" }} />
@@ -463,9 +415,7 @@ function AwardRow({ award, dark, textMain, textMid, textSoft, cardBdr, isOpen, o
       onMouseEnter={function (e) { if (!isOpen) e.currentTarget.style.background = dark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.015)"; }}
       onMouseLeave={function (e) { if (!isOpen) e.currentTarget.style.background = "transparent"; }}
     >
-      <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(0.68rem,1.1vw,0.82rem)", fontWeight: 800, color: isOpen ? "#f5a623" : textSoft, minWidth: 30, transition: "color 0.25s ease" }}>
-        ★
-      </span>
+      <span style={{ fontFamily: "'Orbitron',sans-serif", fontSize: "clamp(0.68rem,1.1vw,0.82rem)", fontWeight: 800, color: isOpen ? "#f5a623" : textSoft, minWidth: 30, transition: "color 0.25s ease" }}>★</span>
       <div style={{ flex: 1 }}>
         <div style={{ fontFamily: "'Montserrat',sans-serif", fontSize: "clamp(0.82rem,1.5vw,1.05rem)", fontWeight: 700, color: textMain, lineHeight: 1.4 }}>{award.name}</div>
         {isOpen && (
@@ -489,7 +439,7 @@ function AwardRow({ award, dark, textMain, textMid, textSoft, cardBdr, isOpen, o
 }
 
 /* ═══════════════════════════════════════════════════════
-   STICKY TROPHY — follows scroll, fades out
+   STICKY TROPHY
    ═══════════════════════════════════════════════════════ */
 
 function StickyTrophy({ dark }) {
@@ -500,7 +450,6 @@ function StickyTrophy({ dark }) {
     function onScroll() {
       var scrollY = window.scrollY;
       var vh = window.innerHeight;
-      // Fully visible in hero, starts fading after 1vh, gone by 3vh
       if (scrollY < vh) {
         setOpacity(1);
         setPastHero(false);
@@ -518,23 +467,12 @@ function StickyTrophy({ dark }) {
     return function () { window.removeEventListener("scroll", onScroll); };
   }, []);
 
-  // Only show the sticky version after scrolling past hero
   if (!pastHero) return null;
 
   return (
-    <div style={{
-      position: "fixed", top: "50%", left: "50%",
-      transform: "translate(-50%, -50%) rotate(-6deg)",
-      zIndex: 1, pointerEvents: "none",
-      width: "clamp(250px, 30vw, 420px)",
-      opacity: opacity,
-      transition: "opacity 0.3s ease",
-    }}>
-      <img src="/awards-trophy-single.png" alt="" style={{
-        width: "100%", height: "auto",
-        filter: dark
-          ? "drop-shadow(0 16px 48px rgba(122,63,209,0.30)) brightness(0.7)"
-          : "drop-shadow(0 16px 48px rgba(0,0,0,0.08)) brightness(0.9)",
+    <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(-6deg)", zIndex: 1, pointerEvents: "none", width: "clamp(250px, 30vw, 420px)", opacity: opacity, transition: "opacity 0.3s ease" }}>
+      <img src="/awards-trophy-single.png" alt="" style={{ width: "100%", height: "auto",
+        filter: dark ? "drop-shadow(0 16px 48px rgba(122,63,209,0.30)) brightness(0.7)" : "drop-shadow(0 16px 48px rgba(0,0,0,0.08)) brightness(0.9)",
       }} />
     </div>
   );

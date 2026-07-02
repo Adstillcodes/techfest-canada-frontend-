@@ -10,7 +10,8 @@ import AdminKyc from "../components/AdminKyc";
 import AdminEmailCampaigns from "../components/AdminEmailCampaigns";
 import AdminAudience from "../components/AdminAudience";
 import AdminCampaignCalendar from "../components/AdminCampaignCalendar";
-import AdminLeads from "../components/AdminLeads"; // 👈 NEW
+import AdminLeads from "../components/AdminLeads";
+import AdminNominations from "../components/AdminNominations"; // 👈 NEW
 
 const API = "https://techfest-canada-backend.onrender.com/api";
 
@@ -111,6 +112,17 @@ function Leads() {
 }
 
 /* =========================================================
+   🏆 NOMINATIONS TAB WRAPPER
+========================================================= */
+function Nominations() {
+  return (
+    <div className="admin-card">
+      <AdminNominations />
+    </div>
+  );
+}
+
+/* =========================================================
    🧠 MAIN ADMIN PAGE
 ========================================================= */
 export default function Admin() {
@@ -119,14 +131,15 @@ export default function Admin() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.dispatchEvent(new Event("authChanged")); // optional but good
+    window.dispatchEvent(new Event("authChanged"));
     navigate("/admin-login");
   };
 
   const tabs = [
     { label: "Overview", component: Overview },
     { label: "Attendees", component: AdminAttendees },
-    { label: "Leads", component: Leads }, // 👈 NEW TAB
+    { label: "Leads", component: Leads },
+    { label: "Nominations", component: Nominations }, // 👈 NEW TAB
     { label: "Inventory", component: AdminInventory },
     { label: "Scanner", component: CheckIn },
     { label: "Admins", component: AdminManagement },

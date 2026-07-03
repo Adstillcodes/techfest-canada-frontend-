@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import PavilionForm from "../components/PavilionForm";
 
 const API = import.meta.env.VITE_API_URL || "https://techfest-canada-backend.onrender.com/api";
 
@@ -292,6 +293,15 @@ export default function Exhibit() {
         ))}
       </div>
 
+      {/* ═══════════ INDIA STARTUP PAVILION FORM ═══════════ */}
+      <PavilionForm
+        isDark={isDark}
+        textMain={textMain}
+        textMuted={textMuted}
+        border={border}
+        cardBg={cardBg}
+      />
+
       {/* ═══════════ CLOSING ARGUMENT ═══════════ */}
       <section style={{ padding: "60px 5% 100px", maxWidth: 900, margin: "0 auto" }}>
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.8 }}>
@@ -311,7 +321,6 @@ export default function Exhibit() {
           className="bottom-cta-grid"
           style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 28, overflow: "hidden", border: "1px solid " + border, background: cardBg, minHeight: 400 }}
         >
-          {/* Logo panel — always dark */}
           <div style={{
             position: "relative", background: "#120a22",
             display: "flex", alignItems: "center", justifyContent: "center",
@@ -325,7 +334,6 @@ export default function Exhibit() {
             <div style={{ position: "absolute", width: "70%", height: "70%", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,63,209,0.15) 0%, transparent 70%)", pointerEvents: "none" }} />
           </div>
 
-          {/* Text panel */}
           <div style={{ padding: "clamp(40px, 6vw, 64px)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 900, lineHeight: 1.2, marginBottom: 20, color: textMain }}>
               Ready to <GradientSpan>secure your space?</GradientSpan>
@@ -497,7 +505,6 @@ function EnquireModal({ booth, onClose, isDark, textMain, border }) {
         initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
         style={{ background: isDark ? "#120a22" : "#ffffff", width: "100%", maxWidth: "500px", borderRadius: "20px", padding: "32px", position: "relative", border: "1px solid " + border, boxShadow: "0 20px 40px rgba(0,0,0,0.4)" }}
       >
-        {/* X button — always visible */}
         <button
           onClick={onClose}
           style={{

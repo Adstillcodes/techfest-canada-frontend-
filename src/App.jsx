@@ -83,6 +83,7 @@ function App() {
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
         <Route path="/exhibit" element={<Exhibit />} />
+        <Route path="/exhibit/india-pavilion" element={<Exhibit />} />
         <Route path="/brochures" element={<Brochures />} />
         <Route path="/venue" element={<Venue />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />

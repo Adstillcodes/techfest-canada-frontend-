@@ -44,12 +44,10 @@ const SPECIAL_AWARDS = [
 const NOMINEE_TYPES = ["Individual", "Organisation", "Team / Project"];
 
 const EMPTY_FORM = {
-  // Section 1 - category
-  categoryType: "", // "matrix" | "special"
+  categoryType: "",
   pillar: "",
   sector: "",
   specialAward: "",
-  // Section 2 - nominee
   nomineeType: "",
   nomineeName: "",
   nomineeTitle: "",
@@ -60,7 +58,6 @@ const EMPTY_FORM = {
   nomineeLinkedIn: "",
   nomineeEmail: "",
   nomineePhone: "",
-  // Section 3 - nominator
   selfNomination: false,
   nominatorName: "",
   nominatorTitle: "",
@@ -68,12 +65,10 @@ const EMPTY_FORM = {
   nominatorRelationship: "",
   nominatorEmail: "",
   nominatorPhone: "",
-  // Section 4 - statement
   statementOverview: "",
   statementImpact: "",
   statementAchievements: "",
   statementEvidence: "",
-  // Section 5 - declaration
   declaration1: false,
   declaration2: false,
   declaration3: false,
@@ -81,7 +76,6 @@ const EMPTY_FORM = {
   signatureName: "",
 };
 
-/* Helpers */
 function wordCount(text) {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
@@ -101,6 +95,21 @@ export default function NominationForm({ dark, textMain, textMid, textSoft, acce
   const formRef = useRef(null);
   const TOTAL_STEPS = 5;
 
+  // Auto-expand & scroll when URL hits /awards/nominations or #nominations
+  useEffect(() => {
+    const shouldOpen =
+      window.location.pathname.toLowerCase().includes("/awards/nominations") ||
+      window.location.hash === "#nominations";
+
+    if (shouldOpen) {
+      setExpanded(true);
+      // Give the section a moment to render before scrolling
+      setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
+  }, []);
+
   const bg = dark ? "#06020f" : "#ffffff";
   const inputBg = dark ? "rgba(255,255,255,0.04)" : "rgba(122,63,209,0.03)";
   const inputBdr = dark ? "rgba(155,135,245,0.14)" : "rgba(122,63,209,0.16)";
@@ -115,7 +124,6 @@ export default function NominationForm({ dark, textMain, textMid, textSoft, acce
   const handleSelfNominationToggle = (checked) => {
     setForm((f) => {
       const next = { ...f, selfNomination: checked };
-      // If self-nominating, prefill nominator name/email from nominee (nice UX)
       if (checked) {
         if (f.nomineeName && !f.nominatorName) next.nominatorName = f.nomineeName;
         if (f.nomineeEmail && !f.nominatorEmail) next.nominatorEmail = f.nomineeEmail;
@@ -126,7 +134,6 @@ export default function NominationForm({ dark, textMain, textMid, textSoft, acce
     });
   };
 
-  /* ── Validation per step ── */
   const validateStep = (s) => {
     const e = {};
     if (s === 1) {
@@ -216,7 +223,6 @@ export default function NominationForm({ dark, textMain, textMid, textSoft, acce
     setStep(1);
   };
 
-  /* ─── Styles ─── */
   const labelStyle = {
     fontFamily: "'Orbitron', sans-serif",
     fontSize: "0.62rem",
@@ -250,10 +256,6 @@ export default function NominationForm({ dark, textMain, textMid, textSoft, acce
   const errStyle = { fontSize: "0.72rem", color: errorColor, marginTop: 6, fontFamily: "'Montserrat', sans-serif" };
   const fieldStyle = { marginBottom: 20 };
 
-  /* ═══════════════════════════════════════════════════════
-     RENDER
-     ═══════════════════════════════════════════════════════ */
-
   const stepTitles = [
     "Award Category",
     "Nominee Details",
@@ -270,7 +272,7 @@ export default function NominationForm({ dark, textMain, textMid, textSoft, acce
   ];
 
   return (
-    <section ref={formRef} style={{ padding: "clamp(3rem, 6vw, 5rem) 5%", background: dark ? "#0a0618" : "#f4f0ff", borderTop: "1px solid " + cardBdr }}>
+    <section id="nominations" ref={formRef} style={{ padding: "clamp(3rem, 6vw, 5rem) 5%", background: dark ? "#0a0618" : "#f4f0ff", borderTop: "1px solid " + cardBdr, scrollMarginTop: 80 }}>
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
 
         {/* ═══════════ COLLAPSED HEADER ═══════════ */}
@@ -424,7 +426,6 @@ export default function NominationForm({ dark, textMain, textMid, textSoft, acce
                 {/* ─────────── STEP 1: CATEGORY ─────────── */}
                 {step === 1 && (
                   <div>
-                    {/* Path selector */}
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 32 }}>
                       {[
                         { key: "matrix", title: "Pillar × Sector", desc: "25 categories combining a technology pillar with an applied sector" },
@@ -461,7 +462,6 @@ export default function NominationForm({ dark, textMain, textMid, textSoft, acce
                     </div>
                     {errors.categoryType && <div style={errStyle}>{errors.categoryType}</div>}
 
-                    {/* Matrix path */}
                     {form.categoryType === "matrix" && (
                       <>
                         <div style={fieldStyle}>
@@ -547,7 +547,6 @@ export default function NominationForm({ dark, textMain, textMid, textSoft, acce
                       </>
                     )}
 
-                    {/* Special path */}
                     {form.categoryType === "special" && (
                       <div style={fieldStyle}>
                         <label style={labelStyle}>Special Recognition Award *</label>

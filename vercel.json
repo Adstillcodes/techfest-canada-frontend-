@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/awards/nominations",
+      "destination": "/awards"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

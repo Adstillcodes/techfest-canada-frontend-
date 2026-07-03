@@ -142,7 +142,7 @@ function ConfettiCanvas() {
 
 const PASS_META = {
   connect: { label:"Connect Pass", tagline:"More than just access to the conference.", description:"Designed for attendees who want full access to the main conference and expo floor. Connect with senior leaders, explore the show floor, and build meaningful business relationships across both days.", features:["2x Day Conference Access","2x Luncheons","Expo Floor Access","Networking Breaks"], tier:"connect", defaultPrice:599, featured:false },
-  influence: { label:"Influence Pass", tagline:"A fuller event experience beyond the conference floor.", description:"Built for decision makers, growth leaders, investors, and professionals who want premium daytime access plus entry to the Gala Dinner and Networking Reception \u2014 creating space for higher-value conversations and stronger business connections.", features:["2x Day Conference Access","2x CxO Breakfasts","2x Luncheons","1x Gala Dinner & Networking Reception","Expo Floor Access","Networking Breaks"], tier:"influence", defaultPrice:799, featured:true },
+  influence: { label:"Influence Pass", tagline:"A fuller event experience beyond the conference floor.", description:"Built for decision makers, growth leaders, investors, and professionals who want premium daytime access with elevated networking moments \u2014 creating space for higher-value conversations and stronger business connections.", features:["2x Day Conference Access","2x CxO Breakfasts","2x Luncheons","Expo Floor Access","Networking Breaks"], tier:"influence", defaultPrice:799, featured:true },
   power: { label:"Power Pass", tagline:"The ultimate all-access experience.", description:"Built for senior executives, VIP guests, investors, speakers, and leaders who want to experience The Tech Festival Canada at the highest level. With access to every major element of the event, this pass offers the most complete and elevated way to engage with the festival.", features:["2x Day Conference Access","2x CxO Breakfasts","2x Luncheons","1x Gala Dinner & Networking Reception","1x Awards Night","VIP Lounge Access (Both Days)","Expo Floor Access","Networking Breaks"], tier:"power", defaultPrice:999, featured:false },
 };
 
@@ -207,7 +207,7 @@ export default function Tickets() {
   const passes = ["connect","influence","power"];
   const passLabels = { connect:"Connect", influence:"Influence", power:"Power" };
   const allFeatures = ["2x Day Conference Access","Expo Floor Access","Networking Breaks","2x CxO Breakfasts","2x Luncheons","1x Gala Dinner & Networking Reception","1x Awards Night","VIP Lounge Access (Both Days)"];
-  const passFeatureMap = { connect:[true,true,true,false,true,false,false,false], influence:[true,true,true,true,true,true,false,false], power:[true,true,true,true,true,true,true,true] };
+  const passFeatureMap = { connect:[true,true,true,false,true,false,false,false], influence:[true,true,true,true,true,false,false,false], power:[true,true,true,true,true,true,true,true] };
   const bg = dark ? "#06020f" : "#ffffff";
   const textMain = dark ? "#ffffff" : "#0d0520";
   const textMuted = dark ? "rgba(255,255,255,0.60)" : "rgba(13,5,32,0.68)";

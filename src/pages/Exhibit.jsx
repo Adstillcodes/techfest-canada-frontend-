@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import PavilionForm from "../components/PavilionForm";
+import PavilionCard from "../components/PavilionCard";
 
 const API = import.meta.env.VITE_API_URL || "https://techfest-canada-backend.onrender.com/api";
 
@@ -293,8 +293,8 @@ export default function Exhibit() {
         ))}
       </div>
 
-      {/* ═══════════ INDIA STARTUP PAVILION FORM ═══════════ */}
-      <PavilionForm
+      {/* ═══════════ INDIA PAVILION PROMO CARD (opens dedicated page in new tab) ═══════════ */}
+      <PavilionCard
         isDark={isDark}
         textMain={textMain}
         textMuted={textMuted}

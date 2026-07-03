@@ -32,6 +32,7 @@ import Partners2026 from "./pages/partners2026";
 import Organizers from "./pages/Organizers";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
+
 function applySystemTheme() {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const theme = prefersDark ? "dark" : "light";

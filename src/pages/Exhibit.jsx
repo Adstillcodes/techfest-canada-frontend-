@@ -371,6 +371,7 @@ export default function Exhibit() {
 
 /* ═══════════════════════════════════════════════════════
    BOOTH ROW
+   
    ═══════════════════════════════════════════════════════ */
 
 function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, onOpenModal, onPurchase }) {

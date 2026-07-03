@@ -21,6 +21,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminRoute from "./components/AdminRoute";
 import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
+import IndiaPavilion from "./pages/IndiaPavilion";
 import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
 import ScrollToTop from "./components/ScrollToTop";
@@ -83,7 +84,7 @@ function App() {
         <Route path="/auth-success" element={<AuthSuccess />} />
         <Route path="/sponsor" element={<Sponsor />} />
         <Route path="/exhibit" element={<Exhibit />} />
-        <Route path="/exhibit/india-pavilion" element={<Exhibit />} />
+        <Route path="/exhibit/india-pavilion" element={<IndiaPavilion />} />
         <Route path="/brochures" element={<Brochures />} />
         <Route path="/venue" element={<Venue />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />

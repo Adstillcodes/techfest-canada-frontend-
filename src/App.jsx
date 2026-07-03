@@ -29,12 +29,14 @@ import KycForm from "./pages/KycForm";
 import Volunteer from "./pages/Volunteer";
 import Partners2026 from "./pages/partners2026";
 import Organizers from "./pages/Organizers";
+
 /* ================= SYSTEM THEME DETECTOR ================= */
 function applySystemTheme() {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const theme = prefersDark ? "dark" : "light";
   document.documentElement.setAttribute("data-theme", theme);
 }
+
 function App() {
   useEffect(() => {
     applySystemTheme();
@@ -43,6 +45,7 @@ function App() {
     media.addEventListener("change", handleChange);
     return () => media.removeEventListener("change", handleChange);
   }, []);
+
   return (
     <BrowserRouter>
       <ScrollToTop />
@@ -84,6 +87,7 @@ function App() {
         <Route path="/venue" element={<Venue />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/awards" element={<Awards />} />
+        <Route path="/awards/nominations" element={<Awards />} />
         <Route path="/kyc" element={<KycForm />} />
         <Route path="/volunteer" element={<Volunteer />} />
         <Route path="/partners2026" element={<Partners2026 />} />
@@ -93,4 +97,5 @@ function App() {
     </BrowserRouter>
   );
 }
+
 export default App;

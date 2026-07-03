@@ -7,6 +7,7 @@ const API = import.meta.env.VITE_API_URL || "https://techfest-canada-backend.onr
 
 /* ═══════════════════════════════════════════════════════
    OPTIONS
+   
    ═══════════════════════════════════════════════════════ */
 
 const BUSINESS_STAGES = [

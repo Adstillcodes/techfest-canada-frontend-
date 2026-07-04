@@ -75,6 +75,7 @@ const EMPTY_FORM = {
   repName: "", repTitle: "", repEmail: "", repMobile: "",
   secondaryContact: "",
   delegate1: "", delegate2: "",
+  needsVisa: "", visaCount: "",
   // Section 7
   declaration1: false, declaration2: false, declaration3: false,
   declaration4: false, declaration5: false, declaration6: false,
@@ -307,6 +308,24 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
     </div>
   );
 
+  /* Visa assistance note — shown on every step */
+  const VisaNote = () => (
+    <div style={{
+      display: "flex", gap: 10, alignItems: "flex-start",
+      padding: "12px 16px", marginBottom: 24, borderRadius: 10,
+      background: "rgba(63,209,156,0.06)",
+      border: "1px solid rgba(63,209,156,0.22)",
+    }}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3fd19c" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}>
+        <circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" />
+      </svg>
+      <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "0.8rem", color: textMuted, margin: 0, lineHeight: 1.5 }}>
+        <strong style={{ color: textMain, fontWeight: 700 }}>Visa assistance: </strong>
+        We will help you with visa assistance if your application is accepted.
+      </p>
+    </div>
+  );
+
   return (
     <section id="india-pavilion" ref={formRef} style={{
       padding: "clamp(3rem, 6vw, 5rem) 5%",
@@ -314,6 +333,15 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
       borderTop: "1px solid " + border, borderBottom: "1px solid " + border,
       scrollMarginTop: 80,
     }}>
+      <style>{`
+        @media (max-width: 600px) {
+          .pf-grid-2 { grid-template-columns: 1fr !important; }
+        }
+        .pf-grid-2 { min-width: 0; }
+        .pf-grid-2 > * { min-width: 0; }
+        .pf-grid-2 input[type="date"] { min-width: 0; max-width: 100%; box-sizing: border-box; }
+      `}</style>
+
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
 
         {/* ═══════════ COLLAPSED HEADER ═══════════ */}
@@ -430,6 +458,9 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                   </p>
                 </div>
 
+                {/* Visa assistance note — appears on every step */}
+                <VisaNote />
+
                 {/* ─────────── STEP 1: COMPANY DETAILS ─────────── */}
                 {step === 1 && (
                   <div>
@@ -440,7 +471,7 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                       {errors.legalName && <div style={errStyle}>{errors.legalName}</div>}
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div className="pf-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                       <div style={fieldStyle}>
                         <label style={labelStyle}>Trading / Brand Name</label>
                         <input value={form.tradingName} onChange={(e) => set("tradingName", e.target.value)} style={inputStyle(false)} placeholder="Acme" />
@@ -452,7 +483,7 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                       </div>
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div className="pf-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                       <div style={fieldStyle}>
                         <label style={labelStyle}>Date of Incorporation</label>
                         <input type="date" value={form.incorporationDate} onChange={(e) => set("incorporationDate", e.target.value)} style={inputStyle(false)} />
@@ -471,7 +502,7 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                       {errors.registeredOffice && <div style={errStyle}>{errors.registeredOffice}</div>}
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div className="pf-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                       <div style={fieldStyle}>
                         <label style={labelStyle}>Website</label>
                         <input value={form.website} onChange={(e) => set("website", e.target.value)} style={inputStyle(false)} placeholder="https://..." />
@@ -504,7 +535,7 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                       {errors.isMcaRegistered && <div style={errStyle}>{errors.isMcaRegistered}</div>}
 
                       {form.isMcaRegistered === "yes" && (
-                        <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                        <div className="pf-grid-2" style={{ marginTop: 16, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                           <div>
                             <label style={labelStyle}>CIN / MCA Reg. No. *</label>
                             <input value={form.cinNumber} onChange={(e) => set("cinNumber", e.target.value.toUpperCase())} style={inputStyle(errors.cinNumber)} placeholder="U72900DL2020PTC012345" />
@@ -578,7 +609,7 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                       )}
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div className="pf-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                       <div style={fieldStyle}>
                         <label style={labelStyle}>Latest Funding <span style={{ opacity: 0.6, textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
                         <input value={form.latestFunding} onChange={(e) => set("latestFunding", e.target.value)} style={inputStyle(false)} placeholder="e.g. Seed, $2M" />
@@ -730,7 +761,7 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                       </p>
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div className="pf-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                       <div style={fieldStyle}>
                         <label style={labelStyle}>Full Name *</label>
                         <input value={form.repName} onChange={(e) => set("repName", e.target.value)} style={inputStyle(errors.repName)} />
@@ -743,7 +774,7 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                       </div>
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div className="pf-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                       <div style={fieldStyle}>
                         <label style={labelStyle}>Email *</label>
                         <input type="email" value={form.repEmail} onChange={(e) => set("repEmail", e.target.value)} style={inputStyle(errors.repEmail)} placeholder="name@company.com" />
@@ -783,6 +814,30 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                       <p style={hintStyle}>Name, title, email</p>
                       <input value={form.delegate2} onChange={(e) => set("delegate2", e.target.value)} style={inputStyle(false)} placeholder="Rahul Kumar, CTO, rahul@company.com" />
                     </div>
+
+                    {/* ── Visa Assistance ── */}
+                    <div style={{
+                      padding: "12px 16px", marginTop: 32, marginBottom: 20, borderRadius: 10,
+                      background: "rgba(245,166,35,0.06)", border: "1px solid rgba(245,166,35,0.20)",
+                    }}>
+                      <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "1.2px", textTransform: "uppercase", color: "#f5a623", margin: 0 }}>
+                        Visa Assistance
+                      </p>
+                    </div>
+
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Do you need visa assistance for delegates travelling to Canada?</label>
+                      <p style={hintStyle}>Support is offered only after your application is accepted</p>
+                      <YesNo value={form.needsVisa} onChange={(v) => set("needsVisa", v)} />
+                    </div>
+
+                    {form.needsVisa === "yes" && (
+                      <div style={fieldStyle}>
+                        <label style={labelStyle}>How many delegates require visa support?</label>
+                        <p style={hintStyle}>An approximate number is fine</p>
+                        <input value={form.visaCount} onChange={(e) => set("visaCount", e.target.value)} style={inputStyle(false)} placeholder="e.g. 2" />
+                      </div>
+                    )}
 
                     {/* Programme interests folded into contact step */}
                     <div style={{ marginTop: 32 }}>
@@ -863,7 +918,7 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                       ))}
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div className="pf-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                       <div style={fieldStyle}>
                         <label style={labelStyle}>Authorised Signatory Name *</label>
                         <input value={form.signatureName} onChange={(e) => set("signatureName", e.target.value)} style={inputStyle(errors.signatureName)} placeholder="Your full legal name" />

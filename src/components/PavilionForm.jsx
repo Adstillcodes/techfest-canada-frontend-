@@ -76,7 +76,9 @@ const EMPTY_FORM = {
   secondaryContact: "",
   delegate1: "", delegate2: "",
   needsVisa: "", visaCount: "",
-  // Section 7
+   referralCode: "",
+
+   // Section 7
   declaration1: false, declaration2: false, declaration3: false,
   declaration4: false, declaration5: false, declaration6: false,
   signatureName: "", signatureTitle: "",
@@ -873,6 +875,18 @@ export default function PavilionForm({ isDark, textMain, textMuted, border, card
                           );
                         })}
                       </div>
+                    </div>
+                     
+                    {/* ── Referral Code ── */}
+                    <div style={{ marginTop: 32 }}>
+                      <label style={labelStyle}>Referral Code <span style={{ opacity: 0.6, textTransform: "none", letterSpacing: 0 }}>(optional)</span></label>
+                      <p style={hintStyle}>If someone referred you, enter their code here</p>
+                      <input 
+                        value={form.referralCode} 
+                        onChange={(e) => set("referralCode", e.target.value.toUpperCase())} 
+                        style={inputStyle(false)} 
+                        placeholder="e.g. TTFC-2026-XYZ" 
+                      />
                     </div>
                   </div>
                 )}

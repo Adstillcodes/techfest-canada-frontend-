@@ -42,12 +42,78 @@ export default defineType({
             options: { hotspot: true },
             validation: (Rule: ImageRule) => Rule.required().error("Profile photo is required."),
         }),
+
+        // ── Ordering ──
         defineField({
             name: "order",
             title: "Display Order",
             type: "number",
             description: "Controls the order speakers appear. Lower numbers appear first.",
             validation: (Rule: NumberRule) => Rule.required().min(1).error("Display order is required."),
+        }),
+        defineField({
+            name: "rowPosition",
+            title: "Position in Row",
+            type: "number",
+            description:
+                "Fine-tunes where this speaker sits within their row/group. Lower numbers appear first. Leave empty to fall back to Display Order.",
+            validation: (Rule: NumberRule) =>
+                Rule.min(1).integer().error("Position in row must be a whole number of 1 or more."),
+        }),
+        defineField({
+            name: "featured",
+            title: "Featured Speaker",
+            type: "boolean",
+            description: "Featured speakers are pinned to the top of the grid regardless of order.",
+            initialValue: false,
+        }),
+
+        // ── Categorization (powers the frontend filters) ──
+        defineField({
+            name: "speakerType",
+            title: "Speaker Type",
+            type: "string",
+            description: "Badge shown on the card, e.g. SPEAKER or KEYNOTE.",
+            options: {
+                list: [
+                    { title: "Speaker", value: "speaker" },
+                    { title: "Keynote", value: "keynote" },
+                    { title: "Panelist", value: "panelist" },
+                    { title: "Moderator", value: "moderator" },
+                ],
+                layout: "radio",
+            },
+            initialValue: "speaker",
+        }),
+        defineField({
+            name: "techPillar",
+            title: "Tech Pillar",
+            type: "string",
+            description: "Used by the Tech Pillar filter on the speakers page.",
+            options: {
+                list: [
+                    { title: "Artificial Intelligence", value: "ai" },
+                    { title: "Cybersecurity", value: "cybersecurity" },
+                    { title: "Cloud & Data", value: "cloud-data" },
+                    { title: "Emerging Tech", value: "emerging-tech" },
+                ],
+            },
+        }),
+        defineField({
+            name: "sector",
+            title: "Sector",
+            type: "string",
+            description: "Used by the Sector filter and shown as the tag on the card.",
+            options: {
+                list: [
+                    { title: "Healthcare & Life Sci", value: "healthcare-life-sci" },
+                    { title: "Manufacturing & Supply", value: "manufacturing-supply" },
+                    { title: "Government & Public Sector", value: "government" },
+                    { title: "Financial Services", value: "financial-services" },
+                    { title: "Energy & Sustainability", value: "energy" },
+                    { title: "Media & Entertainment", value: "media" },
+                ],
+            },
         }),
 
         // ── Optional social links ──
@@ -91,6 +157,14 @@ export default defineType({
             title: "Display Order",
             name: "orderAsc",
             by: [{ field: "order", direction: "asc" }],
+        },
+        {
+            title: "Row Position",
+            name: "rowPositionAsc",
+            by: [
+                { field: "order", direction: "asc" },
+                { field: "rowPosition", direction: "asc" },
+            ],
         },
         {
             title: "Name A–Z",

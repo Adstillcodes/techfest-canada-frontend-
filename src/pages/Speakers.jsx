@@ -390,9 +390,11 @@ function SpeakerCard({ speaker, dark, i }) {
         boxShadow: !dark ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
         transition: "transform 0.25s ease, box-shadow 0.25s ease",
+                display: "flex",
+        flexDirection: "column",
       }}
     >
-      <Link to={"/speakers/" + speaker._id} style={{ display: "block", textDecoration: "none", color: "inherit" }}>
+      <Link to={"/speakers/" + speaker._id} style={{ display: "flex", flexDirection: "column", flex: 1, textDecoration: "none", color: "inherit" }}>
         <div style={{
           position: "relative", paddingTop: "100%", overflow: "hidden",
           background: dark ? "#1a0a3e" : "#ede9ff",
@@ -512,7 +514,7 @@ function SpeakerCard({ speaker, dark, i }) {
       </Link>
 
       {speaker.linkedin && (
-        <div style={{ padding: "0 1.4rem 1.1rem" }}>
+        <div style={{ padding: "0 1.4rem 1.1rem", marginTop: "auto" }}>
           <a
             href={speaker.linkedin} target="_blank" rel="noopener noreferrer"
             onClick={function (e) { e.stopPropagation(); }}
@@ -840,6 +842,7 @@ export default function Speakers() {
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
                 gap: "1.2rem",
+                alignItems: "stretch",
               }}>
                 {filtered.map(function (speaker, i) {
                   return <SpeakerCard key={speaker._id} speaker={speaker} dark={dark} i={i} />;

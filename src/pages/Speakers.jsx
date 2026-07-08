@@ -559,7 +559,7 @@ export default function Speakers() {
   useEffect(function () {
     client
       .fetch(
-        '*[_type == "speaker"] | order(order asc) { _id, name, title, company, bio, linkedin, image }'
+        '*[_type == "speaker"] | order(order asc, coalesce(rowPosition, 9999) asc) { _id, name, title, company, bio, linkedin, image, rowPosition }'
       )
       .then(function (data) { setSpeakers(data); setLoading(false); })
       .catch(function () { setLoading(false); });

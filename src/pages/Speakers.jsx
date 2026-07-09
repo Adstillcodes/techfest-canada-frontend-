@@ -394,8 +394,7 @@ function SpeakerCard({ speaker, dark, i }) {
         flexDirection: "column",
       }}
     >
-      <Link to={"/speakers/" + speaker._id} style={{ display: "flex", flexDirection: "column", flex: 1, textDecoration: "none", color: "inherit" }}>
-        <div style={{
+<Link to={"/speakers/" + speaker.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")} style={{ display: "flex", flexDirection: "column", flex: 1, textDecoration: "none", color: "inherit" }}>        <div style={{
           position: "relative", paddingTop: "100%", overflow: "hidden",
           background: dark ? "#1a0a3e" : "#ede9ff",
         }}>

@@ -6,8 +6,8 @@ import Navbar from "../components/Navbar.tsx";
 import Footer from "../components/Footer";
 import { client, urlFor } from "../utils/sanity";
 
-var SPEAKER_QUERY = function(id) {
-  return '*[_type == "speaker" && _id == "' + id + '"][0] { _id, name, title, company, bio, linkedin, image }';
+var SPEAKER_QUERY = function() {
+  return '*[_type == "speaker"] { _id, name, title, company, bio, linkedin, image }';
 };
 
 function LinkedInIcon() {
@@ -28,12 +28,16 @@ export default function SpeakerProfile() {
     return function() { obs.disconnect(); };
   }, []);
 
-  useEffect(function() {
-    if (!params.id) return;
+    useEffect(function() {
+    if (!params.slug) return;
     setLoading(true);
-    client.fetch(SPEAKER_QUERY(params.id))
-      .then(function(data) {
-        if (data) { setSpeaker(data); }
+    client.fetch(SPEAKER_QUERY())
+      .then(function(speakers) {
+        var speaker = speakers.find(function(s) {
+          var speakerSlug = s.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+          return speakerSlug === params.slug;
+        });
+        if (speaker) { setSpeaker(speaker); }
         else { setError("Speaker not found."); }
         setLoading(false);
       })
@@ -42,7 +46,7 @@ export default function SpeakerProfile() {
         setError("Failed to load speaker.");
         setLoading(false);
       });
-  }, [params.id]);
+  }, [params.slug]);
 
   var bg = dark ? "#06020f" : "#ffffff";
   var textMain = dark ? "#ffffff" : "#0d0520";

@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 
-/* Small promo card for the India Startup Pavilion.
-   Placed inline on the exhibit page — clicking opens the
-   dedicated /exhibit/india-pavilion route in a new tab. */
+/* Promo card for the India Startup Pavilion.
+   TWO CTAs:
+   - "Start Application" → opens the pavilion form in a new tab
+   - "Pay for Approved Application" → opens the deposit page in a new tab */
 
 export default function PavilionCard({ isDark, textMain, textMuted, border, cardBg }) {
   return (
@@ -19,8 +20,43 @@ export default function PavilionCard({ isDark, textMain, textMuted, border, card
           gap: 32px;
           align-items: center;
         }
-        .pavilion-card-btn {
+        .pavilion-card-cta-group {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          flex-shrink: 0;
+          min-width: 220px;
+        }
+        .pavilion-cta {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 16px 24px;
+          border-radius: 14px;
+          font-family: 'Orbitron', sans-serif;
+          font-size: 0.7rem;
+          font-weight: 800;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          text-decoration: none;
           white-space: nowrap;
+          transition: transform 0.15s ease, box-shadow 0.2s ease;
+        }
+        .pavilion-cta:hover { transform: translateY(-1px); }
+        .pavilion-cta-primary {
+          background: linear-gradient(135deg, #7a3fd1, #f5a623);
+          color: #fff;
+          box-shadow: 0 4px 20px rgba(122,63,209,0.3);
+        }
+        .pavilion-cta-secondary {
+          background: transparent;
+          border: 1.5px solid rgba(63,209,156,0.45);
+          color: ${isDark ? "#3fd19c" : "#2a9968"};
+        }
+        .pavilion-cta-secondary:hover {
+          background: rgba(63,209,156,0.08);
+          border-color: rgba(63,209,156,0.7);
         }
         @media (max-width: 768px) {
           .pavilion-card {
@@ -28,59 +64,39 @@ export default function PavilionCard({ isDark, textMain, textMuted, border, card
             gap: 20px !important;
             text-align: left !important;
           }
-          .pavilion-card-btn {
-            width: 100% !important;
-            justify-content: center !important;
+          .pavilion-card-cta-group {
+            width: 100%;
+            min-width: 0;
+          }
+          .pavilion-cta {
+            width: 100%;
             white-space: normal !important;
           }
           .pavilion-card-title {
             font-size: 1.4rem !important;
             line-height: 1.2 !important;
           }
-          .pavilion-card-badges {
-            gap: 8px !important;
-          }
-          .pavilion-card-desc {
-            font-size: 0.92rem !important;
-          }
+          .pavilion-card-desc { font-size: 0.92rem !important; }
         }
       `}</style>
 
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <motion.a
-          href="/exhibit/india-pavilion"
-          target="_blank"
-          rel="noopener noreferrer"
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
-          whileHover={{ y: -3 }}
           className="pavilion-card"
           style={{
             background: cardBg,
             border: "1px solid " + border,
             borderRadius: 24,
             padding: "clamp(24px, 4vw, 44px)",
-            textDecoration: "none",
-            transition: "border-color 0.3s, box-shadow 0.3s",
             boxShadow: isDark ? "0 4px 32px rgba(122,63,209,0.08)" : "0 4px 24px rgba(122,63,209,0.05)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "rgba(245,166,35,0.4)";
-            e.currentTarget.style.boxShadow = isDark
-              ? "0 8px 40px rgba(122,63,209,0.20)"
-              : "0 8px 32px rgba(122,63,209,0.15)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = border;
-            e.currentTarget.style.boxShadow = isDark
-              ? "0 4px 32px rgba(122,63,209,0.08)"
-              : "0 4px 24px rgba(122,63,209,0.05)";
           }}
         >
           <div style={{ minWidth: 0 }}>
-            <div className="pavilion-card-badges" style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
               <span style={{
                 display: "inline-block",
                 background: "rgba(245,166,35,0.12)",
@@ -125,28 +141,34 @@ export default function PavilionCard({ isDark, textMain, textMuted, border, card
             </p>
           </div>
 
-          <div className="pavilion-card-btn" style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 10,
-            padding: "16px 28px",
-            borderRadius: 14,
-            background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
-            color: "#fff",
-            fontFamily: "'Orbitron', sans-serif",
-            fontSize: "0.72rem", fontWeight: 800,
-            letterSpacing: "1px", textTransform: "uppercase",
-            flexShrink: 0,
-            boxShadow: "0 4px 20px rgba(122,63,209,0.3)",
-            textAlign: "center",
-          }}>
-            Start Application
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-              <path d="M7 17L17 7M17 7H8M17 7v9" />
-            </svg>
+          {/* CTA group */}
+          <div className="pavilion-card-cta-group">
+            <a
+              href="/exhibit/india-pavilion"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pavilion-cta pavilion-cta-primary"
+            >
+              Start Application
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M7 17L17 7M17 7H8M17 7v9" />
+              </svg>
+            </a>
+
+            <a
+              href="/exhibit/india-pavilion/pay"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pavilion-cta pavilion-cta-secondary"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              Pay for Approved Application
+            </a>
           </div>
-        </motion.a>
+        </motion.div>
       </div>
     </section>
   );

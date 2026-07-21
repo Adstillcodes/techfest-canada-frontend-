@@ -97,13 +97,46 @@ export default function PavilionPayment() {
     return () => obs.disconnect();
   }, []);
 
-  // Handle success redirect from Stripe
+  // Handle success redirect from Stripe → fire confirmation emails
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("success") === "true") {
-      setShowSuccessModal(true);
-      window.history.replaceState(null, "", window.location.pathname);
+    if (params.get("success") !== "true") return;
+
+    // Show the success UI immediately
+    setShowSuccessModal(true);
+
+    // Recover the payment details we stashed before redirecting to Stripe
+    let stashed = null;
+    try {
+      const raw = sessionStorage.getItem("pavilionPaymentInfo");
+      if (raw) stashed = JSON.parse(raw);
+    } catch (e) {
+      console.error("Could not read pavilion payment stash:", e);
     }
+
+    if (stashed?.contactEmail && stashed?.companyName) {
+      // Fire confirmation emails — non-blocking, don't hold up the UI
+      fetch(`${API}/pavilion/payment-confirmation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          companyName: stashed.companyName,
+          contactEmail: stashed.contactEmail,
+          applicationRef: stashed.applicationRef || "N/A",
+        }),
+      })
+        .then(() => {
+          sessionStorage.removeItem("pavilionPaymentInfo");
+        })
+        .catch((err) => {
+          console.error("Payment confirmation email trigger failed:", err);
+          // Don't show error to user — payment succeeded, sales team will still see the Stripe notification
+        });
+    } else {
+      console.warn("No stashed payment info found — confirmation emails may not have been sent");
+    }
+
+    window.history.replaceState(null, "", window.location.pathname);
   }, []);
 
   const bg = dark ? "#06020f" : "#ffffff";
@@ -122,6 +155,18 @@ export default function PavilionPayment() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) return setError("Please enter a valid email.");
 
     setLoading(true);
+
+    // CRITICAL: stash the details so we can fire confirmation emails after Stripe redirect
+    try {
+      sessionStorage.setItem("pavilionPaymentInfo", JSON.stringify({
+        companyName: companyName.trim(),
+        contactEmail: contactEmail.trim(),
+        applicationRef: applicationRef.trim() || "N/A",
+      }));
+    } catch (e) {
+      console.warn("Could not stash pavilion payment info:", e);
+    }
+
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`${API}/payments/create-checkout`, {
@@ -334,7 +379,7 @@ export default function PavilionPayment() {
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
-                Secure payment via Stripe · 13% HST will be added at checkout
+                Secure payment via Stripe · 13% HST included
               </div>
             </div>
 
@@ -409,7 +454,7 @@ export default function PavilionPayment() {
                     Thank you for your deposit.
                   </p>
                   <p style={{ opacity: 0.65, marginTop: 8, fontSize: "0.9rem", lineHeight: 1.55 }}>
-                    Your India Pavilion booking is confirmed. Check your email for the receipt. Our team will follow up with next steps shortly.
+                    Your India Pavilion booking is confirmed. A receipt has been sent to your email. Our team will follow up with next steps shortly.
                   </p>
                 </div>
 

@@ -22,6 +22,7 @@ import AdminRoute from "./components/AdminRoute";
 import Sponsor from "./pages/Sponsor";
 import Exhibit from "./pages/Exhibit";
 import IndiaPavilion from "./pages/IndiaPavilion";
+import PavilionPayment from "./pages/PavilionPayment";
 import Brochures from "./pages/Brochures";
 import Venue from "./pages/Venue";
 import ScrollToTop from "./components/ScrollToTop";
@@ -32,7 +33,6 @@ import Partners2026 from "./pages/partners2026";
 import Organizers from "./pages/Organizers";
 
 /* ================= SYSTEM THEME DETECTOR ================= */
-
 function applySystemTheme() {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const theme = prefersDark ? "dark" : "light";
@@ -55,7 +55,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/programme" element={<Programme />} />
         <Route path="/speakers" element={<Speakers />} />
-        <Route path="/speakers/:slug" element={<SpeakerProfile />} />
+        <Route path="/speakers/:id" element={<SpeakerProfile />} />
         <Route path="/sponsors" element={<Sponsors />} />
         <Route path="/tickets" element={<Tickets />} />
         <Route path="/tickets/checkout" element={<Checkout />} />
@@ -86,6 +86,7 @@ function App() {
         <Route path="/sponsor" element={<Sponsor />} />
         <Route path="/exhibit" element={<Exhibit />} />
         <Route path="/exhibit/india-pavilion" element={<IndiaPavilion />} />
+        <Route path="/exhibit/india-pavilion/pay" element={<PavilionPayment />} />
         <Route path="/brochures" element={<Brochures />} />
         <Route path="/venue" element={<Venue />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />

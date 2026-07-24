@@ -102,10 +102,8 @@ export default function PavilionPayment() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("success") !== "true") return;
 
-    // Show the success UI immediately
     setShowSuccessModal(true);
 
-    // Recover the payment details we stashed before redirecting to Stripe
     let stashed = null;
     try {
       const raw = sessionStorage.getItem("pavilionPaymentInfo");
@@ -115,7 +113,6 @@ export default function PavilionPayment() {
     }
 
     if (stashed?.contactEmail && stashed?.companyName) {
-      // Fire confirmation emails — non-blocking, don't hold up the UI
       fetch(`${API}/pavilion/payment-confirmation`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -130,7 +127,6 @@ export default function PavilionPayment() {
         })
         .catch((err) => {
           console.error("Payment confirmation email trigger failed:", err);
-          // Don't show error to user — payment succeeded, sales team will still see the Stripe notification
         });
     } else {
       console.warn("No stashed payment info found — confirmation emails may not have been sent");
@@ -156,7 +152,6 @@ export default function PavilionPayment() {
 
     setLoading(true);
 
-    // CRITICAL: stash the details so we can fire confirmation emails after Stripe redirect
     try {
       sessionStorage.setItem("pavilionPaymentInfo", JSON.stringify({
         companyName: companyName.trim(),
@@ -178,7 +173,7 @@ export default function PavilionPayment() {
         body: JSON.stringify({
           type: "pavilion-deposit",
           tier: "pavilion-deposit",
-          amount: 50000, // $500.00 in cents
+          amount: 50000,
           metadata: {
             companyName: companyName.trim(),
             contactEmail: contactEmail.trim(),
@@ -284,7 +279,7 @@ export default function PavilionPayment() {
                   }}>CAD</span>
                 </div>
                 <p style={{ fontSize: "0.7rem", color: textLight, marginTop: 6, letterSpacing: "0.3px" }}>
-                  Non-refundable · Applied towards final booth balance
+                  + 13% HST · Non-refundable · Applied towards final booth balance
                 </p>
               </div>
 
@@ -362,7 +357,7 @@ export default function PavilionPayment() {
               >
                 {loading ? "Redirecting to Stripe…" : (
                   <>
-                    Pay $500 Securely
+                    Pay $500 + HST Securely
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
@@ -374,12 +369,13 @@ export default function PavilionPayment() {
               <div style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
                 gap: 6, marginTop: 16, color: textLight, fontSize: "0.72rem",
+                textAlign: "center",
               }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
-                Secure payment via Stripe · 13% HST included
+                Secure payment via Stripe · 13% HST added at checkout
               </div>
             </div>
 

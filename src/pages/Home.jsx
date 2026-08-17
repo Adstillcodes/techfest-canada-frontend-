@@ -134,8 +134,8 @@ function RegisterWidget() {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: 10,
-        padding: "10px 20px 10px 12px",
+        gap: 9,
+        padding: "8px 16px 8px 9px",
         borderRadius: 999,
         textDecoration: "none",
         background: "rgba(255,255,255,0.08)",
@@ -153,14 +153,14 @@ function RegisterWidget() {
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          width: 30,
-          height: 30,
+          width: 26,
+          height: 26,
           borderRadius: "50%",
           background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
           flexShrink: 0,
         }}
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 10a2 2 0 0 0 2 2v2a2 2 0 0 1-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2a2 2 0 0 1 0-4V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2z" />
         </svg>
       </span>
@@ -168,8 +168,8 @@ function RegisterWidget() {
         style={{
           fontFamily: "'Orbitron', sans-serif",
           fontWeight: 700,
-          fontSize: "0.78rem",
-          letterSpacing: "1px",
+          fontSize: "0.72rem",
+          letterSpacing: "0.9px",
           textTransform: "uppercase",
           whiteSpace: "nowrap",
           flexShrink: 0,
@@ -233,7 +233,7 @@ export default function Home() {
       <Navbar />
 
       {/* HERO UPPER — always dark regardless of theme */}
-      <section style={{ position: "relative", overflow: "hidden", background: "#06020f", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+      <section style={{ position: "relative", overflow: "hidden", background: "#06020f", minHeight: "76vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
         <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden" }}>
           <video autoPlay muted loop playsInline style={{ position: "absolute", top: "50%", left: "50%", minWidth: "100%", minHeight: "100%", width: "auto", height: "auto", transform: "translate(-50%, -50%)", objectFit: "cover" }}>
             <source src="/hero-bg.mp4" type="video/mp4" />
@@ -241,13 +241,13 @@ export default function Home() {
           <div style={{ position: "absolute", inset: 0, background: "rgba(6,2,15,0.65)" }} />
         </div>
         <motion.div variants={containerVariants} initial="hidden" animate="visible"
-          style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 6%", maxWidth: 920, width: "100%" }}
+          style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 6%", maxWidth: 660, width: "100%" }}
         >
-          <motion.div variants={itemBlur} style={{ marginBottom: "2.2rem" }}>
+          <motion.div variants={itemBlur} style={{ marginBottom: "1.8rem" }}>
             <img
               src="/Tech_Festival_Canada_Logo_Dark_Transparent.png"
               alt="The Tech Festival Canada"
-              style={{ width: "100%", maxWidth: 980, height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 50px rgba(155,135,245,0.22))" }}
+              style={{ width: "100%", maxWidth: 620, height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 50px rgba(155,135,245,0.22))" }}
             />
           </motion.div>
           <RegisterWidget />

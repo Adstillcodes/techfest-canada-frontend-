@@ -134,8 +134,8 @@ function RegisterWidget() {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: 9,
-        padding: "8px 16px 8px 9px",
+        gap: 14,
+        padding: "14px 32px 14px 14px",
         borderRadius: 999,
         textDecoration: "none",
         background: "rgba(255,255,255,0.08)",
@@ -153,23 +153,23 @@ function RegisterWidget() {
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          width: 26,
-          height: 26,
+          width: 40,
+          height: 40,
           borderRadius: "50%",
           background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
           flexShrink: 0,
         }}
       >
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
           <path d="M3 10a2 2 0 0 0 2 2v2a2 2 0 0 1-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2a2 2 0 0 1 0-4V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2z" />
         </svg>
       </span>
       <span
         style={{
           fontFamily: "'Orbitron', sans-serif",
-          fontWeight: 700,
-          fontSize: "0.72rem",
-          letterSpacing: "0.9px",
+          fontWeight: 800,
+          fontSize: "1rem",
+          letterSpacing: "1.4px",
           textTransform: "uppercase",
           whiteSpace: "nowrap",
           flexShrink: 0,
@@ -177,7 +177,7 @@ function RegisterWidget() {
       >
         Register Now
       </span>
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: -2 }}>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: -4 }}>
         <path d="M9 6l6 6-6 6" />
       </svg>
     </motion.a>
@@ -234,9 +234,10 @@ export default function Home() {
         .community-marquee h3,
         .community-marquee h4,
         .community-marquee p {
-          font-size: clamp(1.15rem, 2.6vw, 1.85rem) !important;
-          letter-spacing: 0.34em !important;
-          line-height: 1.3 !important;
+          font-size: clamp(1.6rem, 4vw, 2.9rem) !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.26em !important;
+          line-height: 1.25 !important;
         }
       `}</style>
 

@@ -197,7 +197,7 @@ function PassCard({ meta, inventoryItem, onPurchase, dark, inventoryLoaded }) {
   const cardBorder = dark ? "1px solid rgba(255,255,255,0.10)" : "1px solid rgba(122,63,209,0.14)";
 
   return (
-    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+    <div data-pass-card onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
       style={{ position:"relative", flex: soldOut?"0 1 250px":"1 1 260px", maxWidth: soldOut?285:340, minWidth: soldOut?215:240, alignSelf: soldOut?"center":"stretch", borderRadius:20, padding: soldOut?"24px 20px 22px":"32px 26px 28px", display:"flex", flexDirection:"column", backdropFilter:"blur(18px)", WebkitBackdropFilter:"blur(18px)", background: meta.featured?(dark?"linear-gradient(135deg, rgba(122,63,209,0.28) 0%, rgba(245,166,35,0.12) 100%)":"linear-gradient(135deg, rgba(122,63,209,0.12) 0%, rgba(245,166,35,0.08) 100%)"):cardBg, border: meta.featured?(dark?"1px solid rgba(122,63,209,0.55)":"1px solid rgba(122,63,209,0.40)"):cardBorder, boxShadow: meta.featured?(dark?"0 8px 48px rgba(122,63,209,0.25)":"0 8px 32px rgba(122,63,209,0.18)"):(dark?"0 4px 32px rgba(0,0,0,0.35)":"0 4px 24px rgba(122,63,209,0.08)"), transform: meta.featured?"scale(1.04)":soldOut?"scale(0.95)":hovered?"scale(1.02)":"scale(1)", transition:"transform 0.25s ease, box-shadow 0.25s ease", zIndex: meta.featured?2:1, opacity: soldOut?0.7:1 }}>
 
       {meta.featured && <div style={{ position:"absolute", top:-14, left:"50%", transform:"translateX(-50%)", background:"linear-gradient(90deg, #7a3fd1, #f5a623)", color:"white", fontSize:"0.62rem", fontWeight:800, letterSpacing:"1.4px", textTransform:"uppercase", padding:"5px 16px", borderRadius:999, whiteSpace:"nowrap", fontFamily:"'Orbitron', sans-serif" }}>Most Popular</div>}
@@ -244,6 +244,51 @@ export default function Tickets() {
   const [dark, setDark] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  const passes = ["connect","influence","power"];
+  const passLabels = { connect:"Connect", influence:"Influence", power:"Power" };
+
+  /* ── Mobile swipe rail ── */
+  const railRef = useRef(null);
+  const [activeCard, setActiveCard] = useState(0);
+
+  const cardStep = () => {
+    const el = railRef.current;
+    if (!el) return 0;
+    const first = el.querySelector("[data-pass-card]");
+    if (!first) return 0;
+    return first.getBoundingClientRect().width + 14; // card width + rail gap
+  };
+
+  const goToCard = (i, smooth = true) => {
+    const el = railRef.current;
+    const step = cardStep();
+    if (!el || !step) return;
+    el.scrollTo({ left: i * step, behavior: smooth ? "smooth" : "auto" });
+  };
+
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const step = cardStep();
+      if (!step) return;
+      const i = Math.round(el.scrollLeft / step);
+      setActiveCard(Math.min(passes.length - 1, Math.max(0, i)));
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // On mobile, open on the first pass that's actually purchasable
+  useEffect(() => {
+    if (typeof window === "undefined" || window.innerWidth > 768) return;
+    const firstAvailable = passes.findIndex((p) => !PASS_META[p].soldOut);
+    if (firstAvailable > 0) {
+      const t = setTimeout(() => { goToCard(firstAvailable, false); setActiveCard(firstAvailable); }, 60);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
   useEffect(() => { setDark(document.body.classList.contains("dark-mode")); const obs = new MutationObserver(() => setDark(document.body.classList.contains("dark-mode"))); obs.observe(document.body, { attributes:true, attributeFilter:["class"] }); return () => obs.disconnect(); }, []);
 
   useEffect(() => { const params = new URLSearchParams(window.location.search); if (params.get("success") === "true") { setShowSuccessModal(true); window.history.replaceState(null, "", window.location.pathname); } }, []);
@@ -258,9 +303,6 @@ export default function Tickets() {
     navigate(`/tickets/checkout?tier=${tier}`);
   };
 
-  const passes = ["connect","influence","power"];
-  const passLabels = { connect:"Connect", influence:"Influence", power:"Power" };
-
   const allFeatures = ["2x Day Conference Access","Expo Floor Access","Networking Breaks","2x CxO Breakfasts","2x Luncheons","1x Gala Dinner & Networking Reception","1x Awards Night"];
   const passFeatureMap = {
     connect:   [true, true, true, false, false, false, false],
@@ -274,7 +316,59 @@ export default function Tickets() {
 
   return (
     <><Navbar />
-      <style>{`@keyframes ttfcShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+      <style>{`
+        @keyframes ttfcShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Desktop: unchanged flex row */
+        .pass-rail {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+          justify-content: center;
+          align-items: stretch;
+          padding: 0 24px 80px;
+          max-width: 1260px;
+          margin: 0 auto;
+        }
+        .pass-dots { display: none; }
+        .pass-swipe-hint { display: none; }
+
+        /* Mobile: one-card-at-a-time swipe rail */
+        @media (max-width: 768px) {
+          .pass-rail {
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-padding: 0 8vw;
+            gap: 14px;
+            padding: 24px 8vw 14px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+          }
+          .pass-rail::-webkit-scrollbar { display: none; }
+          .pass-rail > [data-pass-card] {
+            flex: 0 0 84vw !important;
+            min-width: 84vw !important;
+            max-width: 84vw !important;
+            align-self: stretch !important;
+            transform: none !important;
+            scroll-snap-align: center;
+          }
+          .pass-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 0 24px 10px;
+          }
+          .pass-swipe-hint {
+            display: block;
+            text-align: center;
+            padding: 0 24px 70px;
+          }
+        }
+      `}</style>
       <div style={{ minHeight:"100vh", background:bg, color:textMain, position:"relative", transition:"background 0.3s ease" }}>
         <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:0, background: dark?"radial-gradient(ellipse 60% 50% at 20% 30%, rgba(122,63,209,0.10) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 80% 70%, rgba(245,166,35,0.06) 0%, transparent 70%)":"radial-gradient(ellipse 60% 50% at 20% 30%, rgba(122,63,209,0.05) 0%, transparent 70%)" }} />
         <div style={{ position:"relative", zIndex:1, paddingBottom:"1px" }}>
@@ -284,8 +378,36 @@ export default function Tickets() {
             <p style={{ fontSize:"1rem", color:textMuted, lineHeight:1.75, textAlign:"justify", hyphens:"auto" }}>Whether you are coming to learn, connect, explore partnerships, or experience the event at the highest level, The Tech Festival Canada offers a pass designed for every kind of delegate.</p>
           </div>
 
-          <div style={{ display:"flex", flexWrap:"wrap", gap:20, justifyContent:"center", alignItems:"stretch", padding:"0 24px 80px", maxWidth:1260, margin:"0 auto" }}>
+          <div ref={railRef} className="pass-rail">
             {passes.map(key => <PassCard key={key} meta={PASS_META[key]} inventoryItem={getTier(key)} onPurchase={handlePurchase} dark={dark} inventoryLoaded={inventoryLoaded} />)}
+          </div>
+
+          {/* Mobile-only: dots + swipe hint */}
+          <div className="pass-dots">
+            {passes.map((p, i) => (
+              <button
+                key={p}
+                onClick={() => { goToCard(i); setActiveCard(i); }}
+                aria-label={`Show ${passLabels[p]} Pass`}
+                style={{
+                  width: i === activeCard ? 22 : 8,
+                  height: 8,
+                  borderRadius: 999,
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  background: i === activeCard
+                    ? "linear-gradient(90deg, #7a3fd1, #f5a623)"
+                    : (dark ? "rgba(255,255,255,0.20)" : "rgba(13,5,32,0.18)"),
+                  transition: "width 0.25s ease, background 0.25s ease",
+                }}
+              />
+            ))}
+          </div>
+          <div className="pass-swipe-hint">
+            <span style={{ fontFamily:"'Orbitron', sans-serif", fontSize:"0.6rem", fontWeight:700, letterSpacing:"1.4px", textTransform:"uppercase", color: dark?"rgba(255,255,255,0.32)":"rgba(13,5,32,0.35)" }}>
+              Swipe to compare passes
+            </span>
           </div>
 
           <div style={{ maxWidth:900, margin:"0 auto 80px", padding:"0 24px" }}>

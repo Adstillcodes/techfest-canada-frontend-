@@ -228,6 +228,16 @@ export default function Home() {
         @media (min-width: 641px) {
           .hero-sub { max-width: 920px !important; width: 100% !important; }
         }
+        /* Enlarge the "Our Community" title rendered by SpeakerMarquee */
+        .community-marquee h1,
+        .community-marquee h2,
+        .community-marquee h3,
+        .community-marquee h4,
+        .community-marquee p {
+          font-size: clamp(1.15rem, 2.6vw, 1.85rem) !important;
+          letter-spacing: 0.34em !important;
+          line-height: 1.3 !important;
+        }
       `}</style>
 
       <Navbar />
@@ -257,7 +267,9 @@ export default function Home() {
 
       {/* OUR COMMUNITY (logo marquee) + 2026 SPEAKERS — between the Register pill and MEET BUILD SCALE */}
       <div id="our-community" style={{ background: bg }}>
-        <SpeakerMarquee dark={dark} title="Our Community" />
+        <div className="community-marquee">
+          <SpeakerMarquee dark={dark} title="Our Community" />
+        </div>
         <CommunityCarousel dark={dark} limit={14} showAllTo="/speakers" />
       </div>
 

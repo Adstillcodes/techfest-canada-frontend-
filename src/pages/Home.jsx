@@ -8,6 +8,40 @@ import OnboardingSurvey from "../components/OnboardingSurvey";
 import { motion, useInView } from "framer-motion";
 import SponsorMarquee from "../components/SponsorMarquee";
 import NewsletterBar from "../components/NewsletterBar";
+import SpeakersCarousel from "../components/SpeakersCarousel";
+
+/* ─────────────────────────────────────────────
+   "Our Community" data.
+   Swap this for your Sanity query result when ready —
+   the carousel only needs: name, title, company, image,
+   plus optional bio / linkedin / twitter / github / website.
+───────────────────────────────────────────── */
+var communityMembers = [
+  {
+    name: "Speaker Name",
+    title: "Chief Technology Officer",
+    company: "Company Inc.",
+    image: "/speakers/placeholder-1.jpg",
+    bio: "Short one-paragraph bio. Replace this copy with the speaker's background, focus areas, and what they'll bring to the festival stage.",
+    linkedin: "https://linkedin.com/in/",
+  },
+  {
+    name: "Speaker Name",
+    title: "Founder & CEO",
+    company: "Company Inc.",
+    image: "/speakers/placeholder-2.jpg",
+    bio: "Short one-paragraph bio. Replace this copy with the speaker's background, focus areas, and what they'll bring to the festival stage.",
+    linkedin: "https://linkedin.com/in/",
+  },
+  {
+    name: "Speaker Name",
+    title: "Director of Innovation",
+    company: "Company Inc.",
+    image: "/speakers/placeholder-3.jpg",
+    bio: "Short one-paragraph bio. Replace this copy with the speaker's background, focus areas, and what they'll bring to the festival stage.",
+    linkedin: "https://linkedin.com/in/",
+  },
+];
 
 var containerVariants = {
   hidden: {},
@@ -162,7 +196,6 @@ function RegisterWidget() {
           <path d="M3 10a2 2 0 0 0 2 2v2a2 2 0 0 1-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2a2 2 0 0 1 0-4V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2z" />
         </svg>
       </span>
-
       <span
         style={{
           fontFamily: "'Orbitron', sans-serif",
@@ -176,9 +209,7 @@ function RegisterWidget() {
       >
         Register Now
       </span>
-
       <span style={{ width: 1, height: 16, background: "rgba(255,255,255,0.25)", flexShrink: 0 }} />
-
       <span
         style={{
           fontFamily: "'Archivo', sans-serif",
@@ -193,7 +224,6 @@ function RegisterWidget() {
       >
         The Westin Harbour Castle, Toronto
       </span>
-
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: -2 }}>
         <path d="M9 6l6 6-6 6" />
       </svg>
@@ -257,7 +287,6 @@ export default function Home() {
           </video>
           <div style={{ position: "absolute", inset: 0, background: "rgba(6,2,15,0.65)" }} />
         </div>
-
         <motion.div variants={containerVariants} initial="hidden" animate="visible"
           style={{ position: "relative", zIndex: 5, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 6%", maxWidth: 920, width: "100%" }}
         >
@@ -268,17 +297,23 @@ export default function Home() {
               style={{ width: "100%", maxWidth: 980, height: "auto", objectFit: "contain", filter: "drop-shadow(0 0 50px rgba(155,135,245,0.22))" }}
             />
           </motion.div>
-
           <RegisterWidget />
         </motion.div>
-
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 80, zIndex: 4, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
       </section>
+
+      {/* OUR COMMUNITY — sits between the Register pill and MEET BUILD SCALE */}
+      <div id="our-community" style={{ background: bg }}>
+        <SpeakersCarousel
+          speakers={communityMembers}
+          titleLead="Our"
+          titleAccent="Community"
+        />
+      </div>
 
       {/* HERO LOWER */}
       <section id="hero-lower" style={{ position: "relative", background: bg, overflow: "hidden", padding: "6rem 5% 8rem" }}>
         <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-
           <TextReveal
             text="MEET BUILD SCALE"
             colors={[dark ? "#ffffff" : "#0d0520", accent, "var(--brand-orange, #f5a623)"]}
@@ -295,7 +330,6 @@ export default function Home() {
       </div>
 
       <SponsorMarquee dark={dark} />
-
       <div style={{ height: "4rem", background: dark ? "#06020f" : "#ffffff" }} />
       <NewsletterBar dark={dark} />
       <Footer />

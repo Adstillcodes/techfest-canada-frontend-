@@ -134,8 +134,8 @@ function RegisterWidget() {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: 12,
-        padding: "10px 26px 10px 12px",
+        gap: 10,
+        padding: "10px 20px 10px 12px",
         borderRadius: 999,
         textDecoration: "none",
         background: "rgba(255,255,255,0.08)",
@@ -176,21 +176,6 @@ function RegisterWidget() {
         }}
       >
         Register Now
-      </span>
-      <span style={{ width: 1, height: 16, background: "rgba(255,255,255,0.25)", flexShrink: 0 }} />
-      <span
-        style={{
-          fontFamily: "'Archivo', sans-serif",
-          fontWeight: 500,
-          fontSize: "0.78rem",
-          letterSpacing: "0.2px",
-          color: "rgba(255,255,255,0.72)",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        The Westin Harbour Castle, Toronto
       </span>
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: -2 }}>
         <path d="M9 6l6 6-6 6" />

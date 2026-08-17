@@ -461,7 +461,7 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
   };
 
   return (
-    <section id="our-community" style={{ padding: "clamp(3.5rem, 7vw, 5.5rem) 0 clamp(3rem, 6vw, 4.5rem)" }}>
+    <section id="speakers-2026" style={{ padding: "clamp(2.5rem, 5vw, 4rem) 0 clamp(3rem, 6vw, 4.5rem)" }}>
       <style>{"\
         .community-rail {\
           display: grid;\
@@ -502,18 +502,12 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
           }}
         >
           <div>
-            <p style={{
-              fontFamily: "'Orbitron', sans-serif", fontSize: "0.7rem", fontWeight: 800,
-              letterSpacing: "3px", textTransform: "uppercase", color: accent, marginBottom: 10,
-            }}>
-              TTFC 2026
-            </p>
             <h2 style={{
               fontFamily: "'Orbitron', sans-serif",
               fontSize: "clamp(1.8rem, 4.5vw, 3rem)",
               fontWeight: 900, lineHeight: 1.1, letterSpacing: "-0.5px", color: text,
             }}>
-              Our <span className="community-gradient-text" style={{ "--grad-start": accent }}>Community</span>
+              2026 <span className="community-gradient-text" style={{ "--grad-start": accent }}>Speakers</span>
             </h2>
           </div>
 

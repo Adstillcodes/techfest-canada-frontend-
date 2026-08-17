@@ -9,6 +9,7 @@ import { motion, useInView } from "framer-motion";
 import SponsorMarquee from "../components/SponsorMarquee";
 import NewsletterBar from "../components/NewsletterBar";
 import CommunityCarousel from "../components/CommunityCarousel";
+import SpeakerMarquee from "../components/SpeakerMarquee";
 
 var containerVariants = {
   hidden: {},
@@ -269,8 +270,9 @@ export default function Home() {
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 80, zIndex: 4, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
       </section>
 
-      {/* OUR COMMUNITY — between the Register pill and MEET BUILD SCALE */}
-      <div style={{ background: bg }}>
+      {/* OUR COMMUNITY (logo marquee) + 2026 SPEAKERS — between the Register pill and MEET BUILD SCALE */}
+      <div id="our-community" style={{ background: bg }}>
+        <SpeakerMarquee dark={dark} title="Our Community" />
         <CommunityCarousel dark={dark} limit={14} showAllTo="/speakers" />
       </div>
 

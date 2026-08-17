@@ -8,40 +8,7 @@ import OnboardingSurvey from "../components/OnboardingSurvey";
 import { motion, useInView } from "framer-motion";
 import SponsorMarquee from "../components/SponsorMarquee";
 import NewsletterBar from "../components/NewsletterBar";
-import SpeakersCarousel from "../components/SpeakersCarousel";
-
-/* ─────────────────────────────────────────────
-   "Our Community" data.
-   Swap this for your Sanity query result when ready —
-   the carousel only needs: name, title, company, image,
-   plus optional bio / linkedin / twitter / github / website.
-───────────────────────────────────────────── */
-var communityMembers = [
-  {
-    name: "Speaker Name",
-    title: "Chief Technology Officer",
-    company: "Company Inc.",
-    image: "/speakers/placeholder-1.jpg",
-    bio: "Short one-paragraph bio. Replace this copy with the speaker's background, focus areas, and what they'll bring to the festival stage.",
-    linkedin: "https://linkedin.com/in/",
-  },
-  {
-    name: "Speaker Name",
-    title: "Founder & CEO",
-    company: "Company Inc.",
-    image: "/speakers/placeholder-2.jpg",
-    bio: "Short one-paragraph bio. Replace this copy with the speaker's background, focus areas, and what they'll bring to the festival stage.",
-    linkedin: "https://linkedin.com/in/",
-  },
-  {
-    name: "Speaker Name",
-    title: "Director of Innovation",
-    company: "Company Inc.",
-    image: "/speakers/placeholder-3.jpg",
-    bio: "Short one-paragraph bio. Replace this copy with the speaker's background, focus areas, and what they'll bring to the festival stage.",
-    linkedin: "https://linkedin.com/in/",
-  },
-];
+import CommunityCarousel from "../components/CommunityCarousel";
 
 var containerVariants = {
   hidden: {},
@@ -302,13 +269,9 @@ export default function Home() {
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 80, zIndex: 4, background: "linear-gradient(to bottom, transparent, " + bg + ")", pointerEvents: "none" }} />
       </section>
 
-      {/* OUR COMMUNITY — sits between the Register pill and MEET BUILD SCALE */}
-      <div id="our-community" style={{ background: bg }}>
-        <SpeakersCarousel
-          speakers={communityMembers}
-          titleLead="Our"
-          titleAccent="Community"
-        />
+      {/* OUR COMMUNITY — between the Register pill and MEET BUILD SCALE */}
+      <div style={{ background: bg }}>
+        <CommunityCarousel dark={dark} limit={14} showAllTo="/speakers" />
       </div>
 
       {/* HERO LOWER */}

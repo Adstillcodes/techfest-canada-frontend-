@@ -121,82 +121,83 @@ function CTAReveal(props) {
 }
 
 /* Sleek rounded pill widget — sits directly beneath the logo, over the video.
-   Dates + venue sit below it as a quiet second line. */
+   Venue is folded into the pill itself, right of a divider. */
 function RegisterWidget() {
   return (
-    <motion.div variants={itemBlur} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
-      <motion.a
-        href="/tickets"
-        whileHover={{ scale: 1.045, y: -2 }}
-        whileTap={{ scale: 0.97 }}
+    <motion.a
+      href="/tickets"
+      variants={itemBlur}
+      whileHover={{ scale: 1.03, y: -2 }}
+      whileTap={{ scale: 0.97 }}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "10px 26px 10px 12px",
+        borderRadius: 999,
+        textDecoration: "none",
+        background: "rgba(255,255,255,0.08)",
+        border: "1px solid rgba(255,255,255,0.22)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)",
+        color: "#ffffff",
+        cursor: "pointer",
+        maxWidth: "92vw",
+      }}
+    >
+      <span
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: 10,
-          padding: "13px 28px 13px 14px",
-          borderRadius: 999,
-          textDecoration: "none",
-          background: "rgba(255,255,255,0.08)",
-          border: "1px solid rgba(255,255,255,0.22)",
-          backdropFilter: "blur(18px)",
-          WebkitBackdropFilter: "blur(18px)",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15)",
-          color: "#ffffff",
-          cursor: "pointer",
-        }}
-      >
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 30,
-            height: 30,
-            borderRadius: "50%",
-            background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
-            flexShrink: 0,
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 10a2 2 0 0 0 2 2v2a2 2 0 0 1-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2a2 2 0 0 1 0-4V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2z" />
-          </svg>
-        </span>
-        <span
-          style={{
-            fontFamily: "'Orbitron', sans-serif",
-            fontWeight: 700,
-            fontSize: "0.78rem",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
-            whiteSpace: "nowrap",
-          }}
-        >
-          Register Now
-        </span>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: -2 }}>
-          <path d="M9 6l6 6-6 6" />
-        </svg>
-      </motion.a>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          fontFamily: "'Archivo', sans-serif",
-          fontSize: "0.82rem",
-          fontWeight: 500,
-          letterSpacing: "0.3px",
-          color: "rgba(255,255,255,0.68)",
-          flexWrap: "wrap",
           justifyContent: "center",
+          width: 30,
+          height: 30,
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
+          flexShrink: 0,
         }}
       >
-        <span style={{ whiteSpace: "nowrap" }}>26 – 27 October 2026</span>
-        <span style={{ width: 3, height: 3, borderRadius: "50%", background: "rgba(255,255,255,0.4)", flexShrink: 0 }} />
-        <span style={{ whiteSpace: "nowrap" }}>The Westin Harbour Castle, Toronto</span>
-      </div>
-    </motion.div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 10a2 2 0 0 0 2 2v2a2 2 0 0 1-2 2v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2a2 2 0 0 1 0-4V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2z" />
+        </svg>
+      </span>
+
+      <span
+        style={{
+          fontFamily: "'Orbitron', sans-serif",
+          fontWeight: 700,
+          fontSize: "0.78rem",
+          letterSpacing: "1px",
+          textTransform: "uppercase",
+          whiteSpace: "nowrap",
+          flexShrink: 0,
+        }}
+      >
+        Register Now
+      </span>
+
+      <span style={{ width: 1, height: 16, background: "rgba(255,255,255,0.25)", flexShrink: 0 }} />
+
+      <span
+        style={{
+          fontFamily: "'Archivo', sans-serif",
+          fontWeight: 500,
+          fontSize: "0.78rem",
+          letterSpacing: "0.2px",
+          color: "rgba(255,255,255,0.72)",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        The Westin Harbour Castle, Toronto
+      </span>
+
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.65)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginLeft: -2 }}>
+        <path d="M9 6l6 6-6 6" />
+      </svg>
+    </motion.a>
   );
 }
 

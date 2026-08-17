@@ -433,7 +433,7 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
     var el = railRef.current;
     if (!el) return;
     var card = el.querySelector(".community-card");
-    var step = card ? card.getBoundingClientRect().width + 19 : el.clientWidth * 0.8;
+    var step = card ? card.getBoundingClientRect().width + 19.2 : el.clientWidth * 0.8;
     var pages = Math.max(1, Math.floor(el.clientWidth / step));
     el.scrollBy({ left: dir * step * pages, behavior: "smooth" });
   }
@@ -466,7 +466,7 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
         .community-rail {\
           display: grid;\
           grid-auto-flow: column;\
-          grid-auto-columns: 264px;\
+          grid-auto-columns: 288px;\
           gap: 1.2rem;\
           overflow-x: auto;\
           scroll-snap-type: x mandatory;\
@@ -490,7 +490,7 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
         }\
       "}</style>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 1.5rem" }}>
+      <div style={{ maxWidth: 1260, margin: "0 auto", padding: "0 1.5rem" }}>
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -548,7 +548,7 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
       </div>
 
       {/* Rail — full-bleed with an inner max width via padding */}
-      <div style={{ position: "relative", maxWidth: 1100, margin: "0 auto" }}>
+      <div style={{ position: "relative", maxWidth: 1260, margin: "0 auto" }}>
         <div ref={railRef} className="community-rail">
           {people.map(function (p) {
             return <CommunityCard key={p._id} speaker={p} dark={dark} />;

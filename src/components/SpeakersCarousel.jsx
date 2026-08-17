@@ -1,9 +1,9 @@
 // src/components/SpeakersCarousel.jsx
-// Testimonial-style speaker cards — adapted from the profile-card-testimonial-carousel
-// pattern for Vite + React (no Next.js, no shadcn, no Tailwind).
-// Uses framer-motion for animations and your existing CSS variables.
+// Testimonial-style profile cards — "Our Community"
+// Vite + React (no Next.js, no shadcn, no Tailwind).
+// framer-motion for animation, CSS variables for light/dark theming.
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Github, Twitter, Linkedin, Globe } from "lucide-react";
 
@@ -32,7 +32,6 @@ const S = {
     titleSpan: {
         color: "#f5a623",
     },
-
     /* ── Desktop card layout ── */
     desktopWrapper: {
         display: "flex",
@@ -112,7 +111,6 @@ const S = {
         textDecoration: "none",
         transition: "transform 0.15s ease, opacity 0.15s ease",
     },
-
     /* ── Mobile card layout ── */
     mobileWrapper: {
         maxWidth: 400,
@@ -131,7 +129,6 @@ const S = {
     mobileCard: {
         padding: "0 8px",
     },
-
     /* ── Navigation ── */
     navRow: {
         display: "flex",
@@ -192,26 +189,52 @@ function SocialLink({ href, icon: Icon, label }) {
 }
 
 /* ─────────────────────────────────────────────
-   Main SpeakersCarousel component
-   Props: speakers[] from Sanity — each item has:
-     name, title, company, image (url string),
-     bio (optional), github, twitter, linkedin, website (optional links)
-───────────────────────────────────────────── */
-export default function SpeakersCarousel({ speakers }) {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+   Main SpeakersCarousel component — "Our Community"
 
-    // Update isMobile on resize
-    useState(() => {
+   Props:
+     speakers[]  — each item: { name, title, company, image,
+                                bio?, github?, twitter?, linkedin?, website? }
+     titleLead   — first word of the heading  (default "Our")
+     titleAccent — highlighted word           (default "Community")
+     autoPlayMs  — 0 / undefined disables autoplay
+───────────────────────────────────────────── */
+export default function SpeakersCarousel({
+    speakers,
+    titleLead = "Our",
+    titleAccent = "Community",
+    autoPlayMs = 0,
+}) {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(
+        typeof window !== "undefined" ? window.innerWidth < 768 : false
+    );
+
+    // Track viewport width (this was a useState() by mistake before — must be useEffect)
+    useEffect(() => {
         const handler = () => setIsMobile(window.innerWidth < 768);
         window.addEventListener("resize", handler);
         return () => window.removeEventListener("resize", handler);
-    });
+    }, []);
 
-    if (!speakers || speakers.length === 0) return null;
+    const total = speakers ? speakers.length : 0;
 
-    const total = speakers.length;
-    const speaker = speakers[currentIndex];
+    // Keep the index valid if the list shrinks
+    useEffect(() => {
+        if (total > 0 && currentIndex > total - 1) setCurrentIndex(0);
+    }, [total, currentIndex]);
+
+    // Optional autoplay
+    useEffect(() => {
+        if (!autoPlayMs || total < 2) return;
+        const id = setInterval(() => {
+            setCurrentIndex((i) => (i + 1) % total);
+        }, autoPlayMs);
+        return () => clearInterval(id);
+    }, [autoPlayMs, total]);
+
+    if (!speakers || total === 0) return null;
+
+    const speaker = speakers[Math.min(currentIndex, total - 1)];
 
     const handleNext = () => setCurrentIndex((i) => (i + 1) % total);
     const handlePrevious = () => setCurrentIndex((i) => (i - 1 + total) % total);
@@ -226,7 +249,7 @@ export default function SpeakersCarousel({ speakers }) {
                 transition={{ duration: 0.35, ease: "easeInOut" }}
                 style={mobile ? S.mobileCard : {}}
             >
-                {/* Rank badge */}
+                {/* Position badge */}
                 <div style={{
                     display: "inline-block",
                     background: "linear-gradient(135deg, #7a3fd1, #f5a623)",
@@ -242,7 +265,7 @@ export default function SpeakersCarousel({ speakers }) {
                     #{currentIndex + 1} of {total}
                 </div>
 
-                <h2 style={S.speakerName}>{speaker.name}</h2>
+                <h3 style={S.speakerName}>{speaker.name}</h3>
                 <p style={S.speakerTitle}>{speaker.title}</p>
                 <p style={S.speakerCompany}>{speaker.company}</p>
 
@@ -283,7 +306,7 @@ export default function SpeakersCarousel({ speakers }) {
         <section style={S.section}>
             <div style={S.container}>
                 <h2 style={S.title}>
-                    Featured <span style={S.titleSpan}>Speakers</span>
+                    {titleLead} <span style={S.titleSpan}>{titleAccent}</span>
                 </h2>
 
                 {/* ── Desktop layout ── */}
@@ -308,7 +331,7 @@ export default function SpeakersCarousel({ speakers }) {
                 <div style={S.navRow}>
                     <button
                         onClick={handlePrevious}
-                        aria-label="Previous speaker"
+                        aria-label="Previous person"
                         style={S.navBtn}
                         onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "transparent"; }}
                         onMouseLeave={(e) => { e.currentTarget.style.background = "var(--bg-card)"; e.currentTarget.style.color = "var(--text-main)"; e.currentTarget.style.borderColor = "var(--border-main)"; }}
@@ -321,7 +344,7 @@ export default function SpeakersCarousel({ speakers }) {
                             <button
                                 key={i}
                                 onClick={() => setCurrentIndex(i)}
-                                aria-label={`Go to speaker ${i + 1}`}
+                                aria-label={`Go to person ${i + 1}`}
                                 style={S.dot(i === currentIndex)}
                             />
                         ))}
@@ -329,7 +352,7 @@ export default function SpeakersCarousel({ speakers }) {
 
                     <button
                         onClick={handleNext}
-                        aria-label="Next speaker"
+                        aria-label="Next person"
                         style={S.navBtn}
                         onMouseEnter={(e) => { e.currentTarget.style.background = "linear-gradient(135deg,#7a3fd1,#f5a623)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "transparent"; }}
                         onMouseLeave={(e) => { e.currentTarget.style.background = "var(--bg-card)"; e.currentTarget.style.color = "var(--text-main)"; e.currentTarget.style.borderColor = "var(--border-main)"; }}

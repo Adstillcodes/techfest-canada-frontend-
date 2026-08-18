@@ -1,12 +1,18 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
-  Clock, Search, X, ChevronDown,
-  Sparkles, Zap, Shield, Cpu, Leaf,
+  Clock, Search, X, ChevronDown, Mic, UserCircle2,
+  Sparkles, Zap, Shield, Cpu, Leaf, Rocket,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-
+import { client, urlFor } from "../utils/sanity";
+import {
+  SESSIONS, DAYS,
+  buildSpeakerIndex, matchSpeaker, sessionsForSpeaker,
+  slugifyName, getDuration, formatTime12,
+} from "../data/agenda";
 
 // ─── Protection ───────────────────────────────────────────────────
 function useProtection() {
@@ -38,6 +44,7 @@ const SECTOR_MAP = {
   energy:        { label: "Energy & Infrastructure", short: "ENR" },
   manufacturing: { label: "Manufacturing & Supply",  short: "MFG" },
   public:        { label: "Public Sector & Defence", short: "DEF" },
+  startups:      { label: "Startups & Capital",      short: "STP", icon: Rocket },
 };
 
 const FORMAT_MAP = {
@@ -54,76 +61,9 @@ const FORMAT_MAP = {
   closing:     { label: "Closing",             bg: "#b99eff22", bgL: "#7a3fd122", tc: "#b99eff", tcL: "#7a3fd1" },
 };
 
-// ─── Sessions ─────────────────────────────────────────────────────
-const SESSIONS = [
-  // DAY 1
-  { id:"d1-1",  day:1, time:"08:00", endTime:"09:00", title:"Registration, Networking Breakfast & Expo Preview",                                                              format:"networking",  isBreak:true },
-  { id:"d1-2",  day:1, time:"09:00", endTime:"09:15", title:"Opening Ceremony: Welcome to The Tech Festival Canada",                                                          format:"opening",     featured:true },
-  { id:"d1-3",  day:1, time:"09:15", endTime:"09:40", title:"Opening Keynote: Canada's Tech Decade — Build, Secure, Scale",                                                   format:"keynote",     featured:true },
-  { id:"d1-4",  day:1, time:"09:40", endTime:"10:15", title:"Canada in the New Global Order",                                                                                 format:"fireside",    featured:true },
-  { id:"d1-5",  day:1, time:"10:15", endTime:"10:30", title:"Artificial Intelligence Beyond the Pilot Phase",                                                                 format:"keynote",     pillar:"ai" },
-  { id:"d1-6",  day:1, time:"10:30", endTime:"10:45", title:"Quantum as Strategic Infrastructure",                                                                            format:"keynote",     pillar:"quantum" },
-  { id:"d1-7",  day:1, time:"10:45", endTime:"11:00", title:"Cybersecurity and Digital Trust in the Agentic Age",                                                             format:"keynote",     pillar:"cybersecurity" },
-  { id:"d1-8",  day:1, time:"11:00", endTime:"11:15", title:"Robotics and the Physical AI Economy",                                                                           format:"keynote",     pillar:"robotics" },
-  { id:"d1-9",  day:1, time:"11:15", endTime:"11:30", title:"Climate Tech as Competitiveness Strategy",                                                                       format:"keynote",     pillar:"climate" },
-  { id:"d1-10", day:1, time:"11:30", endTime:"11:45", title:"Networking Break",                                                                                               format:"break",       isBreak:true },
-  { id:"d1-11", day:1, time:"11:45", endTime:"12:00", title:"Reinventing the Intelligent Financial Institution",                                                               format:"keynote",     sector:"fintech" },
-  { id:"d1-12", day:1, time:"12:00", endTime:"12:22", title:"AI × Financial Services: From Copilots to Core Banking",                                                         format:"briefing",    pillar:"ai",            sector:"fintech" },
-  { id:"d1-13", day:1, time:"12:22", endTime:"12:44", title:"Quantum × Financial Services: Risk, Pricing and the Hype Gap",                                                   format:"fireside",    pillar:"quantum",       sector:"fintech" },
-  { id:"d1-14", day:1, time:"12:44", endTime:"13:06", title:"Cybersecurity × Financial Services: Fraud, Identity and Deepfake Resilience",                                    format:"briefing",    pillar:"cybersecurity", sector:"fintech" },
-  { id:"d1-15", day:1, time:"13:06", endTime:"13:28", title:"Robotics × Financial Services: Automation Beyond the Screen",                                                    format:"provocation", pillar:"robotics",      sector:"fintech" },
-  { id:"d1-16", day:1, time:"13:28", endTime:"13:50", title:"Climate Tech × Financial Services: Transition Finance, Carbon Markets and Bankability",                          format:"fireside",    pillar:"climate",       sector:"fintech" },
-  { id:"d1-17", day:1, time:"13:50", endTime:"14:40", title:"Networking Lunch",                                                                                               format:"networking",  isBreak:true },
-  { id:"d1-18", day:1, time:"14:40", endTime:"14:55", title:"The Digitally Resilient Health System",                                                                          format:"keynote",     sector:"healthcare" },
-  { id:"d1-19", day:1, time:"14:55", endTime:"15:17", title:"AI × Healthcare: Clinical AI That Actually Scales",                                                              format:"briefing",    pillar:"ai",            sector:"healthcare" },
-  { id:"d1-20", day:1, time:"15:17", endTime:"15:39", title:"Quantum × Healthcare: Drug Discovery, Biology and Commercial Timelines",                                          format:"fireside",    pillar:"quantum",       sector:"healthcare" },
-  { id:"d1-21", day:1, time:"15:39", endTime:"16:01", title:"Cybersecurity × Healthcare: Securing Hospitals in an AI First Era",                                              format:"briefing",    pillar:"cybersecurity", sector:"healthcare" },
-  { id:"d1-22", day:1, time:"16:01", endTime:"16:23", title:"Robotics × Healthcare: Surgical, Lab and Eldercare Automation",                                                  format:"provocation", pillar:"robotics",      sector:"healthcare" },
-  { id:"d1-23", day:1, time:"16:23", endTime:"16:45", title:"Climate Tech × Healthcare: Climate Resilient Care Systems",                                                      format:"fireside",    pillar:"climate",       sector:"healthcare" },
-  { id:"d1-24", day:1, time:"16:45", endTime:"17:00", title:"Networking Break",                                                                                               format:"break",       isBreak:true },
-  { id:"d1-25", day:1, time:"17:00", endTime:"17:35", title:"Jobs, AI and the Human Contract",                                                                                format:"panel",       featured:true },
-  { id:"d1-26", day:1, time:"17:35", endTime:"18:05", title:"Canada, the US and the New North American Technology Bargain",                                                    format:"fireside",    featured:true },
-  { id:"d1-27", day:1, time:"18:30", endTime:"20:30", title:"Awards Night: Canada's Tech Titans",                                                                             format:"awards",      isBreak:true, featured:true },
-  // DAY 2
-  { id:"d2-1",  day:2, time:"08:30", endTime:"09:00", title:"Coffee Networking and Media Check-In",                                                                           format:"networking",  isBreak:true },
-  { id:"d2-2",  day:2, time:"09:00", endTime:"09:20", title:"Day 2 Opening Address: From Vision to Execution",                                                                format:"opening",     featured:true },
-  { id:"d2-3",  day:2, time:"09:20", endTime:"09:50", title:"Build in Canada, Scale to the World",                                                                            format:"dialogue",    featured:true },
-  { id:"d2-4",  day:2, time:"09:50", endTime:"10:05", title:"Powering Canada's Digital and Industrial Future",                                                                format:"keynote",     sector:"energy" },
-  { id:"d2-5",  day:2, time:"10:05", endTime:"10:27", title:"AI × Energy & Infrastructure: Grid Intelligence, Asset Optimization and Resilience",                             format:"briefing",    pillar:"ai",            sector:"energy" },
-  { id:"d2-6",  day:2, time:"10:27", endTime:"10:49", title:"Quantum × Energy & Infrastructure: Materials, Storage and Grid Optimization",                                    format:"fireside",    pillar:"quantum",       sector:"energy" },
-  { id:"d2-7",  day:2, time:"10:49", endTime:"11:11", title:"Cybersecurity × Energy & Infrastructure: Protecting Critical Systems from Disruption",                           format:"briefing",    pillar:"cybersecurity", sector:"energy" },
-  { id:"d2-8",  day:2, time:"11:11", endTime:"11:33", title:"Robotics × Energy & Infrastructure: Drones, Inspection and Remote Operations",                                   format:"provocation", pillar:"robotics",      sector:"energy" },
-  { id:"d2-9",  day:2, time:"11:33", endTime:"11:55", title:"Climate Tech × Energy & Infrastructure: Canada's Grid, Storage and Electrification Challenge",                   format:"briefing",    pillar:"climate",       sector:"energy" },
-  { id:"d2-10", day:2, time:"11:55", endTime:"12:10", title:"Networking Break",                                                                                               format:"break",       isBreak:true },
-  { id:"d2-11", day:2, time:"12:10", endTime:"12:25", title:"Rebuilding Industrial Competitiveness",                                                                          format:"keynote",     sector:"manufacturing" },
-  { id:"d2-12", day:2, time:"12:25", endTime:"12:47", title:"AI × Manufacturing & Mobility: Agentic Operations Across the Supply Chain",                                      format:"briefing",    pillar:"ai",            sector:"manufacturing" },
-  { id:"d2-13", day:2, time:"12:47", endTime:"13:09", title:"Quantum × Manufacturing & Mobility: New Materials, Optimization and Industrial Advantage",                        format:"fireside",    pillar:"quantum",       sector:"manufacturing" },
-  { id:"d2-14", day:2, time:"13:09", endTime:"13:31", title:"Cybersecurity × Manufacturing & Mobility: Securing the Connected Factory and Autonomous Systems",                 format:"briefing",    pillar:"cybersecurity", sector:"manufacturing" },
-  { id:"d2-15", day:2, time:"13:31", endTime:"13:53", title:"Robotics × Manufacturing & Mobility: Humanoids, Cobots and Warehouse Autonomy",                                  format:"provocation", pillar:"robotics",      sector:"manufacturing" },
-  { id:"d2-16", day:2, time:"13:53", endTime:"14:15", title:"Climate Tech × Manufacturing & Mobility: Low Carbon Industry and Resilient Production",                          format:"fireside",    pillar:"climate",       sector:"manufacturing" },
-  { id:"d2-17", day:2, time:"14:15", endTime:"15:00", title:"Networking Lunch",                                                                                               format:"networking",  isBreak:true },
-  { id:"d2-18", day:2, time:"15:00", endTime:"15:15", title:"Technology, Trust and National Capacity",                                                                        format:"keynote",     sector:"public" },
-  { id:"d2-19", day:2, time:"15:15", endTime:"15:37", title:"AI × Public Sector & Defence: Trusted AI for Service Delivery and Readiness",                                    format:"briefing",    pillar:"ai",            sector:"public" },
-  { id:"d2-20", day:2, time:"15:37", endTime:"15:59", title:"Quantum × Public Sector & Defence: Strategic Advantage in Sensing and Secure Communications",                    format:"fireside",    pillar:"quantum",       sector:"public" },
-  { id:"d2-21", day:2, time:"15:59", endTime:"16:21", title:"Cybersecurity × Public Sector & Defence: Zero Trust Government and Digital Sovereignty",                         format:"briefing",    pillar:"cybersecurity", sector:"public" },
-  { id:"d2-22", day:2, time:"16:21", endTime:"16:43", title:"Robotics × Public Sector & Defence: Dual Use Systems for Border Security and Emergency Response",                format:"provocation", pillar:"robotics",      sector:"public" },
-  { id:"d2-23", day:2, time:"16:43", endTime:"17:05", title:"Climate Tech × Public Sector & Defence: Arctic Readiness, Wildfire Response and Resilient Infrastructure",       format:"briefing",    pillar:"climate",       sector:"public" },
-  { id:"d2-24", day:2, time:"17:05", endTime:"17:35", title:"Can Canada Win the Compute Race?",                                                                               format:"panel",       featured:true },
-  { id:"d2-25", day:2, time:"17:35", endTime:"18:05", title:"The Toronto Declaration on Technology, Trust and Competitiveness",                                               format:"closing",     featured:true },
-  { id:"d2-26", day:2, time:"18:30", endTime:"21:00", title:"Gala Dinner and Networking Reception",                                                                           format:"awards",      isBreak:true, featured:true },
-];
-
-function getDuration(start, end) {
-  const [sh, sm] = start.split(":").map(Number);
-  const [eh, em] = end.split(":").map(Number);
-  const mins = (eh * 60 + em) - (sh * 60 + sm);
-  if (mins >= 60) {
-    const h = Math.floor(mins / 60);
-    const m = mins % 60;
-    return m ? `${h}h ${m}m` : `${h}h`;
-  }
-  return `${mins}m`;
-}
+// Link blue for speaker names — deliberately distinct from the purple accent
+const LINK_BLUE      = "#1f6fd0";
+const LINK_BLUE_DARK = "#6cbcff";
 
 // ─── Filter Dropdown ──────────────────────────────────────────────
 function FilterDropdown({ label, value, options, onSelect, dark, accent, border, inactiveText }) {
@@ -164,7 +104,6 @@ function FilterDropdown({ label, value, options, onSelect, dark, accent, border,
           <ChevronDown size={13} />
         </motion.span>
       </motion.button>
-
       <AnimatePresence>
         {open && (
           <motion.div
@@ -231,13 +170,79 @@ function FilterDropdown({ label, value, options, onSelect, dark, accent, border,
   );
 }
 
+// ─── One speaker chip: photo + linked name ────────────────────────
+function SpeakerChip({ person, doc, dark, role }) {
+  const [hovered, setHovered] = useState(false);
+  const blue = dark ? LINK_BLUE_DARK : LINK_BLUE;
+  const mutedText = dark ? "rgba(255,255,255,0.48)" : "rgba(13,5,32,0.42)";
+  const imageUrl = doc && doc.image ? urlFor(doc.image).width(120).height(120).url() : null;
+
+  const avatar = (
+    <span style={{
+      width: 34, height: 34, borderRadius: "50%", flexShrink: 0,
+      overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center",
+      background: dark ? "#1a0a3e" : "#ede9ff",
+      border: `1.5px solid ${dark ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.08)"}`,
+    }}>
+      {imageUrl
+        ? <img src={imageUrl} alt={person.name} loading="lazy" draggable={false}
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+        : <UserCircle2 size={19} style={{ color: mutedText }} />}
+    </span>
+  );
+
+  const label = (
+    <span style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <span style={{
+        fontSize: "0.86rem", fontWeight: 600, lineHeight: 1.25,
+        color: doc ? blue : (dark ? "rgba(255,255,255,0.82)" : "rgba(13,5,32,0.78)"),
+        borderBottom: doc ? `2px solid ${hovered ? blue : blue + "70"}` : "none",
+        paddingBottom: doc ? 1 : 0,
+        transition: "border-color 0.18s ease",
+        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+      }}>
+        {person.name}{person.tentative ? " *" : ""}
+      </span>
+      {(person.org || role === "moderator") && (
+        <span style={{ fontSize: "0.7rem", color: mutedText, lineHeight: 1.3, marginTop: 1 }}>
+          {role === "moderator" ? (person.org ? `Moderator · ${person.org}` : "Moderator") : person.org}
+        </span>
+      )}
+    </span>
+  );
+
+  const inner = (
+    <span
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ display: "inline-flex", alignItems: "center", gap: 9, minWidth: 0, maxWidth: 260 }}
+    >
+      {avatar}{label}
+    </span>
+  );
+
+  if (!doc) return inner;
+
+  return (
+    <Link
+      to={"/speakers/" + slugifyName(doc.name)}
+      onClick={(e) => e.stopPropagation()}
+      style={{ textDecoration: "none", color: "inherit", minWidth: 0 }}
+    >
+      {inner}
+    </Link>
+  );
+}
+
 // ─── Session Card ─────────────────────────────────────────────────
-function SessionCard({ s, dark, i }) {
-  const [expanded, setExpanded] = useState(false);
+function SessionCard({ s, dark, i, speakerIndex, highlight, defaultExpanded }) {
+  const [expanded, setExpanded] = useState(!!defaultExpanded);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
 
-  const fmtInfo    = FORMAT_MAP[s.format];
+  useEffect(() => { if (defaultExpanded) setExpanded(true); }, [defaultExpanded]);
+
+  const fmtInfo    = FORMAT_MAP[s.format] || FORMAT_MAP.keynote;
   const pillar     = s.pillar ? PILLAR_MAP[s.pillar] : null;
   const sector     = s.sector ? SECTOR_MAP[s.sector] : null;
   const accent     = pillar ? (dark ? pillar.color : pillar.light) : (dark ? "#b99eff" : "#7a3fd1");
@@ -245,13 +250,18 @@ function SessionCard({ s, dark, i }) {
   const isBreak    = !!s.isBreak;
   const dur        = getDuration(s.time, s.endTime);
 
-  const primaryText   = dark ? "#ffffff"                 : "#0d0520";
-  const secondaryText = dark ? "rgba(255,255,255,0.75)"  : "rgba(13,5,32,0.65)";
-  const mutedText     = dark ? "rgba(255,255,255,0.48)"  : "rgba(13,5,32,0.42)";
+  const primaryText   = dark ? "#ffffff"                : "#0d0520";
+  const secondaryText = dark ? "rgba(255,255,255,0.75)" : "rgba(13,5,32,0.65)";
+  const mutedText     = dark ? "rgba(255,255,255,0.48)" : "rgba(13,5,32,0.42)";
+
+  const speakers    = s.speakers || [];
+  const hasPeople   = speakers.length > 0 || !!s.moderator;
+  const placeholders = s.placeholders || [];
 
   return (
     <motion.div
       ref={ref}
+      id={"session-" + s.id}
       initial={{ opacity: 0, y: 10 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ delay: i * 0.025, type: "spring", damping: 24 }}
@@ -259,14 +269,19 @@ function SessionCard({ s, dark, i }) {
       style={{
         position: "relative", borderRadius: "10px", overflow: "hidden",
         cursor: isBreak ? "default" : "pointer",
-        transition: "box-shadow 0.2s",
+        transition: "box-shadow 0.2s, border-color 0.2s",
+        scrollMarginTop: "150px",
         background: isBreak
           ? (dark ? "rgba(255,255,255,0.015)" : "rgba(0,0,0,0.02)")
           : (dark ? "rgba(255,255,255,0.04)"  : "#fff"),
-        border: dark
-          ? `1px solid rgba(255,255,255,${isBreak ? "0.05" : "0.11"})`
-          : `1px solid rgba(0,0,0,${isBreak ? "0.05" : "0.08"})`,
-        boxShadow: (!isBreak && !dark) ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
+        border: highlight
+          ? `1.5px solid ${accent}`
+          : (dark
+              ? `1px solid rgba(255,255,255,${isBreak ? "0.05" : "0.11"})`
+              : `1px solid rgba(0,0,0,${isBreak ? "0.05" : "0.08"})`),
+        boxShadow: highlight
+          ? `0 0 0 4px ${accent}22`
+          : ((!isBreak && !dark) ? "0 2px 8px rgba(0,0,0,0.06)" : "none"),
       }}
     >
       {!isBreak && (
@@ -291,7 +306,6 @@ function SessionCard({ s, dark, i }) {
                 }}>
                   {fmtInfo.label}
                 </span>
-
                 {s.featured && (
                   <span style={{
                     padding: "0.24rem 0.62rem", borderRadius: "5px",
@@ -302,7 +316,6 @@ function SessionCard({ s, dark, i }) {
                     border: `1px solid ${dark ? "#b99eff" : "#7a3fd1"}40`,
                   }}>✦ Featured</span>
                 )}
-
                 {PillarIcon && pillar && (
                   <span style={{
                     display: "inline-flex", alignItems: "center", gap: "0.3rem",
@@ -314,7 +327,6 @@ function SessionCard({ s, dark, i }) {
                     <PillarIcon size={11} />{pillar.label}
                   </span>
                 )}
-
                 {sector && (
                   <span style={{
                     padding: "0.24rem 0.62rem", borderRadius: "5px",
@@ -334,12 +346,53 @@ function SessionCard({ s, dark, i }) {
               fontSize: isBreak ? "0.95rem" : "1.06rem",
               lineHeight: 1.42,
               color: isBreak ? mutedText : primaryText,
-            }}>{s.title}</p>
+            }}>
+              {s.title}
+              {s.titleTbc && (
+                <span style={{ fontSize: "0.7rem", fontWeight: 600, color: mutedText, marginLeft: 8 }}>
+                  (title to be confirmed)
+                </span>
+              )}
+            </p>
 
+            {/* ── Speakers: photo + blue linked name ── */}
             {!isBreak && (
-              <p style={{ fontSize: "0.82rem", color: mutedText, marginTop: "0.4rem" }}>
-                Speaker: To Be Decided
-              </p>
+              <div style={{ marginTop: "0.75rem" }}>
+                {hasPeople ? (
+                  <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.85rem 1.4rem" }}>
+                    {speakers.map((p, idx) => (
+                      <SpeakerChip
+                        key={p.name + idx}
+                        person={p}
+                        doc={matchSpeaker(speakerIndex, p.name)}
+                        dark={dark}
+                        role="speaker"
+                      />
+                    ))}
+                    {s.moderator && (
+                      <SpeakerChip
+                        person={s.moderator}
+                        doc={matchSpeaker(speakerIndex, s.moderator.name)}
+                        dark={dark}
+                        role="moderator"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <p style={{ fontSize: "0.82rem", color: mutedText }}>Speaker: To Be Decided</p>
+                )}
+
+                {placeholders.length > 0 && (
+                  <p style={{ fontSize: "0.76rem", color: mutedText, marginTop: "0.6rem", fontStyle: "italic" }}>
+                    + {placeholders.join(" · ")} — to be confirmed
+                  </p>
+                )}
+                {speakers.some(p => p.tentative) && (
+                  <p style={{ fontSize: "0.72rem", color: mutedText, marginTop: "0.4rem" }}>
+                    * Participation not yet confirmed
+                  </p>
+                )}
+              </div>
             )}
           </div>
 
@@ -347,7 +400,7 @@ function SessionCard({ s, dark, i }) {
             <span style={{
               fontFamily: "'Orbitron', sans-serif", fontSize: "0.94rem", fontWeight: 800,
               color: isBreak ? mutedText : accent,
-            }}>{s.time}</span>
+            }}>{formatTime12(s.time)}</span>
             <span style={{ fontSize: "0.74rem", color: mutedText }}>{dur}</span>
             {!isBreak && (
               <motion.div
@@ -380,17 +433,27 @@ function SessionCard({ s, dark, i }) {
                   <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Time</p>
                   <p style={{ fontSize: "0.9rem", display: "flex", alignItems: "center", gap: "0.38rem", color: primaryText }}>
                     <Clock size={13} style={{ color: mutedText }} />
-                    {s.time} – {s.endTime} · {dur}
+                    {formatTime12(s.time)} – {formatTime12(s.endTime)} · {dur}
                   </p>
                 </div>
                 <div>
-                  <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Speaker</p>
-                  <p style={{ fontSize: "0.9rem", color: secondaryText }}>To Be Decided</p>
-                </div>
-                <div>
                   <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Format</p>
-                  <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.68rem", fontWeight: 700, color: dark ? fmtInfo.tc : fmtInfo.tcL }}>{fmtInfo.label}</p>
+                  <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.68rem", fontWeight: 700, color: dark ? fmtInfo.tc : fmtInfo.tcL }}>
+                    {s.type || fmtInfo.label}
+                  </p>
                 </div>
+                {s.moderator && (
+                  <div>
+                    <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Moderator</p>
+                    <p style={{ fontSize: "0.9rem", color: secondaryText }}>{s.moderator.name}</p>
+                  </div>
+                )}
+                {s.note && (
+                  <div style={{ flexBasis: "100%" }}>
+                    <p style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "0.6rem", color: mutedText, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.34rem", fontWeight: 700 }}>Structure</p>
+                    <p style={{ fontSize: "0.88rem", color: secondaryText }}>{s.note}</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -401,20 +464,19 @@ function SessionCard({ s, dark, i }) {
 }
 
 // ─── Timeline Group ───────────────────────────────────────────────
-function TimeGroup({ time, sessions, dark, base }) {
+function TimeGroup({ time, sessions, dark, base, speakerIndex, highlightId, expandId }) {
   return (
     <div style={{ display: "flex", gap: "1.1rem" }}>
       <div style={{
         display: "flex", flexDirection: "column", alignItems: "flex-end",
-        flexShrink: 0, paddingTop: "1rem", width: "52px",
+        flexShrink: 0, paddingTop: "1rem", width: "68px",
       }}>
         <span style={{
-          fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
+          fontFamily: "'Orbitron', sans-serif", fontSize: "0.72rem", fontWeight: 800,
           color: dark ? "rgba(255,255,255,0.52)" : "rgba(13,5,32,0.44)",
-          letterSpacing: "0.02em",
-        }}>{time}</span>
+          letterSpacing: "0.02em", textAlign: "right", lineHeight: 1.3,
+        }}>{formatTime12(time)}</span>
       </div>
-
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, paddingTop: "1.1rem" }}>
         <div style={{
           width: "8px", height: "8px", borderRadius: "50%", flexShrink: 0,
@@ -425,9 +487,15 @@ function TimeGroup({ time, sessions, dark, base }) {
           background: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
         }} />
       </div>
-
-      <div style={{ flex: 1, paddingTop: "0.6rem", paddingBottom: "0.8rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
-        {sessions.map((s, i) => <SessionCard key={s.id} s={s} dark={dark} i={base + i} />)}
+      <div style={{ flex: 1, minWidth: 0, paddingTop: "0.6rem", paddingBottom: "0.8rem", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+        {sessions.map((s, i) => (
+          <SessionCard
+            key={s.id} s={s} dark={dark} i={base + i}
+            speakerIndex={speakerIndex}
+            highlight={highlightId === s.id}
+            defaultExpanded={expandId === s.id}
+          />
+        ))}
       </div>
     </div>
   );
@@ -436,12 +504,15 @@ function TimeGroup({ time, sessions, dark, base }) {
 // ─── Page ─────────────────────────────────────────────────────────
 export default function AgendaPage() {
   useProtection();
-
   const [dark, setDark]                 = useState(false);
   const [activeDay, setActiveDay]       = useState(1);
   const [search, setSearch]             = useState("");
   const [activePillar, setActivePillar] = useState(null);
   const [activeSector, setActiveSector] = useState(null);
+
+  const [speakerDocs, setSpeakerDocs]   = useState([]);
+  const [focusSpeaker, setFocusSpeaker] = useState(null);   // { slug, name, sessionIds }
+  const [highlightId, setHighlightId]   = useState(null);
 
   useEffect(() => {
     const check = () => setDark(document.body.classList.contains("dark-mode"));
@@ -451,33 +522,86 @@ export default function AgendaPage() {
     return () => obs.disconnect();
   }, []);
 
+  // Speaker photos / profile links come from the same Sanity data as the Speakers page
+  useEffect(() => {
+    let alive = true;
+    client
+      .fetch('*[_type == "speaker"]{ _id, name, image }')
+      .then((data) => { if (alive) setSpeakerDocs(Array.isArray(data) ? data : []); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
+  const speakerIndex = useMemo(() => buildSpeakerIndex(speakerDocs), [speakerDocs]);
+
+  /* ── Deep links ──
+     /agenda?speaker=jane-smith  → show only that person's sessions
+     /agenda?session=d1-12       → jump to and expand one session      */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const speakerSlug = params.get("speaker");
+    const sessionId = params.get("session");
+
+    if (speakerSlug) {
+      // resolve the slug back to a name via Sanity docs, else prettify the slug
+      const doc = speakerDocs.find((d) => slugifyName(d.name) === speakerSlug);
+      const name = doc ? doc.name : speakerSlug.replace(/-/g, " ");
+      const mine = sessionsForSpeaker(name);
+      if (mine.length) {
+        setFocusSpeaker({ slug: speakerSlug, name, sessionIds: mine.map((m) => m.id) });
+        setActiveDay(mine[0].day);
+        if (mine.length === 1) setHighlightId(mine[0].id);
+      }
+      return;
+    }
+
+    if (sessionId) {
+      const hit = SESSIONS.find((s) => s.id === sessionId);
+      if (hit) { setActiveDay(hit.day); setHighlightId(hit.id); }
+    }
+  }, [speakerDocs]);
+
+  // scroll to the highlighted card once it's rendered
+  useEffect(() => {
+    if (!highlightId) return;
+    const t = setTimeout(() => {
+      const el = document.getElementById("session-" + highlightId);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 260);
+    return () => clearTimeout(t);
+  }, [highlightId, activeDay]);
+
   const bg           = dark ? "#06020f"                 : "#f8f7fc";
   const text         = dark ? "#ffffff"                 : "#0d0520";
   const accent       = dark ? "#b99eff"                 : "#7a3fd1";
   const border       = dark ? "rgba(255,255,255,0.10)"  : "rgba(0,0,0,0.10)";
   const inactiveText = dark ? "rgba(255,255,255,0.70)"  : "rgba(13,5,32,0.55)";
+  const blue         = dark ? LINK_BLUE_DARK : LINK_BLUE;
 
-  const filtered = useMemo(() => SESSIONS.filter(s => {
-    if (s.day !== activeDay) return false;
-    const q = search.toLowerCase();
-    if (q && !s.title.toLowerCase().includes(q)) return false;
+  const matchesFilters = (s) => {
+    const q = search.trim().toLowerCase();
+    if (q) {
+      const people = (s.speakers || []).concat(s.moderator ? [s.moderator] : []);
+      const blob = [s.title, s.type || "", people.map(p => p.name + " " + (p.org || "")).join(" ")]
+        .join(" ").toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
     if (activePillar && s.pillar !== activePillar) return false;
     if (activeSector && s.sector !== activeSector) return false;
+    if (focusSpeaker && !focusSpeaker.sessionIds.includes(s.id)) return false;
     return true;
-  }), [activeDay, search, activePillar, activeSector]);
+  };
+
+  const filtered = useMemo(
+    () => SESSIONS.filter(s => s.day === activeDay && matchesFilters(s)),
+    [activeDay, search, activePillar, activeSector, focusSpeaker]
+  );
 
   const otherDayResults = useMemo(() => {
     const otherDay = activeDay === 1 ? 2 : 1;
-    const count = SESSIONS.filter(s => {
-      if (s.day !== otherDay) return false;
-      const q = search.toLowerCase();
-      if (q && !s.title.toLowerCase().includes(q)) return false;
-      if (activePillar && s.pillar !== activePillar) return false;
-      if (activeSector && s.sector !== activeSector) return false;
-      return true;
-    }).length;
+    const count = SESSIONS.filter(s => s.day === otherDay && matchesFilters(s)).length;
     return { day: otherDay, count };
-  }, [activeDay, search, activePillar, activeSector]);
+  }, [activeDay, search, activePillar, activeSector, focusSpeaker]);
 
   const grouped = useMemo(() => {
     const map = new Map();
@@ -489,10 +613,15 @@ export default function AgendaPage() {
   }, [filtered]);
 
   let cardIdx = 0;
-  const hasFilters = !!(activePillar || activeSector || search);
+  const hasFilters = !!(activePillar || activeSector || search || focusSpeaker);
   const fp = { dark, accent, border, inactiveText };
 
-  // ── Shared search bar markup (used in both desktop and mobile sticky) ──
+  const clearAll = () => {
+    setActivePillar(null); setActiveSector(null); setSearch("");
+    setFocusSpeaker(null); setHighlightId(null);
+    window.history.replaceState(null, "", window.location.pathname);
+  };
+
   const SearchBar = (
     <div style={{
       display: "flex", alignItems: "center", gap: "0.5rem",
@@ -506,7 +635,7 @@ export default function AgendaPage() {
         className="agenda-search-input"
         value={search}
         onChange={e => setSearch(e.target.value)}
-        placeholder="SEARCH SESSIONS"
+        placeholder="SEARCH SESSIONS OR SPEAKERS"
         style={{
           background: "transparent", border: "none", outline: "none",
           fontFamily: "'Orbitron', sans-serif",
@@ -522,7 +651,6 @@ export default function AgendaPage() {
     </div>
   );
 
-  // ── Shared day tabs markup ──
   const DayTabs = (
     <div style={{ display: "flex", gap: "0.4rem", flexShrink: 0 }}>
       {[1, 2].map(d => (
@@ -539,14 +667,13 @@ export default function AgendaPage() {
           }}>
           DAY {d}
           <span style={{ fontSize: "0.6rem", fontWeight: 600, opacity: 0.55, marginLeft: "0.4rem" }}>
-            {d === 1 ? "OCT 26" : "OCT 27"}
+            {DAYS[d].date.toUpperCase()}
           </span>
         </motion.button>
       ))}
     </div>
   );
 
-  // ── Shared filter dropdowns + clear all ──
   const FilterRow = (
     <>
       <FilterDropdown label="TECH PILLAR" value={activePillar} options={PILLAR_MAP} onSelect={setActivePillar} {...fp} />
@@ -556,7 +683,7 @@ export default function AgendaPage() {
           <motion.button
             initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.88 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => { setActivePillar(null); setActiveSector(null); setSearch(""); }}
+            onClick={clearAll}
             style={{
               display: "inline-flex", alignItems: "center", gap: "0.34rem",
               padding: "0.5rem 1rem", borderRadius: "10px",
@@ -601,16 +728,9 @@ export default function AgendaPage() {
         letter-spacing: 0.05em;
         opacity: 0.45;
       }
-
-      /*
-       * Desktop (≥641px): sticky bar = day tabs + search + filters
-       * Mobile  (≤640px): sticky bar = search ONLY
-       *                   day tabs + filters scroll with the page below
-       */
-      .desktop-bar-rows  { display: block; }   /* shown on desktop, hidden on mobile */
-      .mobile-search-row { display: none;  }   /* hidden on desktop, shown on mobile  */
-      .mobile-scroll-row { display: none;  }   /* hidden on desktop, shown on mobile  */
-
+      .desktop-bar-rows  { display: block; }
+      .mobile-search-row { display: none;  }
+      .mobile-scroll-row { display: none;  }
       @media (max-width: 640px) {
         .desktop-bar-rows  { display: none  !important; }
         .mobile-search-row { display: flex  !important; }
@@ -625,7 +745,6 @@ export default function AgendaPage() {
       overflowX: "clip",
       userSelect: "none",
     }}>
-
       <Navbar />
 
       {/* ── HERO ──────────────────────────────────────────────────── */}
@@ -642,7 +761,6 @@ export default function AgendaPage() {
               fontFamily: "'Orbitron', sans-serif", fontSize: "0.78rem", fontWeight: 800,
               letterSpacing: "3px", textTransform: "uppercase", color: accent, marginBottom: 18,
             }}>TTFC 2026 — October 26–27, Toronto</p>
-
             <h1 style={{
               fontFamily: "'Orbitron', sans-serif",
               fontSize: "clamp(2.4rem, 6vw, 4.4rem)",
@@ -650,19 +768,17 @@ export default function AgendaPage() {
             }}>
               The <span className="agenda-gradient-text" style={{ "--grad-start": accent }}>Agenda</span>
             </h1>
-
             <p style={{
               fontSize: "clamp(1.05rem, 1.9vw, 1.25rem)",
               color: dark ? "rgba(255,255,255,0.68)" : "rgba(13,5,32,0.58)",
               lineHeight: 1.75, maxWidth: 620, margin: "0 auto 48px",
             }}>
-              Two days of keynotes, fireside chats, boardroom briefings, panels, and networking — organised around five technology pillars and five applied sectors.
+              Two days of keynotes, fireside chats, panels, and networking — organised around five technology pillars and five applied sectors.
             </p>
           </motion.div>
-
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}>
             <div style={{ display: "flex", justifyContent: "center", gap: "clamp(1.5rem, 4vw, 3.5rem)", flexWrap: "wrap" }}>
-              {[["2","Days"],["50+","Sessions"],["5","Pillars"],["5","Sectors"]].map(([v,l], i) => (
+              {[["2","Days"],[String(SESSIONS.filter(s => !s.isBreak).length),"Sessions"],["5","Pillars"],["5","Sectors"]].map(([v,l], i) => (
                 <motion.div key={l}
                   initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.06, type: "spring", damping: 20 }}
@@ -693,8 +809,6 @@ export default function AgendaPage() {
         borderBottom: `1px solid ${border}`,
       }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0.8rem 1.5rem 0.85rem" }}>
-
-          {/* DESKTOP: day tabs + search on row 1, filters on row 2 */}
           <div className="desktop-bar-rows">
             <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
               {DayTabs}
@@ -705,12 +819,9 @@ export default function AgendaPage() {
               {FilterRow}
             </div>
           </div>
-
-          {/* MOBILE: search bar only */}
           <div className="mobile-search-row" style={{ alignItems: "center", gap: "0.5rem" }}>
             {SearchBar}
           </div>
-
         </div>
       </div>
 
@@ -729,13 +840,43 @@ export default function AgendaPage() {
       <main style={{ padding: "2.8rem 0 7rem" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 1.5rem" }}>
 
+          {/* Focused-on-one-speaker banner (arrives from the Speakers page) */}
+          <AnimatePresence>
+            {focusSpeaker && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  gap: "1rem", flexWrap: "wrap",
+                  padding: "0.85rem 1.1rem", marginBottom: "1.4rem", borderRadius: 10,
+                  border: `1.5px solid ${blue}55`,
+                  background: dark ? "rgba(108,188,255,0.10)" : "rgba(31,111,208,0.07)",
+                }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: "0.9rem", color: text }}>
+                  <Mic size={15} style={{ color: blue }} />
+                  Showing the {focusSpeaker.sessionIds.length} session{focusSpeaker.sessionIds.length !== 1 ? "s" : ""} featuring{" "}
+                  <strong style={{ textTransform: "capitalize" }}>{focusSpeaker.name}</strong>
+                </span>
+                <button onClick={clearAll}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                    background: "none", border: "none", cursor: "pointer", color: blue,
+                    fontFamily: "'Orbitron', sans-serif", fontSize: "0.64rem", fontWeight: 700,
+                    letterSpacing: "0.06em", textTransform: "uppercase",
+                  }}>
+                  <X size={12} /> Show full agenda
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <p style={{
             fontFamily: "'Orbitron', sans-serif",
             fontSize: "0.66rem", fontWeight: 600, letterSpacing: "0.06em",
             color: dark ? "rgba(255,255,255,0.38)" : "rgba(13,5,32,0.34)",
             marginBottom: "1.5rem",
           }}>
-            {filtered.length} session{filtered.length !== 1 ? "s" : ""} · Day {activeDay} — {activeDay === 1 ? "Oct 26" : "Oct 27"}, 2026
+            {filtered.length} session{filtered.length !== 1 ? "s" : ""} · Day {activeDay} — {DAYS[activeDay].date}, 2026
           </p>
 
           {grouped.length === 0 ? (
@@ -744,7 +885,6 @@ export default function AgendaPage() {
               justifyContent: "center", padding: "5rem 0", gap: "0.9rem",
             }}>
               <Search size={28} style={{ color: dark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.14)" }} />
-
               {otherDayResults.count > 0 ? (
                 <>
                   <p style={{
@@ -760,7 +900,7 @@ export default function AgendaPage() {
                     textAlign: "center", maxWidth: "340px", lineHeight: 1.6,
                   }}>
                     <strong style={{ color: accent }}>{otherDayResults.count} matching session{otherDayResults.count > 1 ? "s" : ""}</strong>{" "}
-                    found on Day {otherDayResults.day} ({otherDayResults.day === 1 ? "Oct 26" : "Oct 27"}).
+                    found on Day {otherDayResults.day} ({DAYS[otherDayResults.day].date}).
                   </p>
                   <motion.button whileTap={{ scale: 0.97 }}
                     onClick={() => setActiveDay(otherDayResults.day)}
@@ -784,7 +924,7 @@ export default function AgendaPage() {
                     No sessions match.
                   </p>
                   <button
-                    onClick={() => { setSearch(""); setActivePillar(null); setActiveSector(null); }}
+                    onClick={clearAll}
                     style={{
                       fontFamily: "'Orbitron', sans-serif",
                       fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.04em",
@@ -798,7 +938,14 @@ export default function AgendaPage() {
             </div>
           ) : (
             grouped.map(([time, sessions]) => {
-              const el = <TimeGroup key={time} time={time} sessions={sessions} dark={dark} base={cardIdx} />;
+              const el = (
+                <TimeGroup
+                  key={time} time={time} sessions={sessions} dark={dark} base={cardIdx}
+                  speakerIndex={speakerIndex}
+                  highlightId={highlightId}
+                  expandId={highlightId}
+                />
+              );
               cardIdx += sessions.length;
               return el;
             })

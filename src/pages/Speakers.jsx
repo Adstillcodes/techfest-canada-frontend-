@@ -174,54 +174,11 @@ function speakerMatchesKeywords(speaker, keywords) {
   });
 }
 
-function countMatches(speaker, keywords) {
-  var blob = [
-    speaker.name || "",
-    speaker.title || "",
-    speaker.company || "",
-    speaker.bio || "",
-  ].join(" ").toLowerCase();
-  var count = 0;
-  keywords.forEach(function (kw) {
-    if (kw.includes(" ")) {
-      if (blob.includes(kw.toLowerCase())) count++;
-    } else {
-      try {
-        var re = new RegExp("\\b" + kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b");
-        if (re.test(blob)) count++;
-      } catch (e) {
-        if (blob.includes(kw.toLowerCase())) count++;
-      }
-    }
-  });
-  return count;
-}
-
-function deriveTags(speaker) {
-  var pillarScores = Object.entries(PILLAR_MAP).map(function (entry) {
-    return { key: entry[0], score: countMatches(speaker, entry[1].keywords) };
-  }).filter(function (p) { return p.score > 0; })
-    .sort(function (a, b) { return b.score - a.score; });
-  var sectorScores = Object.entries(SECTOR_MAP).map(function (entry) {
-    return { key: entry[0], score: countMatches(speaker, entry[1].keywords) };
-  }).filter(function (s) { return s.score > 0; })
-    .sort(function (a, b) { return b.score - a.score; });
-  var pillars = [];
-  if (pillarScores.length > 0) {
-    pillars.push(pillarScores[0].key);
-    if (pillarScores.length > 1 && pillarScores[1].score === pillarScores[0].score) {
-      pillars.push(pillarScores[1].key);
-    }
-  }
-  var sectors = [];
-  if (sectorScores.length > 0) {
-    sectors.push(sectorScores[0].key);
-    if (sectorScores.length > 1 && sectorScores[1].score === sectorScores[0].score) {
-      sectors.push(sectorScores[1].key);
-    }
-  }
-  return { pillars: pillars, sectors: sectors };
-}
+/* NOTE: the per-card category pills (AI / ML, Robotics, Public Sector …) were
+   removed at the client's request, along with the keyword-scoring helpers that
+   generated them (countMatches / deriveTags). The PILLAR_MAP and SECTOR_MAP
+   keyword lists are still used — by speakerMatchesKeywords above — to power the
+   TECH PILLAR and SECTOR filter dropdowns. Don't delete those maps. */
 
 var LinkedInIcon = function () {
   return (
@@ -349,19 +306,12 @@ function SpeakerCard({ speaker, dark, i }) {
   var s1 = useState(false); var hovered = s1[0]; var setHovered = s1[1];
 
   var imageUrl = speaker.image ? urlFor(speaker.image).width(500).height(500).url() : null;
-  var tags = useMemo(function () { return deriveTags(speaker); }, [speaker]);
 
   // Sessions this person appears in, straight from src/data/agenda.js
   var mySessions = useMemo(function () { return sessionsForSpeaker(speaker.name); }, [speaker.name]);
   var firstSession = mySessions[0] || null;
 
-  var primaryPillar = tags.pillars[0] ? PILLAR_MAP[tags.pillars[0]] : null;
-  var primarySector = tags.sectors[0] ? SECTOR_MAP[tags.sectors[0]] : null;
-
-  var accent = primaryPillar
-    ? (dark ? primaryPillar.color : primaryPillar.light)
-    : (dark ? "#b99eff" : "#7a3fd1");
-  var PillarIcon = primaryPillar ? primaryPillar.icon : null;
+  var accent = dark ? "#b99eff" : "#7a3fd1";
 
   var primaryText = dark ? "#ffffff" : "#0d0520";
   var secondaryText = dark ? "rgba(255,255,255,0.75)" : "rgba(13,5,32,0.65)";
@@ -438,48 +388,6 @@ function SpeakerCard({ speaker, dark, i }) {
         </div>
 
         <div style={{ padding: "1.1rem 1.4rem" }}>
-          <div style={{
-            display: "flex", flexWrap: "wrap", alignItems: "center",
-            gap: "0.4rem", marginBottom: "0.6rem",
-          }}>
-            {primaryPillar && (
-              <span style={{
-                display: "inline-flex", alignItems: "center", gap: "0.3rem",
-                padding: "0.24rem 0.62rem", borderRadius: "5px",
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.05em",
-                background: accent + "1c", color: accent,
-                border: "1px solid " + accent + "38",
-              }}>
-                {PillarIcon && <PillarIcon size={11} />}
-                {primaryPillar.label}
-              </span>
-            )}
-            {primarySector && (
-              <span style={{
-                padding: "0.24rem 0.62rem", borderRadius: "5px",
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.05em",
-                background: dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
-                color: primaryText,
-              }}>
-                {primarySector.label}
-              </span>
-            )}
-            {!primaryPillar && !primarySector && (
-              <span style={{
-                padding: "0.24rem 0.62rem", borderRadius: "5px",
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.06em",
-                textTransform: "uppercase",
-                background: dark ? "rgba(185,158,255,0.15)" : "rgba(122,63,209,0.10)",
-                color: accent,
-              }}>
-                Speaker
-              </span>
-            )}
-          </div>
-
           <p style={{
             fontWeight: 700, fontSize: "1.06rem", lineHeight: 1.35,
             color: primaryText, marginBottom: "0.35rem",

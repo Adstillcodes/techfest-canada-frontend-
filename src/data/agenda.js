@@ -30,13 +30,9 @@ export const SESSIONS = [
     id: "d1-02", day: 1, time: "09:05", endTime: "09:15",
     title: "Opening Ceremony",
     type: "Opening Ceremony", format: "opening", featured: true,
-    speakers: [
-      { name: "Dr. Elizabeth Sherwood Randall" },
-      { name: "Hon. Vic Fedeli" },
-      { name: "Christy Clark" },
-      { name: "Evan Solomon" },
-    ],
-    moderator: { name: "Christian Weedbrook" },
+    // Line-up withheld until confirmed (per Lubna, 18 Aug).
+    // To put names back, re-add `speakers: [...]` and/or `moderator: {...}`.
+    speakers: [],
   },
   {
     id: "d1-03", day: 1, time: "09:15", endTime: "09:45",
@@ -64,11 +60,8 @@ export const SESSIONS = [
     id: "d1-06", day: 1, time: "10:20", endTime: "10:45",
     title: "Conviction Before Consensus: A Bet on Canadian Deep Tech",
     type: "Fireside Chat", format: "fireside", pillar: "quantum",
-    speakers: [
-      { name: "Christian Weedbrook" },
-      { name: "Stephanie Simmons", org: "Photonic", tentative: true },
-      { name: "Don Mattrick", org: "Photonic", tentative: true },
-    ],
+    // Photonic names (Stephanie Simmons / Don Mattrick) withheld until confirmed.
+    speakers: [{ name: "Christian Weedbrook" }],
     moderator: { name: "Shawn Abbott" },
   },
   {
@@ -107,7 +100,8 @@ export const SESSIONS = [
     id: "d1-11", day: 1, time: "12:10", endTime: "12:40",
     title: "Reinventing the Intelligent Financial Institution",
     type: "Fireside Chat", format: "fireside", sector: "fintech",
-    speakers: [{ name: "Shereen Benzvy Miller" }],
+    // Speaker name withheld until confirmed.
+    speakers: [],
     moderator: { name: "Baldeep Singh Pahwa" },
   },
   {

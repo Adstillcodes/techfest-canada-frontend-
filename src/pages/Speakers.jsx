@@ -11,6 +11,7 @@ import { motion, AnimatePresence, useInView } from "framer-motion";
 import emailjs from "@emailjs/browser";
 import { client, urlFor } from "../utils/sanity";
 import SpeakerMarquee from "../components/SpeakerMarquee";
+import { sessionsForSpeaker, slugifyName, formatTime12, DAYS } from "../data/agenda";
 
 // ─── Protection ──────────────────────────────────────────────────
 function useProtection() {
@@ -36,10 +37,6 @@ const STATS = [
 ];
 
 // ─── Pillar & Sector maps (TIGHTENED KEYWORDS) ──────────────────
-// Rules applied:
-//   - No single generic words ("security","automation","privacy","intelligent")
-//   - Multi-word phrases preferred ("machine learning" not just "learning")
-//   - No words that commonly appear in other pillars' bios
 const PILLAR_MAP = {
   ai: {
     label: "AI / ML", icon: Sparkles, color: "#b99eff", light: "#7a3fd1",
@@ -156,8 +153,7 @@ const SECTOR_MAP = {
   },
 };
 
-// ─── FIXED: Word-boundary aware matching ─────────────────────────
-// Uses regex \b to prevent "security" matching inside "cybersecurity"
+// ─── Word-boundary aware matching ────────────────────────────────
 function speakerMatchesKeywords(speaker, keywords) {
   var blob = [
     speaker.name || "",
@@ -165,13 +161,10 @@ function speakerMatchesKeywords(speaker, keywords) {
     speaker.company || "",
     speaker.bio || "",
   ].join(" ").toLowerCase();
-
   return keywords.some(function (kw) {
-    // For multi-word phrases, use simple includes (they're specific enough)
     if (kw.includes(" ")) {
       return blob.includes(kw.toLowerCase());
     }
-    // For single words, use word boundary regex to prevent substring matches
     try {
       var re = new RegExp("\\b" + kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b");
       return re.test(blob);
@@ -181,9 +174,6 @@ function speakerMatchesKeywords(speaker, keywords) {
   });
 }
 
-// ─── FIXED: Score-based tagging ──────────────────────────────────
-// Counts how many keywords match per pillar/sector, returns only
-// the top match (not every pillar that has any match at all)
 function countMatches(speaker, keywords) {
   var blob = [
     speaker.name || "",
@@ -191,7 +181,6 @@ function countMatches(speaker, keywords) {
     speaker.company || "",
     speaker.bio || "",
   ].join(" ").toLowerCase();
-
   var count = 0;
   keywords.forEach(function (kw) {
     if (kw.includes(" ")) {
@@ -209,19 +198,14 @@ function countMatches(speaker, keywords) {
 }
 
 function deriveTags(speaker) {
-  // Score each pillar and sector
   var pillarScores = Object.entries(PILLAR_MAP).map(function (entry) {
     return { key: entry[0], score: countMatches(speaker, entry[1].keywords) };
   }).filter(function (p) { return p.score > 0; })
     .sort(function (a, b) { return b.score - a.score; });
-
   var sectorScores = Object.entries(SECTOR_MAP).map(function (entry) {
     return { key: entry[0], score: countMatches(speaker, entry[1].keywords) };
   }).filter(function (s) { return s.score > 0; })
     .sort(function (a, b) { return b.score - a.score; });
-
-  // Only return the top pillar (highest keyword match count)
-  // If top two are tied, return both. Otherwise just the best one.
   var pillars = [];
   if (pillarScores.length > 0) {
     pillars.push(pillarScores[0].key);
@@ -229,7 +213,6 @@ function deriveTags(speaker) {
       pillars.push(pillarScores[1].key);
     }
   }
-
   var sectors = [];
   if (sectorScores.length > 0) {
     sectors.push(sectorScores[0].key);
@@ -237,7 +220,6 @@ function deriveTags(speaker) {
       sectors.push(sectorScores[1].key);
     }
   }
-
   return { pillars: pillars, sectors: sectors };
 }
 
@@ -249,19 +231,26 @@ var LinkedInIcon = function () {
   );
 };
 
+var CalendarIcon = function () {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </svg>
+  );
+};
+
 // ─── Filter Dropdown ─────────────────────────────────────────────
 function FilterDropdown({ label, value, options, onSelect, dark, accent, border, inactiveText }) {
   var s1 = useState(false); var open = s1[0]; var setOpen = s1[1];
   var ref = useRef(null);
-
   useEffect(function () {
     var fn = function (e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
     document.addEventListener("mousedown", fn);
     return function () { document.removeEventListener("mousedown", fn); };
   }, []);
-
   var selected = value ? options[value] : null;
-
   return (
     <div ref={ref} style={{ position: "relative", flexShrink: 0 }}>
       <motion.button
@@ -288,7 +277,6 @@ function FilterDropdown({ label, value, options, onSelect, dark, accent, border,
           <ChevronDown size={13} />
         </motion.span>
       </motion.button>
-
       <AnimatePresence>
         {open && (
           <motion.div
@@ -361,8 +349,12 @@ function SpeakerCard({ speaker, dark, i }) {
   var s1 = useState(false); var hovered = s1[0]; var setHovered = s1[1];
 
   var imageUrl = speaker.image ? urlFor(speaker.image).width(500).height(500).url() : null;
-
   var tags = useMemo(function () { return deriveTags(speaker); }, [speaker]);
+
+  // Sessions this person appears in, straight from src/data/agenda.js
+  var mySessions = useMemo(function () { return sessionsForSpeaker(speaker.name); }, [speaker.name]);
+  var firstSession = mySessions[0] || null;
+
   var primaryPillar = tags.pillars[0] ? PILLAR_MAP[tags.pillars[0]] : null;
   var primarySector = tags.sectors[0] ? SECTOR_MAP[tags.sectors[0]] : null;
 
@@ -374,6 +366,8 @@ function SpeakerCard({ speaker, dark, i }) {
   var primaryText = dark ? "#ffffff" : "#0d0520";
   var secondaryText = dark ? "rgba(255,255,255,0.75)" : "rgba(13,5,32,0.65)";
   var mutedText = dark ? "rgba(255,255,255,0.48)" : "rgba(13,5,32,0.42)";
+
+  var slug = speaker.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
   return (
     <motion.div
@@ -390,11 +384,12 @@ function SpeakerCard({ speaker, dark, i }) {
         boxShadow: !dark ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
         transition: "transform 0.25s ease, box-shadow 0.25s ease",
-                display: "flex",
+        display: "flex",
         flexDirection: "column",
       }}
     >
-<Link to={"/speakers/" + speaker.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")} style={{ display: "flex", flexDirection: "column", flex: 1, textDecoration: "none", color: "inherit" }}>        <div style={{
+      <Link to={"/speakers/" + slug} style={{ display: "flex", flexDirection: "column", flex: 1, textDecoration: "none", color: "inherit" }}>
+        <div style={{
           position: "relative", paddingTop: "100%", overflow: "hidden",
           background: dark ? "#1a0a3e" : "#ede9ff",
         }}>
@@ -509,29 +504,92 @@ function SpeakerCard({ speaker, dark, i }) {
               {speaker.company}
             </p>
           )}
+
+          {/* Session teaser — what they'll actually be on stage for */}
+          {firstSession && (
+            <p style={{
+              fontSize: "0.76rem", lineHeight: 1.45, color: mutedText,
+              marginTop: "0.7rem", paddingTop: "0.7rem",
+              borderTop: "1px dashed " + (dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.09)"),
+            }}>
+              <span style={{ fontWeight: 700, color: secondaryText }}>
+                {DAYS[firstSession.day].label} · {formatTime12(firstSession.time)}
+              </span>
+              {" — "}{firstSession.title}
+              {mySessions.length > 1 && (
+                <span style={{ fontWeight: 700, color: accent }}>
+                  {" "}+{mySessions.length - 1} more
+                </span>
+              )}
+            </p>
+          )}
         </div>
       </Link>
 
-      {speaker.linkedin && (
-        <div style={{ padding: "0 1.4rem 1.1rem", marginTop: "auto" }}>
-          <a
-            href={speaker.linkedin} target="_blank" rel="noopener noreferrer"
-            onClick={function (e) { e.stopPropagation(); }}
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-              width: "100%", padding: "9px 0", borderRadius: 8,
-              background: "#0A66C2", color: "#fff",
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em",
-              textDecoration: "none", textTransform: "uppercase",
-              transition: "background 0.2s ease",
-            }}
-            onMouseEnter={function (e) { e.currentTarget.style.background = "#004182"; }}
-            onMouseLeave={function (e) { e.currentTarget.style.background = "#0A66C2"; }}
-          >
-            <LinkedInIcon />
-            View on LinkedIn
-          </a>
+      {/* ── Card footer: LinkedIn + Show Agenda ── */}
+      {(speaker.linkedin || mySessions.length > 0) && (
+        <div style={{
+          padding: "0 1.4rem 1.1rem", marginTop: "auto",
+          display: "flex", flexDirection: "column", gap: 8,
+        }}>
+          {speaker.linkedin && (
+            <a
+              href={speaker.linkedin} target="_blank" rel="noopener noreferrer"
+              onClick={function (e) { e.stopPropagation(); }}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                width: "100%", padding: "9px 0", borderRadius: 8,
+                background: "#0A66C2", color: "#fff",
+                fontFamily: "'Orbitron', sans-serif",
+                fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em",
+                textDecoration: "none", textTransform: "uppercase",
+                transition: "background 0.2s ease",
+              }}
+              onMouseEnter={function (e) { e.currentTarget.style.background = "#004182"; }}
+              onMouseLeave={function (e) { e.currentTarget.style.background = "#0A66C2"; }}
+            >
+              <LinkedInIcon />
+              View on LinkedIn
+            </a>
+          )}
+
+          {mySessions.length > 0 && (
+            <Link
+              to={"/agenda?speaker=" + slugifyName(speaker.name)}
+              onClick={function (e) { e.stopPropagation(); }}
+              style={{
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                width: "100%", padding: "9px 0", borderRadius: 8,
+                background: "transparent", color: accent,
+                border: "1.5px solid " + accent + "70",
+                fontFamily: "'Orbitron', sans-serif",
+                fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em",
+                textDecoration: "none", textTransform: "uppercase",
+                transition: "background 0.2s ease, color 0.2s ease, border-color 0.2s ease",
+              }}
+              onMouseEnter={function (e) {
+                e.currentTarget.style.background = accent;
+                e.currentTarget.style.color = "#fff";
+                e.currentTarget.style.borderColor = accent;
+              }}
+              onMouseLeave={function (e) {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = accent;
+                e.currentTarget.style.borderColor = accent + "70";
+              }}
+            >
+              <CalendarIcon />
+              Show Agenda
+              {mySessions.length > 1 && (
+                <span style={{
+                  fontSize: "0.6rem", fontWeight: 800, padding: "1px 6px",
+                  borderRadius: 999, background: accent + "2e",
+                }}>
+                  {mySessions.length}
+                </span>
+              )}
+            </Link>
+          )}
         </div>
       )}
     </motion.div>
@@ -541,7 +599,6 @@ function SpeakerCard({ speaker, dark, i }) {
 // ─── Page ────────────────────────────────────────────────────────
 export default function Speakers() {
   useProtection();
-
   var s1 = useState(false); var dark = s1[0]; var setDark = s1[1];
   var s2 = useState([]); var speakers = s2[0]; var setSpeakers = s2[1];
   var s3 = useState(true); var loading = s3[0]; var setLoading = s3[1];
@@ -574,7 +631,6 @@ export default function Speakers() {
   var mutedText = dark ? "rgba(255,255,255,0.48)" : "rgba(13,5,32,0.42)";
   var secondary = dark ? "rgba(255,255,255,0.68)" : "rgba(13,5,32,0.58)";
 
-  // FIXED: Filtering uses the same word-boundary matching
   var filtered = useMemo(function () {
     return speakers.filter(function (s) {
       if (search.trim()) {
@@ -693,7 +749,6 @@ export default function Speakers() {
           .mobile-scroll-row { display: flex  !important; }\
         }\
       "}</style>
-
       <div style={{
         background: bg, minHeight: "100vh", color: text,
         overflowX: "clip", userSelect: "none", fontFamily: "'Inter', sans-serif",
@@ -730,7 +785,6 @@ export default function Speakers() {
                 Industry leaders, innovators, and pioneers shaping the future of technology in Canada and beyond.
               </p>
             </motion.div>
-
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.7 }}>
               <div style={{ display: "flex", justifyContent: "center", gap: "clamp(1.5rem, 4vw, 3.5rem)", flexWrap: "wrap" }}>
                 {STATS.map(function (s, i) {
@@ -809,7 +863,6 @@ export default function Speakers() {
                 ? "Loading speakers..."
                 : filtered.length + " speaker" + (filtered.length !== 1 ? "s" : "") + " · TTFC 2026"}
             </p>
-
             {loading ? (
               <div style={{ textAlign: "center", color: mutedText, padding: 80 }}>Loading speakers...</div>
             ) : filtered.length === 0 ? (
@@ -848,7 +901,6 @@ export default function Speakers() {
                 })}
               </div>
             )}
-
             {!loading && (
               <div style={{
                 marginTop: "3.5rem", padding: "2.2rem 2rem", borderRadius: "10px",
@@ -879,7 +931,6 @@ export default function Speakers() {
           dark={dark} border={border} accent={accent}
           text={text} secondary={secondary} mutedText={mutedText}
         />
-
         <Footer />
       </div>
     </>
@@ -979,7 +1030,6 @@ function ApplyToSpeak({ dark, border, accent, text, secondary, mutedText }) {
             }}>
               Apply to Speak
             </h3>
-
             {status === "success" ? (
               <div style={{ textAlign: "center", padding: "1.2rem 0", color: accent }}>
                 <div style={{ fontSize: "2rem", marginBottom: 10 }}>✓</div>

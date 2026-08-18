@@ -198,19 +198,19 @@ function PassCard({ meta, inventoryItem, onPurchase, dark, inventoryLoaded }) {
 
   return (
     <div data-pass-card onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-      style={{ position:"relative", flex: soldOut?"0 1 250px":"1 1 260px", maxWidth: soldOut?285:340, minWidth: soldOut?215:240, alignSelf: soldOut?"center":"stretch", borderRadius:20, padding: soldOut?"24px 20px 22px":"32px 26px 28px", display:"flex", flexDirection:"column", backdropFilter:"blur(18px)", WebkitBackdropFilter:"blur(18px)", background: meta.featured?(dark?"linear-gradient(135deg, rgba(122,63,209,0.28) 0%, rgba(245,166,35,0.12) 100%)":"linear-gradient(135deg, rgba(122,63,209,0.12) 0%, rgba(245,166,35,0.08) 100%)"):cardBg, border: meta.featured?(dark?"1px solid rgba(122,63,209,0.55)":"1px solid rgba(122,63,209,0.40)"):cardBorder, boxShadow: meta.featured?(dark?"0 8px 48px rgba(122,63,209,0.25)":"0 8px 32px rgba(122,63,209,0.18)"):(dark?"0 4px 32px rgba(0,0,0,0.35)":"0 4px 24px rgba(122,63,209,0.08)"), transform: meta.featured?"scale(1.04)":soldOut?"scale(0.95)":hovered?"scale(1.02)":"scale(1)", transition:"transform 0.25s ease, box-shadow 0.25s ease", zIndex: meta.featured?2:1, opacity: soldOut?0.7:1 }}>
+      style={{ position:"relative", flex:"1 1 260px", maxWidth:340, minWidth:240, alignSelf:"stretch", borderRadius:20, padding:"32px 26px 28px", display:"flex", flexDirection:"column", backdropFilter:"blur(18px)", WebkitBackdropFilter:"blur(18px)", background: meta.featured?(dark?"linear-gradient(135deg, rgba(122,63,209,0.28) 0%, rgba(245,166,35,0.12) 100%)":"linear-gradient(135deg, rgba(122,63,209,0.12) 0%, rgba(245,166,35,0.08) 100%)"):cardBg, border: meta.featured?(dark?"1px solid rgba(122,63,209,0.55)":"1px solid rgba(122,63,209,0.40)"):cardBorder, boxShadow: meta.featured?(dark?"0 8px 48px rgba(122,63,209,0.25)":"0 8px 32px rgba(122,63,209,0.18)"):(dark?"0 4px 32px rgba(0,0,0,0.35)":"0 4px 24px rgba(122,63,209,0.08)"), transform: meta.featured?"scale(1.04)":(hovered && !soldOut)?"scale(1.02)":"scale(1)", transition:"transform 0.25s ease, box-shadow 0.25s ease", zIndex: meta.featured?2:1, opacity: soldOut?0.82:1 }}>
 
       {meta.featured && <div style={{ position:"absolute", top:-14, left:"50%", transform:"translateX(-50%)", background:"linear-gradient(90deg, #7a3fd1, #f5a623)", color:"white", fontSize:"0.62rem", fontWeight:800, letterSpacing:"1.4px", textTransform:"uppercase", padding:"5px 16px", borderRadius:999, whiteSpace:"nowrap", fontFamily:"'Orbitron', sans-serif" }}>Most Popular</div>}
 
       {soldOut && !meta.featured && <div style={{ position:"absolute", top:-14, left:"50%", transform:"translateX(-50%)", background: dark?"rgba(255,255,255,0.14)":"rgba(13,5,32,0.72)", color: dark?"rgba(255,255,255,0.85)":"#ffffff", fontSize:"0.62rem", fontWeight:800, letterSpacing:"1.4px", textTransform:"uppercase", padding:"5px 16px", borderRadius:999, whiteSpace:"nowrap", fontFamily:"'Orbitron', sans-serif", border: dark?"1px solid rgba(255,255,255,0.18)":"none" }}>Sold Out</div>}
 
-      <div style={{ fontFamily:"'Orbitron', sans-serif", fontWeight:800, fontSize: soldOut?"0.66rem":"0.72rem", letterSpacing:"1.5px", textTransform:"uppercase", color: meta.featured?(dark?"#f5a623":"#d98a14"):(dark?"rgba(160,100,255,0.85)":"#7a3fd1"), marginBottom:8 }}>{meta.label}</div>
+      <div style={{ fontFamily:"'Orbitron', sans-serif", fontWeight:800, fontSize:"0.72rem", letterSpacing:"1.5px", textTransform:"uppercase", color: meta.featured?(dark?"#f5a623":"#d98a14"):(dark?"rgba(160,100,255,0.85)":"#7a3fd1"), marginBottom:8 }}>{meta.label}</div>
 
-      <div style={{ display:"flex", alignItems:"baseline", gap:6, marginBottom:2, minHeight: soldOut?"2.1rem":"2.6rem" }}>
+      <div style={{ display:"flex", alignItems:"baseline", gap:6, marginBottom:2, minHeight:"2.6rem" }}>
         {inventoryLoaded ? (
           <>
-            <PriceWithAsterisk price={price} color={textMain} fontSize={soldOut?"2.05rem":"2.6rem"} fontWeight={900} />
-            <span style={{ fontFamily:"'Orbitron', sans-serif", fontSize: soldOut?"0.82rem":"0.95rem", fontWeight:800, color:textLight, letterSpacing:"1px", textTransform:"uppercase" }}>CAD</span>
+            <PriceWithAsterisk price={price} color={textMain} fontSize="2.6rem" fontWeight={900} />
+            <span style={{ fontFamily:"'Orbitron', sans-serif", fontSize:"0.95rem", fontWeight:800, color:textLight, letterSpacing:"1px", textTransform:"uppercase" }}>CAD</span>
           </>
         ) : (
           <div aria-label="Loading price" style={{ width:160, height:"2.4rem", borderRadius:8, background: dark?"linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08), rgba(255,255,255,0.04))":"linear-gradient(90deg, rgba(122,63,209,0.05), rgba(122,63,209,0.12), rgba(122,63,209,0.05))", backgroundSize:"200% 100%", animation:"ttfcShimmer 1.4s ease-in-out infinite" }} />
@@ -221,14 +221,14 @@ function PassCard({ meta, inventoryItem, onPurchase, dark, inventoryLoaded }) {
 
       <div style={{ width:"100%", height:1, background: dark?"linear-gradient(90deg,transparent,rgba(255,255,255,0.12) 50%,transparent)":"linear-gradient(90deg,transparent,rgba(122,63,209,0.18) 50%,transparent)", margin:"14px 0 16px" }} />
 
-      <p style={{ fontSize: soldOut?"0.78rem":"0.82rem", fontWeight:600, color:textMain, marginBottom:8, lineHeight:1.5, textAlign:"justify" }}>{meta.tagline}</p>
-      <p style={{ fontSize: soldOut?"0.72rem":"0.76rem", color:textMuted, lineHeight:1.6, marginBottom: soldOut?14:18, textAlign:"justify", hyphens:"auto" }}>{meta.description}</p>
+      <p style={{ fontSize:"0.82rem", fontWeight:600, color:textMain, marginBottom:8, lineHeight:1.5, textAlign:"justify" }}>{meta.tagline}</p>
+      <p style={{ fontSize:"0.76rem", color:textMuted, lineHeight:1.65, marginBottom:18, textAlign:"justify", hyphens:"auto" }}>{meta.description}</p>
 
       <div style={{ fontSize:"0.66rem", fontWeight:700, letterSpacing:"1.2px", textTransform:"uppercase", color:textLight, marginBottom:10 }}>Includes</div>
-      <ul style={{ listStyle:"none", padding:0, margin:"0 0 auto", display:"flex", flexDirection:"column", gap: soldOut?6:8 }}>{meta.features.map(f => <li key={f} style={{ display:"flex", alignItems:"flex-start", gap:8, fontSize: soldOut?"0.74rem":"0.78rem", color:textMuted, lineHeight:1.4 }}><CheckIcon />{f}</li>)}</ul>
+      <ul style={{ listStyle:"none", padding:0, margin:"0 0 auto", display:"flex", flexDirection:"column", gap:8 }}>{meta.features.map(f => <li key={f} style={{ display:"flex", alignItems:"flex-start", gap:8, fontSize:"0.78rem", color:textMuted, lineHeight:1.4 }}><CheckIcon />{f}</li>)}</ul>
 
       <button disabled={soldOut} onClick={() => !soldOut && onPurchase(meta.tier)}
-        style={{ marginTop: soldOut?18:24, width:"100%", padding: soldOut?"11px 0":"13px 0", borderRadius:12, border:"none", cursor: soldOut?"not-allowed":"pointer", fontFamily:"'Orbitron', sans-serif", fontWeight:800, fontSize:"0.68rem", letterSpacing:"1px", textTransform:"uppercase", color: soldOut?(dark?"rgba(255,255,255,0.3)":"rgba(13,5,32,0.3)"):"white", background: soldOut?(dark?"rgba(255,255,255,0.05)":"rgba(13,5,32,0.05)"):meta.featured?"linear-gradient(135deg, #7a3fd1, #f5a623)":(dark?"rgba(122,63,209,0.35)":"#7a3fd1"), boxShadow: soldOut||!meta.featured?"none":"0 4px 20px rgba(122,63,209,0.4)", transition:"all 0.2s" }}
+        style={{ marginTop:24, width:"100%", padding:"13px 0", borderRadius:12, border:"none", cursor: soldOut?"not-allowed":"pointer", fontFamily:"'Orbitron', sans-serif", fontWeight:800, fontSize:"0.68rem", letterSpacing:"1px", textTransform:"uppercase", color: soldOut?(dark?"rgba(255,255,255,0.3)":"rgba(13,5,32,0.3)"):"white", background: soldOut?(dark?"rgba(255,255,255,0.05)":"rgba(13,5,32,0.05)"):meta.featured?"linear-gradient(135deg, #7a3fd1, #f5a623)":(dark?"rgba(122,63,209,0.35)":"#7a3fd1"), boxShadow: soldOut||!meta.featured?"none":"0 4px 20px rgba(122,63,209,0.4)", transition:"all 0.2s" }}
         onMouseEnter={(e) => { if (!soldOut && !meta.featured) e.currentTarget.style.background = dark?"rgba(122,63,209,0.55)":"#6330b3"; }}
         onMouseLeave={(e) => { if (!soldOut && !meta.featured) e.currentTarget.style.background = dark?"rgba(122,63,209,0.35)":"#7a3fd1"; }}>
         {soldOut ? "Sold Out" : "Get Your Pass"}

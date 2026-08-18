@@ -1,193 +1,17 @@
 // src/components/CommunityCarousel.jsx
-// "Our Community" — horizontal card carousel built from the same Sanity
+// "2026 Speakers" — horizontal card carousel built from the same Sanity
 // speaker data and card design used on the Speakers page.
 // Vite + React, framer-motion, no Tailwind. Respects light / dark mode.
+//
+// NOTE: category pills (AI / ML, Robotics, …) were removed at the client's
+// request, so this component no longer needs the pillar/sector keyword maps.
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  Mic, ChevronLeft, ChevronRight,
-  Sparkles, Zap, Shield, Cpu, Leaf,
-} from "lucide-react";
+import { Mic, ChevronLeft, ChevronRight } from "lucide-react";
 import { client, urlFor } from "../utils/sanity";
-
-/* ─────────────────────────────────────────────
-   Pillar & sector maps — kept in sync with the
-   Speakers page. If you'd rather share one copy,
-   move these into src/utils/speakerTags.js and
-   import from both files.
-───────────────────────────────────────────── */
-const PILLAR_MAP = {
-  ai: {
-    label: "AI / ML", icon: Sparkles, color: "#b99eff", light: "#7a3fd1",
-    keywords: [
-      "artificial intelligence", "machine learning", "deep learning",
-      "large language model", "llm", "generative ai", "genai", "gen ai",
-      "neural network", "natural language processing", "nlp",
-      "computer vision", "data science", "foundation model",
-      "gpt", "agentic ai", "ai agent", "ml ops", "mlops",
-      "responsible ai", "ai governance", "ai ethics",
-      "recommendation engine", "predictive analytics",
-      "ai infrastructure", "ai platform",
-    ],
-  },
-  quantum: {
-    label: "Quantum", icon: Zap, color: "#56b3f5", light: "#1878c2",
-    keywords: [
-      "quantum computing", "quantum", "qubit", "superposition",
-      "entanglement", "quantum cryptography", "quantum sensing",
-      "quantum communication", "quantum hardware", "quantum software",
-      "post-quantum", "post quantum",
-    ],
-  },
-  cybersecurity: {
-    label: "Cybersecurity", icon: Shield, color: "#f57eb3", light: "#c2287a",
-    keywords: [
-      "cybersecurity", "cyber security", "infosec", "information security",
-      "threat intelligence", "zero trust", "penetration testing",
-      "vulnerability management", "security operations center", "soc analyst",
-      "ciso", "chief information security", "identity management",
-      "ransomware", "malware", "devsecops", "incident response",
-      "digital forensics", "network security", "endpoint security",
-      "cloud security", "application security", "appsec",
-      "data protection", "encryption", "cyber threat", "cyber defense",
-      "security architect", "security engineering",
-    ],
-  },
-  robotics: {
-    label: "Robotics", icon: Cpu, color: "#f5a623", light: "#c4780a",
-    keywords: [
-      "robotics", "robot", "autonomous vehicle", "autonomous system",
-      "cobot", "collaborative robot", "drone", "uav",
-      "humanoid robot", "physical ai", "mechatronics",
-      "industrial automation", "robotic process",
-      "actuator", "embedded systems", "field robotics",
-    ],
-  },
-  climate: {
-    label: "Climate Tech", icon: Leaf, color: "#3fd19c", light: "#1a9e70",
-    keywords: [
-      "climate tech", "climate technology", "sustainability",
-      "sustainable", "renewable energy", "carbon capture",
-      "net zero", "net-zero", "esg reporting", "clean energy",
-      "cleantech", "clean tech", "decarbonization", "decarbonisation",
-      "circular economy", "carbon neutral", "green technology",
-      "solar energy", "wind energy", "energy transition",
-      "climate change", "environmental technology",
-    ],
-  },
-};
-
-const SECTOR_MAP = {
-  fintech: {
-    label: "Financial Services", short: "FIN",
-    keywords: [
-      "fintech", "financial services", "financial technology",
-      "banking", "capital markets", "trading platform",
-      "wealth management", "asset management", "hedge fund",
-      "venture capital", "private equity", "blockchain",
-      "cryptocurrency", "defi", "regtech", "insurtech",
-      "payment processing", "digital payments",
-    ],
-  },
-  healthcare: {
-    label: "Healthcare & Life Sci", short: "HLT",
-    keywords: [
-      "healthcare", "health tech", "healthtech", "medical device",
-      "hospital", "clinical trial", "pharmaceutical", "pharma",
-      "biotech", "biotechnology", "life sciences", "drug discovery",
-      "patient care", "genomics", "medtech", "telemedicine",
-      "therapeutics", "digital health", "health system",
-      "public health", "mental health", "oncology", "radiology",
-    ],
-  },
-  energy: {
-    label: "Energy & Infrastructure", short: "ENR",
-    keywords: [
-      "energy sector", "power grid", "utility company", "utilities",
-      "oil and gas", "petroleum", "electrification",
-      "energy storage", "battery technology", "smart grid",
-      "microgrid", "nuclear energy", "hydroelectric",
-      "energy infrastructure", "power generation",
-    ],
-  },
-  manufacturing: {
-    label: "Manufacturing & Supply", short: "MFG",
-    keywords: [
-      "manufacturing", "supply chain", "logistics technology",
-      "production line", "factory automation", "industrial iot",
-      "automotive industry", "aerospace", "warehouse automation",
-      "inventory management", "procurement", "industry 4.0",
-      "smart factory", "digital twin", "additive manufacturing",
-    ],
-  },
-  public: {
-    label: "Public Sector & Defence", short: "DEF",
-    keywords: [
-      "defence", "defense", "public sector", "military",
-      "national security", "government technology", "govtech",
-      "federal government", "border security", "emergency management",
-      "intelligence community", "armed forces", "law enforcement",
-      "public safety", "ministry of defence", "department of defense",
-    ],
-  },
-};
-
-/* Word-boundary aware keyword scoring (same logic as the Speakers page) */
-function countMatches(speaker, keywords) {
-  var blob = [
-    speaker.name || "",
-    speaker.title || "",
-    speaker.company || "",
-    speaker.bio || "",
-  ].join(" ").toLowerCase();
-
-  var count = 0;
-  keywords.forEach(function (kw) {
-    if (kw.includes(" ")) {
-      if (blob.includes(kw.toLowerCase())) count++;
-    } else {
-      try {
-        var re = new RegExp("\\b" + kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b");
-        if (re.test(blob)) count++;
-      } catch (e) {
-        if (blob.includes(kw.toLowerCase())) count++;
-      }
-    }
-  });
-  return count;
-}
-
-function deriveTags(speaker) {
-  var pillarScores = Object.entries(PILLAR_MAP).map(function (entry) {
-    return { key: entry[0], score: countMatches(speaker, entry[1].keywords) };
-  }).filter(function (p) { return p.score > 0; })
-    .sort(function (a, b) { return b.score - a.score; });
-
-  var sectorScores = Object.entries(SECTOR_MAP).map(function (entry) {
-    return { key: entry[0], score: countMatches(speaker, entry[1].keywords) };
-  }).filter(function (s) { return s.score > 0; })
-    .sort(function (a, b) { return b.score - a.score; });
-
-  var pillars = [];
-  if (pillarScores.length > 0) {
-    pillars.push(pillarScores[0].key);
-    if (pillarScores.length > 1 && pillarScores[1].score === pillarScores[0].score) {
-      pillars.push(pillarScores[1].key);
-    }
-  }
-
-  var sectors = [];
-  if (sectorScores.length > 0) {
-    sectors.push(sectorScores[0].key);
-    if (sectorScores.length > 1 && sectorScores[1].score === sectorScores[0].score) {
-      sectors.push(sectorScores[1].key);
-    }
-  }
-
-  return { pillars: pillars, sectors: sectors };
-}
+import { sessionsForSpeaker, slugifyName, formatTime12, DAYS } from "../data/agenda";
 
 var LinkedInIcon = function () {
   return (
@@ -197,25 +21,15 @@ var LinkedInIcon = function () {
   );
 };
 
-function slugFor(name) {
-  return String(name || "").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-}
-
 /* ─── Card (same design language as the Speakers page grid) ─── */
 function CommunityCard({ speaker, dark }) {
   var s1 = useState(false); var hovered = s1[0]; var setHovered = s1[1];
 
   var imageUrl = speaker.image ? urlFor(speaker.image).width(500).height(500).url() : null;
-  var tags = useMemo(function () { return deriveTags(speaker); }, [speaker]);
+  var mySessions = useMemo(function () { return sessionsForSpeaker(speaker.name); }, [speaker.name]);
+  var firstSession = mySessions[0] || null;
 
-  var primaryPillar = tags.pillars[0] ? PILLAR_MAP[tags.pillars[0]] : null;
-  var primarySector = tags.sectors[0] ? SECTOR_MAP[tags.sectors[0]] : null;
-
-  var accent = primaryPillar
-    ? (dark ? primaryPillar.color : primaryPillar.light)
-    : (dark ? "#b99eff" : "#7a3fd1");
-  var PillarIcon = primaryPillar ? primaryPillar.icon : null;
-
+  var accent = dark ? "#b99eff" : "#7a3fd1";
   var primaryText = dark ? "#ffffff" : "#0d0520";
   var secondaryText = dark ? "rgba(255,255,255,0.75)" : "rgba(13,5,32,0.65)";
   var mutedText = dark ? "rgba(255,255,255,0.48)" : "rgba(13,5,32,0.42)";
@@ -237,7 +51,7 @@ function CommunityCard({ speaker, dark }) {
       }}
     >
       <Link
-        to={"/speakers/" + slugFor(speaker.name)}
+        to={"/speakers/" + slugifyName(speaker.name)}
         style={{ display: "flex", flexDirection: "column", flex: 1, textDecoration: "none", color: "inherit" }}
       >
         <div style={{
@@ -289,48 +103,6 @@ function CommunityCard({ speaker, dark }) {
         </div>
 
         <div style={{ padding: "1.1rem 1.4rem" }}>
-          <div style={{
-            display: "flex", flexWrap: "wrap", alignItems: "center",
-            gap: "0.4rem", marginBottom: "0.6rem",
-          }}>
-            {primaryPillar && (
-              <span style={{
-                display: "inline-flex", alignItems: "center", gap: "0.3rem",
-                padding: "0.24rem 0.62rem", borderRadius: "5px",
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.05em",
-                background: accent + "1c", color: accent,
-                border: "1px solid " + accent + "38",
-              }}>
-                {PillarIcon && <PillarIcon size={11} />}
-                {primaryPillar.label}
-              </span>
-            )}
-            {primarySector && (
-              <span style={{
-                padding: "0.24rem 0.62rem", borderRadius: "5px",
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.05em",
-                background: dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.06)",
-                color: primaryText,
-              }}>
-                {primarySector.label}
-              </span>
-            )}
-            {!primaryPillar && !primarySector && (
-              <span style={{
-                padding: "0.24rem 0.62rem", borderRadius: "5px",
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.06em",
-                textTransform: "uppercase",
-                background: dark ? "rgba(185,158,255,0.15)" : "rgba(122,63,209,0.10)",
-                color: accent,
-              }}>
-                Speaker
-              </span>
-            )}
-          </div>
-
           <p style={{
             fontWeight: 700, fontSize: "1.06rem", lineHeight: 1.35,
             color: primaryText, marginBottom: "0.35rem",
@@ -350,6 +122,19 @@ function CommunityCard({ speaker, dark }) {
           {speaker.company && (
             <p style={{ fontSize: "0.82rem", lineHeight: 1.5, color: mutedText }}>
               {speaker.company}
+            </p>
+          )}
+
+          {firstSession && (
+            <p style={{
+              fontSize: "0.76rem", lineHeight: 1.45, color: mutedText,
+              marginTop: "0.7rem", paddingTop: "0.7rem",
+              borderTop: "1px dashed " + (dark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.09)"),
+            }}>
+              <span style={{ fontWeight: 700, color: secondaryText }}>
+                {DAYS[firstSession.day].label} · {formatTime12(firstSession.time)}
+              </span>
+              {" — "}{firstSession.title}
             </p>
           )}
         </div>
@@ -382,7 +167,7 @@ function CommunityCard({ speaker, dark }) {
 }
 
 /* ─────────────────────────────────────────────
-   OUR COMMUNITY carousel
+   2026 SPEAKERS carousel
 
    Props:
      dark      — boolean, from the Home page theme observer
@@ -438,7 +223,6 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
     el.scrollBy({ left: dir * step * pages, behavior: "smooth" });
   }
 
-  // Nothing to show — render nothing rather than an empty band in the hero flow
   if (loading || people.length === 0) return null;
 
   var text = dark ? "#ffffff" : "#0d0520";
@@ -526,20 +310,12 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
             </Link>
 
             <div className="community-nav" style={{ display: "flex", gap: "0.5rem" }}>
-              <button
-                onClick={function () { scrollByPage(-1); }}
-                disabled={atStart}
-                aria-label="Scroll left"
-                style={navBtn(atStart)}
-              >
+              <button onClick={function () { scrollByPage(-1); }} disabled={atStart}
+                aria-label="Scroll left" style={navBtn(atStart)}>
                 <ChevronLeft size={19} />
               </button>
-              <button
-                onClick={function () { scrollByPage(1); }}
-                disabled={atEnd}
-                aria-label="Scroll right"
-                style={navBtn(atEnd)}
-              >
+              <button onClick={function () { scrollByPage(1); }} disabled={atEnd}
+                aria-label="Scroll right" style={navBtn(atEnd)}>
                 <ChevronRight size={19} />
               </button>
             </div>
@@ -547,7 +323,6 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
         </motion.div>
       </div>
 
-      {/* Rail — full-bleed with an inner max width via padding */}
       <div style={{ position: "relative", maxWidth: 1260, margin: "0 auto" }}>
         <div ref={railRef} className="community-rail">
           {people.map(function (p) {
@@ -555,7 +330,6 @@ export default function CommunityCarousel({ dark, limit = 14, showAllTo = "/spea
           })}
         </div>
 
-        {/* Edge fades so cut-off cards read as "there's more" */}
         <div style={{
           position: "absolute", top: 0, bottom: 0, left: 0, width: 40, pointerEvents: "none",
           background: "linear-gradient(to right, " + (dark ? "#06020f" : "#ffffff") + ", transparent)",

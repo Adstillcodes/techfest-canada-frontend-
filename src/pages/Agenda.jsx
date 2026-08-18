@@ -176,6 +176,8 @@ function SpeakerChip({ person, doc, dark, role }) {
   const blue = dark ? LINK_BLUE_DARK : LINK_BLUE;
   const mutedText = dark ? "rgba(255,255,255,0.48)" : "rgba(13,5,32,0.42)";
   const imageUrl = doc && doc.image ? urlFor(doc.image).width(120).height(120).url() : null;
+  // Company line: a session-specific org overrides the profile, otherwise use Sanity
+  const org = person.org || (doc && doc.company) || null;
 
   const avatar = (
     <span style={{
@@ -203,9 +205,12 @@ function SpeakerChip({ person, doc, dark, role }) {
       }}>
         {person.name}{person.tentative ? " *" : ""}
       </span>
-      {(person.org || role === "moderator") && (
-        <span style={{ fontSize: "0.7rem", color: mutedText, lineHeight: 1.3, marginTop: 1 }}>
-          {role === "moderator" ? (person.org ? `Moderator · ${person.org}` : "Moderator") : person.org}
+      {(org || role === "moderator") && (
+        <span style={{
+          fontSize: "0.7rem", color: mutedText, lineHeight: 1.3, marginTop: 1,
+          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+        }}>
+          {role === "moderator" ? (org ? `Moderator · ${org}` : "Moderator") : org}
         </span>
       )}
     </span>
@@ -526,7 +531,7 @@ export default function AgendaPage() {
   useEffect(() => {
     let alive = true;
     client
-      .fetch('*[_type == "speaker"]{ _id, name, image }')
+      .fetch('*[_type == "speaker"]{ _id, name, company, title, image }')
       .then((data) => { if (alive) setSpeakerDocs(Array.isArray(data) ? data : []); })
       .catch(() => {});
     return () => { alive = false; };

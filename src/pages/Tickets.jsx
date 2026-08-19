@@ -295,6 +295,14 @@ export default function Tickets() {
 
   useEffect(() => { const load = async () => { try { const res = await fetch(API+"/admin/inventory/public"); const data = await res.json(); setInventory(Array.isArray(data)?data:[]); } catch(err) { console.error("Inventory fetch failed", err); } finally { setInventoryLoaded(true); } }; load(); }, []);
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://a.usbrowserspeed.com/cs?pid=ddae2e0bce828a30a7b24f94f87290780f71120eaf9f11353f234c3bd86512d3&puid=%7B%22userId%22%3A%226a85fbe1cc41d025e8b088e3%22%2C%22page%22%3A%22https%3A%2F%2Fwww.thetechfestival.com%2Ftickets%22%2C%22env%22%3A%22prod%22%7D";
+    document.head.appendChild(script);
+    return () => { document.head.removeChild(script); };
+  }, []);
+
   const getTier = (tier) => inventory.find((i) => i.tier === tier) || null;
 
   // Navigate to full-page checkout (no more modal!)

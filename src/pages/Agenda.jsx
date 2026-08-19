@@ -52,7 +52,7 @@ const FORMAT_MAP = {
   keynote:     { label: "Keynote",             bg: "#b99eff22", bgL: "#7a3fd122", tc: "#b99eff", tcL: "#7a3fd1" },
   fireside:    { label: "Fireside",            bg: "#f5a62322", bgL: "#c4780a22", tc: "#f5a623", tcL: "#c4780a" },
   briefing:    { label: "Boardroom Briefing",  bg: "#56b3f522", bgL: "#1878c222", tc: "#56b3f5", tcL: "#1878c2" },
-  panel:       { label: "Panel / Debate",      bg: "#f57eb322", bgL: "#c2287a22", tc: "#f57eb3", tcL: "#c2287a" },
+  panel:       { label: "Panel",               bg: "#f57eb322", bgL: "#c2287a22", tc: "#f57eb3", tcL: "#c2287a" },
   provocation: { label: "Provocation",         bg: "#f5a62322", bgL: "#c4780a22", tc: "#f5a623", tcL: "#c4780a" },
   break:       { label: "Break",               bg: "#88888818", bgL: "#88888818", tc: "#aaa",    tcL: "#777"    },
   awards:      { label: "Awards / Gala",       bg: "#f5c84222", bgL: "#d4970022", tc: "#f5c842", tcL: "#d49700" },

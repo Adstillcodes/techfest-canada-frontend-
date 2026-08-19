@@ -204,12 +204,10 @@ export const SESSIONS = [
   },
   {
     id: "d2-02", day: 2, time: "09:05", endTime: "09:35",
-    title: "Build in Canada, Scale to the World — an SMB Way",
+    title: "Build in Canada, Scale to the World: an SMB Way",
     type: "Opening Keynote + Fireside Chat", format: "fireside", featured: true,
     speakers: [
-      { name: "Hon. Nina Tangri" },
       { name: "Christy Clark" },
-      { name: "Mahaveer Singh" },
     ],
     moderator: { name: "Alicia Pereira" },
   },
@@ -223,12 +221,10 @@ export const SESSIONS = [
       { name: "Hiten Makim" },
       { name: "Marc Pepin" },
     ],
-    moderator: { name: "Jack Greco" },
   },
   {
     id: "d2-04", day: 2, time: "10:05", endTime: "10:35",
-    title: "Quantum Keynote & Fireside",
-    titleTbc: true,
+    title: "The Quantum Advantage: Separating Signal from Hype",
     type: "Keynote & Fireside", format: "fireside", pillar: "quantum",
     speakers: [{ name: "Prof. Aspuru-Guzik" }],
     moderator: { name: "David Succu" },
@@ -244,7 +240,6 @@ export const SESSIONS = [
     speakers: [
       { name: "Greg Dick" },
       { name: "Rajesh Patil" },
-      { name: "Luke Preskey" },
       { name: "Louise Davey" },
     ],
     moderator: { name: "Luke Preskey" },

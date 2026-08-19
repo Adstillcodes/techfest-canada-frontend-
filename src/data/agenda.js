@@ -134,7 +134,7 @@ export const SESSIONS = [
     speakers: [
       { name: "Thiru Venkatachalam" },
       { name: "Samrah Kazmi" },
-      { name: "Queena Chung" },
+      { name: "Queena Cheung" },
       { name: "Roy Pereira" },
     ],
     moderator: { name: "Yvette Schmitter" },
@@ -181,7 +181,6 @@ export const SESSIONS = [
     type: "Panel Session", format: "panel", pillar: "ai", featured: true,
     speakers: [
       { name: "Rob Catalano" },
-      { name: "Mariano Alegra" },
       { name: "John Wilder" },
       { name: "Alyssa Daku" },
     ],
@@ -190,10 +189,6 @@ export const SESSIONS = [
   {
     id: "d1-21", day: 1, time: "17:15", endTime: "18:15",
     title: "Awards Evening", type: "Awards", format: "awards", isBreak: true, featured: true,
-  },
-  {
-    id: "d1-22", day: 1, time: "18:15", endTime: "19:15",
-    title: "Private Dinner with Resonance", type: "Private Dinner", format: "awards", isBreak: true,
   },
 
   /* ══════════════════ DAY 2 — 27 Oct 2026 ══════════════════ */

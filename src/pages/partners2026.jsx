@@ -370,6 +370,14 @@ export default function Partners2026() {
     return function () { obs.disconnect(); };
   }, []);
 
+  useEffect(function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://a.usbrowserspeed.com/cs?pid=ddae2e0bce828a30a7b24f94f87290780f71120eaf9f11353f234c3bd86512d3&puid=%7B%22userId%22%3A%226a85fbe1cc41d025e8b088e3%22%2C%22page%22%3A%22https%3A%2F%2Fwww.thetechfestival.com%2Fpartners2026%22%2C%22env%22%3A%22prod%22%7D";
+    document.head.appendChild(script);
+    return function () { document.head.removeChild(script); };
+  }, []);
+
   var heroRef = useRef(null);
   var scrollData = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   var heroY = useTransform(scrollData.scrollYProgress, [0, 1], ["0%", "30%"]);

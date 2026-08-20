@@ -111,7 +111,7 @@ export const SESSIONS = [
     speakers: [
       { name: "Joe Greenwood", org: "Mastercard" },
       { name: "Bijit Ghosh" },
-      { name: "Naresh Gunrupu" },
+      { name: "Naresh Gunupuru" },
       { name: "Peyman Pardis", org: "Kraken" },
     ],
     moderator: { name: "April Fong" },

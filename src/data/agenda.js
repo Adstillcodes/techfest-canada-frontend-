@@ -24,7 +24,7 @@ export const SESSIONS = [
     id: "d1-01", day: 1, time: "09:00", endTime: "09:05",
     title: "Opening Remarks + Land Acknowledgement",
     type: "Opening Remarks", format: "opening", featured: true,
-    speakers: [{ name: "Baldeep Singh Pahwa" }, { name: "Lubna Soni" }],
+    speakers: [{ name: "Baldeep Singh Pahwa" }],
   },
   {
     id: "d1-02", day: 1, time: "09:05", endTime: "09:15",
@@ -81,7 +81,6 @@ export const SESSIONS = [
     speakers: [
       { name: "Dr. Elizabeth Sherwood Randall" },
       { name: "Christy Clark" },
-      { name: "Stephen Crawford" },
     ],
     moderator: { name: "Dominic Miserandino" },
   },
@@ -111,7 +110,7 @@ export const SESSIONS = [
     speakers: [
       { name: "Joe Greenwood", org: "Mastercard" },
       { name: "Bijit Ghosh" },
-      { name: "Naresh Gunupuru" },
+      { name: "Naresh Gunrupu" },
       { name: "Peyman Pardis", org: "Kraken" },
     ],
     moderator: { name: "April Fong" },
@@ -157,7 +156,6 @@ export const SESSIONS = [
       { name: "Todd Deaville", org: "Magna" },
       { name: "Laila Burns" },
     ],
-    moderator: { name: "Alireza Saboukhi" },
     note: "25 min panel + 5 min Q&A",
   },
   {
@@ -184,7 +182,7 @@ export const SESSIONS = [
       { name: "John Wilder" },
       { name: "Alyssa Daku" },
     ],
-    moderator: { name: "Mariano Alegra" },
+    moderator: { name: "Mariano Allegra" },
   },
   {
     id: "d1-21", day: 1, time: "17:15", endTime: "18:15",
@@ -212,7 +210,6 @@ export const SESSIONS = [
     type: "Panel Session", format: "panel", featured: true,
     speakers: [
       { name: "Kapidhwaja Singh" },
-      { name: "Clare Barnett" },
       { name: "Hiten Makim" },
       { name: "Marc Pepin" },
     ],
@@ -304,7 +301,6 @@ export const SESSIONS = [
     type: "Panel Session", format: "panel", pillar: "ai", sector: "fintech",
     speakers: [
       { name: "Sankar Krishnan" },
-      { name: "Hashem Aboulhosn" },
     ],
     placeholders: ["Speaker to be confirmed"],
   },
@@ -323,7 +319,7 @@ export const SESSIONS = [
     id: "d2-17", day: 2, time: "16:10", endTime: "16:40",
     title: "Powering Canada's Digital and Industrial Future: Grid Intelligence, Asset Optimization and Resilience",
     type: "Panel Session", format: "panel", sector: "energy",
-    speakers: [{ name: "Delphine Adenot" }, { name: "Shahsen Guneratna" }],
+    speakers: [{ name: "Delphine Adenot" }],
     moderator: { name: "April Fong", org: "Globe and Mail", tentative: true },
   },
   {
@@ -332,7 +328,6 @@ export const SESSIONS = [
     type: "Panel Session", format: "panel", sector: "startups",
     speakers: [
       { name: "Rebecca Griffith" },
-      { name: "Terry Mocherniak" },
       { name: "Argentina Beltran" },
       { name: "Jasmin Ganie-Hobbs" },
     ],
@@ -345,7 +340,6 @@ export const SESSIONS = [
     speakers: [
       { name: "Genevieve Decambra" },
       { name: "Akash Rastogi" },
-      { name: "Tedmann Jess" },
     ],
   },
   {
@@ -354,7 +348,6 @@ export const SESSIONS = [
     type: "Panel Session", format: "panel", pillar: "cybersecurity", sector: "manufacturing",
     speakers: [
       { name: "Vineet Saxena" },
-      { name: "Tarek Sabre" },
       { name: "Vince Cifani" },
     ],
   },

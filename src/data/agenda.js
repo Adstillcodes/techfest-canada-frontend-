@@ -10,7 +10,7 @@
 //
 // speakers:     [{ name, org?, tentative? }]  — real people
 // placeholders: ["Hospital CMO", ...]         — unfilled slots from the
-//               planning sheet; rendered as "To be confirmed", never  linked
+//               planning sheet; rendered as "To be confirmed", never linked
 // ─────────────────────────────────────────────────────────────────
 
 export const DAYS = {
@@ -30,11 +30,13 @@ export const SESSIONS = [
     id: "d1-02", day: 1, time: "09:05", endTime: "09:15",
     title: "Opening Ceremony",
     type: "Opening Ceremony", format: "opening", featured: true,
-    speakers: [{ name: "Lubna Soni" }],
+    // Line-up withheld until confirmed (per Lubna, 18 Aug).
+    // To put names back, re-add `speakers: [...]` and/or `moderator: {...}`.
+    speakers: [],
   },
   {
     id: "d1-03", day: 1, time: "09:15", endTime: "09:45",
-    title: "Canada's Tech Decade: Build | Secure | Scale",
+    title: "Canada's Tech Decade — Build | Secure | Scale",
     type: "Opening Keynote", format: "keynote", featured: true,
     speakers: [{ name: "Hon. Evan Solomon" }],
     moderator: { name: "Baldeep Singh Pahwa" },
@@ -45,7 +47,7 @@ export const SESSIONS = [
     title: "From Investment to Industrial Capacity: Canada's Next Ten Years",
     type: "Opening Keynote", format: "keynote", featured: true,
     speakers: [{ name: "Vic Fedeli" }],
-    moderator: { name: "Dominic Miserandino", org: "RTM Nexus" },
+    moderator: { name: "Dominic Miserandino" },
     note: "10 min keynote + 15 min fireside + 5 min Q&A",
   },
   {
@@ -58,6 +60,7 @@ export const SESSIONS = [
     id: "d1-06", day: 1, time: "10:20", endTime: "10:45",
     title: "Conviction Before Consensus: A Bet on Canadian Deep Tech",
     type: "Fireside Chat", format: "fireside", pillar: "quantum",
+    // Photonic names (Stephanie Simmons / Don Mattrick) withheld until confirmed.
     speakers: [{ name: "Christian Weedbrook" }],
     moderator: { name: "Shawn Abbott" },
   },
@@ -67,7 +70,7 @@ export const SESSIONS = [
   },
   {
     id: "d1-08", day: 1, time: "10:55", endTime: "11:10",
-    title: "AI Runs on Electricity: What Happens When the Grid Goes Dark?",
+    title: "AI Runs on Electricity — What Happens When the Grid Goes Dark?",
     type: "Keynote", format: "keynote", sector: "energy",
     speakers: [{ name: "Dr. Elizabeth Sherwood Randall" }],
   },
@@ -79,12 +82,12 @@ export const SESSIONS = [
       { name: "Dr. Elizabeth Sherwood Randall" },
       { name: "Christy Clark" },
     ],
-    moderator: { name: "Dominic Miserandino", org: "RTM Nexus" },
+    moderator: { name: "Dominic Miserandino" },
   },
   {
     id: "d1-10", day: 1, time: "11:40", endTime: "12:10",
     title: "Allied by Design: Securing the Technologies That Hold the Alliance Together",
-    type: "Panel Session", format: "panel", sector: "public",
+    type: "Dual Fireside", format: "fireside", sector: "public",
     speakers: [
       { name: "Brigadier General Kyle Paul" },
       { name: "Nancy Morgan" },
@@ -96,6 +99,7 @@ export const SESSIONS = [
     id: "d1-11", day: 1, time: "12:10", endTime: "12:40",
     title: "Reinventing the Intelligent Financial Institution",
     type: "Fireside Chat", format: "fireside", sector: "fintech",
+    // Speaker name withheld until confirmed.
     speakers: [],
     moderator: { name: "Baldeep Singh Pahwa" },
   },
@@ -106,7 +110,7 @@ export const SESSIONS = [
     speakers: [
       { name: "Joe Greenwood", org: "Mastercard" },
       { name: "Bijit Ghosh" },
-      { name: "Naresh Gunupuru" },
+      { name: "Naresh Gunrupu" },
       { name: "Peyman Pardis", org: "Kraken" },
     ],
     moderator: { name: "April Fong" },
@@ -177,7 +181,6 @@ export const SESSIONS = [
       { name: "Rob Catalano" },
       { name: "John Wilder" },
       { name: "Alyssa Daku" },
-      { name: "Dr. Maha Aziz" },
     ],
     moderator: { name: "Mariano Allegra" },
   },
@@ -196,7 +199,9 @@ export const SESSIONS = [
     id: "d2-02", day: 2, time: "09:05", endTime: "09:35",
     title: "Build in Canada, Scale to the World: an SMB Way",
     type: "Opening Keynote + Fireside Chat", format: "fireside", featured: true,
-    speakers: [{ name: "Christy Clark" }],
+    speakers: [
+      { name: "Christy Clark" },
+    ],
     moderator: { name: "Alicia Pereira" },
   },
   {
@@ -254,6 +259,7 @@ export const SESSIONS = [
     title: "Artificial Intelligence Beyond the Pilot Phase",
     type: "Keynote + Panel", format: "keynote", pillar: "ai",
     speakers: [{ name: "Daniel Vigdor" }],
+    moderator: { name: "Dr. Maha Aziz" },
   },
   {
     id: "d2-10", day: 2, time: "12:40", endTime: "13:25",
@@ -261,7 +267,7 @@ export const SESSIONS = [
   },
   {
     id: "d2-11", day: 2, time: "13:25", endTime: "13:45",
-    title: "Who Owns AI Governance?",
+    title: "AI Governance",
     type: "Keynote", format: "keynote", pillar: "ai",
     speakers: [{ name: "Ashley Casovan" }],
   },
@@ -293,7 +299,9 @@ export const SESSIONS = [
     id: "d2-14", day: 2, time: "15:00", endTime: "15:30",
     title: "AI in Financial Services: From Main Street Lending to Wall Street Trading",
     type: "Panel Session", format: "panel", pillar: "ai", sector: "fintech",
-    speakers: [{ name: "Sankar Krishnan" }],
+    speakers: [
+      { name: "Sankar Krishnan" },
+    ],
     placeholders: ["Speaker to be confirmed"],
   },
   {
@@ -352,6 +360,14 @@ export const SESSIONS = [
 
 /* ─────────────────────────────────────────────────────────────────
    NAME MATCHING
+   The planning sheet and Sanity won't always spell a name the same
+   way ("Vic Fedeli" / "Vic Fedelli", "Dr Christian Weedbrook" /
+   "Christian Weedbrook"). We normalise both sides and generate a few
+   equivalent keys so a photo/link is still found.
+
+   Add an entry to NAME_ALIASES whenever a genuine mismatch appears:
+   key = the (normalised) spelling used in the agenda,
+   value = the (normalised) spelling used in Sanity.
    ───────────────────────────────────────────────────────────────── */
 
 export const NAME_ALIASES = {
@@ -370,23 +386,21 @@ const TITLES = [
 
 export function normalizeName(raw) {
   let n = String(raw || "")
-    .replace(/\(.*?\)/g, " ")
+    .replace(/\(.*?\)/g, " ")        // drop "(Mastercard)", "(Alex)"
     .toLowerCase()
-    .replace(/[’‘']/g, "")
+    .replace(/[’‘']/g, "")           // Na'im -> naim
     .replace(/[^a-z\s-]/g, " ")
     .replace(/-/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 
+  // strip any stacked honorifics from the front
   let changed = true;
   while (changed) {
     changed = false;
     for (const t of TITLES) {
       if (n === t) return "";
-      if (n.startsWith(t + " ")) {
-        n = n.slice(t.length + 1);
-        changed = true;
-      }
+      if (n.startsWith(t + " ")) { n = n.slice(t.length + 1); changed = true; }
     }
   }
   return n.trim();
@@ -404,9 +418,9 @@ export function nameKeys(raw) {
   if (parts.length >= 2) {
     const first = parts[0];
     const last = parts[parts.length - 1];
-    keys.add(first + " " + last);
-    keys.add(parts[0] + " " + parts[1]);
-    keys.add(last + " " + first[0]);
+    keys.add(first + " " + last);            // drop middle names
+    keys.add(parts[0] + " " + parts[1]);     // "baldeep singh pahwa" ~ "baldeep singh"
+    keys.add(last + " " + first[0]);         // "pahwa b"
   }
   return Array.from(keys);
 }
@@ -423,7 +437,7 @@ export function buildSpeakerIndex(speakerDocs) {
   const index = {};
   (speakerDocs || []).forEach((doc) => {
     nameKeys(doc.name).forEach((k) => {
-      if (!index[k]) index[k] = doc;
+      if (!index[k]) index[k] = doc;      // first writer wins — keeps it stable
     });
   });
   return index;
@@ -441,7 +455,6 @@ export function matchSpeaker(index, name) {
 export function sessionsForSpeaker(name) {
   const keys = new Set(nameKeys(name));
   if (!keys.size) return [];
-
   return SESSIONS.filter((s) => {
     const people = (s.speakers || []).concat(s.moderator ? [s.moderator] : []);
     return people.some((p) => nameKeys(p.name).some((k) => keys.has(k)));
@@ -452,7 +465,6 @@ export function sessionsForSpeaker(name) {
 export function roleInSession(session, name) {
   const keys = new Set(nameKeys(name));
   const isMatch = (p) => p && nameKeys(p.name).some((k) => keys.has(k));
-
   if ((session.speakers || []).some(isMatch)) return "speaker";
   if (isMatch(session.moderator)) return "moderator";
   return null;
@@ -462,13 +474,11 @@ export function getDuration(start, end) {
   const [sh, sm] = start.split(":").map(Number);
   const [eh, em] = end.split(":").map(Number);
   const mins = (eh * 60 + em) - (sh * 60 + sm);
-
   if (mins >= 60) {
     const h = Math.floor(mins / 60);
     const m = mins % 60;
     return m ? `${h}h ${m}m` : `${h}h`;
   }
-
   return `${mins}m`;
 }
 

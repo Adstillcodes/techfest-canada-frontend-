@@ -267,7 +267,7 @@ export const SESSIONS = [
   },
   {
     id: "d2-11", day: 2, time: "13:25", endTime: "13:45",
-    title: "AI Governance",
+    title: "Who Owns AI Governance?",
     type: "Keynote", format: "keynote", pillar: "ai",
     speakers: [{ name: "Ashley Casovan" }],
   },

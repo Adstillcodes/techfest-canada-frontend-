@@ -24,7 +24,7 @@ export const SESSIONS = [
     id: "d1-01", day: 1, time: "09:00", endTime: "09:05",
     title: "Opening Remarks + Land Acknowledgement",
     type: "Opening Remarks", format: "opening", featured: true,
-    speakers: [{ name: "Baldeep Singh Pahwa" }],
+    speakers: [{ name: "Baldeep Singh Pahwa" }, { name: "Lubna Soni" }],
   },
   {
     id: "d1-02", day: 1, time: "09:05", endTime: "09:15",
@@ -36,7 +36,7 @@ export const SESSIONS = [
   },
   {
     id: "d1-03", day: 1, time: "09:15", endTime: "09:45",
-    title: "Canada's Tech Decade — Build | Secure | Scale",
+    title: "Canada's Tech Decade: Build | Secure | Scale",
     type: "Opening Keynote", format: "keynote", featured: true,
     speakers: [{ name: "Hon. Evan Solomon" }],
     moderator: { name: "Baldeep Singh Pahwa" },
@@ -47,7 +47,7 @@ export const SESSIONS = [
     title: "From Investment to Industrial Capacity: Canada's Next Ten Years",
     type: "Opening Keynote", format: "keynote", featured: true,
     speakers: [{ name: "Vic Fedeli" }],
-    moderator: { name: "Dominic Miserandino" },
+    moderator: { name: "Dominic Miserandino", org: "RTM Nexus" },
     note: "10 min keynote + 15 min fireside + 5 min Q&A",
   },
   {
@@ -70,7 +70,7 @@ export const SESSIONS = [
   },
   {
     id: "d1-08", day: 1, time: "10:55", endTime: "11:10",
-    title: "AI Runs on Electricity — What Happens When the Grid Goes Dark?",
+    title: "AI Runs on Electricity: What Happens When the Grid Goes Dark?",
     type: "Keynote", format: "keynote", sector: "energy",
     speakers: [{ name: "Dr. Elizabeth Sherwood Randall" }],
   },
@@ -82,12 +82,12 @@ export const SESSIONS = [
       { name: "Dr. Elizabeth Sherwood Randall" },
       { name: "Christy Clark" },
     ],
-    moderator: { name: "Dominic Miserandino" },
+    moderator: { name: "Dominic Miserandino", org: "RTM Nexus" },
   },
   {
     id: "d1-10", day: 1, time: "11:40", endTime: "12:10",
     title: "Allied by Design: Securing the Technologies That Hold the Alliance Together",
-    type: "Dual Fireside", format: "fireside", sector: "public",
+    type: "Panel Session", format: "panel", sector: "public",
     speakers: [
       { name: "Brigadier General Kyle Paul" },
       { name: "Nancy Morgan" },
@@ -110,7 +110,7 @@ export const SESSIONS = [
     speakers: [
       { name: "Joe Greenwood", org: "Mastercard" },
       { name: "Bijit Ghosh" },
-      { name: "Naresh Gunrupu" },
+      { name: "Naresh Gunupuru" },
       { name: "Peyman Pardis", org: "Kraken" },
     ],
     moderator: { name: "April Fong" },
@@ -320,7 +320,6 @@ export const SESSIONS = [
     title: "Powering Canada's Digital and Industrial Future: Grid Intelligence, Asset Optimization and Resilience",
     type: "Panel Session", format: "panel", sector: "energy",
     speakers: [{ name: "Delphine Adenot" }],
-    moderator: { name: "April Fong", org: "Globe and Mail", tentative: true },
   },
   {
     id: "d2-18", day: 2, time: "16:40", endTime: "17:10",
@@ -347,7 +346,6 @@ export const SESSIONS = [
     title: "Securing Connected Devices: From Factory Floor to Fleet",
     type: "Panel Session", format: "panel", pillar: "cybersecurity", sector: "manufacturing",
     speakers: [
-      { name: "Vineet Saxena" },
       { name: "Vince Cifani" },
     ],
   },

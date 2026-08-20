@@ -10,7 +10,7 @@
 //
 // speakers:     [{ name, org?, tentative? }]  — real people
 // placeholders: ["Hospital CMO", ...]         — unfilled slots from the
-//               planning sheet; rendered as "To be confirmed", never linked
+//               planning sheet; rendered as "To be confirmed", never  linked
 // ─────────────────────────────────────────────────────────────────
 
 export const DAYS = {

@@ -40,7 +40,6 @@ export const SESSIONS = [
     type: "Opening Keynote", format: "keynote", featured: true,
     speakers: [{ name: "Hon. Evan Solomon" }],
     moderator: { name: "Baldeep Singh Pahwa" },
-    note: "10 min keynote + 30 min fireside + 5 min Q&A",
   },
   {
     id: "d1-04", day: 1, time: "09:45", endTime: "10:15",
@@ -48,7 +47,6 @@ export const SESSIONS = [
     type: "Opening Keynote", format: "keynote", featured: true,
     speakers: [{ name: "Vic Fedeli" }],
     moderator: { name: "Dominic Miserandino", org: "RTM Nexus" },
-    note: "10 min keynote + 15 min fireside + 5 min Q&A",
   },
   {
     id: "d1-05", day: 1, time: "10:15", endTime: "10:20",
@@ -114,7 +112,6 @@ export const SESSIONS = [
       { name: "Peyman Pardis", org: "Kraken" },
     ],
     moderator: { name: "April Fong" },
-    note: "20 min panel + 10 min Q&A",
   },
   {
     id: "d1-13", day: 1, time: "13:10", endTime: "13:55",
@@ -144,7 +141,6 @@ export const SESSIONS = [
     type: "Panel Session", format: "panel", pillar: "cybersecurity",
     speakers: [{ name: "Francois Guay" }, { name: "Chris Hetner" }],
     moderator: { name: "Brennan Lodge" },
-    note: "25 min panel + 5 min Q&A",
   },
   {
     id: "d1-17", day: 1, time: "15:05", endTime: "15:35",
@@ -156,7 +152,6 @@ export const SESSIONS = [
       { name: "Todd Deaville", org: "Magna" },
       { name: "Laila Burns" },
     ],
-    note: "25 min panel + 5 min Q&A",
   },
   {
     id: "d1-18", day: 1, time: "15:35", endTime: "15:45",
@@ -171,7 +166,6 @@ export const SESSIONS = [
       { name: "Ed Whittingham" },
       { name: "Dave Hochhalter" },
     ],
-    placeholders: ["Canadian Bank representative"],
   },
   {
     id: "d1-20", day: 1, time: "16:45", endTime: "17:15",
@@ -181,6 +175,7 @@ export const SESSIONS = [
       { name: "Rob Catalano" },
       { name: "John Wilder" },
       { name: "Alyssa Daku" },
+      { name: "Dr. Maha Aziz" },
     ],
     moderator: { name: "Mariano Allegra" },
   },
@@ -251,7 +246,6 @@ export const SESSIONS = [
       { name: "Julia Jezmir" },
       { name: "Amy Flood" },
     ],
-    placeholders: ["Hospital CMO"],
     moderator: { name: "Laura Cooley" },
   },
   {
@@ -259,7 +253,6 @@ export const SESSIONS = [
     title: "Artificial Intelligence Beyond the Pilot Phase",
     type: "Keynote + Panel", format: "keynote", pillar: "ai",
     speakers: [{ name: "Daniel Vigdor" }],
-    moderator: { name: "Dr. Maha Aziz" },
   },
   {
     id: "d2-10", day: 2, time: "12:40", endTime: "13:25",
@@ -267,7 +260,7 @@ export const SESSIONS = [
   },
   {
     id: "d2-11", day: 2, time: "13:25", endTime: "13:45",
-    title: "Who Owns AI Governance?",
+    title: "AI Governance",
     type: "Keynote", format: "keynote", pillar: "ai",
     speakers: [{ name: "Ashley Casovan" }],
   },
@@ -292,7 +285,6 @@ export const SESSIONS = [
       { name: "David Succu" },
       { name: "Heling (Alex) Pu" },
     ],
-    placeholders: ["Quantum banking specialist"],
     moderator: { name: "Louise Davey" },
   },
   {
@@ -302,7 +294,6 @@ export const SESSIONS = [
     speakers: [
       { name: "Sankar Krishnan" },
     ],
-    placeholders: ["Speaker to be confirmed"],
   },
   {
     id: "d2-15", day: 2, time: "15:30", endTime: "15:40",
@@ -313,7 +304,6 @@ export const SESSIONS = [
     title: "Closing the Women's Health Gap: Innovation, Investment and the Blueprint for Action",
     type: "Panel Session", format: "panel", sector: "healthcare",
     speakers: [{ name: "Amy Flood" }],
-    placeholders: ["FemTech representative", "MaRS Discovery District representative"],
   },
   {
     id: "d2-17", day: 2, time: "16:10", endTime: "16:40",

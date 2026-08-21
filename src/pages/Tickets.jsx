@@ -180,6 +180,17 @@ const PASS_META = {
     featured: false,
     soldOut: false,
   },
+  apex: {
+    label: "Apex Pass",
+    tagline: "Everything, plus the meetings you actually came for.",
+    description: "Our highest tier. Everything in the Power Pass, plus two business meetings matched for you in advance against your objectives, and preferential seating at every keynote, panel and dinner. Built for those who measure an event by the deals it starts.",
+    features: ["2x Pre-Matched Business Meetings", "Preferential Seating", "2x Day Conference Access", "2x CxO Breakfasts", "2x Luncheons", "1x Gala Dinner & Networking Reception", "1x Awards Night", "Expo Floor Access", "Networking Breaks"],
+    tier: "apex",
+    defaultPrice: 1499,
+    featured: false,
+    badge: "All Access",
+    soldOut: false,
+  },
 };
 
 function PassCard({ meta, inventoryItem, onPurchase, dark, inventoryLoaded }) {
@@ -198,9 +209,11 @@ function PassCard({ meta, inventoryItem, onPurchase, dark, inventoryLoaded }) {
 
   return (
     <div data-pass-card onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-      style={{ position:"relative", flex:"1 1 260px", maxWidth:340, minWidth:240, alignSelf:"stretch", borderRadius:20, padding:"32px 26px 28px", display:"flex", flexDirection:"column", backdropFilter:"blur(18px)", WebkitBackdropFilter:"blur(18px)", background: meta.featured?(dark?"linear-gradient(135deg, rgba(122,63,209,0.28) 0%, rgba(245,166,35,0.12) 100%)":"linear-gradient(135deg, rgba(122,63,209,0.12) 0%, rgba(245,166,35,0.08) 100%)"):cardBg, border: meta.featured?(dark?"1px solid rgba(122,63,209,0.55)":"1px solid rgba(122,63,209,0.40)"):cardBorder, boxShadow: meta.featured?(dark?"0 8px 48px rgba(122,63,209,0.25)":"0 8px 32px rgba(122,63,209,0.18)"):(dark?"0 4px 32px rgba(0,0,0,0.35)":"0 4px 24px rgba(122,63,209,0.08)"), transform: meta.featured?"scale(1.04)":(hovered && !soldOut)?"scale(1.02)":"scale(1)", transition:"transform 0.25s ease, box-shadow 0.25s ease", zIndex: meta.featured?2:1, opacity: soldOut?0.82:1 }}>
+      style={{ position:"relative", flex:"1 1 240px", maxWidth:318, minWidth:236, alignSelf:"stretch", borderRadius:20, padding:"32px 26px 28px", display:"flex", flexDirection:"column", backdropFilter:"blur(18px)", WebkitBackdropFilter:"blur(18px)", background: meta.featured?(dark?"linear-gradient(135deg, rgba(122,63,209,0.28) 0%, rgba(245,166,35,0.12) 100%)":"linear-gradient(135deg, rgba(122,63,209,0.12) 0%, rgba(245,166,35,0.08) 100%)"):cardBg, border: meta.featured?(dark?"1px solid rgba(122,63,209,0.55)":"1px solid rgba(122,63,209,0.40)"):cardBorder, boxShadow: meta.featured?(dark?"0 8px 48px rgba(122,63,209,0.25)":"0 8px 32px rgba(122,63,209,0.18)"):(dark?"0 4px 32px rgba(0,0,0,0.35)":"0 4px 24px rgba(122,63,209,0.08)"), transform: meta.featured?"scale(1.04)":(hovered && !soldOut)?"scale(1.02)":"scale(1)", transition:"transform 0.25s ease, box-shadow 0.25s ease", zIndex: meta.featured?2:1, opacity: soldOut?0.82:1 }}>
 
       {meta.featured && <div style={{ position:"absolute", top:-14, left:"50%", transform:"translateX(-50%)", background:"linear-gradient(90deg, #7a3fd1, #f5a623)", color:"white", fontSize:"0.62rem", fontWeight:800, letterSpacing:"1.4px", textTransform:"uppercase", padding:"5px 16px", borderRadius:999, whiteSpace:"nowrap", fontFamily:"'Orbitron', sans-serif" }}>Most Popular</div>}
+
+      {meta.badge && !meta.featured && !soldOut && <div style={{ position:"absolute", top:-14, left:"50%", transform:"translateX(-50%)", background: dark?"linear-gradient(90deg, #4b1d8f, #b8860b)":"linear-gradient(90deg, #3d1580, #c4780a)", color:"white", fontSize:"0.62rem", fontWeight:800, letterSpacing:"1.4px", textTransform:"uppercase", padding:"5px 16px", borderRadius:999, whiteSpace:"nowrap", fontFamily:"'Orbitron', sans-serif" }}>{meta.badge}</div>}
 
       {soldOut && !meta.featured && <div style={{ position:"absolute", top:-14, left:"50%", transform:"translateX(-50%)", background: dark?"rgba(255,255,255,0.14)":"rgba(13,5,32,0.72)", color: dark?"rgba(255,255,255,0.85)":"#ffffff", fontSize:"0.62rem", fontWeight:800, letterSpacing:"1.4px", textTransform:"uppercase", padding:"5px 16px", borderRadius:999, whiteSpace:"nowrap", fontFamily:"'Orbitron', sans-serif", border: dark?"1px solid rgba(255,255,255,0.18)":"none" }}>Sold Out</div>}
 
@@ -244,8 +257,8 @@ export default function Tickets() {
   const [dark, setDark] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const passes = ["connect","influence","power"];
-  const passLabels = { connect:"Connect", influence:"Influence", power:"Power" };
+  const passes = ["connect","influence","power","apex"];
+  const passLabels = { connect:"Connect", influence:"Influence", power:"Power", apex:"Apex" };
 
   /* ── Mobile swipe rail ── */
   const railRef = useRef(null);
@@ -295,14 +308,6 @@ export default function Tickets() {
 
   useEffect(() => { const load = async () => { try { const res = await fetch(API+"/admin/inventory/public"); const data = await res.json(); setInventory(Array.isArray(data)?data:[]); } catch(err) { console.error("Inventory fetch failed", err); } finally { setInventoryLoaded(true); } }; load(); }, []);
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = "https://a.usbrowserspeed.com/cs?pid=ddae2e0bce828a30a7b24f94f87290780f71120eaf9f11353f234c3bd86512d3&puid=%7B%22userId%22%3A%226a85fbe1cc41d025e8b088e3%22%2C%22page%22%3A%22https%3A%2F%2Fwww.thetechfestival.com%2Ftickets%22%2C%22env%22%3A%22prod%22%7D";
-    document.head.appendChild(script);
-    return () => { document.head.removeChild(script); };
-  }, []);
-
   const getTier = (tier) => inventory.find((i) => i.tier === tier) || null;
 
   // Navigate to full-page checkout (no more modal!)
@@ -311,11 +316,13 @@ export default function Tickets() {
     navigate(`/tickets/checkout?tier=${tier}`);
   };
 
-  const allFeatures = ["2x Day Conference Access","Expo Floor Access","Networking Breaks","2x CxO Breakfasts","2x Luncheons","1x Gala Dinner & Networking Reception","1x Awards Night"];
+  const allFeatures = ["2x Day Conference Access","Expo Floor Access","Networking Breaks","2x CxO Breakfasts","2x Luncheons","1x Gala Dinner & Networking Reception","1x Awards Night","Preferential Seating","2x Pre-Matched Business Meetings"];
   const passFeatureMap = {
-    connect:   [true, true, true, false, false, false, false],
-    influence: [true, true, true, false, true,  false, false],
-    power:     [true, true, true, true,  true,  true,  true ],
+    //          conf   expo   break  cxo    lunch  gala   awards seating meetings
+    connect:   [true,  true,  true,  false, false, false, false, false,  false],
+    influence: [true,  true,  true,  false, true,  false, false, false,  false],
+    power:     [true,  true,  true,  true,  true,  true,  true,  false,  false],
+    apex:      [true,  true,  true,  true,  true,  true,  true,  true,   true ],
   };
 
   const bg = dark ? "#06020f" : "#ffffff";
@@ -335,7 +342,7 @@ export default function Tickets() {
           justify-content: center;
           align-items: stretch;
           padding: 0 24px 80px;
-          max-width: 1260px;
+          max-width: 1340px;
           margin: 0 auto;
         }
         .pass-dots { display: none; }
@@ -421,8 +428,8 @@ export default function Tickets() {
           <div style={{ maxWidth:900, margin:"0 auto 80px", padding:"0 24px" }}>
             <h2 style={{ fontFamily:"'Orbitron', sans-serif", fontWeight:800, fontSize:"1rem", letterSpacing:"1px", textTransform:"uppercase", color: dark?"rgba(255,255,255,0.35)":"rgba(13,5,32,0.40)", textAlign:"center", marginBottom:28 }}>Pass Comparison</h2>
             <div style={{ backdropFilter:"blur(16px)", WebkitBackdropFilter:"blur(16px)", background: dark?"rgba(255,255,255,0.04)":"rgba(122,63,209,0.03)", border: dark?"1px solid rgba(255,255,255,0.08)":"1px solid rgba(122,63,209,0.10)", borderRadius:20, overflowX:"auto", WebkitOverflowScrolling:"touch" }}>
-              <div style={{ minWidth:500 }}>
-                <div style={{ display:"grid", gridTemplateColumns:"1.5fr repeat(3, 1fr)", borderBottom: dark?"1px solid rgba(255,255,255,0.08)":"1px solid rgba(122,63,209,0.10)", padding:"14px 24px" }}>
+              <div style={{ minWidth:660 }}>
+                <div style={{ display:"grid", gridTemplateColumns:"1.6fr repeat(4, 1fr)", borderBottom: dark?"1px solid rgba(255,255,255,0.08)":"1px solid rgba(122,63,209,0.10)", padding:"14px 24px" }}>
                   <div style={{ fontSize:"0.7rem", color:textMuted, fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", display:"flex", alignItems:"center" }}>Feature</div>
                   {passes.map(p => (
                     <div key={p} style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", textAlign:"center", fontFamily:"'Orbitron', sans-serif", fontWeight:800, fontSize:"0.62rem", letterSpacing:"0.8px", textTransform:"uppercase", color: p==="influence"?(dark?"#f5a623":"#d98a14"):textMuted, opacity: PASS_META[p].soldOut?0.55:1 }}>
@@ -432,7 +439,7 @@ export default function Tickets() {
                   ))}
                 </div>
                 {allFeatures.map((feature, fi) => (
-                  <div key={feature} style={{ display:"grid", gridTemplateColumns:"1.5fr repeat(3, 1fr)", padding:"13px 24px", borderBottom: fi<allFeatures.length-1?(dark?"1px solid rgba(255,255,255,0.05)":"1px solid rgba(122,63,209,0.05)"):"none", background: fi%2===0?(dark?"rgba(255,255,255,0.01)":"rgba(122,63,209,0.02)"):"transparent" }}>
+                  <div key={feature} style={{ display:"grid", gridTemplateColumns:"1.6fr repeat(4, 1fr)", padding:"13px 24px", borderBottom: fi<allFeatures.length-1?(dark?"1px solid rgba(255,255,255,0.05)":"1px solid rgba(122,63,209,0.05)"):"none", background: fi%2===0?(dark?"rgba(255,255,255,0.01)":"rgba(122,63,209,0.02)"):"transparent" }}>
                     <div style={{ fontSize:"0.78rem", color: dark?"rgba(255,255,255,0.65)":"rgba(13,5,32,0.80)", display:"flex", alignItems:"center" }}>{feature}</div>
                     {passes.map(p => <div key={p} style={{ display:"flex", alignItems:"center", justifyContent:"center", opacity: PASS_META[p].soldOut?0.55:1 }}>{passFeatureMap[p][fi] ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={dark?"#f5a623":"#d98a14"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg> : <span style={{ color: dark?"rgba(255,255,255,0.15)":"rgba(13,5,32,0.15)", fontSize:"1rem", lineHeight:1 }}>&mdash;</span>}</div>)}
                   </div>

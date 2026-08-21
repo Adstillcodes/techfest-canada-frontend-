@@ -37,8 +37,7 @@ function formatPrice(n) {
    ============================================================ */
 const COUNTRIES = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo (Brazzaville)","Congo (Kinshasa)","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
 const PRIORITY_COUNTRIES = ["Canada", "United States", "United Kingdom", "Australia"];
-const COUNTRY_FLAGS = { Canada: "\u{1F1E8}\u{1F1E6}", "United States": "\u{1F1FA}\u{1F1F8}", "United Kingdom": "\u{1F1EC}\u{1F1E7}", Australia: "\u{1F1E6}\u{1F1FA}" };
-
+const COUNTRY_FLAGS = { Canada: "🇨🇦", "United States": "🇺🇸", "United Kingdom": "🇬🇧", Australia: "🇦🇺" };
 const SALUTATIONS = ["Mr.", "Mrs.", "Ms.", "Dr.", "H.E.", "Hon.", "Prof."];
 const JOB_LEVELS = ["Student","Entry Level","Mid Level Professional","Manager","Senior Manager","Director","Vice President","C-Level / Executive","Founder / Owner / Partner","Government / Public Sector","Investor","Academic / Research","Other"];
 const JOB_FUNCTIONS = ["Compliance & Risk Management","Consulting & Advisory","Cybersecurity","Data, Analytics & Insights","Environmental, Social & Corporate Governance (ESG)","Executive Leadership & Board of Directors","Finance & Accounting","HR & Recruiting","Investing","Legal","Marketing & Communications","Operations & Project Management","Partnerships","Policy","Procurement & Vendor Management","Product","Research, Content & Journalism","Sales, BD & Account Management","Strategy, Innovation, R&D","Technology & IT","Not Applicable"];
@@ -47,13 +46,20 @@ const OBJECTIVES = ["Education","Investments","Jobs","Market Entry","Networking"
 
 const EMPTY_FORM = { salutation:"",firstName:"",lastName:"",jobTitle:"",organisation:"",businessNumber:"",email:"",country:"",linkedin:"",jobLevel:"",jobLevelOther:"",jobFunction:"",topics:[],objectives:[],consent1:false,consent2:false };
 
-const TIER_LABELS = { connect: "Connect", influence: "Influence", power: "Power" };
-const TIER_DEFAULT_PRICE = { connect: 599, influence: 799, power: 999 };
+/* Every purchasable pass MUST appear in both maps.
+   A tier missing from TIER_LABELS is treated as invalid and the page
+   redirects back to /tickets — which is exactly how the Apex Pass
+   silently failed when it was added to the tickets page but not here.
+
+   TIER_DEFAULT_PRICE is only shown for the instant before the live
+   inventory price loads, so keep it matching the database. */
+const TIER_LABELS = { connect: "Connect", influence: "Influence", power: "Power", apex: "Apex" };
+const TIER_DEFAULT_PRICE = { connect: 749, influence: 849, power: 999, apex: 1499 };
 
 /* ============================================================
    CUSTOM DROPDOWN
    ============================================================ */
-function CustomDropdown({ options, value, onChange, placeholder="Select\u2026", multi=false, searchable=false, dark, error, maxHeight=220, priorityOptions=[], flagMap={} }) {
+function CustomDropdown({ options, value, onChange, placeholder="Select…", multi=false, searchable=false, dark, error, maxHeight=220, priorityOptions=[], flagMap={} }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const containerRef = useRef(null);
@@ -78,11 +84,14 @@ function CustomDropdown({ options, value, onChange, placeholder="Select\u2026", 
   useEffect(() => { if (open && searchable && searchRef.current) setTimeout(() => searchRef.current?.focus(), 60); }, [open, searchable]);
 
   const isSelected = (opt) => multi ? Array.isArray(value) && value.includes(opt) : value === opt;
+
   const handleSelect = (opt) => {
     if (multi) { const arr = Array.isArray(value) ? value : []; onChange(arr.includes(opt) ? arr.filter(x => x !== opt) : [...arr, opt]); }
     else { onChange(opt); setOpen(false); setSearch(""); }
   };
+
   const removeTag = (e, opt) => { e.stopPropagation(); if (multi && Array.isArray(value)) onChange(value.filter(x => x !== opt)); };
+
   const filteredOptions = options.filter(o => !search || o.toLowerCase().includes(search.toLowerCase()));
   const filteredPriority = priorityOptions.filter(o => !search || o.toLowerCase().includes(search.toLowerCase()));
   const filteredRest = filteredOptions.filter(o => !priorityOptions.includes(o));
@@ -104,22 +113,25 @@ function CustomDropdown({ options, value, onChange, placeholder="Select\u2026", 
         </div>
         <span style={{ transform: open?"rotate(180deg)":"rotate(0deg)", transition:"transform 0.2s ease", flexShrink:0 }}><ChevronDown color={textMuted} /></span>
       </div>
+
       {open && (
         <div style={{ position:"absolute", top:"calc(100% + 6px)", left:0, right:0, background:dropBg, border:"1px solid "+(dark?"rgba(122,63,209,0.35)":"rgba(122,63,209,0.18)"), borderRadius:12, zIndex:9999, boxShadow: dark?"0 12px 48px rgba(0,0,0,0.55)":"0 12px 40px rgba(122,63,209,0.14)", overflow:"hidden" }}>
           {searchable && (
             <div style={{ padding:"10px 10px 6px", borderBottom:"1px solid "+dividerColor }}>
               <div style={{ position:"relative" }}>
                 <svg style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", opacity:0.4 }} width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={textMain} strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input ref={searchRef} value={search} onChange={e => setSearch(e.target.value)} placeholder="Search\u2026" style={{ width:"100%", padding:"8px 10px 8px 30px", borderRadius:8, border:"1px solid "+dividerColor, background: dark?"rgba(255,255,255,0.05)":"rgba(122,63,209,0.04)", color:textMain, fontSize:"14px", outline:"none", boxSizing:"border-box", fontFamily:"inherit" }} />
+                <input ref={searchRef} value={search} onChange={e => setSearch(e.target.value)} placeholder="Search…" style={{ width:"100%", padding:"8px 10px 8px 30px", borderRadius:8, border:"1px solid "+dividerColor, background: dark?"rgba(255,255,255,0.05)":"rgba(122,63,209,0.04)", color:textMain, fontSize:"14px", outline:"none", boxSizing:"border-box", fontFamily:"inherit" }} />
               </div>
             </div>
           )}
+
           {multi && (
             <div style={{ padding:"8px 12px", fontSize:"0.60rem", fontWeight:700, letterSpacing:"1px", textTransform:"uppercase", color: dark?"rgba(245,166,35,0.8)":"#d98a14", borderBottom:"1px solid "+dividerColor, display:"flex", alignItems:"center", justifyContent:"space-between" }}>
               <span>{Array.isArray(value)?value.length:0} selected</span>
               {Array.isArray(value) && value.length > 0 && <span onClick={(e)=>{e.stopPropagation();onChange([]);}} style={{ cursor:"pointer", opacity:0.7, fontSize:"0.60rem", color:"#e05555" }}>Clear all</span>}
             </div>
           )}
+
           <div style={{ overflowY:"auto", maxHeight, WebkitOverflowScrolling:"touch" }}>
             {filteredPriority.length > 0 && (<>
               {filteredPriority.map(opt => <DropOption key={opt} opt={opt} label={flagMap[opt]?flagMap[opt]+" "+opt:opt} selected={isSelected(opt)} multi={multi} dark={dark} hoverBg={hoverBg} selectedBg={selectedBg} textMain={textMain} textMuted={textMuted} onSelect={handleSelect} />)}
@@ -188,9 +200,11 @@ export default function Checkout() {
 
 function CheckoutInner() {
   const navigate = useNavigate();
+
   const tier = (typeof window !== "undefined")
     ? (new URLSearchParams(window.location.search).get("tier") || "connect")
     : "connect";
+
   const tierLabel = TIER_LABELS[tier] || "Connect";
 
   const [dark, setDark] = useState(false);
@@ -236,7 +250,7 @@ function CheckoutInner() {
     setTimeout(() => { if (firstInputRef.current) firstInputRef.current.focus({ preventScroll: true }); }, 350);
   }, [step]);
 
-  const basePrice = inventory?.price ?? TIER_DEFAULT_PRICE[tier];
+  const basePrice = inventory?.price ?? TIER_DEFAULT_PRICE[tier] ?? 0;
   const finalPrice = promoDiscount > 0 ? basePrice * (1 - promoDiscount / 100) : basePrice;
 
   const textMain = dark ? "#ffffff" : "#0d0520";
@@ -320,7 +334,21 @@ function CheckoutInner() {
       const res = await fetch(API+"/payments/create-checkout", {
         method:"POST",
         headers:{ "Content-Type":"application/json", ...(token && { Authorization:"Bearer "+token }) },
-        body:JSON.stringify({ tier, promoCode: promoCode || undefined }),
+        body:JSON.stringify({
+          tier,
+          promoCode: promoCode || undefined,
+          // Attendee details so the ticket PDF and confirmation email
+          // aren't addressed to "Guest"
+          metadata: {
+            firstName: form.firstName,
+            lastName: form.lastName,
+            name: [form.firstName, form.lastName].filter(Boolean).join(" "),
+            email: form.email,
+            organisation: form.organisation,
+            jobTitle: form.jobTitle,
+            country: form.country,
+          },
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Checkout failed");
@@ -339,6 +367,7 @@ function CheckoutInner() {
     <>
       <Navbar />
       <style>{`@keyframes ttfcShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
+
       <div style={{ minHeight: "100vh", background: bg, color: textMain, position: "relative" }}>
         <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:0,
           background: dark
@@ -363,6 +392,7 @@ function CheckoutInner() {
               </h1>
               <span style={{ fontFamily:"'Orbitron', sans-serif", fontSize:"0.6rem", fontWeight:800, letterSpacing:"2px", textTransform:"uppercase", color:"#f5a623", padding:"5px 12px", borderRadius:999, background:"rgba(245,166,35,0.12)", border:"1px solid rgba(245,166,35,0.30)" }}>{tierLabel} Pass</span>
             </div>
+
             <p style={{ fontSize:"0.95rem", color:textMuted, margin:0, lineHeight:1.6 }}>{stepSubtitles[step-1]}</p>
 
             <div style={{ marginTop:24, display:"flex", alignItems:"center", gap:12 }}>
@@ -389,8 +419,9 @@ function CheckoutInner() {
                 <div style={{ display:"flex", flexDirection:"column", gap:18 }}>
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Salutation</label>
-                    <CustomDropdown options={SALUTATIONS} value={form.salutation} onChange={v => set("salutation",v)} placeholder="Select\u2026" dark={dark} />
+                    <CustomDropdown options={SALUTATIONS} value={form.salutation} onChange={v => set("salutation",v)} placeholder="Select…" dark={dark} />
                   </div>
+
                   <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
                     <div style={fieldStyle}>
                       <label style={labelStyle}>First Name *</label>
@@ -403,52 +434,60 @@ function CheckoutInner() {
                       {errors.lastName && <span style={errStyle}>{errors.lastName}</span>}
                     </div>
                   </div>
+
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Job Title</label>
                     <input value={form.jobTitle} onChange={e => set("jobTitle",e.target.value)} placeholder="e.g. Chief Technology Officer" autoComplete="organization-title" style={inputStyle(false)} />
                   </div>
+
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Organisation Name *</label>
                     <input value={form.organisation} onChange={e => set("organisation",e.target.value)} placeholder="e.g. Acme Corp" autoComplete="organization" style={inputStyle(errors.organisation)} />
                     {errors.organisation && <span style={errStyle}>{errors.organisation}</span>}
                   </div>
+
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Business Phone</label>
                     <input type="tel" inputMode="tel" value={form.businessNumber} onChange={e => handlePhoneChange(e.target.value)} placeholder="+1 (416) 000-0000" autoComplete="tel" maxLength={15} style={inputStyle(false)} />
                     <span style={{ fontSize:"0.60rem", color:textDim, marginTop:4 }}>Include country code (e.g. +1 for Canada/US)</span>
                   </div>
+
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Work Email *</label>
                     <input type="email" inputMode="email" value={form.email} onChange={e => set("email",e.target.value)} placeholder="jane@company.com" autoComplete="email" style={inputStyle(errors.email)} />
                     {errors.email && <span style={errStyle}>{errors.email}</span>}
                   </div>
+
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Country *</label>
-                    <CustomDropdown options={COUNTRIES.filter(c => !PRIORITY_COUNTRIES.includes(c))} priorityOptions={PRIORITY_COUNTRIES} flagMap={COUNTRY_FLAGS} value={form.country} onChange={v => set("country",v)} placeholder="Select your country\u2026" searchable dark={dark} error={!!errors.country} maxHeight={200} />
+                    <CustomDropdown options={COUNTRIES.filter(c => !PRIORITY_COUNTRIES.includes(c))} priorityOptions={PRIORITY_COUNTRIES} flagMap={COUNTRY_FLAGS} value={form.country} onChange={v => set("country",v)} placeholder="Select your country…" searchable dark={dark} error={!!errors.country} maxHeight={200} />
                     {errors.country && <span style={errStyle}>{errors.country}</span>}
                   </div>
+
                   <div style={fieldStyle}>
                     <label style={labelStyle}>LinkedIn Profile <span style={{ fontWeight:500, letterSpacing:0, textTransform:"none", color:textDim }}>(optional)</span></label>
                     <input type="url" inputMode="url" value={form.linkedin} onChange={e => set("linkedin",e.target.value)} onBlur={handleLinkedInBlur} placeholder="linkedin.com/in/yourname" autoComplete="url" style={inputStyle(false)} />
                   </div>
 
                   <div style={{ width:"100%", height:1, background: dark?"rgba(255,255,255,0.07)":"rgba(122,63,209,0.10)", margin:"8px 0 4px" }} />
+
                   <div style={{ fontFamily:"'Orbitron', sans-serif", fontWeight:800, fontSize:"0.60rem", letterSpacing:"1.5px", textTransform:"uppercase", color: dark?"#c8a8ff":"#7a3fd1" }}>Professional Profile</div>
 
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Job Level *</label>
-                    <CustomDropdown options={JOB_LEVELS} value={form.jobLevel} onChange={setJobLevel} placeholder="Select your level\u2026" dark={dark} error={!!errors.jobLevel} maxHeight={220} />
+                    <CustomDropdown options={JOB_LEVELS} value={form.jobLevel} onChange={setJobLevel} placeholder="Select your level…" dark={dark} error={!!errors.jobLevel} maxHeight={220} />
                     {errors.jobLevel && <span style={errStyle}>{errors.jobLevel}</span>}
                     {form.jobLevel === "Other" && (
                       <div style={{ marginTop:10 }}>
-                        <input value={form.jobLevelOther} onChange={e => set("jobLevelOther",e.target.value)} placeholder="Please describe your role\u2026" style={inputStyle(!!errors.jobLevelOther)} autoFocus />
+                        <input value={form.jobLevelOther} onChange={e => set("jobLevelOther",e.target.value)} placeholder="Please describe your role…" style={inputStyle(!!errors.jobLevelOther)} autoFocus />
                         {errors.jobLevelOther && <span style={errStyle}>{errors.jobLevelOther}</span>}
                       </div>
                     )}
                   </div>
+
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Job Function *</label>
-                    <CustomDropdown options={JOB_FUNCTIONS} value={form.jobFunction} onChange={v => set("jobFunction",v)} placeholder="Select your function\u2026" dark={dark} error={!!errors.jobFunction} maxHeight={220} />
+                    <CustomDropdown options={JOB_FUNCTIONS} value={form.jobFunction} onChange={v => set("jobFunction",v)} placeholder="Select your function…" dark={dark} error={!!errors.jobFunction} maxHeight={220} />
                     {errors.jobFunction && <span style={errStyle}>{errors.jobFunction}</span>}
                   </div>
                 </div>
@@ -458,12 +497,13 @@ function CheckoutInner() {
                 <div style={{ display:"flex", flexDirection:"column", gap:22 }}>
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Topics of Interest * <span style={{ color:textMuted, fontWeight:500, letterSpacing:0, textTransform:"none" }}>({form.topics.length} selected)</span></label>
-                    <CustomDropdown options={TOPICS} value={form.topics} onChange={v => set("topics",v)} placeholder="Select all that apply\u2026" multi dark={dark} error={!!errors.topics} maxHeight={240} />
+                    <CustomDropdown options={TOPICS} value={form.topics} onChange={v => set("topics",v)} placeholder="Select all that apply…" multi dark={dark} error={!!errors.topics} maxHeight={240} />
                     {errors.topics && <span style={errStyle}>{errors.topics}</span>}
                   </div>
+
                   <div style={fieldStyle}>
                     <label style={labelStyle}>Objectives for attending * <span style={{ color:textMuted, fontWeight:500, letterSpacing:0, textTransform:"none" }}>({form.objectives.length} selected)</span></label>
-                    <CustomDropdown options={OBJECTIVES} value={form.objectives} onChange={v => set("objectives",v)} placeholder="Select all that apply\u2026" multi dark={dark} error={!!errors.objectives} maxHeight={240} />
+                    <CustomDropdown options={OBJECTIVES} value={form.objectives} onChange={v => set("objectives",v)} placeholder="Select all that apply…" multi dark={dark} error={!!errors.objectives} maxHeight={240} />
                     {errors.objectives && <span style={errStyle}>{errors.objectives}</span>}
                   </div>
 
@@ -493,7 +533,7 @@ function CheckoutInner() {
                 </button>
                 <button onClick={step < TOTAL_STEPS ? next : submit} disabled={submitting}
                   style={{ flex:1, padding:"14px", borderRadius:12, border:"none", background:"linear-gradient(135deg, #7a3fd1, #f5a623)", color:"white", fontFamily:"'Orbitron', sans-serif", fontWeight:800, fontSize:"0.65rem", letterSpacing:"1px", textTransform:"uppercase", cursor: submitting?"not-allowed":"pointer", opacity: submitting?0.7:1, boxShadow:"0 4px 20px rgba(122,63,209,0.35)" }}>
-                  {submitting ? "Redirecting to payment\u2026" : (step < TOTAL_STEPS ? "Continue \u2192" : "Proceed to Payment \u2192")}
+                  {submitting ? "Redirecting to payment…" : (step < TOTAL_STEPS ? "Continue →" : "Proceed to Payment →")}
                 </button>
               </div>
             </div>
@@ -577,7 +617,7 @@ function CheckoutInner() {
                       />
                       <button type="button" onClick={applyPromo} disabled={promoStatus === "loading" || !promoInput.trim()}
                         style={{ flexShrink:0, padding:"11px 18px", borderRadius:10, border:"none", cursor: (promoStatus==="loading" || !promoInput.trim())?"not-allowed":"pointer", opacity:(promoStatus==="loading" || !promoInput.trim())?0.55:1, background:"linear-gradient(135deg, #7a3fd1, #f5a623)", color:"white", fontFamily:"'Orbitron', sans-serif", fontWeight:800, fontSize:"0.62rem", letterSpacing:"1px", textTransform:"uppercase" }}>
-                        {promoStatus === "loading" ? "\u2026" : "Apply"}
+                        {promoStatus === "loading" ? "…" : "Apply"}
                       </button>
                     </div>
                     {promoStatus === "error" && <span style={{ ...errStyle, marginTop:8, display:"block" }}>{promoError}</span>}
@@ -594,6 +634,7 @@ function CheckoutInner() {
             </div>
           </div>
         </div>
+
         <Footer />
       </div>
     </>

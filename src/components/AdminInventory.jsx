@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 const API = "https://techfest-canada-backend.onrender.com/api";
 
 const DISCOUNTS = [10, 25, 50];
+
 const TIERS = [
   { value: "connect", label: "Connect" },
   { value: "influence", label: "Influence" },
   { value: "power", label: "Power" },
+  { value: "apex", label: "Apex" },
 ];
 
 function genCode() {
@@ -17,7 +19,6 @@ function genCode() {
 }
 
 export default function AdminInventory() {
-
   const [isDark, setIsDark] = useState(true);
   const [inventory, setInventory] = useState([]);
 
@@ -101,6 +102,7 @@ export default function AdminInventory() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Create failed");
+
       setNewCode("");
       setNewDiscount(10);
       setCustomDiscount("");
@@ -137,6 +139,14 @@ export default function AdminInventory() {
   const totalRevenue = inventory.reduce((sum, i) => sum + (i.sold * (i.price || 0)), 0);
   const totalSold = inventory.reduce((sum, i) => sum + i.sold, 0);
   const totalRemaining = inventory.reduce((sum, i) => sum + (i.total - i.sold), 0);
+
+  /* Tiers the pass page offers but the backend has no inventory row for.
+     Without a row they can't be priced or sold — surfaced here so a new
+     tier can't be added to the site and silently fail at checkout. */
+  const missingTiers = TIERS
+    .filter((t2) => !inventory.some((i) => i.tier === t2.value))
+    .map((t2) => t2.label);
+
   const cardClass = isDark ? "stat-card" : "stat-card stat-card-light";
 
   const t = {
@@ -153,6 +163,20 @@ export default function AdminInventory() {
     <>
     <div className="admin-card">
       <h2 className={isDark ? "text-white" : "text-gray-900"}>Ticket Inventory</h2>
+
+      {missingTiers.length > 0 && (
+        <div style={{
+          marginTop: 14, padding: "12px 16px", borderRadius: 10,
+          border: "1px solid rgba(224,155,85,0.45)",
+          background: isDark ? "rgba(224,155,85,0.10)" : "rgba(224,155,85,0.08)",
+          color: isDark ? "#f0b57a" : "#a8600a",
+          fontSize: "0.8rem", fontWeight: 600, lineHeight: 1.6,
+        }}>
+          No inventory record for: <strong>{missingTiers.join(", ")}</strong>. This pass is
+          shown on the tickets page but cannot be sold until the backend has a row for it
+          (price + total). Checkout will fail for this tier.
+        </div>
+      )}
 
       <div className="inventory-stats">
         <div className={cardClass}>
@@ -178,7 +202,7 @@ export default function AdminInventory() {
             {inventory.map((item) => {
               const remaining = item.total - item.sold;
               const revenue = item.sold * (item.price || 0);
-              const percent = (item.sold / item.total) * 100;
+              const percent = item.total ? (item.sold / item.total) * 100 : 0;
               return (
                 <tr key={item.tier}>
                   <td className={isDark ? "text-white" : "text-gray-900"}>{item.tier.toUpperCase()}</td>
@@ -203,7 +227,6 @@ export default function AdminInventory() {
     {/* ===== PROMO CODES ===== */}
     {/* ============================================================= */}
     <div className="admin-card" style={{ marginTop: 24 }}>
-
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
         <h2 className={isDark ? "text-white" : "text-gray-900"} style={{ margin: 0 }}>Promo Codes</h2>
         <span style={{ fontSize: "0.72rem", color: t.muted }}>Per-pass scoping &middot; enforced on Stripe checkout</span>
@@ -214,7 +237,6 @@ export default function AdminInventory() {
 
         {/* Row 1: Code + Generate + Discount */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 14, alignItems: "flex-end" }}>
-
           {/* Code input */}
           <div style={{ display: "flex", flexDirection: "column", gap: 6, flex: "1 1 200px", minWidth: 180 }}>
             <label style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", color: t.muted }}>Code</label>
@@ -295,7 +317,7 @@ export default function AdminInventory() {
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <button onClick={createPromo} disabled={promoBusy}
             style={{ padding: "12px 28px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#fff", fontWeight: 800, fontSize: "0.74rem", letterSpacing: "0.5px", cursor: promoBusy ? "not-allowed" : "pointer", opacity: promoBusy ? 0.6 : 1, boxShadow: "0 4px 16px rgba(122,63,209,0.3)" }}>
-            {promoBusy ? "Creating\u2026" : "Create Promo Code"}
+            {promoBusy ? "Creating…" : "Create Promo Code"}
           </button>
         </div>
       </div>

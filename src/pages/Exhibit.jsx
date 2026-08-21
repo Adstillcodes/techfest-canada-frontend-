@@ -6,12 +6,24 @@ import PavilionCard from "../components/PavilionCard";
 
 const API = import.meta.env.VITE_API_URL || "https://techfest-canada-backend.onrender.com/api";
 
+/* ─────────────────────────────────────────────────────────────
+   PROMO CODE VALIDATION ENDPOINT
+
+   Point this at whatever the tickets checkout already uses so both
+   flows validate against the same route. If the path is wrong the
+   modal degrades gracefully: the code is still passed to Stripe and
+   enforced server-side, the shopper just doesn't see the discount
+   before they click through.
+   ───────────────────────────────────────────────────────────── */
+const PROMO_VALIDATE_URL = `${API}/promos/validate`;
+
 const BOOTH_TIERS = [
   {
     id: "single",
     title: "Single Booth",
     specs: "10 ft x 10 ft",
     price: "$2,499",
+    amount: 2499,
     tagline: "A smart, strategic entry into the market.",
     description: "The Single Booth is ideal for companies that want focused visibility and high value face time without overextending budget. It is perfect for startups, emerging tech companies, niche solution providers, consultancies, and first time exhibitors looking to establish a presence in a serious business environment.",
     whyItWorks: [
@@ -27,6 +39,7 @@ const BOOTH_TIERS = [
     title: "Double Booth",
     specs: "20 ft x 10 ft",
     price: "$4,499",
+    amount: 4499,
     tagline: "More space. More visibility. More commercial opportunity.",
     description: "The Double Booth is built for companies that want to move beyond presence and start making a statement. With added space comes greater flexibility to showcase multiple products, create a stronger visual brand experience, host more conversations, and engage visitors with greater confidence.",
     whyItWorks: [
@@ -42,6 +55,7 @@ const BOOTH_TIERS = [
     title: "Triple Booth",
     specs: "30 ft x 10 ft",
     price: "$5,999",
+    amount: 5999,
     tagline: "For brands that want to be noticed, remembered, and taken seriously.",
     description: "The Triple Booth is for exhibitors with bigger ambitions and a stronger market story to tell. It gives you the space to create a real destination on the floor rather than just a booth. This is where your brand begins to command attention.\n\nIf your objective is to stand apart from the crowd and present your company as a serious market leader, this is where that begins.",
     whyItWorks: [
@@ -57,6 +71,7 @@ const BOOTH_TIERS = [
     title: "Quadruple Booth",
     specs: "40 ft x 10 ft",
     price: "$7,499",
+    amount: 7499,
     tagline: "Maximum presence for brands that intend to lead the room.",
     description: "The Quadruple Booth is our flagship exhibition option for companies that want scale, authority, and visibility that cannot be ignored. This is for major brands, strategic partners, global companies, ecosystem leaders, and organizations ready to own a significant share of attention at The Tech Festival Canada.\n\nIf you are launching in a major way, building strategic partnerships, attracting enterprise buyers, or reinforcing leadership in your category, the Quadruple Booth gives you the stage to do it with impact.",
     whyItWorks: [
@@ -68,6 +83,9 @@ const BOOTH_TIERS = [
     images: ["/booths/quad-1.jpg", "/booths/quad-2.jpg", "/booths/quad-3.jpg"]
   }
 ];
+
+const money = (n) =>
+  "$" + Number(n).toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
 function BoothGallery({ images, isDark, border, cardBg }) {
   const [active, setActive] = useState(0);
@@ -145,7 +163,8 @@ function BoothGallery({ images, isDark, border, cardBg }) {
 
 export default function Exhibit() {
   const [isDark, setIsDark] = useState(true);
-  const [selectedBooth, setSelectedBooth] = useState(null);
+  const [selectedBooth, setSelectedBooth] = useState(null);   // enquire modal
+  const [checkoutBooth, setCheckoutBooth] = useState(null);   // promo + pay modal
 
   useEffect(() => {
     setIsDark(document.body.classList.contains("dark-mode"));
@@ -156,21 +175,22 @@ export default function Exhibit() {
     return () => obs.disconnect();
   }, []);
 
-  const handlePurchaseBooth = async (tier) => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API}/payments/create-checkout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
-        body: JSON.stringify({ type: "booth", tier: `booth-${tier}` }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Checkout failed");
-      window.location.href = data.url;
-    } catch (err) {
-      console.error("Purchase error:", err);
-      alert(err.message || "Purchase failed. Please try again.");
-    }
+  /* Creates the Stripe session. `promoCode` is optional — the server
+     is the authority on whether it's valid and what it's worth. */
+  const startCheckout = async (tierId, promoCode) => {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API}/payments/create-checkout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...(token && { Authorization: `Bearer ${token}` }) },
+      body: JSON.stringify({
+        type: "booth",
+        tier: `booth-${tierId}`,
+        ...(promoCode ? { promoCode, promo_code: promoCode, code: promoCode } : {}),
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Checkout failed");
+    window.location.href = data.url;
   };
 
   const bg        = isDark ? "#07030f"                : "#f4f0ff";
@@ -189,6 +209,8 @@ export default function Exhibit() {
         @media (max-width: 540px) {
           .cta-row { flex-direction: column !important; align-items: stretch !important; }
           .cta-row a { width: 100% !important; text-align: center !important; justify-content: center !important; }
+          .promo-row { flex-direction: column !important; }
+          .promo-row button { width: 100% !important; }
         }
         :root {
           --aurora-white: #ffffff;
@@ -288,12 +310,12 @@ export default function Exhibit() {
             textMain={textMain} textMuted={textMuted} border={border} cardBg={cardBg}
             index={index}
             onOpenModal={() => setSelectedBooth(tier)}
-            onPurchase={() => handlePurchaseBooth(tier.id)}
+            onPurchase={() => setCheckoutBooth(tier)}
           />
         ))}
       </div>
 
-      {/* ═══════════ INDIA PAVILION PROMO CARD (opens dedicated page in new tab) ═══════════ */}
+      {/* ═══════════ INDIA PAVILION PROMO CARD ═══════════ */}
       <PavilionCard
         isDark={isDark}
         textMain={textMain}
@@ -333,7 +355,6 @@ export default function Exhibit() {
             />
             <div style={{ position: "absolute", width: "70%", height: "70%", borderRadius: "50%", background: "radial-gradient(circle, rgba(122,63,209,0.15) 0%, transparent 70%)", pointerEvents: "none" }} />
           </div>
-
           <div style={{ padding: "clamp(40px, 6vw, 64px)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <h2 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 900, lineHeight: 1.2, marginBottom: 20, color: textMain }}>
               Ready to <GradientSpan>secure your space?</GradientSpan>
@@ -364,6 +385,18 @@ export default function Exhibit() {
         )}
       </AnimatePresence>
 
+      {/* ═══════════ PROMO + CHECKOUT MODAL ═══════════ */}
+      <AnimatePresence>
+        {checkoutBooth && (
+          <CheckoutModal
+            booth={checkoutBooth}
+            onClose={() => setCheckoutBooth(null)}
+            onCheckout={startCheckout}
+            isDark={isDark} textMain={textMain} textMuted={textMuted} border={border}
+          />
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );
@@ -371,9 +404,7 @@ export default function Exhibit() {
 
 /* ═══════════════════════════════════════════════════════
    BOOTH ROW
-   
    ═══════════════════════════════════════════════════════ */
-
 function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, onOpenModal, onPurchase }) {
   const hasBg = index % 2 === 0;
 
@@ -438,6 +469,10 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
             Buy Now
           </motion.button>
 
+          <p style={{ marginTop: 10, textAlign: "center", fontSize: "0.78rem", color: textMuted, opacity: 0.85 }}>
+            Have a promo code? Apply it at the next step.
+          </p>
+
           <motion.button
             onClick={onOpenModal}
             className="btn-outline"
@@ -453,9 +488,205 @@ function BoothRow({ tier, isDark, textMain, textMuted, border, cardBg, index, on
 }
 
 /* ═══════════════════════════════════════════════════════
+   CHECKOUT MODAL — promo code, then Stripe
+
+   The server remains the authority on whether a code is valid and
+   what it's worth. This only previews the discount so the shopper
+   knows what they're paying before being sent to Stripe.
+   ═══════════════════════════════════════════════════════ */
+function CheckoutModal({ booth, onClose, onCheckout, isDark, textMain, textMuted, border }) {
+  const [code, setCode] = useState("");
+  const [applied, setApplied] = useState(null);     // { code, discount }
+  const [checking, setChecking] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");         // couldn't verify, still sending
+  const [paying, setPaying] = useState(false);
+
+  const panel = isDark ? "#120a22" : "#ffffff";
+  const inputBg = isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)";
+
+  const discountAmt = applied ? Math.round(booth.amount * (applied.discount / 100) * 100) / 100 : 0;
+  const total = booth.amount - discountAmt;
+
+  const applyCode = async () => {
+    const clean = code.trim().toUpperCase().replace(/\s+/g, "");
+    if (!clean) { setError("Enter a promo code."); return; }
+
+    setChecking(true);
+    setError("");
+    setNotice("");
+
+    try {
+      const res = await fetch(PROMO_VALIDATE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: clean, tier: `booth-${booth.id}`, type: "booth" }),
+      });
+
+      // No validation route deployed yet — let Stripe decide.
+      if (res.status === 404 || res.status === 405) {
+        setApplied({ code: clean, discount: 0 });
+        setNotice("Code saved. It will be applied at payment.");
+        return;
+      }
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || data.valid === false || data.error) {
+        setError(data.error || "That code isn't valid for this booth.");
+        setApplied(null);
+        return;
+      }
+
+      const pct = Number(data.discount ?? data.percentOff ?? data.percent_off);
+      if (!pct || isNaN(pct)) {
+        setApplied({ code: clean, discount: 0 });
+        setNotice("Code saved. It will be applied at payment.");
+        return;
+      }
+
+      setApplied({ code: data.code || clean, discount: pct });
+    } catch (err) {
+      // Network/CORS — don't block the sale
+      setApplied({ code: clean, discount: 0 });
+      setNotice("Code saved. It will be applied at payment.");
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  const proceed = async () => {
+    setPaying(true);
+    setError("");
+    try {
+      await onCheckout(booth.id, applied ? applied.code : undefined);
+    } catch (err) {
+      setError(err.message || "Checkout failed. Please try again.");
+      setPaying(false);
+    }
+  };
+
+  const rowStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.95rem" };
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center",
+        background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)", padding: "24px"
+      }}
+    >
+      <motion.div
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        style={{ background: panel, width: "100%", maxWidth: 480, borderRadius: 20, padding: 32, position: "relative", border: "1px solid " + border, boxShadow: "0 20px 40px rgba(0,0,0,0.4)" }}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute", top: 16, right: 16, width: 32, height: 32, borderRadius: "50%",
+            background: isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)",
+            border: isDark ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(0,0,0,0.12)",
+            color: textMain, fontSize: "1.1rem", lineHeight: 1, cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >✕</button>
+
+        <h3 style={{ fontFamily: "'Orbitron', sans-serif", fontSize: "1.3rem", fontWeight: 800, color: textMain, marginBottom: 6, paddingRight: 40 }}>
+          {booth.title}
+        </h3>
+        <p style={{ fontSize: "0.88rem", color: textMuted, marginBottom: 24 }}>
+          {booth.specs} · Exhibition space at TTFC 2026
+        </p>
+
+        {/* ---- promo input ---- */}
+        <label style={{ display: "block", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", color: textMuted, marginBottom: 8 }}>
+          Promo code
+        </label>
+        <div className="promo-row" style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+          <input
+            value={code}
+            onChange={(e) => { setCode(e.target.value.toUpperCase()); setError(""); }}
+            onKeyDown={(e) => { if (e.key === "Enter") applyCode(); }}
+            placeholder="e.g. LAUNCH25"
+            spellCheck={false}
+            disabled={!!applied}
+            style={{
+              flex: 1, padding: "12px 14px", borderRadius: 10,
+              border: "1px solid " + border, background: inputBg, color: textMain,
+              fontWeight: 700, fontSize: "0.95rem", letterSpacing: "1.5px", textTransform: "uppercase",
+              outline: "none", boxSizing: "border-box", fontFamily: "inherit",
+              opacity: applied ? 0.6 : 1,
+            }}
+          />
+          {applied ? (
+            <button
+              onClick={() => { setApplied(null); setCode(""); setNotice(""); }}
+              style={{ padding: "12px 18px", borderRadius: 10, border: "1px solid " + border, background: "transparent", color: textMuted, fontWeight: 700, fontSize: "0.78rem", cursor: "pointer", whiteSpace: "nowrap" }}
+            >Remove</button>
+          ) : (
+            <button
+              onClick={applyCode}
+              disabled={checking}
+              style={{ padding: "12px 22px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#fff", fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.5px", textTransform: "uppercase", cursor: checking ? "not-allowed" : "pointer", opacity: checking ? 0.6 : 1, whiteSpace: "nowrap" }}
+            >{checking ? "Checking…" : "Apply"}</button>
+          )}
+        </div>
+
+        {error && <p style={{ fontSize: "0.8rem", color: "#e05555", fontWeight: 600, marginBottom: 12 }}>{error}</p>}
+        {notice && <p style={{ fontSize: "0.8rem", color: isDark ? "#f0b57a" : "#a8600a", fontWeight: 600, marginBottom: 12 }}>{notice}</p>}
+        {applied && applied.discount > 0 && (
+          <p style={{ fontSize: "0.8rem", color: "#3fb968", fontWeight: 700, marginBottom: 12 }}>
+            {applied.code} applied — {applied.discount}% off
+          </p>
+        )}
+
+        {/* ---- totals ---- */}
+        <div style={{ borderTop: "1px solid " + border, marginTop: 16, paddingTop: 16, display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ ...rowStyle, color: textMuted }}>
+            <span>Booth</span><span>{money(booth.amount)}</span>
+          </div>
+          {applied && applied.discount > 0 && (
+            <div style={{ ...rowStyle, color: "#3fb968" }}>
+              <span>Discount ({applied.discount}%)</span><span>−{money(discountAmt)}</span>
+            </div>
+          )}
+          <div style={{ ...rowStyle, color: textMain, fontWeight: 800, fontSize: "1.1rem", fontFamily: "'Orbitron', sans-serif" }}>
+            <span>Total</span><span>{money(total)} CAD</span>
+          </div>
+          {applied && applied.discount === 0 && (
+            <p style={{ fontSize: "0.72rem", color: textMuted }}>
+              Final total shown at payment.
+            </p>
+          )}
+        </div>
+
+        <button
+          onClick={proceed}
+          disabled={paying}
+          style={{
+            width: "100%", marginTop: 22, padding: "15px", borderRadius: 12, border: "none",
+            background: "linear-gradient(135deg, #7a3fd1, #f5a623)", color: "#fff",
+            fontFamily: "'Orbitron', sans-serif", fontWeight: 800, fontSize: "0.85rem",
+            letterSpacing: "1px", textTransform: "uppercase",
+            cursor: paying ? "not-allowed" : "pointer", opacity: paying ? 0.7 : 1,
+            boxShadow: "0 4px 16px rgba(122,63,209,0.3)",
+          }}
+        >
+          {paying ? "Redirecting…" : "Continue to Payment"}
+        </button>
+
+        <p style={{ marginTop: 12, textAlign: "center", fontSize: "0.72rem", color: textMuted }}>
+          Secure payment via Stripe. Prices in CAD.
+        </p>
+      </motion.div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
    ENQUIRE MODAL
    ═══════════════════════════════════════════════════════ */
-
 function EnquireModal({ booth, onClose, isDark, textMain, border }) {
   const [status, setStatus] = useState("");
   const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", message: "" });

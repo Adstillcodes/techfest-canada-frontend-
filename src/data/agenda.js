@@ -168,6 +168,15 @@ export const SESSIONS = [
     ],
   },
   {
+    id: "d1-19b", day: 1, time: "16:15", endTime: "16:45",
+    title: "Arctic Readiness, Wildfire Response, and Resilient Infrastructure with Drones & Remote Ops",
+    type: "Panel Session", format: "panel", pillar: "climate", sector: "public",
+    speakers: [
+      { name: "Genevieve Decambra" },
+      { name: "Akash Rastogi" },
+    ],
+  },
+  {
     id: "d1-20", day: 1, time: "16:45", endTime: "17:15",
     title: "Jobs, Skills, AI and the Human Contract",
     type: "Panel Session", format: "panel", pillar: "ai", featured: true,
@@ -195,7 +204,7 @@ export const SESSIONS = [
     title: "Build in Canada, Scale to the World: an SMB Way",
     type: "Opening Keynote + Fireside Chat", format: "fireside", featured: true,
     speakers: [
-      { name: "Christy Clark" },
+      { name: "Hon. Nina Tangri" },
     ],
     moderator: { name: "Alicia Pereira" },
   },
@@ -260,7 +269,7 @@ export const SESSIONS = [
   },
   {
     id: "d2-11", day: 2, time: "13:25", endTime: "13:45",
-    title: "Who Owns AI Governance?",
+    title: "AI Governance",
     type: "Keynote", format: "keynote", pillar: "ai",
     speakers: [{ name: "Ashley Casovan" }],
   },
@@ -321,15 +330,6 @@ export const SESSIONS = [
       { name: "Jasmin Ganie-Hobbs" },
     ],
     moderator: { name: "Mathew Growden" },
-  },
-  {
-    id: "d2-19", day: 2, time: "17:10", endTime: "17:40",
-    title: "Arctic Readiness, Wildfire Response, and Resilient Infrastructure with Drones & Remote Ops",
-    type: "Panel Session", format: "panel", pillar: "climate", sector: "public",
-    speakers: [
-      { name: "Genevieve Decambra" },
-      { name: "Akash Rastogi" },
-    ],
   },
   {
     id: "d2-20", day: 2, time: "17:40", endTime: "18:10",

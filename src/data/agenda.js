@@ -129,7 +129,6 @@ export const SESSIONS = [
     type: "Dual Fireside", format: "fireside", pillar: "ai",
     speakers: [
       { name: "Thiru Venkatachalam" },
-      { name: "Samrah Kazmi" },
       { name: "Queena Cheung" },
       { name: "Roy Pereira" },
     ],
@@ -173,7 +172,6 @@ export const SESSIONS = [
     type: "Panel Session", format: "panel", pillar: "climate", sector: "public",
     speakers: [
       { name: "Genevieve Decambra" },
-      { name: "Akash Rastogi" },
     ],
   },
   {
@@ -269,7 +267,7 @@ export const SESSIONS = [
   },
   {
     id: "d2-11", day: 2, time: "13:25", endTime: "13:45",
-    title: "Who Owns AI Governance?",
+    title: "AI Governance",
     type: "Keynote", format: "keynote", pillar: "ai",
     speakers: [{ name: "Ashley Casovan" }],
   },

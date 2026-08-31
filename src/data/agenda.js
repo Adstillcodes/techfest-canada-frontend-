@@ -109,9 +109,7 @@ export const SESSIONS = [
       { name: "Joe Greenwood", org: "Mastercard" },
       { name: "Bijit Ghosh" },
       { name: "Naresh Gunupuru" },
-      { name: "Peyman Pardis", org: "Kraken" },
     ],
-    moderator: { name: "April Fong" },
   },
   {
     id: "d1-13", day: 1, time: "13:10", endTime: "13:55",
@@ -138,7 +136,7 @@ export const SESSIONS = [
     id: "d1-16", day: 1, time: "14:35", endTime: "15:05",
     title: "Cybersecurity and Digital Trust in the Agentic Age",
     type: "Panel Session", format: "panel", pillar: "cybersecurity",
-    speakers: [{ name: "Francois Guay" }, { name: "Chris Hetner" }],
+    speakers: [{ name: "Francois Guay" }, { name: "Samrah Kazmi" }],
     moderator: { name: "Brennan Lodge" },
   },
   {
@@ -162,8 +160,6 @@ export const SESSIONS = [
     type: "Dual Fireside", format: "fireside", pillar: "climate", sector: "fintech",
     speakers: [
       { name: "Na'im Merchant" },
-      { name: "Ed Whittingham" },
-      { name: "Dave Hochhalter" },
     ],
   },
   {
@@ -179,12 +175,11 @@ export const SESSIONS = [
     title: "Jobs, Skills, AI and the Human Contract",
     type: "Panel Session", format: "panel", pillar: "ai", featured: true,
     speakers: [
-      { name: "Rob Catalano" },
-      { name: "John Wilder" },
       { name: "Alyssa Daku" },
       { name: "Dr. Maha Aziz" },
+      { name: "Mariano Allegra" },
     ],
-    moderator: { name: "Mariano Allegra" },
+    moderator: { name: "John Wilder" },
   },
   {
     id: "d1-21", day: 1, time: "17:15", endTime: "18:15",
@@ -267,7 +262,7 @@ export const SESSIONS = [
   },
   {
     id: "d2-11", day: 2, time: "13:25", endTime: "13:45",
-    title: "Who Owns AI Governance?",
+    title: "AI Governance",
     type: "Keynote", format: "keynote", pillar: "ai",
     speakers: [{ name: "Ashley Casovan" }],
   },

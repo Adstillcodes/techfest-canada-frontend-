@@ -38,7 +38,7 @@ export const SESSIONS = [
     id: "d1-03", day: 1, time: "09:15", endTime: "09:45",
     title: "Canada's Tech Decade: Build | Secure | Scale",
     type: "Opening Keynote", format: "keynote", featured: true,
-    speakers: [{ name: "Hon. Evan Solomon" }],
+    speakers: [{ name: "TBD" }],
     moderator: { name: "Baldeep Singh Pahwa" },
   },
   {
@@ -197,7 +197,7 @@ export const SESSIONS = [
     title: "Build in Canada, Scale to the World: an SMB Way",
     type: "Opening Keynote + Fireside Chat", format: "fireside", featured: true,
     speakers: [
-      { name: "Hon. Nina Tangri" },
+      { name: "TBD" },
     ],
     moderator: { name: "Alicia Pereira" },
   },

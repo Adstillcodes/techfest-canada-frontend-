@@ -235,7 +235,7 @@ export const SESSIONS = [
   },
   {
     id: "d2-07", day: 2, time: "11:15", endTime: "11:35",
-    title: "Every Phone is Now a Stethoscope",
+    title: "We Can’t Treat What We Can’t Find: Closing the Detection Gap in Healthcare",
     type: "Keynote Presentation", format: "keynote", sector: "healthcare",
     speakers: [{ name: "Mark Attila Opauszky" }],
   },

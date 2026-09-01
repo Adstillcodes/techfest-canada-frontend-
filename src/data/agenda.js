@@ -199,7 +199,7 @@ export const SESSIONS = [
     speakers: [
       { name: "TBD" },
     ],
-    moderator: { name: "Alicia Pereira" },
+    moderator: { name: "TBD" },
   },
   {
     id: "d2-03", day: 2, time: "09:35", endTime: "10:05",

@@ -173,7 +173,7 @@ export const SESSIONS = [
   {
     id: "d1-20", day: 1, time: "16:45", endTime: "17:15",
     title: "Jobs, Skills, AI and the Human Contract",
-    type: "Panel Session", format: "panel", pillar: "ai", featured: true,
+    type: "Fireside Discussion", format: "fireside", pillar: "ai", featured: true,
     speakers: [
       { name: "Alyssa Daku" },
       { name: "Dr. Maha Aziz" },

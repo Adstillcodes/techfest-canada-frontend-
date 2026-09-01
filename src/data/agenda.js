@@ -272,9 +272,7 @@ export const SESSIONS = [
     type: "Panel Session", format: "panel", pillar: "ai", sector: "fintech",
     speakers: [
       { name: "Peter Routledge" },
-      { name: "Tania Narciso", org: "Kraken" },
-      { name: "Fatemah Pirone", org: "Interac" },
-      { name: "Vance Lockton" },
+  
     ],
     moderator: { name: "April Fong", org: "Globe and Mail" },
   },
@@ -322,7 +320,6 @@ export const SESSIONS = [
       { name: "Argentina Beltran" },
       { name: "Jasmin Ganie-Hobbs" },
     ],
-    moderator: { name: "Mathew Growden" },
   },
   {
     id: "d2-20", day: 2, time: "17:40", endTime: "18:10",

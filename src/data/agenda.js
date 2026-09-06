@@ -315,8 +315,8 @@ export const SESSIONS = [
     id: "d2-14", day: 2, time: "14:05", endTime: "14:35",
     title: "Can Canada Regulate Its Way to Better Finance?",
     type: "Panel Session", format: "panel", sector: "fintech",
-    speakers: [{ name: "David Merriby" }, { name: "Tania Narciso" }],
-    moderator: { name: "April Fong", org: "Globe and Mail" },
+    speakers: [{ name: "TBD" }, { name: "TBD" }],
+    moderator: { name: "TBD", org: "TBD" },
   },
   {
     id: "d2-15", day: 2, time: "14:35", endTime: "15:20",
@@ -368,7 +368,7 @@ export const SESSIONS = [
     title: "Beyond the Vehicle: Building the Connected, Intelligent, and Sustainable Mobility Systems of Tomorrow",
     type: "Panel Session", format: "panel", sector: "manufacturing",
     speakers: [{ name: "TBD" }, { name: "Vince Cifani" }],
-    moderator: { name: "Simba" },
+    moderator: { name: "TBD" },
   },
   {
     id: "d2-21", day: 2, time: "17:20", endTime: "17:45",
